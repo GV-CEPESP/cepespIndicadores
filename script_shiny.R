@@ -17,8 +17,14 @@ library(shinyalert)
 library(shinyBS)
 library(ggplot2)
 library(shiny)
+library(readr)
 
 
+# 1. Data ----------------------------------------------------------------
+
+df <- read.csv("df.csv")
+
+de <- read.csv("de.csv")
 
 # 1. User interface -------------------------------------------------------
 
