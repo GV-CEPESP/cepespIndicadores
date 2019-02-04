@@ -7,7 +7,12 @@ rm(list = ls())
 
 # Pacotes utilizados
 
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github("Cepesp-Fgv/cepesp-r", force = TRUE)
+
+
 library(cepespR)
+install.packages("tidyverse")
 library(tidyverse)
 library(lubridate)
 
@@ -15,6 +20,7 @@ library(lubridate)
 # 1. Dados ----------------------------------------------------------------
 
 # Deputado Federal
+
 df <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", position = "Deputado Federal",
                     regional_aggregation = "Brasil", political_aggregation = "Partido")
 
@@ -38,12 +44,13 @@ vr <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador"
 vrc <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador",
                      regional_aggregation = "Municipio", political_aggregation = "Consolidado")
 
+?rename
 
 
 # 2. Tranformacoes primarias ----------------------------------------------
 
-df <- df %>% 
-  rename(UF = SIGLA_UE)
+ 
+df <- rename(df, UF = SIGLA_UE)
 
 df$AGREGACAO_REGIONAL <- "BRASIL"
 
@@ -123,8 +130,6 @@ vrc1 <- vrc %>%
 
 
 
-
-
 # 3. Join -----------------------------------------------------------------
 
 # Deputado Federal
@@ -163,9 +168,6 @@ de <- left_join(de,dec1, by = c("ANO_ELEICAO","UF"))
 # Vereador
 
 vr <- left_join(vr, vr1, by = c("ANO_ELEICAO", "NOME_MUNICIPIO", "SIGLA_PARTIDO"))
-
-
-
 
 
 

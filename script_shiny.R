@@ -18,6 +18,8 @@ library(shinyBS)
 library(ggplot2)
 library(shiny)
 library(readr)
+library(shiny)
+library(shinythemes)
 
 
 # 1. Data ----------------------------------------------------------------
@@ -33,21 +35,17 @@ ui <- fluidPage(
   
   # Titulo do app ----
   
-  titlePanel("Cepesp Indicadores"),
-  
-  sidebarLayout(
-    
-    sidebarPanel(
-      
+ navbarPage("CepespIndicadores"),
+ 
+ tabPanel("Indicadores de Fragmentação Legislativa"),
+ 
+ absolutePanel(top = 60, left = 10, right = "auto", bottom = "auto",
+               width = 260, height = "auto", draggable = FALSE, fixed = TRUE,
+               h4("Opções:"),
       selectInput(inputId = "DESCRICAO_CARGO",
                   label = "Escolha um cargo:",
                   choices = c("Deputado Federal", "Deputado Estadual", "Vereador"),
                   selected = "Deputado Federal"),
-      
-      selectInput(inputId = "AGREGACAO_REGIONAL",
-                  label = "Escolha uma agregação regional:",
-                  choices = c("Brasil", "UF", "Municipio"),
-                  selected = "Brasil"),
       
       selectInput(inputId = "ANO_ELEICAO",
                   label = "Escolha um ano:",
@@ -59,15 +57,21 @@ ui <- fluidPage(
                   choices = c("AC","AM","AL","AP","BA","CE","DF","ES","GO","MA",
                               "MS","MG","MT","PA","PB","PE","PI","PR","RJ","RN",
                               "RO","RR","RS","SC","SE","SP","TO"),
-                  selected = "AC")
+                  selected = "AC"),
+      
+      selectInput("INDICADORES",
+                  label = "Escolha um indicador:",
+                  choices = c("Desproporcionalidade de Gallagher", "Fracionalização", "Fracionalização máxima",
+                              "Fragmentação", "Número efetivo de partidos", "Quociente eleitoral"),
+                  selected = "Desproporcionalidade de Gallagher")
+    
     ),
     
-    
-    mainPanel(
+        mainPanel(
       plotOutput("graph")
     )
   )
-)
+
 
 
 
@@ -75,13 +79,12 @@ ui <- fluidPage(
 
 
 
-write.csv(df, "df.csv")
-
-server <- function(input, output) {
+server <- function(input, output,session) {
   
-  output$graph <- renderPlot({
-    ggplot(df, mapping = aes(x = input$ANO_ELEICAO, y = input$DESCRICAO_CARGO)) +
-      geom_bar(stat = "identity")
+  
+  output$text <- renderPlot({
+    ggplot(df, mapping = aes(x = input$ANO_ELEICAO, y = df$VOTOS_VALIDOS/513)) +
+      geom_density()
   }
   
   
