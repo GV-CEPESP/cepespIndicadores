@@ -28,6 +28,8 @@ df <- read.csv("df.csv")
 
 de <- read.csv("de.csv")
 
+cidades <- read.csv("cidades.csv")
+
 # 2. User interface -------------------------------------------------------
 
 
@@ -126,7 +128,8 @@ ui <- fluidPage(
     if(cargo == "Vereador"){
     selectizeInput("AGREG_MUN",
                    label = "Escolha um município",
-                   choices = )  
+                   choices = cidades[[3]],
+                   selected = NULL)  
   }
   })
   

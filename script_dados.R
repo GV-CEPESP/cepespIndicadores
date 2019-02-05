@@ -7,12 +7,8 @@ rm(list = ls())
 
 # Pacotes utilizados
 
-if (!require("devtools")) install.packages("devtools")
-devtools::install_github("Cepesp-Fgv/cepesp-r", force = TRUE)
-
-
 library(cepespR)
-install.packages("tidyverse")
+library(dplyr)
 library(tidyverse)
 library(lubridate)
 
@@ -44,7 +40,12 @@ vr <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador"
 vrc <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador",
                      regional_aggregation = "Municipio", political_aggregation = "Consolidado")
 
-?rename
+
+
+
+cidades <- count(vr, c("UF", "NOME_MUNICIPIO"))
+
+cidades <- select(cidades, "UF", "NOME_MUNICIPIO")
 
 
 # 2. Tranformacoes primarias ----------------------------------------------
@@ -176,3 +177,5 @@ vr <- left_join(vr, vr1, by = c("ANO_ELEICAO", "NOME_MUNICIPIO", "SIGLA_PARTIDO"
 write.csv(df, "df.csv")
 
 write.csv(de, "de.csv")
+
+write.csv(cidades, "cidades.csv")
