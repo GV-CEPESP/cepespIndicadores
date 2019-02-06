@@ -8,9 +8,10 @@ rm(list = ls())
 # Pacotes utilizados
 
 library(cepespR)
-library(dplyr)
 library(tidyverse)
 library(lubridate)
+library(dplyr)
+
 
 
 # 1. Dados ----------------------------------------------------------------
@@ -41,8 +42,6 @@ vrc <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador
                      regional_aggregation = "Municipio", political_aggregation = "Consolidado")
 
 
-
-
 cidades <- count(vr, c("UF", "NOME_MUNICIPIO"))
 
 cidades <- select(cidades, "UF", "NOME_MUNICIPIO")
@@ -51,7 +50,7 @@ cidades <- select(cidades, "UF", "NOME_MUNICIPIO")
 # 2. Tranformacoes primarias ----------------------------------------------
 
  
-df <- rename(df, UF = SIGLA_UE)
+df <- rename(df, c("SIGLA_UE" = "UF"))
 
 df$AGREGACAO_REGIONAL <- "BRASIL"
 
@@ -71,7 +70,7 @@ vr <- vr %>%
 # Votação total e por UF dos partidos
 
 df1 <- df %>%  
-  group_by(ANO_ELEICAO, UF,SIGLA_PARTIDO) %>% 
+  group_by(ANO_ELEICAO, UF, SIGLA_PARTIDO) %>% 
   summarise(
     VOT_PART_UF = sum(QTDE_VOTOS))
 
@@ -169,7 +168,6 @@ de <- left_join(de,dec1, by = c("ANO_ELEICAO","UF"))
 # Vereador
 
 vr <- left_join(vr, vr1, by = c("ANO_ELEICAO", "NOME_MUNICIPIO", "SIGLA_PARTIDO"))
-
 
 
 # 4. Salvando os bancos ---------------------------------------------------

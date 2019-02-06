@@ -57,7 +57,12 @@ ui <- fluidPage(
       
       uiOutput("ANO_MUN"),
       
-      uiOutput("AGREG_EST"),
+      selectInput(inputId = "SIGLA_UE",
+                  label = "Escolha um estado",
+                  choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG",
+                              "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", 
+                              "RS", "SC", "SE", "SP", "TO"),
+                  selected = "AC"),
       
       uiOutput("AGREG_MUN"),
       
@@ -118,9 +123,7 @@ ui <- fluidPage(
    cargo <- input$DESCRICAO_CARGO
    if(cargo == "Vereador"){
    return(input$AGREG_MUN)
-  } else {
-   return(output$AGREG_EST)
-  }
+  } 
   })
   
   output$AGREG_MUN <- renderUI({
@@ -132,19 +135,16 @@ ui <- fluidPage(
                    selected = NULL)  
   }
   })
-  
-  output$AGREG_EST <- renderUI({
-    cargo <- input$DESCRICAO_CARGO
-    if(cargo %in% c("Deputado Federal", "Deputado Estadual")){
-    selectizeInput("AGREG_EST",
-                   label = "Escolha um estado",
-                   choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG",
-                   "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC",
-                   "SE", "SP", "TO"),
-                   selected = "AC")  
+    
+  mun <- reactive({
+    estado <- input$SIGLA_UE
+    if(estado == re.matc){
+      return(cidades == "AC")
+      
   }
   })
   }
+  
   
 
 
