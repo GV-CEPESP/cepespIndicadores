@@ -8,9 +8,11 @@ rm(list = ls())
 # Pacotes utilizados
 
 library(cepespR)
+library(magrittr)
+library(dplyr)
 library(tidyverse)
 library(lubridate)
-library(dplyr)
+
 
 
 
@@ -42,7 +44,7 @@ vrc <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador
                      regional_aggregation = "Municipio", political_aggregation = "Consolidado")
 
 
-cidades <- count(vr, c("UF", "NOME_MUNICIPIO"))
+cidades <- dplyr::count_(vr, c("UF", "NOME_MUNICIPIO"))
 
 cidades <- select(cidades, "UF", "NOME_MUNICIPIO")
 
@@ -50,7 +52,7 @@ cidades <- select(cidades, "UF", "NOME_MUNICIPIO")
 # 2. Tranformacoes primarias ----------------------------------------------
 
  
-df <- rename(df, c("SIGLA_UE" = "UF"))
+df <- dplyr::rename(df, "UF" = "SIGLA_UE")
 
 df$AGREGACAO_REGIONAL <- "BRASIL"
 
@@ -70,38 +72,38 @@ vr <- vr %>%
 # Votação total e por UF dos partidos
 
 df1 <- df %>%  
-  group_by(ANO_ELEICAO, UF, SIGLA_PARTIDO) %>% 
-  summarise(
+  dplyr::group_by(ANO_ELEICAO, UF, SIGLA_PARTIDO) %>% 
+  dplyr::summarise(
     VOT_PART_UF = sum(QTDE_VOTOS))
 
 
 df2 <- df1 %>% 
-  group_by(ANO_ELEICAO,SIGLA_PARTIDO) %>% 
-  summarise(
+  dplyr::group_by(ANO_ELEICAO,SIGLA_PARTIDO) %>% 
+  dplyr::summarise(
     TOT_VOT_PART = sum(VOT_PART_UF)
   )
 
 de1 <- de %>% 
-  group_by(ANO_ELEICAO, UF,SIGLA_PARTIDO) %>% 
-  summarise(
+  dplyr::group_by(ANO_ELEICAO, UF,SIGLA_PARTIDO) %>% 
+  dplyr::summarise(
     VOT_PART_UF = sum(QTDE_VOTOS)
   ) 
 
 de2 <- de1 %>% 
-  group_by(ANO_ELEICAO,SIGLA_PARTIDO) %>% 
-  summarise(
+  dplyr::group_by(ANO_ELEICAO,SIGLA_PARTIDO) %>% 
+  dplyr::summarise(
     TOT_VOT_PART = sum(VOT_PART_UF)
   )
 
 vr1 <- vr %>% 
-  group_by(ANO_ELEICAO, NOME_MUNICIPIO,SIGLA_PARTIDO) %>% 
-  summarise(
+  dplyr::group_by(ANO_ELEICAO, NOME_MUNICIPIO,SIGLA_PARTIDO) %>% 
+  dplyr::summarise(
     VOT_PART_MUN = sum(QTDE_VOTOS)
   ) 
 
 vr2 <- vr1 %>% 
-  group_by(ANO_ELEICAO,SIGLA_PARTIDO) %>% 
-  summarise(
+  dplyr::group_by(ANO_ELEICAO,SIGLA_PARTIDO) %>% 
+  dplyr::summarise(
     TOT_VOT_PART = sum(VOT_PART_MUN)
   )
 
@@ -110,16 +112,16 @@ vr2 <- vr1 %>%
 # Deputado Federal
 
 dfc1 <- dfc %>% 
-  group_by(ANO_ELEICAO) %>% 
-  summarise(
+  dplyr::group_by(ANO_ELEICAO) %>% 
+  dplyr::summarise(
     VOTOS_VALIDOS = sum(QT_VOTOS_NOMINAIS,QT_VOTOS_LEGENDA)
   )
 
 # Deputado Estadual
 
 dec1 <- dec %>% 
-  group_by(ANO_ELEICAO,UF) %>% 
-  summarise(
+  dplyr::group_by(ANO_ELEICAO,UF) %>% 
+  dplyr::summarise(
     VOTOS_VALIDOS_UF = sum(QT_VOTOS_NOMINAIS,QT_VOTOS_LEGENDA)
   )
 
@@ -170,7 +172,29 @@ de <- left_join(de,dec1, by = c("ANO_ELEICAO","UF"))
 vr <- left_join(vr, vr1, by = c("ANO_ELEICAO", "NOME_MUNICIPIO", "SIGLA_PARTIDO"))
 
 
-# 4. Salvando os bancos ---------------------------------------------------
+# 4. Calculo --------------------------------------------------------------
+
+# Quociente eleitoral
+
+
+quoc_eleit <- function(x){
+  x/513
+}
+
+QE <- data.frame(unique(quoc_eleit(df$VOTOS_VALIDOS)))
+
+  QE$ANO_ELEICAO <- c("2018", "2014", "2010", "2006", "2002", "1998") 
+  
+  QE <- QE %>% 
+    dplyr::rename("QUOCIENTE_ELEITORAL" = "unique.quoc_eleit.df.VOTOS_VALIDOS..") %>% 
+    select(ANO_ELEICAO, QUOCIENTE_ELEITORAL) %>% 
+    arrange(QE$ANO_ELEICAO)
+  
+# Quociente partidario
+  
+  
+
+# 5. Salvando os bancos ---------------------------------------------------
 
 write.csv(df, "df.csv")
 

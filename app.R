@@ -21,6 +21,8 @@ library(readr)
 library(shiny)
 library(shinythemes)
 library(magrittr)
+library(shinydashboard)
+library(shinyWidgets)
 
 # 1. Data ----------------------------------------------------------------
 
@@ -35,7 +37,10 @@ cidades <- read.csv("cidades.csv")
 
 ui <- fluidPage(
   
+
  navbarPage("CepespIndicadores", theme = shinytheme("flatly"),
+ 
+ tabPanel("Sobre"),
  
  tabPanel("Fragmentação legislativa"),
  
@@ -43,44 +48,51 @@ ui <- fluidPage(
           
  tabPanel("Alienação"),
  
- tabPanel("Sobre"),
- 
- absolutePanel(top = 60, left = 10, right = "auto", bottom = "auto",
-               width = 260, height = "auto", draggable = FALSE, fixed = TRUE,
-              h4("Opções:"),
+ sidebarLayout(
+  
+ sidebarPanel(h4("Opções:"),width = 3,
+            
+      
+ selectInput(inputId = "INDICADORES_FRAG",
+             label = "Escolha um indicador", 
+             choices = c("Desproporcionalidade de Gallagher", "Fracionalização", "Fracionalização máxima",
+             "Fragmentação", "Número efetivo de partidos", "Quociente eleitoral"),
+             selected = "Desproporcionalidade de Gallagher"),
+              
  selectInput(inputId = "DESCRICAO_CARGO",
              label = "Escolha um cargo",
              choices = c("Deputado Federal", "Deputado Estadual", "Vereador"),
              selected = "Deputado Federal"),
  
- uiOutput("ANO_EST"),
+ selectInput(inputId = "AGREGACAO_REGIONAL",
+             label = "Escolha uma agregação regional",
+             choices = c("Brasil", "UF", "Municipio"),
+             selected = "Brasil"),
  
- uiOutput("ANO_MUN"),
- 
- 
- selectInput(inputId = "SIGLA_UE",
+
+ selectInput(inputId = "UF",
              label = "Escolha um estado",
              choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG",
                          "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", 
                          "RS", "SC", "SE", "SP", "TO"),
              selected = "AC"),
  
- uiOutput("AGREG_MUN"),
- 
- selectInput(inputId = "INDICADORES_FRAG",
-             label = "Escolha um indicador", 
-             choices = c("Desproporcionalidade de Gallagher", "Fracionalização", "Fracionalização máxima",
-                         "Fragmentação", "Número efetivo de partidos", "Quociente eleitoral"),
-             selected = "Desproporcionalidade de Gallagher")
+ uiOutput("AGREG_MUN")
  
  
  ),
  
- mainPanel()
+ mainPanel(
+   
+   absolutePanel(top = 0, right = 0, left = 100,
+     tabsetPanel(type = "pills",
+                tabPanel("Tabelas", br(), tableOutput("table")),
+                tabPanel("Gráficos"))
+   
+   ))
  
  
- ))
- 
+ )))
 
 
 
@@ -92,38 +104,6 @@ ui <- fluidPage(
 
   server <- function(input, output,session){
   
-# Ano da eleicao
-  
-  ano <- reactive({
-    cargo <- input$DESCRICAO_CARGO
-    if(cargo == "Vereador"){
-    return(ouput$ANO_MUN)
-  } else {
-    return(output$ANO_EST)
-  }
-  })
-  
-  output$ANO_MUN <- renderUI({
-    cargo <- input$DESCRICAO_CARGO
-    if(cargo == "Vereador"){
-    selectizeInput("ANO_MUN", 
-                    label = "Escolha um ano",
-                    choices = c(2000,2004,2008,2012,2016),
-                    selected = 2016)
-  }
-  })
-     
-  output$ANO_EST <- renderUI({
-    cargo <- input$DESCRICAO_CARGO
-    if(cargo %in% c("Deputado Federal", "Deputado Estadual")){
-    selectizeInput("ANO_EST",
-                   label = "Escolha um ano",
-                   choices = c(1998,2002,2006,2010,2014),
-                   selected = 2014)
-  }
-  })
-  
-
 # Agregacao regional
 
   agreg <- reactive({
@@ -162,18 +142,24 @@ ui <- fluidPage(
                                "Volatilidade eleitoral"),
                    selected = "Conservação")  
   })
-  }
+  
+  # Calculo
+  
+  q <- reactive({
+    
+    INDICADORES_FRAG <- switch(input$INDICADORES_FRAG,
+                               "Quociente eleitoral" = "QUOCIENTE_ELEITORAL")
+    
+  })  
+  
+  output$table <- renderTable(expr = QE, striped = TRUE, bordered = TRUE, align = "c", spacing = "m", width = 100)
+  
+  }  
 
 
-# Calculo
-
- output$cal_qe <- renderTable({
-   
- })
 
 
 
 # 4. ShinyApp -------------------------------------------------------------
-
 
 shinyApp(ui = ui, server = server)
