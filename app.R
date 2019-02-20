@@ -26,11 +26,7 @@ library(shinyWidgets)
 
 # 1. Data ----------------------------------------------------------------
 
-df <- read.csv("df.csv")
-
-de <- read.csv("de.csv")
-
-cidades <- read.csv("cidades.csv")
+#source("script_dados.R")
 
 # 2. User interface -------------------------------------------------------
 
@@ -41,6 +37,8 @@ ui <- fluidPage(
  navbarPage("CepespIndicadores", theme = shinytheme("flatly"),
  
  tabPanel("Sobre"),
+ 
+ tabPanel("Distribuição de cadeiras"),
  
  tabPanel("Fragmentação legislativa"),
  
@@ -56,7 +54,8 @@ ui <- fluidPage(
  selectInput(inputId = "INDICADORES_FRAG",
              label = "Escolha um indicador", 
              choices = c("Desproporcionalidade de Gallagher", "Fracionalização", "Fracionalização máxima",
-             "Fragmentação", "Número efetivo de partidos", "Quociente eleitoral"),
+             "Fragmentação", "Número efetivo de partidos por cadeiras",
+             "Número efetivo de partidos por votos"),
              selected = "Desproporcionalidade de Gallagher"),
               
  selectInput(inputId = "DESCRICAO_CARGO",
@@ -77,7 +76,11 @@ ui <- fluidPage(
                          "RS", "SC", "SE", "SP", "TO"),
              selected = "AC"),
  
- uiOutput("AGREG_MUN")
+ uiOutput("AGREG_MUN"),
+ 
+ actionButton(inputId = "Calcular",
+              label = strong("Calcular"),
+              width = "95%")
  
  
  ),
@@ -86,8 +89,9 @@ ui <- fluidPage(
    
    absolutePanel(top = 0, right = 0, left = 100,
      tabsetPanel(type = "pills",
-                tabPanel("Tabelas", br(), tableOutput("table")),
-                tabPanel("Gráficos"))
+                tabPanel("Tabelas",h4("Quociente eleitoral"), tableOutput("table")),
+                tabPanel("Gráficos"),
+                tabPanel("Definição"))
    
    ))
  
