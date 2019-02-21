@@ -48,7 +48,7 @@ ui <- fluidPage(
  
  sidebarLayout(
   
- sidebarPanel(h4("Opções:"),width = 3,
+ sidebarPanel(h4("Opções"),width = 3,
             
       
  selectInput(inputId = "INDICADORES_FRAG",

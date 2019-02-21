@@ -4,6 +4,14 @@
 
 rm(list = ls())
 
+# Pacotes utilizados
+
+library(stringr)
+library(plyr)
+library(dplyr)
+library(lubridate)
+library(tidyverse)
+library(magrittr)
 
 # 1. Download dos dados ---------------------------------------------------
 
@@ -11,7 +19,7 @@ rm(list = ls())
 
 url_vagas <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_vagas/consulta_vagas_ANO.zip"
 
- for(i in seq(1998,2010, by = 4)){
+ for(i in seq(1998,2018, by = 4)){
   vagas <- stringr::str_replace(url_vagas, "ANO", as.character(i)) 
   print(vagas)
   download.file(vagas, str_c("vagas", i, ".zip"))
@@ -40,7 +48,19 @@ vags <- list()
  }
 
  
-arvg <- rbind.fill(vags)
+vags <- rbind.fill(vags)
+
+vags_fed <- vags %>% 
+  select(V6, V9, V10) %>%
+  dplyr::filter(V9 == "DEPUTADO FEDERAL")
+
+vags_fed <- unique(vags_fed)
+
+vags_est <- vags %>% 
+  select(V6, V9, V10) %>% 
+  filter(V9 == "DEPUTADO ESTADUAL")
+
+vags_est <- unique(vags_est)
 
 
  # Eleicoes municipais
@@ -76,4 +96,17 @@ for(i in seq_along(vagas_mun)){
 }
 
 
-t <- rbind.fill(vags_mun)
+vags_mun <- rbind.fill(vags_mun)
+
+vags_ver <- vags_mun %>% 
+  select(V3,V5, V7,V9, V10) %>% 
+  filter(V9 == "VEREADOR")
+
+vags_ver <- vags_ver %>% 
+  dplyr::rename("ANO_ELEICAO" = "V3",
+                "UF" = "V5",
+                "NOME_MUNICIPIO" = "V7",
+                "CARGO" = "V9",
+                "VAGAS" = "V10")
+
+
