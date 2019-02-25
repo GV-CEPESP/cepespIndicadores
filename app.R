@@ -16,13 +16,12 @@ library(shiny)
 library(shinyalert)
 library(shinyBS)
 library(ggplot2)
-library(shiny)
 library(readr)
-library(shiny)
 library(shinythemes)
 library(magrittr)
 library(shinydashboard)
 library(shinyWidgets)
+
 
 # 1. Data ----------------------------------------------------------------
 
