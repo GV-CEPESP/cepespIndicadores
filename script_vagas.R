@@ -56,11 +56,19 @@ vags_fed <- vags %>%
 
 vags_fed <- unique(vags_fed)
 
+vags_fed <- dplyr::rename(vags_fed,"UF" = "V6", 
+                   "CARGO" = "V9",
+                   "VAGAS" = "V10")
+
 vags_est <- vags %>% 
   select(V6, V9, V10) %>% 
   filter(V9 == "DEPUTADO ESTADUAL")
 
 vags_est <- unique(vags_est)
+
+vags_est <- dplyr::rename(vags_est,"UF" = "V6", 
+                          "CARGO" = "V9",
+                          "VAGAS" = "V10")
 
 
  # Eleicoes municipais
