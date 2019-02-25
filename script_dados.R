@@ -19,13 +19,15 @@ library(lubridate)
 
 # 1. Dados ----------------------------------------------------------------
 
+#source("script_vagas.R")
+
  # Deputado Federal
 
 df <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", position = "Deputado Federal",
-                    regional_aggregation = "Brasil", political_aggregation = "Partido")
+                    regional_aggregation = "Estado", political_aggregation = "Partido")
 
 dfc <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", position = "Deputado Federal",
-                     regional_aggregation = "Brasil", political_aggregation = "Consolidado")
+                     regional_aggregation = "Estado", political_aggregation = "Consolidado")
 
  # Deputado Estadual
 
@@ -54,66 +56,15 @@ cidades <- select(cidades, "UF", "NOME_MUNICIPIO")
 
 magn <- read.csv2("quociente_eleitoraL_partidario.csv")
 
-magn_fed <- filter(magn, Cargo == "Deputado Federal")
 
-magn_est <- filter(magn, Cargo == "Deputado Estadual")
-
-vagas_fed <- unique(select(magn_fed, c("UF", "Vagas")))
-
-vagas_est <- unique(select(magn_est, c("UF", "Vagas")))
-
-
- # Vagas
-
- url_vagas <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_vagas/consulta_vagas_ANO.zip"
  
- for(i in seq(1998,2010, by = 4)){
-   vagas <- stringr::str_replace(url_vagas, "ANO", as.character(i)) 
-   print(vagas)
-   download.file(vagas, str_c("vagas", i, ".zip"))
- }
- 
- 
- list_vag <- list.files(pattern = "vagas")##cria uma lista com os arquivos com nomes correspondentes a "vagas"  
- 
- for(i in seq_along(list_vag)){ 
-   unzip(list_vag [i], exdir = "vagas") ##loop para unzipar todos os arquivos contidos dentro da lista
- } 
- 
- 
- arq_vags <- list.files(path = "vagas")
- 
- vags <- list()
- 
- for (i in seq_along(arq_vags)) {
-   cat("lendo", arq_vags[i], "\n")
-   vags[[i]] <- read.table(file = paste0("vagas/",arq_vags[i]),header=F,sep=";", stringsAsFactors = FALSE)
- }
- 
- for(i in seq_along(vagas)){
-   br_files_vagas <- list.files(path = "vagas", pattern = "BR",full.names = T)
-   file.remove(br_files_vagas)
- }
- 
- 
- arvg <- rbind.fill(vags)
- 
- 
- t <- arvg %>% 
-   group_by(V3,V6,V9) %>% 
-   count(V10)
- 
- x <- filter(t, V9 == "DEPUTADO FEDERAL")
-
 # 2. Tranformacoes primarias ----------------------------------------------
 
  
-df <- dplyr::rename(df, "UF" = "SIGLA_UE")
-
 df$AGREGACAO_REGIONAL <- "BRASIL"
 
 df <- df %>% 
-  select(ANO_ELEICAO, NUM_TURNO, UF,AGREGACAO_REGIONAL,DESCRICAO_CARGO,NUMERO_PARTIDO, SIGLA_PARTIDO, QTDE_VOTOS)
+  dplyr::select(ANO_ELEICAO, NUM_TURNO, UF,AGREGACAO_REGIONAL,DESCRICAO_CARGO,NUMERO_PARTIDO, SIGLA_PARTIDO, QTDE_VOTOS)
 
 de$AGREGACAO_REGIONAL <- "UF"
 
@@ -133,23 +84,11 @@ df1 <- df %>%
     VOT_PART_UF = sum(QTDE_VOTOS))
 
 
-df2 <- df1 %>% 
-  dplyr::group_by(ANO_ELEICAO,SIGLA_PARTIDO) %>% 
-  dplyr::summarise(
-    TOT_VOT_PART = sum(VOT_PART_UF)
-  )
-
 de1 <- de %>% 
   dplyr::group_by(ANO_ELEICAO, UF,SIGLA_PARTIDO) %>% 
   dplyr::summarise(
     VOT_PART_UF = sum(QTDE_VOTOS)
   ) 
-
-de2 <- de1 %>% 
-  dplyr::group_by(ANO_ELEICAO,SIGLA_PARTIDO) %>% 
-  dplyr::summarise(
-    TOT_VOT_PART = sum(VOT_PART_UF)
-  )
 
 vr1 <- vr %>% 
   dplyr::group_by(ANO_ELEICAO, NOME_MUNICIPIO,SIGLA_PARTIDO) %>% 
@@ -168,7 +107,7 @@ vr2 <- vr1 %>%
   # Deputado Federal
 
 dfc1 <- dfc %>% 
-  dplyr::group_by(ANO_ELEICAO) %>% 
+  dplyr::group_by(ANO_ELEICAO, UF) %>% 
   dplyr::summarise(
     VOTOS_VALIDOS = sum(QT_VOTOS_NOMINAIS,QT_VOTOS_LEGENDA)
   )
@@ -184,7 +123,10 @@ dec1 <- dec %>%
   # Vereador
 
 vrc1 <- vrc %>% 
-  group_by(ANO_ELEICAO)
+  group_by(ANO_ELEICAO,UF, NOME_MUNICIPIO) %>% 
+  dplyr::summarise(
+    VOTOS_VALIDOS_UF = sum(QT_VOTOS_NOMINAIS,QT_VOTOS_LEGENDA)
+  )
 
 
 
@@ -202,9 +144,9 @@ df <- df %>%
 
 df <- left_join(df, df1, by = c("ANO_ELEICAO", "UF", "SIGLA_PARTIDO"))
 
-df <- left_join(df, df2, by = c("ANO_ELEICAO", "SIGLA_PARTIDO"))
-
 df <- left_join(df,dfc1, by = "ANO_ELEICAO")
+
+fed <- left_join(dfc1, vagas_fed, by = "UF")
 
  # Deputado Estadual
 
@@ -218,14 +160,21 @@ de <- de %>%
 
 de <- left_join(de, de1, by = c("ANO_ELEICAO", "UF", "SIGLA_PARTIDO"))
 
-de <- left_join(de, de2, by = c("ANO_ELEICAO", "SIGLA_PARTIDO"))
-
 
 de <- left_join(de,dec1, by = c("ANO_ELEICAO","UF"))
+
+est <- left_join(dec1, vagas_est, by = "UF")
 
  # Vereador
 
 vr <- left_join(vr, vr1, by = c("ANO_ELEICAO", "NOME_MUNICIPIO", "SIGLA_PARTIDO"))
+
+data.table::setDT(vrc1)
+vrc1[, (colnames(vrc1)) := lapply(.SD, as.character), .SDcols = colnames(vrc1)] 
+
+
+ver <- left_join(vrc1, vags_ver, by = c("ANO_ELEICAO", "UF", "NOME_MUNICIPIO"))
+
 
 
 # 4. Calculo --------------------------------------------------------------
@@ -237,12 +186,14 @@ vr <- left_join(vr, vr1, by = c("ANO_ELEICAO", "NOME_MUNICIPIO", "SIGLA_PARTIDO"
 
  # Quociente eleitoral
 
+  ## Deputados Federais
+
 
 quoc_eleit <- function(x){
   x/y
 }
 
-QE <- data.frame(unique(quoc_eleit(df$VOTOS_VALIDOS, vagas_fed$Vagas)))
+QE <- data.frame(unique(quoc_eleit(df$VOTOS_VALIDOS)))
 
   QE$ANO_ELEICAO <- c("2018", "2014", "2010", "2006", "2002", "1998") 
   
