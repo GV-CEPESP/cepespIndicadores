@@ -40,11 +40,10 @@ ui <- fluidPage(
   navbarPage("CepespIndicadores", theme = shinytheme("flatly"),
              
              
-            shinyjs
-             
+          
              tabPanel("Sobre"),
   
-             tabPanel("Fragmentação legislativa"),
+             tabPanel("Fragmentação legislativa",
             
              sidebarLayout(
                
@@ -76,6 +75,7 @@ ui <- fluidPage(
                                                     "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
                                         selected = "Todos os estados"),
                             
+                           
                             actionButton(inputId = "Calcular",
                                          label = strong("Calcular"),
                                          width = "95%")
@@ -91,7 +91,7 @@ ui <- fluidPage(
                                            tabPanel("Gráficos"),
                                            tabPanel("Definição"))
                                
-                 ))
+                 )))
                
                
              )))
@@ -125,25 +125,6 @@ server <- function(input, output,session){
     }
   })
   
-  # Indicadores
-  
-  
-  output$INDICADORES_FRAG <- renderUI({
-    selectizeInput("INDICADORES_FRAG",
-                   label = "Escolha um indicador", 
-                   choices = c("Desproporcionalidade de Gallagher", "Fracionalização", "Fracionalização máxima",
-                               "Fragmentação", "Número efetivo de partidos", "Quociente eleitoral"),
-                   selected = "Desproporcionalidade de Gallagher")  
-  })
-  
-  
-  output$INDICADORES_REN <- renderUI({
-    selectizeInput("INDICADORES_REN",
-                   label = "Escolha um indicador",
-                   choices = c("Conservação", "Renovação bruta", "Renovação líquida",
-                               "Volatilidade eleitoral"),
-                   selected = "Conservação")  
-  })
   
   # Calculo
   
