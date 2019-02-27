@@ -35,8 +35,6 @@ ui <- fluidPage(
   
   navbarPage("CepespIndicadores", theme = shinytheme("flatly"),
              
-             tabsetPanel(id = "x",
-             
              tabPanel("Sobre"),
              
              tabPanel("Distribuição de cadeiras",
@@ -225,7 +223,7 @@ ui <- fluidPage(
                  )))
                
                
-             ))))
+             )))
 
 
 
