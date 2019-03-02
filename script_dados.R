@@ -15,6 +15,7 @@ library(dplyr)
 library(tidyverse)
 library(lubridate)
 library(abjutils)
+library(data.table)
 
 
 # 1. Dados ----------------------------------------------------------------
@@ -185,8 +186,6 @@ vrc1 <- dplyr::mutate_all(vrc1, .funs = toupper)
 
 vags_ver <- left_join(vags_ver, vrc1, by = c("ANO_ELEICAO", "UF", "COD_MUN_TSE"))
 
-ver <- left_join(vrc1, vags_ver, by = c("ANO_ELEICAO", "UF","COD_MUN_TSE" , "NOME_MUNICIPIO"))
- 
 
 # 4. Calculo --------------------------------------------------------------
 
