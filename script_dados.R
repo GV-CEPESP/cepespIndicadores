@@ -8,6 +8,8 @@ rm(list = ls())
 
 # Pacotes utilizados
 
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github("Cepesp-Fgv/cepesp-r", force = TRUE)
 
 library(cepespR)
 library(magrittr)
@@ -44,7 +46,7 @@ vr <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador"
                     regional_aggregation = "Municipio", political_aggregation = "Partido")
 
 vrc <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador",
-                     regional_aggregation = "Municipio", political_aggregation = "Consolidado", dev = TRUE)
+                     regional_aggregation = "Municipio", political_aggregation = "Consolidado")
 
 
  # Cidades
