@@ -8,13 +8,14 @@ rm(list = ls())
 
 # Pacotes utilizados
 
-library(cepespR)
+
 library(cepespR)
 library(magrittr)
 library(dplyr)
 library(tidyverse)
 library(lubridate)
 library(abjutils)
+library(data.table)
 
 
 # 1. Dados ----------------------------------------------------------------
