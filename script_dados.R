@@ -185,8 +185,6 @@ vrc1 <- dplyr::mutate_all(vrc1, .funs = toupper)
 
 vags_ver <- left_join(vags_ver, vrc1, by = c("ANO_ELEICAO", "UF", "COD_MUN_TSE"))
 
-ver <- left_join(vrc1, vags_ver, by = c("ANO_ELEICAO", "UF","COD_MUN_TSE" , "NOME_MUNICIPIO"))
- 
 
 # 4. Calculo --------------------------------------------------------------
 
@@ -195,29 +193,7 @@ ver <- left_join(vrc1, vags_ver, by = c("ANO_ELEICAO", "UF","COD_MUN_TSE" , "NOM
 # 4.1. Indicadores de fragmentacao legislativa ----------------------------
 
 
- # Quociente eleitoral
-
-  ## Deputados Federais
-
-
-vags_fed$QUOCIENTE_ELEITORAL <- vags_fed$VOTOS_VALIDOS_UF/as.numeric(vags_fed$VAGAS)
-
-  ## Deputados Estaduais
-
-vags_est$QUOCIENTE_ELEITORAL <- vags_est$VOTOS_VALIDOS_UF/as.numeric(vags_est$VAGAS)
-
-
-# Quociente partidario
-
-  ## Deputados Federais
-  
-vags_fed$QUOCIENTE_PARTIDARIO <- vags_fed$VOT_PART_UF/vags_fed$QUOCIENTE_ELEITORAL
-
-  ## Deputados Estaduais
-
-vags_est$QUOCIENTE_PARTIDARIO <- vags_est$VOT_PART_UF/vags_est$QUOCIENTE_ELEITORAL
-
-# Numero de cadeiras
+ # Numero de cadeiras
 
   ## Deputados Federais
 
@@ -254,5 +230,25 @@ vags_est$NUM_CADEIRAS <- floor(vags_est$QUOCIENTE_PARTIDARIO)
   
 # 4.4. Indicadores de distribuicao das cadeiras ---------------------------  
 
+# Quociente eleitoral
 
+## Deputados Federais
+
+
+vags_fed$QUOCIENTE_ELEITORAL <- vags_fed$VOTOS_VALIDOS_UF/as.numeric(vags_fed$VAGAS)
+
+## Deputados Estaduais
+
+vags_est$QUOCIENTE_ELEITORAL <- vags_est$VOTOS_VALIDOS_UF/as.numeric(vags_est$VAGAS)
+
+
+# Quociente partidario
+
+## Deputados Federais
+
+vags_fed$QUOCIENTE_PARTIDARIO <- vags_fed$VOT_PART_UF/vags_fed$QUOCIENTE_ELEITORAL
+
+## Deputados Estaduais
+
+vags_est$QUOCIENTE_PARTIDARIO <- vags_est$VOT_PART_UF/vags_est$QUOCIENTE_ELEITORAL
   
