@@ -25,6 +25,7 @@ library(magrittr)
 library(shinydashboard)
 library(shinyWidgets)
 library(shinyjs)
+library(plotly)
 
 
 # 1. Data ----------------------------------------------------------------
@@ -42,6 +43,51 @@ ui <- fluidPage(
              
           
              tabPanel("Sobre"),
+             
+             tabPanel("Distribuição de cadeiras",
+                      
+                      sidebarLayout(
+                        
+                        sidebarPanel(h4("Opções:"),width = 3,
+                                     
+                                     
+                                     selectInput(inputId = "INDICADORES_DISTR",
+                                                 label = "Escolha um indicador", 
+                                                 choices = c("Quociente eleitoral", "Quociente partidário"),
+                                                 selected = "Quociente eleitoral"),
+                                     
+                                     selectInput(inputId = "DESCRICAO_CARGO1",
+                                                 label = "Escolha um cargo",
+                                                 choices = c("Deputado Federal", "Deputado Estadual"),
+                                                 selected = "Deputado Federal"),
+                                     
+                                     selectInput(inputId = "AGREGACAO_REGIONAL",
+                                                 label = "Escolha uma agregação regional",
+                                                 choices = c("UF"),
+                                                 selected = "UF"),
+                                     
+                                     
+                                     selectInput(inputId = "UF",
+                                                 label = "Escolha um estado",
+                                                 choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
+                                                             "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", 
+                                                             "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
+                                                 selected = "AC"),
+                                     
+                                 
+                                     actionButton(inputId = "Calcular",
+                                                  label = strong("Calcular"),
+                                                  width = "95%")
+                                     
+                        ),
+                        
+                        mainPanel(
+                          
+                          absolutePanel(top = 0, right = 0, left = 100,
+                                        tabsetPanel(type = "pills", 
+                                                    tabPanel("Tabelas", br(),DT::dataTableOutput("table1")),
+                                                    tabPanel("Gráficos", br(), plotlyOutput("plotqe")),
+                                                    tabPanel("Definição")))))),  
   
              tabPanel("Fragmentação legislativa",
             
@@ -106,7 +152,7 @@ ui <- fluidPage(
 
 server <- function(input, output,session){
   
-  # Agregacao regional
+ # Agregacao regional
   
   agreg <- reactive({
     cargo <- input$DESCRICAO_CARGO
@@ -125,24 +171,82 @@ server <- function(input, output,session){
     }
   })
   
+ # Indicadores
   
-  # Calculo
+  indistr <- reactive({
+    switch(input$INDICADORES_DISTR,
+           "Quociente eleitoral" = "Quociente eleitoral",
+           "Quociente partidário" = "Quociente partidário")
+  })
   
-  q <- reactive({
+ # Cargo
+    cargo <- reactive({
+    switch(input$DESCRICAO_CARGO1,
+           "Deputado Federal" = "DEPUTADO FEDERAL",
+           "Deputado Estadual" = "DEPUTADO ESTADUAL")
+  })
+ 
+ # Uf
     
-    INDICADORES_FRAG <- switch(input$INDICADORES_FRAG,
-                               "Quociente eleitoral" = "QUOCIENTE_ELEITORAL")
-    
-  })  
+  uf <- reactive({
+    switch(input$UF, 
+           "AC" = AC,
+           "AL" = AL,
+           "AM" = AM,
+           "AP" = AP,
+           "BA" = BA,
+           "CE" = CE,
+           "DF" = DF,
+           "ES" = ES,
+           "GO" = GO,
+           "MA" = MA,
+           "MG" = MG,
+           "MS" = MS,
+           "MT" = MT,
+           "PA" = PA,
+           "PB" = PB,
+           "PE" = PE,
+           "PI" = PI,
+           "PR" = PR,
+           "RJ" = RJ,
+           "RN" = RN,
+           "RO" = RO,
+           "RR" = RR,
+           "RS" = RS,
+           "SC" = SC,
+           "SE" = SE,
+           "SP" = SP,
+           "TO" = TO)
+  })
   
-  output$table <- renderTable(expr = QE, striped = TRUE, bordered = TRUE, align = "c", spacing = "m", width = 100)
   
-}  
+
+# 3.1. Tabelas ------------------------------------------------------------
+
+  # Quociente eleitoral
+  
+  output$table1 <- DT::renderDataTable(qef)
+  
 
 
+# 3.2. Graficos -----------------------------------------------------------
 
+  # Quociente eleitoral
 
-
+ output$plotqe <- renderPlotly({
+   
+  p <- plot_ly(qef, 
+           type = "histogram", 
+           x = "Ano da eleição", 
+           y = "Quociente eleitoral",
+           color = "UF"
+                ) 
+   
+     
+ })
+ }   
+  
+?plot_ly
 # 4. ShinyApp -------------------------------------------------------------
 
 shinyApp(ui = ui, server = server)

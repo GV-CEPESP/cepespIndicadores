@@ -194,16 +194,6 @@ vags_ver <- left_join(vags_ver, vrc1, by = c("ANO_ELEICAO", "UF", "COD_MUN_TSE")
 # 4.1. Indicadores de fragmentacao legislativa ----------------------------
 
 
- # Numero de cadeiras
-
-  ## Deputados Federais
-
-vags_fed$NUM_CADEIRAS <- floor(vags_fed$QUOCIENTE_PARTIDARIO)
-
-  ## Deputados Estaduais
-
-vags_est$NUM_CADEIRAS <- floor(vags_est$QUOCIENTE_PARTIDARIO)
-  
  # Fracionalizacao 
   
   
@@ -252,4 +242,72 @@ vags_fed$QUOCIENTE_PARTIDARIO <- vags_fed$VOT_PART_UF/vags_fed$QUOCIENTE_ELEITOR
 ## Deputados Estaduais
 
 vags_est$QUOCIENTE_PARTIDARIO <- vags_est$VOT_PART_UF/vags_est$QUOCIENTE_ELEITORAL
+
+# Numero de cadeiras
+
+## Deputados Federais
+
+vags_fed$NUM_CADEIRAS <- floor(vags_fed$QUOCIENTE_PARTIDARIO)
+
+## Deputados Estaduais
+
+vags_est$NUM_CADEIRAS <- floor(vags_est$QUOCIENTE_PARTIDARIO)
+
+
+
+# 5. Tabelas --------------------------------------------------------------
+
+
+# 5.1. Quociente eleitoral ------------------------------------------------
+
+# Deputado Federal
+
+vags_fed <- vags_fed %>% 
+  mutate(C = str_to_title(vags_fed$CARGO))
+
+qef <- vags_fed %>% 
+  select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, QUOCIENTE_ELEITORAL) %>% 
+  rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
+         "Quociente eleitoral" = "QUOCIENTE_ELEITORAL") 
+
+ qef <- unique(qef)
+ 
+ 
+# Deputado Estadual
+ 
+ vags_est <- vags_est %>% 
+   mutate(C = str_to_title(vags_est$CARGO))
+ 
+ qee <- vags_est %>% 
+   select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, QUOCIENTE_ELEITORAL) %>% 
+   rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
+          "Quociente eleitoral" = "QUOCIENTE_ELEITORAL") 
+ 
+ qee <- unique(qee)
+ 
+
+# 5.2. Quociente partidario -----------------------------------------------
+
+# Deputado Federal
+ 
+ qpf <- vags_fed %>% 
+   select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, SIGLA_PARTIDO, VOT_PART_UF,QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
+   rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
+          "Sigla do partido" = "SIGLA_PARTIDO","Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
+          "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
+ 
+ qpf <- unique(qpf)
+ 
+
+ 
+ # Deputado estadual
+ 
+ qpe <- vags_est %>% 
+   select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, SIGLA_PARTIDO, VOT_PART_UF,QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
+   rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
+          "Sigla do partido" = "SIGLA_PARTIDO","Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
+          "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
+ 
+ qpe <- unique(qpe)
+
   
