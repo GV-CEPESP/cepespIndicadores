@@ -63,10 +63,10 @@ ui <- fluidPage(
                                  
                                      selectInput(inputId = "UF",
                                                  label = "Escolha um estado",
-                                                 choices = c("Todos os estados", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
-                                                             "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", 
-                                                             "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
-                                                 selected = "Todos os estados"),
+                                                 choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
+                                                    "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", "PR", 
+                                                    "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
+                                                 selected = "AC"),
                                      
                                  
                                      actionButton(inputId = "BCALC1",
@@ -85,7 +85,8 @@ ui <- fluidPage(
                                                              DT::dataTableOutput("table3"),
                                                              DT::dataTableOutput("table4")),
                                                     tabPanel("Gráficos", br(), plotlyOutput("plotqe")),
-                                                    tabPanel("Definição")))))),  
+                                                    tabPanel("Definição"),
+                                                    tabPanel("Dados agregados")))))),  
   
              tabPanel("Fragmentação legislativa",
             
@@ -147,7 +148,6 @@ ui <- fluidPage(
 # 3. Server ---------------------------------------------------------------
 
 
-
 server <- function(input, output,session){
   
  # Agregacao regional
@@ -174,8 +174,11 @@ server <- function(input, output,session){
 # 3.1. Tabelas ------------------------------------------------------------
 
 
+
 # 3.1.1 Quociente eleitoral -------------------------------------------------------------------
 
+  
+  
   
   # Deputado federal
   
@@ -183,18 +186,13 @@ server <- function(input, output,session){
     indicador <- input$INDICADORES_DISTR
     cargo <- input$DESCRICAO_CARGO1
     uf <- input$UF
-    if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal" & uf == "Todos os estados"){
+    if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal"){
       return(input$table1)
     }
   })
   
   output$table1 <- DT::renderDataTable({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
-    if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal" & uf == "Todos os estados" ){
-      expr = qef
-    }
+    quoce_fed()
   })
   
   # Deputado estadual
@@ -202,19 +200,13 @@ server <- function(input, output,session){
   depest <- reactive({
     indicador <- input$INDICADORES_DISTR
     cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
-    if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual" & uf == "Todos os estados"){
+   if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual"){
       return(input$table2)
     }
   })
   
   output$table2 <- DT::renderDataTable({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
-    if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual" & uf == "Todos os estados" ){
-    expr = qee
-    }
+    quoce_est()
     })
   
   
@@ -226,19 +218,13 @@ server <- function(input, output,session){
   depfed1 <- reactive({
     indicador <- input$INDICADORES_DISTR
     cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
-    if(indicador == "Quociente partidário" & cargo == "Deputado Federal" & uf == "Todos os estados"){
+    if(indicador == "Quociente partidário" & cargo == "Deputado Federal"){
       return(input$table3)
     }
   })
   
   output$table3 <- DT::renderDataTable({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
-    if(indicador == "Quociente partidário" & cargo == "Deputado Federal" & uf == "Todos os estados" ){
-      expr = qpf
-    }
+    quocp_fed()
   })
   
   # Deputado estadual
@@ -246,20 +232,15 @@ server <- function(input, output,session){
   depest2 <- reactive({
     indicador <- input$INDICADORES_DISTR
     cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
-    if(indicador == "Quociente partidário" & cargo == "Deputado Estadual" & uf == "Todos os estados"){
+    if(indicador == "Quociente partidário" & cargo == "Deputado Estadual"){
       return(input$table4)
     }
   })
   
   output$table4 <- DT::renderDataTable({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
-    if(indicador == "Quociente partidário" & cargo == "Deputado Estadual" & uf == "Todos os estados" ){
-      expr = qpe
-    }
-  })
+    quocp_est()
+    })
+  
 # 3.2. Graficos -----------------------------------------------------------
 
   # Quociente eleitoral
@@ -275,7 +256,7 @@ server <- function(input, output,session){
    
      
  })
-}   
+   
 
 
 
@@ -285,16 +266,76 @@ server <- function(input, output,session){
 
 # 3.4. Botao de acao ------------------------------------------------------
 
-c <- reactiveValues(doTable = FALSE)
 
- observeEvent(input$BCALC1, {
-  c$doTable <- input$BCALC1
-})
+# 3.4.1. Quociente eleitoral ----------------------------------------------  
+  
+ # Deputado Federal
+  
+  
+  
+  quoce_fed <- eventReactive(input$BCALC1, {
+    datatable({
+      indicador <- input$INDICADORES_DISTR
+      cargo <- input$DESCRICAO_CARGO1
+      uf <- input$UF
+      if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal"){
+        expr = qef %>% 
+          dplyr::filter(UF == input$UF)
+      }
+    })
+  })  
+  
+ # Deputado Estadual  
+  
+  quoce_est <- eventReactive(input$BCALC1, {
+    datatable({
+      indicador <- input$INDICADORES_DISTR
+      cargo <- input$DESCRICAO_CARGO1
+      uf <- input$UF
+      if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual"){
+      expr = qee %>% 
+        dplyr::filter(UF == input$UF)
+      }
+    })
+  })  
+  
+  
+# 3.4.2. Quociente partidario ----------------------------------------------  
+  
+  
+  # Deputado Federal
+  
+  quocp_fed <- eventReactive(input$BCALC1, {
+    datatable({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente partidário" & cargo == "Deputado Federal"){
+    expr = qpf %>% 
+      dplyr::filter(UF == input$UF)
+  }
+  })
+  })  
+  
+ # Deputado Estadual  
+  
+  quocp_est <- eventReactive(input$BCALC1, {
+    datatable({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente partidário" & cargo == "Deputado Estadual"){
+      expr = qpe %>% 
+        dplyr::filter(UF == input$UF)
+  }
+  })
+  })
+  
+  
+}
 
-observeEvent(input$CepespIndicadores, {
-  c$doTable <- FALSE
-})
+
 
 # 4. ShinyApp -------------------------------------------------------------
 
-shinyApp(ui = ui, server = server)
+  shinyApp(ui = ui, server = server)
