@@ -26,7 +26,7 @@ library(shinydashboard)
 library(shinyWidgets)
 library(shinyjs)
 library(plotly)
-
+library(DT)
 
 # 1. Data ----------------------------------------------------------------
 
@@ -236,7 +236,7 @@ server <- function(input, output,session){
  output$plotqe <- renderPlotly({
    
   p <- plot_ly(qef, 
-           type = "histogram", 
+           type = "histogram2d", 
            x = "Ano da eleição", 
            y = "Quociente eleitoral",
            color = "UF"

@@ -267,7 +267,7 @@ vags_fed <- vags_fed %>%
 
 qef <- vags_fed %>% 
   select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, QUOCIENTE_ELEITORAL) %>% 
-  rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
+  dplyr::rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
          "Quociente eleitoral" = "QUOCIENTE_ELEITORAL") 
 
  qef <- unique(qef)
@@ -280,7 +280,7 @@ qef <- vags_fed %>%
  
  qee <- vags_est %>% 
    select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, QUOCIENTE_ELEITORAL) %>% 
-   rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
+   dplyr::rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
           "Quociente eleitoral" = "QUOCIENTE_ELEITORAL") 
  
  qee <- unique(qee)
@@ -292,7 +292,7 @@ qef <- vags_fed %>%
  
  qpf <- vags_fed %>% 
    select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, SIGLA_PARTIDO, VOT_PART_UF,QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
-   rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
+   dplyr::rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
           "Sigla do partido" = "SIGLA_PARTIDO","Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
           "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
  
@@ -304,7 +304,7 @@ qef <- vags_fed %>%
  
  qpe <- vags_est %>% 
    select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, SIGLA_PARTIDO, VOT_PART_UF,QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
-   rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
+   dplyr::rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
           "Sigla do partido" = "SIGLA_PARTIDO","Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
           "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
  
