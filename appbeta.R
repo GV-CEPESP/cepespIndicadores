@@ -60,22 +60,16 @@ ui <- fluidPage(
                                                  label = "Escolha um cargo",
                                                  choices = c("Deputado Federal", "Deputado Estadual"),
                                                  selected = "Deputado Federal"),
-                                     
-                                     selectInput(inputId = "AGREGACAO_REGIONAL",
-                                                 label = "Escolha uma agregação regional",
-                                                 choices = c("UF"),
-                                                 selected = "UF"),
-                                     
-                                     
+                                 
                                      selectInput(inputId = "UF",
                                                  label = "Escolha um estado",
-                                                 choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
+                                                 choices = c("Todos os estados", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
                                                              "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", 
                                                              "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
-                                                 selected = "AC"),
+                                                 selected = "Todos os estados"),
                                      
                                  
-                                     actionButton(inputId = "Calcular",
+                                     actionButton(inputId = "BCALC1",
                                                   label = strong("Calcular"),
                                                   width = "95%")
                                      
@@ -85,7 +79,11 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills", 
-                                                    tabPanel("Tabelas", br(),DT::dataTableOutput("table1")),
+                                                    tabPanel("Tabelas", br(),
+                                                             DT::dataTableOutput("table1"),
+                                                             DT::dataTableOutput("table2"),
+                                                             DT::dataTableOutput("table3"),
+                                                             DT::dataTableOutput("table4")),
                                                     tabPanel("Gráficos", br(), plotlyOutput("plotqe")),
                                                     tabPanel("Definição")))))),  
   
@@ -122,7 +120,7 @@ ui <- fluidPage(
                                         selected = "Todos os estados"),
                             
                            
-                            actionButton(inputId = "Calcular",
+                            actionButton(inputId = "BCALC2",
                                          label = strong("Calcular"),
                                          width = "95%")
                             
@@ -133,7 +131,7 @@ ui <- fluidPage(
                  
                  absolutePanel(top = 0, right = 0, left = 100,
                                tabsetPanel(type = "pills",
-                                           tabPanel("Tabelas", br(), tableOutput("table")),
+                                           tabPanel("Tabelas", br()),
                                            tabPanel("Gráficos"),
                                            tabPanel("Definição"))
                                
@@ -171,64 +169,97 @@ server <- function(input, output,session){
     }
   })
   
- # Indicadores
   
-  indistr <- reactive({
-    switch(input$INDICADORES_DISTR,
-           "Quociente eleitoral" = "Quociente eleitoral",
-           "Quociente partidário" = "Quociente partidário")
-  })
-  
- # Cargo
-    cargo <- reactive({
-    switch(input$DESCRICAO_CARGO1,
-           "Deputado Federal" = "DEPUTADO FEDERAL",
-           "Deputado Estadual" = "DEPUTADO ESTADUAL")
-  })
  
- # Uf
-    
-  uf <- reactive({
-    switch(input$UF, 
-           "AC" = AC,
-           "AL" = AL,
-           "AM" = AM,
-           "AP" = AP,
-           "BA" = BA,
-           "CE" = CE,
-           "DF" = DF,
-           "ES" = ES,
-           "GO" = GO,
-           "MA" = MA,
-           "MG" = MG,
-           "MS" = MS,
-           "MT" = MT,
-           "PA" = PA,
-           "PB" = PB,
-           "PE" = PE,
-           "PI" = PI,
-           "PR" = PR,
-           "RJ" = RJ,
-           "RN" = RN,
-           "RO" = RO,
-           "RR" = RR,
-           "RS" = RS,
-           "SC" = SC,
-           "SE" = SE,
-           "SP" = SP,
-           "TO" = TO)
-  })
-  
-  
-
 # 3.1. Tabelas ------------------------------------------------------------
 
-  # Quociente eleitoral
+
+# 3.1.1 Quociente eleitoral -------------------------------------------------------------------
+
   
-  output$table1 <- DT::renderDataTable(qef)
+  # Deputado federal
+  
+  depfed <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal" & uf == "Todos os estados"){
+      return(input$table1)
+    }
+  })
+  
+  output$table1 <- DT::renderDataTable({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal" & uf == "Todos os estados" ){
+      expr = qef
+    }
+  })
+  
+  # Deputado estadual
+  
+  depest <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual" & uf == "Todos os estados"){
+      return(input$table2)
+    }
+  })
+  
+  output$table2 <- DT::renderDataTable({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual" & uf == "Todos os estados" ){
+    expr = qee
+    }
+    })
+  
   
 
+# 3.1.2. Quociente partidario ---------------------------------------------
 
+  # Deputado federal
+  
+  depfed1 <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente partidário" & cargo == "Deputado Federal" & uf == "Todos os estados"){
+      return(input$table3)
+    }
+  })
+  
+  output$table3 <- DT::renderDataTable({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente partidário" & cargo == "Deputado Federal" & uf == "Todos os estados" ){
+      expr = qpf
+    }
+  })
+  
+  # Deputado estadual
+  
+  depest2 <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente partidário" & cargo == "Deputado Estadual" & uf == "Todos os estados"){
+      return(input$table4)
+    }
+  })
+  
+  output$table4 <- DT::renderDataTable({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente partidário" & cargo == "Deputado Estadual" & uf == "Todos os estados" ){
+      expr = qpe
+    }
+  })
 # 3.2. Graficos -----------------------------------------------------------
 
   # Quociente eleitoral
@@ -244,9 +275,26 @@ server <- function(input, output,session){
    
      
  })
- }   
-  
-?plot_ly
+}   
+
+
+
+
+# 3.3. Definicao ----------------------------------------------------------
+
+
+# 3.4. Botao de acao ------------------------------------------------------
+
+c <- reactiveValues(doTable = FALSE)
+
+ observeEvent(input$BCALC1, {
+  c$doTable <- input$BCALC1
+})
+
+observeEvent(input$CepespIndicadores, {
+  c$doTable <- FALSE
+})
+
 # 4. ShinyApp -------------------------------------------------------------
 
 shinyApp(ui = ui, server = server)
