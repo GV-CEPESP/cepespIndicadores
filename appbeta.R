@@ -30,7 +30,7 @@ library(DT)
 
 # 1. Data ----------------------------------------------------------------
 
-#source("script_dados.R")
+source("script_dados.R", encoding = "UTF-8")
 
 # 2. User interface -------------------------------------------------------
 
@@ -80,13 +80,20 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills", 
                                                     tabPanel("Tabelas", br(),
+                                                             div(style = 'overflow-x: scroll',
                                                              DT::dataTableOutput("table1"),
                                                              DT::dataTableOutput("table2"),
                                                              DT::dataTableOutput("table3"),
-                                                             DT::dataTableOutput("table4")),
-                                                    tabPanel("Gráficos", br(), plotlyOutput("plotqe")),
+                                                             DT::dataTableOutput("table4"))),
+                                                    tabPanel("Gráficos", br(), 
+                                                             plotlyOutput("plot1")),
                                                     tabPanel("Definição"),
-                                                    tabPanel("Dados agregados")))))),  
+                                                    tabPanel("Dados agregados", br(),
+                                                             div(style = 'overflow-x: scroll',
+                                                             DT::dataTableOutput("table5"),
+                                                             DT::dataTableOutput("table6"),
+                                                             DT::dataTableOutput("table7"),
+                                                             DT::dataTableOutput("table8")))))))),  
   
              tabPanel("Fragmentação legislativa",
             
@@ -243,34 +250,163 @@ server <- function(input, output,session){
   
 # 3.2. Graficos -----------------------------------------------------------
 
-  # Quociente eleitoral
 
- output$plotqe <- renderPlotly({
+# 3.2.1 Quociente eleitoral -------------------------------------------------------------------
+
+  # Deputado Federal
+  
+  grqe_df <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    if(indicador == "Quociente partidário" & cargo == "Deputado Federal"){
+      return(input$plot1)
+    }
+  })
+
+ output$plot1 <- renderPlotly({
+   plot1 <- qef %>% 
+     dplyr::filter(UF == input$UF) %>%
+     ggplot(aes(x = reorder(`Ano da eleição`, order(`Ano da eleição`)), y=`Quociente eleitoral`, color = UF)) + 
+     geom_bar(stat="identity", width=0.5, fill="#023858", colour = "#023858") +
+     labs(title="Quociente eleitoral: Deputado Federal", 
+          subtitle="Período de 1998-2018", 
+          caption="fonte: CepespIndicadores") + 
+     theme(plot.background=element_blank(),
+           panel.border=element_blank(),
+           plot.title = element_text(size = rel(1.2)),
+           axis.title.x = ,
+           axis.ticks = element_blank(),
+           legend.title = element_blank(),
+           legend.position = "right",
+           axis.line = element_blank(),
+           panel.background = element_blank(),
+           strip.background = element_blank(),
+           panel.grid = element_blank(),
+           axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) 
    
-  p <- plot_ly(qef, 
-           type = "histogram2d", 
-           x = "Ano da eleição", 
-           y = "Quociente eleitoral",
-           color = "UF"
-                ) 
-   
-     
  })
-   
-
-
+    
 
 
 # 3.3. Definicao ----------------------------------------------------------
 
 # 3.4. Dados agregados ----------------------------------------------------
 
+# 3.4.1. Quociente eleitoral ----------------------------------------------
+  
+  ag_fed <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal"){
+      return(input$table5)
+    }
+  })
+  
+  output$table5 <- DT::renderDataTable({
+    agreg_fed()
+  })
+  
+  agreg_fed <- eventReactive(input$BCALC1, {
+    datatable({
+      indicador <- input$INDICADORES_DISTR
+      cargo <- input$DESCRICAO_CARGO1
+      uf <- input$UF
+      if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal"){
+        data = vags_fed %>% 
+          dplyr::filter(UF == input$UF) %>% 
+           select(`Ano da eleição`, UF, Cargo, Vagas,`Votos válidos `, `Quociente eleitoral`)
+      }
+    })
+  })  
+  
+  # Deputado estadual
+  
+  ag_est <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual"){
+      return(input$table6) 
+    }
+  })
+  
+  output$table6 <- DT::renderDataTable({
+    agreg_est()
+  })
+  
+ agreg_est <- eventReactive(input$BCALC1, {
+    datatable({
+      indicador <- input$INDICADORES_DISTR
+      cargo <- input$DESCRICAO_CARGO1
+      uf <- input$UF
+      if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual"){
+        expr = vags_est %>% 
+          dplyr::filter(UF == input$UF) %>% 
+          select(`Ano da eleição`, UF, Cargo, Vagas,`Votos válidos `, `Quociente eleitoral`)
+      }
+    })
+  })  
+  
+  
+  # 3.4.2. Quociente partidario ---------------------------------------------
+  
+  # Deputado federal
+  
+  ag_fed1 <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    if(indicador == "Quociente partidário" & cargo == "Deputado Federal"){
+      return(input$table7)
+    }
+  })
+  
+  output$table7 <- DT::renderDataTable({
+    agreg_fed1()
+  })
+  
+  agreg_fed1 <- eventReactive(input$BCALC1, {
+    datatable({
+      indicador <- input$INDICADORES_DISTR
+      cargo <- input$DESCRICAO_CARGO1
+      uf <- input$UF
+      if(indicador == "Quociente partidário" & cargo == "Deputado Federal"){
+        expr = vags_fed %>% 
+          dplyr::filter(UF == input$UF) 
+      }
+    })
+  })  
+  # Deputado estadual
+  
+  ag_est2 <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    if(indicador == "Quociente partidário" & cargo == "Deputado Estadual"){
+      return(input$table8)
+    }
+  })
+  
+  output$table8 <- DT::renderDataTable({
+    agreg_est2()
+  })
+  
+  agreg_est2 <- eventReactive(input$BCALC1,{
+    datatable({
+      indicador <- input$INDICADORES_DISTR
+      cargo <- input$DESCRICAO_CARGO1
+      uf <- input$UF
+      if(indicador == "Quociente partidário" & cargo == "Deputado Estadual"){
+        expr = vags_est %>% 
+          dplyr::filter(UF == input$UF)
+      }
+    })
+  })
+  
 
 
 # 3.5. Botao de acao ------------------------------------------------------
 
 
-# 3.4.1. Quociente eleitoral ----------------------------------------------  
+# 3.5.1. Quociente eleitoral ----------------------------------------------  
   
  # Deputado Federal
   
@@ -282,11 +418,13 @@ server <- function(input, output,session){
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
       if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal"){
-        expr = qef %>% 
+        qef %>% 
           dplyr::filter(UF == input$UF)
+        
       }
     })
   })  
+  
   
  # Deputado Estadual  
   
@@ -303,7 +441,8 @@ server <- function(input, output,session){
   })  
   
   
-# 3.4.2. Quociente partidario ----------------------------------------------  
+  
+# 3.5.2. Quociente partidario ----------------------------------------------  
   
   
   # Deputado Federal

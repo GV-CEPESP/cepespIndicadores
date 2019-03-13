@@ -16,10 +16,11 @@ library(tidyverse)
 library(lubridate)
 library(abjutils)
 library(data.table)
-
+library(ggplot2)
+library(ggfortify)
+library(ggExtra)
 
 # 1. Dados ----------------------------------------------------------------
-
 
 source("script_vagas.R")
 
@@ -42,17 +43,17 @@ dec <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", position = "Dep
  # Vereador
 
 
-vr <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador",
-                    regional_aggregation = "Municipio", political_aggregation = "Partido")
+# vr <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador",
+                    #regional_aggregation = "Municipio", political_aggregation = "Partido")
 
-vrc <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador",
-                     regional_aggregation = "Municipio", political_aggregation = "Consolidado")
+# vrc <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador",
+                     #regional_aggregation = "Municipio", political_aggregation = "Consolidado")
 
  # Cidades
 
-cidades <- dplyr::count_(vr, c("UF", "NOME_MUNICIPIO"))
+#cidades <- dplyr::count_(vr, c("UF", "NOME_MUNICIPIO"))
 
-cidades <- select(cidades, "UF", "NOME_MUNICIPIO")
+#cidades <- select(cidades, "UF", "NOME_MUNICIPIO")
 
 # Quociente eleitoral e magnitude distrital 2018
 
@@ -78,24 +79,24 @@ de <- de %>%
 
 # Vereador
 
-vr$NM <- rm_accent(vr$NOME_MUNICIPIO)
+#vr$NM <- rm_accent(vr$NOME_MUNICIPIO)
 
-vrc$NM <- rm_accent(vrc$NOME_MUNICIPIO)
+#vrc$NM <- rm_accent(vrc$NOME_MUNICIPIO)
 
-vr$AGREGACAO_REGIONAL <- "MUNICIPIO"
+#vr$AGREGACAO_REGIONAL <- "MUNICIPIO"
 
-vr <- vr %>% 
-  select(ANO_ELEICAO, NUM_TURNO, UF,COD_MUN_TSE,NM,AGREGACAO_REGIONAL,DESCRICAO_CARGO,NUMERO_PARTIDO, SIGLA_PARTIDO, QTDE_VOTOS) %>% 
-  dplyr::rename("NOME_MUNICIPIO" = "NM")
+#vr <- vr %>% 
+  #select(ANO_ELEICAO, NUM_TURNO, UF,COD_MUN_TSE,NM,AGREGACAO_REGIONAL,DESCRICAO_CARGO,NUMERO_PARTIDO, SIGLA_PARTIDO, QTDE_VOTOS) %>% 
+  #dplyr::rename("NOME_MUNICIPIO" = "NM")
 
-vr$NOME_MUNICIPIO <- str_to_upper(vr$NOME_MUNICIPIO)
+#vr$NOME_MUNICIPIO <- str_to_upper(vr$NOME_MUNICIPIO)
 
-vrc <- vrc %>% 
-  select(ANO_ELEICAO, NUM_TURNO, UF, COD_MUN_TSE,NM, DESCRICAO_CARGO, QTD_APTOS, QTD_COMPARECIMENTO, QTD_ABSTENCOES,
-         QT_VOTOS_NOMINAIS, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, QT_VOTOS_LEGENDA, QT_VOTOS_ANULADOS_APU_SEP) %>% 
-  dplyr::rename("NOME_MUNICIPIO" = "NM")
+#vrc <- vrc %>% 
+  #select(ANO_ELEICAO, NUM_TURNO, UF, COD_MUN_TSE,NM, DESCRICAO_CARGO, QTD_APTOS, QTD_COMPARECIMENTO, QTD_ABSTENCOES,
+         #QT_VOTOS_NOMINAIS, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, QT_VOTOS_LEGENDA, QT_VOTOS_ANULADOS_APU_SEP) %>% 
+  #dplyr::rename("NOME_MUNICIPIO" = "NM")
   
-vrc$NOME_MUNICIPIO <- str_to_upper(vrc$NOME_MUNICIPIO)
+#vrc$NOME_MUNICIPIO <- str_to_upper(vrc$NOME_MUNICIPIO)
 
 
  # Votação UF dos partidos
@@ -117,11 +118,10 @@ de1 <- de %>%
 
 # Vereador
 
-vr1 <- vr %>% 
-  dplyr::group_by(ANO_ELEICAO, COD_MUN_TSE,NOME_MUNICIPIO,SIGLA_PARTIDO) %>% 
-  dplyr::summarise(
-    VOT_PART_MUN = sum(QTDE_VOTOS)
-  ) 
+#vr1 <- vr %>% 
+  #dplyr::group_by(ANO_ELEICAO, COD_MUN_TSE,NOME_MUNICIPIO,SIGLA_PARTIDO) %>% 
+  #dplyr::summarise(
+    #VOT_PART_MUN = sum(QTDE_VOTOS)) 
 
  # Votos validos de cada eleicao
 
@@ -143,10 +143,10 @@ dec1 <- dec %>%
 
   # Vereador
 
-vrc1 <- vrc %>% 
-  group_by(ANO_ELEICAO, UF, COD_MUN_TSE,NOME_MUNICIPIO) %>% 
-  dplyr::summarise(
-    VOTOS_VALIDOS_MUN = sum(QT_VOTOS_NOMINAIS, QT_VOTOS_LEGENDA))
+#vrc1 <- vrc %>% 
+  #group_by(ANO_ELEICAO, UF, COD_MUN_TSE,NOME_MUNICIPIO) %>% 
+  #dplyr::summarise(
+    #VOTOS_VALIDOS_MUN = sum(QT_VOTOS_NOMINAIS, QT_VOTOS_LEGENDA))
 
 
 
@@ -174,17 +174,17 @@ vags_est <- left_join(vags_est, de1, by = c("ANO_ELEICAO", "UF"))
 
  # Vereador
 
-data.table::setDT(vrc1)
-vrc1[, (colnames(vrc1)) := lapply(.SD, as.character), .SDcols = colnames(vrc1)] 
+#data.table::setDT(vrc1)
+#vrc1[, (colnames(vrc1)) := lapply(.SD, as.character), .SDcols = colnames(vrc1)] 
 
-data.table::setDT(vags_ver)
-vags_ver[, (colnames(vags_ver)) := lapply(.SD, as.character), .SDcols = colnames(vags_ver)] 
+#data.table::setDT(vags_ver)
+#vags_ver[, (colnames(vags_ver)) := lapply(.SD, as.character), .SDcols = colnames(vags_ver)] 
 
-glimpse(vags_ver)
+#glimpse(vags_ver)
 
-vrc1 <- dplyr::mutate_all(vrc1, .funs = toupper)
+#vrc1 <- dplyr::mutate_all(vrc1, .funs = toupper)
 
-vags_ver <- left_join(vags_ver, vrc1, by = c("ANO_ELEICAO", "UF", "COD_MUN_TSE"))
+#vags_ver <- left_join(vags_ver, vrc1, by = c("ANO_ELEICAO", "UF", "COD_MUN_TSE"))
 
 
 # 4. Calculo --------------------------------------------------------------
@@ -247,11 +247,11 @@ vags_est$QUOCIENTE_PARTIDARIO <- vags_est$VOT_PART_UF/vags_est$QUOCIENTE_ELEITOR
 
 ## Deputados Federais
 
-vags_fed$NUM_CADEIRAS <- floor(vags_fed$QUOCIENTE_PARTIDARIO)
+#vags_fed$NUM_CADEIRAS <- floor(vags_fed$QUOCIENTE_PARTIDARIO)
 
 ## Deputados Estaduais
 
-vags_est$NUM_CADEIRAS <- floor(vags_est$QUOCIENTE_PARTIDARIO)
+#vags_est$NUM_CADEIRAS <- floor(vags_est$QUOCIENTE_PARTIDARIO)
 
 
 
@@ -260,10 +260,13 @@ vags_est$NUM_CADEIRAS <- floor(vags_est$QUOCIENTE_PARTIDARIO)
 
 # 5.1. Quociente eleitoral ------------------------------------------------
 
-gabi<-function(string){
+ gabi<-function(string){
+  
   paste0(round(string/1000,0),".", substr(round(string,0), start = nchar(round(string,0))- 2, stop = nchar(round(string,0))),
          ifelse(round(string,2)==round(string,0),"",
-                paste0(",",substr(1 + round(string,2)-round(string,0),start = 3, stop = 4))))}
+                paste0(",",substr(1 + round(string,2)-round(string,0),start = 3, stop = 4))))
+  }
+
 
 vags_fed$QUOCIENTE_ELEITORAL <-gabi(vags_fed$QUOCIENTE_ELEITORAL)
 vags_fed$QUOCIENTE_PARTIDARIO <- round(vags_fed$QUOCIENTE_PARTIDARIO, digits = 2)
@@ -278,10 +281,14 @@ vags_fed <- vags_fed %>%
 
 # Deputado Federal
 
+vags_fed <- vags_fed %>% 
+  select(ANO_ELEICAO, UF, C, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
+   dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Vagas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
+                 "Sigla do partido" = "SIGLA_PARTIDO", "Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
+                 "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
+
 qef <- vags_fed %>% 
-  select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, QUOCIENTE_ELEITORAL) %>% 
-  dplyr::rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
-         "Quociente eleitoral" = "QUOCIENTE_ELEITORAL") 
+  select(`Ano da eleição`, UF, `Quociente eleitoral`)
 
  qef <- unique(qef)
  
@@ -291,10 +298,14 @@ qef <- vags_fed %>%
  vags_est <- vags_est %>% 
    mutate(C = str_to_title(vags_est$CARGO))
  
- qee <- vags_est %>% 
-   select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, QUOCIENTE_ELEITORAL) %>% 
-   dplyr::rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
-          "Quociente eleitoral" = "QUOCIENTE_ELEITORAL") 
+ vags_est <- vags_est %>% 
+   select(ANO_ELEICAO, UF, C, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
+   dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Vagas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
+                 "Sigla do partido" = "SIGLA_PARTIDO", "Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
+                 "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
+ 
+qee <- vags_est %>% 
+  select(`Ano da eleição`, UF, `Quociente eleitoral`)
  
  qee <- unique(qee)
  
@@ -304,10 +315,7 @@ qef <- vags_fed %>%
 # Deputado Federal
  
  qpf <- vags_fed %>% 
-   select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, SIGLA_PARTIDO, VOT_PART_UF,QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
-   dplyr::rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
-          "Sigla do partido" = "SIGLA_PARTIDO","Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
-          "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
+   select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
  
  qpf <- unique(qpf)
  
@@ -316,11 +324,9 @@ qef <- vags_fed %>%
  # Deputado estadual
  
  qpe <- vags_est %>% 
-   select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, SIGLA_PARTIDO, VOT_PART_UF,QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
-   dplyr::rename("Cargo" = "C", "Vagas" = "VAGAS", "Ano da eleição" = "ANO_ELEICAO", "Votos válidos" = "VOTOS_VALIDOS_UF",
-          "Sigla do partido" = "SIGLA_PARTIDO","Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
-          "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
- 
- qpe <- unique(qpe)
+   select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
 
-  
+ qpe <- unique(vags_est)
+ 
+ 
+ 

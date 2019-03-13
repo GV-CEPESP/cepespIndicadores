@@ -43,7 +43,7 @@ vags <- list()
   vags[[i]] <- read.table(file = paste0("vagas/",arq_vags[i]),header=F,sep=";", stringsAsFactors = FALSE)
  }
 
- for(i in seq_along(vagas)){
+ for(i in seq_along("vagas")){
   br_files_vagas <- list.files(path = "vagas", pattern = "BR",full.names = T)
   file.remove(br_files_vagas)
  }
@@ -82,6 +82,7 @@ for(i in seq(2000,2014, by = 4)){
   print(vagas_mun_)
   download.file(vagas_mun_, str_c("vagas_mun_", i, ".zip"))
 }
+
 
 
 list_vag_mun <- list.files(pattern = "vagas_mun_")##cria uma lista com os arquivos com nomes correspondentes a "arquivo_vagas"  
