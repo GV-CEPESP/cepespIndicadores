@@ -260,18 +260,23 @@ vags_est$NUM_CADEIRAS <- floor(vags_est$QUOCIENTE_PARTIDARIO)
 
 # 5.1. Quociente eleitoral ------------------------------------------------
 
-# Deputado Federal
-
 gabi<-function(string){
   paste0(round(string/1000,0),".", substr(round(string,0), start = nchar(round(string,0))- 2, stop = nchar(round(string,0))),
-          ifelse(round(string,2)==round(string,0),"",
-                 paste0(",",substr(1 + round(string,2)-round(string,0),start = 3, stop = 4))))}
+         ifelse(round(string,2)==round(string,0),"",
+                paste0(",",substr(1 + round(string,2)-round(string,0),start = 3, stop = 4))))}
 
-x<-gabi(qef$`Quociente eleitoral`)
-qef$`Quociente eleitoral`[[1]]
+vags_fed$QUOCIENTE_ELEITORAL <-gabi(vags_fed$QUOCIENTE_ELEITORAL)
+vags_fed$QUOCIENTE_PARTIDARIO <- round(vags_fed$QUOCIENTE_PARTIDARIO, digits = 2)
+
+vags_est$QUOCIENTE_ELEITORAL <-gabi(vags_est$QUOCIENTE_ELEITORAL)
+vags_est$QUOCIENTE_PARTIDARIO <- round(vags_est$QUOCIENTE_PARTIDARIO, digits = 2)
 
 vags_fed <- vags_fed %>% 
   mutate(C = str_to_title(vags_fed$CARGO))
+
+
+
+# Deputado Federal
 
 qef <- vags_fed %>% 
   select(UF, C, VAGAS, ANO_ELEICAO, VOTOS_VALIDOS_UF, QUOCIENTE_ELEITORAL) %>% 
