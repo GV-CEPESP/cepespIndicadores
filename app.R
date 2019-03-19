@@ -108,23 +108,17 @@ ui <- fluidPage(
                                                              "Número efetivo de partidos por votos"),
                                                  selected = "Desproporcionalidade de Gallagher"),
                                      
-                                     selectInput(inputId = "DESCRICAO_CARGO",
+                                     selectInput(inputId = "DESCRICAO_CARGO2",
                                                  label = "Escolha um cargo",
                                                  choices = c("Deputado Federal", "Deputado Estadual"),
                                                  selected = "Deputado Federal"),
                                      
-                                     selectInput(inputId = "AGREGACAO_REGIONAL",
+                                     selectInput(inputId = "AGREGACAO_REGIONAL2",
                                                  label = "Escolha uma agregação regional",
                                                  choices = c("Brasil", "UF"),
                                                  selected = "Brasil"),
                                      
-                                     
-                                     selectInput(inputId = "UF",
-                                                 label = "Escolha um estado",
-                                                 choices = c("Todos os estados","AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
-                                                             "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", 
-                                                             "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
-                                                 selected = "Todos os estados"),
+                                     uiOutput("UF2"),
                                      
                                      
                                      actionButton(inputId = "BCALC2",
@@ -138,10 +132,18 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabelas", br()),
+                                                    tabPanel("Tabelas", br(),
+                                                             div(style = 'overflow-x: scroll',
+                                                                 DT::dataTableOutput("table13"),
+                                                                 DT::dataTableOutput("table16"),
+                                                                 DT::dataTableOutput("table19"))),
                                                     tabPanel("Gráficos"),
                                                     tabPanel("Definição"),
-                                                    tabPanel("Dados agregados")))))),
+                                                    tabPanel("Dados agregados", br(),
+                                                             div(style = 'overflow-x: scroll',
+                                                                 DT::dataTableOutput("table15"),
+                                                                 DT::dataTableOutput("table18"),
+                                                                 DT::dataTableOutput("table21")))))))),
              tabPanel("Renovação das bancadas",
                       
                       sidebarLayout(
@@ -208,12 +210,7 @@ ui <- fluidPage(
                                                  selected = "Brasil"),
                                      
                                      
-                                     selectInput(inputId = "UF4",
-                                                 label = "Escolha um estado",
-                                                 choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG",
-                                                             "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", 
-                                                             "RS", "SC", "SE", "SP", "TO"),
-                                                 selected = "AC"),
+                                     uiOutput("UF4"),
                                      
                                      
                                      actionButton(inputId = "BCALC4",
@@ -248,26 +245,56 @@ ui <- fluidPage(
 
 server <- function(input, output,session){
   
-  # Agregacao regional
+
+# 3.1. Agregacao regional -------------------------------------------------
+  
+# Fragmentacao partidaria
   
   agreg <- reactive({
-    cargo <- input$DESCRICAO_CARGO
-    if(cargo == "Vereador"){
-      return(input$AGREG_MUN)
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(agregacao == "UF"){
+      return(input$UF2)
     } 
   })
   
-  output$AGREG_MUN <- renderUI({
-    cargo <- input$DESCRICAO_CARGO
-    if(cargo == "Vereador"){
-      selectizeInput("AGREG_MUN",
-                     label = "Escolha um município",
-                     choices = cidades[[3]],
-                     selected = NULL)  
+  
+  output$UF2 <- renderUI({
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(agregacao == "UF"){
+      selectizeInput("UF2",
+                     label = "Escolha um estado",
+                     choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
+                                  "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", 
+                                 "PR", "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
+                     selected = "AC")
     }
   })
   
   
+  # Alienacao
+  
+  
+  agreg <- reactive({
+    agregacao <- input$AGREGACAO_REGIONAL4
+    if(agregacao == "UF"){
+      return(input$UF4)
+    } 
+  })
+  
+  
+  output$UF4 <- renderUI({
+    agregacao <- input$AGREGACAO_REGIONAL4
+    if(agregacao == "UF"){
+      selectizeInput("UF4",
+                     label = "Escolha um estado",
+                     choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
+                                 "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", 
+                                 "PR", "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
+                     selected = "AC")
+    }
+  })
+
+
 
   
 # 3.1. Tabelas ------------------------------------------------------------
@@ -345,8 +372,9 @@ server <- function(input, output,session){
   depfed_ali <- reactive({
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$DESCRICAO_CARGO4
     uf <- input$UF4
-    if(indicador == "Alienação" & cargo == "Deputado Federal"){
+    if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
       return(input$table9)
     }
   })
@@ -361,8 +389,9 @@ server <- function(input, output,session){
   depest_ali <- reactive({
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$AGREGACAO_REGIONAL4
     uf <- input$UF4
-    if(indicador == "Alienação" & cargo == "Deputado Estadual"){
+    if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "UF"){
       return(input$table10)
     }
   })
@@ -371,10 +400,111 @@ server <- function(input, output,session){
     alien_est()
   })
   
+# 3.1.4. Fracionalizacao -------------------------------------------------- 
+  
+  # Deputado Federal
+  
+  
+  depfed_frac <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Fracionalização" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table13)
+    }
+  })
+  
+  output$table13 <- DT::renderDataTable({
+    fracio_fed()
+  })
+  
+  # Deputado Estadual
+  
+  depfed_frac <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    uf <- input$UF2
+    if(indicador == "Fracionalização" & cargo == "Deputado Estadual"){
+      return(input$table14)
+    }
+  })
+  
+  output$table14 <- DT::renderDataTable({
+    fracio_est()
+  })
+  
+
+# 3.1.5. Fracionalizacao maxima -------------------------------------------
+
+  # Deputado Federal
+  
+  depfed_fracmax <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Fracionalização máxima" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table16)
+    }
+  })
+  
+  output$table16 <- DT::renderDataTable({
+    fraciomax_fed()
+  })
+  
+  # Deputado Estadual
+  
+  depest_fracmax <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    uf <- input$UF2
+    if(indicador == "Fracionalização" & cargo == "Deputado Estadual"){
+      return(input$table17)
+    }
+  })
+  
+  output$table17 <- DT::renderDataTable({
+    fraciomax_est()
+  })
+
+# 3.1.6. Fragmentacao -----------------------------------------------------
+  
+  # Deputado Federal
+  
+  depfed_frag <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Fragmentação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table19)
+    }
+  })
+  
+  output$table19 <- DT::renderDataTable({
+    frag_fed()
+  })
+  
+  # Deputado Estadual
+  
+  depest_frag <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    uf <- input$UF2
+    if(indicador == "Fragmentação" & cargo == "Deputado Estadual"){
+      return(input$table20)
+    }
+  })
+  
+  output$table20 <- DT::renderDataTable({
+    frag_est()
+  })
+  
 # 3.2. Graficos -----------------------------------------------------------
   
   
-  # 3.2.1 Quociente eleitoral -------------------------------------------------------------------
+# 3.2.1 Quociente eleitoral -------------------------------------------------------------------
   
   # Deputado Federal
   
@@ -533,8 +663,9 @@ server <- function(input, output,session){
   agali_fed <- reactive({
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$AGREGACAO_REGIONAL4
     uf <- input$UF4
-    if(indicador == "Alienação" & cargo == "Deputado Federal"){
+    if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
       return(input$table11)
     }
   })
@@ -547,8 +678,9 @@ server <- function(input, output,session){
     datatable({
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
+      agregacao <- input$AGREGACAO_REGIONAL4
       uf <- input$UF4
-      if(indicador == "Alienação" & cargo == "Deputado Federal"){
+      if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
         data = dfc %>% 
           dplyr::filter(UF == input$UF4) 
       }
@@ -562,8 +694,9 @@ server <- function(input, output,session){
   agali_est <- reactive({
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$AGREGACAO_REGIONAL4
     uf <- input$UF4
-    if(indicador == "Alienação" & cargo == "Deputado Estadual"){
+    if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "UF"){
       return(input$table12)
     }
   })
@@ -576,14 +709,110 @@ server <- function(input, output,session){
     datatable({
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
+      agregacao <- input$AGREGACAO_REGIONAL4
       uf <- input$UF4
-      if(indicador == "Alienação" & cargo == "Deputado Estadual"){
+      if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "UF"){
         data = dec %>% 
           dplyr::filter(UF == input$UF4) 
       }
     })
   }) 
+
+
+
+# 3.4.4. Fracionalizacao --------------------------------------------------
+
+  # Deputado Federal
   
+  agfrac_fed <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Fracionalização" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table15)
+    }
+  })
+  
+  output$table15 <- DT::renderDataTable({
+    agregfrac_fed()
+  })
+  
+  agregfrac_fed <- eventReactive(input$BCALC2, {
+    datatable({
+      indicador <- input$INDICADORES_FRAG
+      cargo <- input$DESCRICAO_CARGO2
+      agregacao <- input$AGREGACAO_REGIONAL2
+      uf <- input$UF2
+      if(indicador == "Fracionalização" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+        data = frag_partdf %>% 
+          select(`Ano da eleição`, Cargo, `Sigla do partido`, `Total de cadeiras conquistadas`, `Percentual de cadeiras`, Fracionalização)
+      }
+    })
+  })
+  
+# 3.4.5. Fracionalizacao maxima -------------------------------------------
+  
+  # Deputado Federal
+  
+  agfracmax_fed <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Fracionalização máxima" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table18)
+    }
+  })
+  
+  output$table18 <- DT::renderDataTable({
+    agregfracmax_fed()
+  })
+  
+  agregfracmax_fed <- eventReactive(input$BCALC2, {
+    datatable({
+      indicador <- input$INDICADORES_FRAG
+      cargo <- input$DESCRICAO_CARGO2
+      agregacao <- input$AGREGACAO_REGIONAL2
+      uf <- input$UF2
+      if(indicador == "Fracionalização máxima" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+        data = frag_partdf %>% 
+          select(`Ano da eleição`, Cargo, `Sigla do partido`, `Total de cadeiras conquistadas`, `Percentual de cadeiras`, `Fracionalização máxima`)
+      }
+    })
+  })
+  
+# 3.4.6. Fragmentacao -----------------------------------------------------
+  
+  
+  # Deputado Federal
+  
+  agfrag_fed <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Fragmentação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table21)
+    }
+  })
+  
+  output$table21 <- DT::renderDataTable({
+    agregfrag_fed()
+  })
+  
+  agregfrag_fed <- eventReactive(input$BCALC2, {
+    datatable({
+      indicador <- input$INDICADORES_FRAG
+      cargo <- input$DESCRICAO_CARGO2
+      agregacao <- input$AGREGACAO_REGIONAL2
+      uf <- input$UF2
+      if(indicador == "Fragmentação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+        data = frag_partdf %>% 
+          select(`Ano da eleição`, Cargo, `Sigla do partido`, `Total de cadeiras conquistadas`, `Percentual de cadeiras`, Fragmentação)
+      }
+    })
+  })
   
 # 3.5. Botao de acao ------------------------------------------------------
   
@@ -657,6 +886,7 @@ server <- function(input, output,session){
   
   
 
+
 # 3.5.3. Alienacao --------------------------------------------------------
 
   # Deputado Federal
@@ -665,11 +895,12 @@ alien_fed <- eventReactive(input$BCALC4, {
   datatable({
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$AGREGACAO_REGIONAL4
     uf <- input$UF4
-    if(indicador == "Alienação" & cargo == "Deputado Federal"){
+    if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
       dfc %>% 
         dplyr::filter(UF == input$UF4) %>% 
-        select(`Ano da eleição`, UF, Alienação)
+    dplyr::select(`Ano da eleição`, UF, Alienação)
       
     }
   })
@@ -681,18 +912,82 @@ alien_fed <- eventReactive(input$BCALC4, {
     datatable({
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
+      agregacao <- input$AGREGACAO_REGIONAL4
       uf <- input$UF4
-      if(indicador == "Alienação" & cargo == "Deputado Estadual"){
-        dec %>% 
+      if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "UF"){
+      dec %>% 
           dplyr::filter(UF == input$UF4) %>% 
-          select(`Ano da eleição`, UF, Alienação)
+          dplyr::select(`Ano da eleição`, UF, Alienação)
         
       }
     })
   })  
+
+
+
+# 3.5.4. Fracionalizacao --------------------------------------------------
+
+
+  # Deputado Federal
+
+fracio_fed <- eventReactive(input$BCALC2, {
+  datatable({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Fracionalização" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      frag_partdf %>% 
+        ungroup() %>% 
+        dplyr::select(`Ano da eleição`,Fracionalização)
+        
+      
+    }
+  })
+})  
+
+
+
+# 3.5.5. Fracionalizacao maxima -------------------------------------------
+
+# Deputado Federal
+
+fraciomax_fed <- eventReactive(input$BCALC2, {
+  datatable({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Fracionalização máxima" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      frag_partdf %>% 
+        ungroup() %>% 
+        dplyr::select(`Ano da eleição`,`Fracionalização máxima`) 
+      
+    }
+  })
+})  
+
+
+
+# 3.5.6. Fragmentacao -----------------------------------------------------
+
+# Deputado Federal
+
+frag_fed <- eventReactive(input$BCALC2, {
+  datatable({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Fragmentação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      frag_partdf %>% 
+        ungroup() %>% 
+        dplyr::select(`Ano da eleição`,Fragmentação) 
+      
+    }
+  })
+}) 
 }
-
-
 
 
 # 4. ShinyApp -------------------------------------------------------------
