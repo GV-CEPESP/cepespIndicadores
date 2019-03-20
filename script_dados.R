@@ -19,6 +19,9 @@ library(data.table)
 library(ggplot2)
 library(ggfortify)
 library(ggExtra)
+library(fansi)
+library(stringi)
+
 
 # 1. Dados ----------------------------------------------------------------
 
@@ -69,19 +72,6 @@ dec_ <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", position = "De
 
 # 2. Tranformacoes primarias ----------------------------------------------
 
-# Deputado Federal
-
-df$AGREGACAO_REGIONAL <- "BRASIL"
-
-df <- df %>% 
-  dplyr::select(ANO_ELEICAO, NUM_TURNO, UF,AGREGACAO_REGIONAL,DESCRICAO_CARGO,NUMERO_PARTIDO, SIGLA_PARTIDO, QTDE_VOTOS)
-
-# Deputado Estadual
-
-de$AGREGACAO_REGIONAL <- "UF"
-
-de <- de %>% 
-  dplyr::select(ANO_ELEICAO, NUM_TURNO, UF,AGREGACAO_REGIONAL,DESCRICAO_CARGO,NUMERO_PARTIDO, SIGLA_PARTIDO, QTDE_VOTOS) 
 
 # Vereador
 
@@ -89,7 +79,6 @@ de <- de %>%
 
 #vrc$NM <- rm_accent(vrc$NOME_MUNICIPIO)
 
-#vr$AGREGACAO_REGIONAL <- "MUNICIPIO"
 
 #vr <- vr %>% 
   #select(ANO_ELEICAO, NUM_TURNO, UF,COD_MUN_TSE,NM,AGREGACAO_REGIONAL,DESCRICAO_CARGO,NUMERO_PARTIDO, SIGLA_PARTIDO, QTDE_VOTOS) %>% 
@@ -164,7 +153,6 @@ vags_fed <- left_join(vags_fed,dfc1, by = "UF")
 
 vags_fed <- left_join(vags_fed, df1, by = c("ANO_ELEICAO", "UF"))
 
-fed <- left_join(dfc1, vags_fed, by = "UF")
 
  # Deputado Estadual
 
@@ -172,8 +160,6 @@ vags_est <- left_join(vags_est,dec1, by = "UF")
 
 
 de <- left_join(de,dec1, by = c("ANO_ELEICAO","UF"))
-
-est <- left_join(dec1, vags_est, by = "UF")
 
 vags_est <- left_join(vags_est, de1, by = c("ANO_ELEICAO", "UF"))
 
@@ -231,20 +217,16 @@ num_de <- dec_ %>%
 
 num_de <- num_de %>% 
   dplyr::group_by(ANO_ELEICAO, DESCRICAO_CARGO, SIGLA_PARTIDO, UF) %>% 
-  dplyr::summarise("Cadeiras conquistadas por UF" = n())
+  dplyr::summarise("Cadeiras conquistadas" = n())
 
-num_de1 <- num_de %>% 
-  dplyr::group_by(ANO_ELEICAO, DESCRICAO_CARGO, SIGLA_PARTIDO) %>% 
-  dplyr::summarise(
-    "Total de cadeiras conquistadas" = sum(`Cadeiras conquistadas por UF`))
-
-numc_de <- left_join(num_de, num_de1, by = c("ANO_ELEICAO", "DESCRICAO_CARGO", "SIGLA_PARTIDO"))
-
-numc_de <- numc_de %>% 
-  dplyr::select(ANO_ELEICAO, UF,DESCRICAO_CARGO, SIGLA_PARTIDO, `Cadeiras conquistadas por UF`, `Total de cadeiras conquistadas`) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do Partido" = "SIGLA_PARTIDO")
+numc_de <- num_de %>% 
+  dplyr::select(ANO_ELEICAO, UF,DESCRICAO_CARGO, SIGLA_PARTIDO, `Cadeiras conquistadas`) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do partido" = "SIGLA_PARTIDO")
 
 numc_de$Cargo <- str_to_title(numc_de$Cargo)
+
+numc_de <- left_join(numc_de, vags_est, by = c("Ano da eleição", "UF", "Cargo", "Sigla do partido"))
+
 
 # 4.1.2. Fracionalizacao --------------------------------------------------
 
@@ -255,19 +237,67 @@ num_df1$`Percentual de cadeiras` <- num_df1$`Total de cadeiras conquistadas`/513
 numc_df$`Percentual de cadeiras` <- numc_df$`Total de cadeiras conquistadas`/513
 
 
-
 fracio <- function(x){
   
   1-(sum(x^2))
 }
 
-
-
-
 t98df <- num_df1 %>% 
   filter(ANO_ELEICAO == 1998) 
 
 t98df$Fracionalização <- fracio(t98df$`Percentual de cadeiras`)
+
+t02df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2002) 
+
+t02df$Fracionalização <- fracio(t02df$`Percentual de cadeiras`)
+
+t06df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2006) 
+
+t06df$Fracionalização <- fracio(t06df$`Percentual de cadeiras`)
+
+t10df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2010) 
+
+t10df$Fracionalização <- fracio(t10df$`Percentual de cadeiras`)
+
+t14df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2014)
+
+t14df$Fracionalização <- fracio(t14df$`Percentual de cadeiras`)
+
+t18df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2018) 
+
+t18df$Fracionalização <- fracio(t18df$`Percentual de cadeiras`)
+
+  # Deputado Estadual
+
+
+numc_de$`Percentual de cadeiras` <- numc_de$`Cadeiras conquistadas`/as.numeric(numc_de$Vagas)
+
+
+estados <- list("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
+                "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", "PR", 
+                "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO")
+
+anos <- list(1998,2002,2006,2010,2014,2018)
+
+frac <- list()
+
+
+#for(i in estados){
+  #frac[[i]] <- dplyr::filter(numc_de, `Ano da eleição` == lapply(anos[i], as.numeric))
+  #print(frac)
+#}
+
+
+
+t98de <- numc_de %>% 
+  filter(ANO_ELEICAO == 1998, UF == "AC") 
+
+t98de$Fracionalização <- fracio(t98de$`Percentual de cadeiras`)
 
 t02df <- num_df1 %>% 
   filter(ANO_ELEICAO == 2002) 

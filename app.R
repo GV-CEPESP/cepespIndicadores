@@ -554,7 +554,7 @@ server <- function(input, output,session){
     cargo <- input$DESCRICAO_CARGO1
     uf <- input$UF
     if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal"){
-      return(input$table5)
+      return(input$table5) 
     }
   })
   
@@ -570,7 +570,8 @@ server <- function(input, output,session){
       if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal"){
         data = vags_fed %>% 
           dplyr::filter(UF == input$UF) %>% 
-          select(`Ano da eleição`, UF, Cargo, Vagas,`Votos válidos `, `Quociente eleitoral`)
+          select(`Ano da eleição`, UF, Cargo, Vagas,`Votos válidos `, `Quociente eleitoral`) %>% 
+          unique()
       }
     })
   })  
@@ -597,7 +598,8 @@ server <- function(input, output,session){
       if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual"){
         expr = vags_est %>% 
           dplyr::filter(UF == input$UF) %>% 
-          select(`Ano da eleição`, UF, Cargo, Vagas,`Votos válidos `, `Quociente eleitoral`)
+          select(`Ano da eleição`, UF, Cargo, Vagas,`Votos válidos `, `Quociente eleitoral`) %>% 
+          unique()
       }
     })
   })  
@@ -626,7 +628,8 @@ server <- function(input, output,session){
       uf <- input$UF
       if(indicador == "Quociente partidário" & cargo == "Deputado Federal"){
         expr = vags_fed %>% 
-          dplyr::filter(UF == input$UF) 
+          dplyr::filter(UF == input$UF) %>% 
+          unique()
       }
     })
   })  
@@ -651,7 +654,8 @@ server <- function(input, output,session){
       uf <- input$UF
       if(indicador == "Quociente partidário" & cargo == "Deputado Estadual"){
         expr = vags_est %>% 
-          dplyr::filter(UF == input$UF)
+          dplyr::filter(UF == input$UF) %>% 
+          unique()
       }
     })
   })
@@ -746,7 +750,7 @@ server <- function(input, output,session){
       uf <- input$UF2
       if(indicador == "Fracionalização" & cargo == "Deputado Federal" & agregacao == "Brasil"){
         data = frag_partdf %>% 
-          select(`Ano da eleição`, Cargo, `Sigla do partido`, `Total de cadeiras conquistadas`, `Percentual de cadeiras`, Fracionalização)
+          select(`Ano da eleição`, Cargo, Fracionalização)
       }
     })
   })
@@ -777,7 +781,7 @@ server <- function(input, output,session){
       uf <- input$UF2
       if(indicador == "Fracionalização máxima" & cargo == "Deputado Federal" & agregacao == "Brasil"){
         data = frag_partdf %>% 
-          select(`Ano da eleição`, Cargo, `Sigla do partido`, `Total de cadeiras conquistadas`, `Percentual de cadeiras`, `Fracionalização máxima`)
+          select(`Ano da eleição`, Cargo,Fracionalização, `Fracionalização máxima`)
       }
     })
   })
@@ -809,7 +813,7 @@ server <- function(input, output,session){
       uf <- input$UF2
       if(indicador == "Fragmentação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
         data = frag_partdf %>% 
-          select(`Ano da eleição`, Cargo, `Sigla do partido`, `Total de cadeiras conquistadas`, `Percentual de cadeiras`, Fragmentação)
+          select(`Ano da eleição`, Cargo, Fracionalização,`Fracionalização máxima`, Fragmentação)
       }
     })
   })
@@ -830,7 +834,8 @@ server <- function(input, output,session){
       uf <- input$UF
       if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal"){
         qef %>% 
-          dplyr::filter(UF == input$UF)
+          dplyr::filter(UF == input$UF) %>% 
+          spread(`Ano da eleição`, `Quociente eleitoral`)
         
       }
     })
@@ -846,7 +851,8 @@ server <- function(input, output,session){
       uf <- input$UF
       if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual"){
         expr = qee %>% 
-          dplyr::filter(UF == input$UF)
+          dplyr::filter(UF == input$UF) %>% 
+          spread(`Ano da eleição`, `Quociente eleitoral`)
       }
     })
   })  
@@ -865,7 +871,9 @@ server <- function(input, output,session){
       uf <- input$UF
       if(indicador == "Quociente partidário" & cargo == "Deputado Federal"){
         expr = qpf %>% 
-          dplyr::filter(UF == input$UF)
+          dplyr::filter(UF == input$UF) 
+          
+        
       }
     })
   })  
@@ -879,7 +887,8 @@ server <- function(input, output,session){
       uf <- input$UF
       if(indicador == "Quociente partidário" & cargo == "Deputado Estadual"){
         expr = qpe %>% 
-          dplyr::filter(UF == input$UF)
+          dplyr::filter(UF == input$UF) %>% 
+          select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
       }
     })
   })
@@ -900,7 +909,8 @@ alien_fed <- eventReactive(input$BCALC4, {
     if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
       dfc %>% 
         dplyr::filter(UF == input$UF4) %>% 
-    dplyr::select(`Ano da eleição`, UF, Alienação)
+    dplyr::select(`Ano da eleição`, UF, Alienação) %>% 
+        spread(`Ano da eleição`,Alienação)
       
     }
   })
@@ -917,7 +927,9 @@ alien_fed <- eventReactive(input$BCALC4, {
       if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "UF"){
       dec %>% 
           dplyr::filter(UF == input$UF4) %>% 
-          dplyr::select(`Ano da eleição`, UF, Alienação)
+          dplyr::select(`Ano da eleição`, UF, Alienação) %>% 
+          spread(`Ano da eleição`,Alienação)
+          
         
       }
     })
@@ -937,9 +949,11 @@ fracio_fed <- eventReactive(input$BCALC2, {
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
     if(indicador == "Fracionalização" & cargo == "Deputado Federal" & agregacao == "Brasil"){
-      frag_partdf %>% 
+     frag_partdf %>% 
         ungroup() %>% 
-        dplyr::select(`Ano da eleição`,Fracionalização)
+        dplyr::select(`Ano da eleição`,Fracionalização) %>% 
+        unique() %>% 
+       spread(`Ano da eleição`,Fracionalização)
         
       
     }
@@ -961,7 +975,9 @@ fraciomax_fed <- eventReactive(input$BCALC2, {
     if(indicador == "Fracionalização máxima" & cargo == "Deputado Federal" & agregacao == "Brasil"){
       frag_partdf %>% 
         ungroup() %>% 
-        dplyr::select(`Ano da eleição`,`Fracionalização máxima`) 
+        dplyr::select(`Ano da eleição`,`Fracionalização máxima`) %>% 
+        unique() %>% 
+        spread(`Ano da eleição`,`Fracionalização máxima`)
       
     }
   })
@@ -982,7 +998,9 @@ frag_fed <- eventReactive(input$BCALC2, {
     if(indicador == "Fragmentação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
       frag_partdf %>% 
         ungroup() %>% 
-        dplyr::select(`Ano da eleição`,Fragmentação) 
+        dplyr::select(`Ano da eleição`,Fragmentação) %>% 
+        unique() %>% 
+        spread(`Ano da eleição`,Fragmentação)
       
     }
   })
