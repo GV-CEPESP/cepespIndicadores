@@ -266,7 +266,7 @@ server <- function(input, output,session){
  output$plot1 <- renderPlotly({
    plot1 <- qef %>% 
      dplyr::filter(UF == input$UF) %>%
-     ggplot(aes(x = reorder(`Ano da eleição`, order(`Ano da eleição`)), y=`Quociente eleitoral`, color = UF)) + 
+     ggplot(aes(x = reorder(`Ano da eleição`, order(`Ano da eleição`)), y=`Quociente eleitoral`)) + 
      geom_bar(stat="identity", width=0.5, fill="#023858", colour = "#023858") +
      labs(title="Quociente eleitoral: Deputado Federal", 
           subtitle="Período de 1998-2018", 

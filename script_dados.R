@@ -19,10 +19,13 @@ library(data.table)
 library(ggplot2)
 library(ggfortify)
 library(ggExtra)
+library(fansi)
+library(stringi)
+
 
 # 1. Dados ----------------------------------------------------------------
 
-source("script_vagas.R")
+source("script_vagas.R", encoding = "UTF-8")
 
  # Deputado Federal
 
@@ -32,6 +35,9 @@ df <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", position = "Dep
 dfc <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", position = "Deputado Federal",
                      regional_aggregation = "Estado", political_aggregation = "Consolidado")
 
+dfc_ <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", position = "Deputado Federal",
+                      regional_aggregation = "Estado", political_aggregation = "Candidato")
+
  # Deputado Estadual
 
 de <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", position = "Deputado Estadual",
@@ -39,6 +45,9 @@ de <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", position = "Dep
 
 dec <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", position = "Deputado Estadual",
                      regional_aggregation = "Estado", political_aggregation = "Consolidado")
+
+dec_ <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", position = "Deputado Estadual",
+                     regional_aggregation = "Estado", political_aggregation = "Candidato")
 
  # Vereador
 
@@ -57,25 +66,12 @@ dec <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", position = "Dep
 
 # Quociente eleitoral e magnitude distrital 2018
 
-magn <- read.csv2("quociente_eleitoraL_partidario.csv")
+
 
 
 
 # 2. Tranformacoes primarias ----------------------------------------------
 
-# Deputado Federal
-
-df$AGREGACAO_REGIONAL <- "BRASIL"
-
-df <- df %>% 
-  dplyr::select(ANO_ELEICAO, NUM_TURNO, UF,AGREGACAO_REGIONAL,DESCRICAO_CARGO,NUMERO_PARTIDO, SIGLA_PARTIDO, QTDE_VOTOS)
-
-# Deputado Estadual
-
-de$AGREGACAO_REGIONAL <- "UF"
-
-de <- de %>% 
-  select(ANO_ELEICAO, NUM_TURNO, UF,AGREGACAO_REGIONAL,DESCRICAO_CARGO,NUMERO_PARTIDO, SIGLA_PARTIDO, QTDE_VOTOS) 
 
 # Vereador
 
@@ -83,7 +79,6 @@ de <- de %>%
 
 #vrc$NM <- rm_accent(vrc$NOME_MUNICIPIO)
 
-#vr$AGREGACAO_REGIONAL <- "MUNICIPIO"
 
 #vr <- vr %>% 
   #select(ANO_ELEICAO, NUM_TURNO, UF,COD_MUN_TSE,NM,AGREGACAO_REGIONAL,DESCRICAO_CARGO,NUMERO_PARTIDO, SIGLA_PARTIDO, QTDE_VOTOS) %>% 
@@ -158,7 +153,6 @@ vags_fed <- left_join(vags_fed,dfc1, by = "UF")
 
 vags_fed <- left_join(vags_fed, df1, by = c("ANO_ELEICAO", "UF"))
 
-fed <- left_join(dfc1, vags_fed, by = "UF")
 
  # Deputado Estadual
 
@@ -166,8 +160,6 @@ vags_est <- left_join(vags_est,dec1, by = "UF")
 
 
 de <- left_join(de,dec1, by = c("ANO_ELEICAO","UF"))
-
-est <- left_join(dec1, vags_est, by = "UF")
 
 vags_est <- left_join(vags_est, de1, by = c("ANO_ELEICAO", "UF"))
 
@@ -194,22 +186,214 @@ vags_est <- left_join(vags_est, de1, by = c("ANO_ELEICAO", "UF"))
 # 4.1. Indicadores de fragmentacao legislativa ----------------------------
 
 
- # Fracionalizacao 
-  
-  
- # Fracionalizacao maxima  
-  
-  
- # Fragmentacao
-  
+# 4.1.1. Numero de cadeiras -----------------------------------------------
 
- # Desproporcionalidade de Gallagher
-  
+ # Deputado Federal
 
- # Número efetivo de partidos
+num_df <- dfc_ %>% 
+  filter(DESC_SIT_TOT_TURNO == "ELEITO"|DESC_SIT_TOT_TURNO == "ELEITO POR QP"|DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA")
+
+num_df <- num_df %>% 
+  dplyr::group_by(ANO_ELEICAO,DESCRICAO_CARGO, SIGLA_PARTIDO, UF) %>% 
+  dplyr::summarise("Cadeiras conquistadas por UF" = n())
+
+num_df1 <- num_df %>% 
+  dplyr::group_by(ANO_ELEICAO,DESCRICAO_CARGO, SIGLA_PARTIDO) %>% 
+  dplyr::summarise(
+    "Total de cadeiras conquistadas" = sum(`Cadeiras conquistadas por UF`))
+
+numc_df <- left_join(num_df, num_df1, by = c("ANO_ELEICAO", "DESCRICAO_CARGO", "SIGLA_PARTIDO"))
+
+numc_df <- numc_df %>% 
+  dplyr::select(ANO_ELEICAO, UF,DESCRICAO_CARGO, SIGLA_PARTIDO, `Cadeiras conquistadas por UF`, `Total de cadeiras conquistadas`) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do Partido" = "SIGLA_PARTIDO")
+
+numc_df$Cargo <- str_to_title(numc_df$Cargo)
+
+ # Deputado Estadual
+
+num_de <- dec_ %>% 
+  filter(DESC_SIT_TOT_TURNO == "ELEITO"|DESC_SIT_TOT_TURNO == "ELEITO POR QP"|DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA")
+
+num_de <- num_de %>% 
+  dplyr::group_by(ANO_ELEICAO, DESCRICAO_CARGO, SIGLA_PARTIDO, UF) %>% 
+  dplyr::summarise("Cadeiras conquistadas" = n())
+
+numc_de <- num_de %>% 
+  dplyr::select(ANO_ELEICAO, UF,DESCRICAO_CARGO, SIGLA_PARTIDO, `Cadeiras conquistadas`) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do partido" = "SIGLA_PARTIDO")
+
+numc_de$Cargo <- str_to_title(numc_de$Cargo)
+
+numc_de <- left_join(numc_de, vags_est, by = c("Ano da eleição", "UF", "Cargo", "Sigla do partido"))
+
+
+# 4.1.2. Fracionalizacao --------------------------------------------------
+
+  # Deputado Federal
+
+num_df1$`Percentual de cadeiras` <- num_df1$`Total de cadeiras conquistadas`/513
+
+numc_df$`Percentual de cadeiras` <- numc_df$`Total de cadeiras conquistadas`/513
+
+
+fracio <- function(x){
   
+  1-(sum(x^2))
+}
+
+t98df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 1998) 
+
+t98df$Fracionalização <- fracio(t98df$`Percentual de cadeiras`)
+
+t02df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2002) 
+
+t02df$Fracionalização <- fracio(t02df$`Percentual de cadeiras`)
+
+t06df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2006) 
+
+t06df$Fracionalização <- fracio(t06df$`Percentual de cadeiras`)
+
+t10df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2010) 
+
+t10df$Fracionalização <- fracio(t10df$`Percentual de cadeiras`)
+
+t14df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2014)
+
+t14df$Fracionalização <- fracio(t14df$`Percentual de cadeiras`)
+
+t18df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2018) 
+
+t18df$Fracionalização <- fracio(t18df$`Percentual de cadeiras`)
+
+  # Deputado Estadual
+
+
+numc_de$`Percentual de cadeiras` <- numc_de$`Cadeiras conquistadas`/as.numeric(numc_de$Vagas)
+
+
+estados <- list("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
+                "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", "PR", 
+                "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO")
+
+anos <- list(1998,2002,2006,2010,2014,2018)
+
+frac <- list()
+
+
+#for(i in estados){
+  #frac[[i]] <- dplyr::filter(numc_de, `Ano da eleição` == lapply(anos[i], as.numeric))
+  #print(frac)
+#}
+
+
+
+t98de <- numc_de %>% 
+  filter(ANO_ELEICAO == 1998, UF == "AC") 
+
+t98de$Fracionalização <- fracio(t98de$`Percentual de cadeiras`)
+
+t02df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2002) 
+
+t02df$Fracionalização <- fracio(t02df$`Percentual de cadeiras`)
+
+t06df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2006) 
+
+t06df$Fracionalização <- fracio(t06df$`Percentual de cadeiras`)
+
+t10df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2010) 
+
+t10df$Fracionalização <- fracio(t10df$`Percentual de cadeiras`)
+
+t14df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2014)
+
+t14df$Fracionalização <- fracio(t14df$`Percentual de cadeiras`)
+
+t18df <- num_df1 %>% 
+  filter(ANO_ELEICAO == 2018) 
+
+t18df$Fracionalização <- fracio(t18df$`Percentual de cadeiras`)
+
+
+# 4.1.3. Fracionalizacao maxima  ------------------------------------------
+
+
+fracio_max <- function(N, n){
   
+  (N*(n-1))/(n*(N-1))
   
+}
+
+
+
+t98df$`Fracionalização máxima`<- fracio_max(513,18)
+
+t02df$`Fracionalização máxima`<- fracio_max(513,19) 
+
+t06df$`Fracionalização máxima`<- fracio_max(513,21)
+
+t10df$`Fracionalização máxima`<- fracio_max(513,22)
+
+t14df$`Fracionalização máxima`<- fracio_max(513,28)
+
+t18df$`Fracionalização máxima`<- fracio_max(513,30)
+
+# 4.1.4. Fragmentacao -----------------------------------------------------
+
+
+frag <- function(fracio, fracio_max){
+  
+  fracio/fracio_max
+}
+
+
+  
+t98df$Fragmentação <- frag(t98df$Fracionalização, t98df$`Fracionalização máxima`)
+
+t02df$Fragmentação <- frag(t02df$Fracionalização, t02df$`Fracionalização máxima`)
+
+t06df$Fragmentação <- frag(t06df$Fracionalização, t06df$`Fracionalização máxima`)
+
+t10df$Fragmentação <- frag(t10df$Fracionalização, t10df$`Fracionalização máxima`)
+
+t14df$Fragmentação <- frag(t14df$Fracionalização, t14df$`Fracionalização máxima`)
+
+t18df$Fragmentação <- frag(t18df$Fracionalização, t18df$`Fracionalização máxima`)
+
+
+frag_partdf <- bind_rows(t98df, t02df, t06df, t10df, t14df, t18df) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do partido" = SIGLA_PARTIDO)
+
+frag_partdf$Cargo <- str_to_title(frag_partdf$Cargo)
+
+
+# 4.1.5.  Desproporcionalidade de Gallagher -------------------------------
+
+  # Deputado Federal
+
+
+desp_gallg <- function(Vi, Si){
+  
+  sqrt(1/2*sum(Vi - Si)^2)
+}
+
+# 4.1.6. Número efetivo de partidos por votos ---------------------------------------
+
+
+
+# 4.1.7. Número efetivo de partidos por cadeiras ---------------------------------------
+
+
 
 # 4.2. Indicadores de renovacao das bancadas ------------------------------
 
@@ -217,8 +401,30 @@ vags_est <- left_join(vags_est, de1, by = c("ANO_ELEICAO", "UF"))
 
 # 4.3. Indicadores de alienacao -------------------------------------------
   
+  # Deputado Federal
 
+dfc$Alienação <- dfc$QTD_ABSTENCOES + dfc$QT_VOTOS_BRANCOS + dfc$QT_VOTOS_NULOS
+
+dfc <- dfc %>% 
+  dplyr::select(ANO_ELEICAO,UF, DESCRICAO_CARGO, QTD_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, Alienação) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Quantidade de abstenções" = "QTD_ABSTENCOES",
+                "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS")
   
+
+dfc$Cargo <- str_to_title(dfc$Cargo)
+
+
+  # Deputado Estadual
+
+dec$Alienação <- dec$QTD_ABSTENCOES + dec$QT_VOTOS_BRANCOS + dec$QT_VOTOS_NULOS
+
+dec <- dec %>% 
+  dplyr::select(ANO_ELEICAO,UF, DESCRICAO_CARGO, QTD_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, Alienação) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Quantidade de abstenções" = "QTD_ABSTENCOES",
+                "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS")
+
+dec$Cargo <- str_to_title(dec$Cargo)
+
 # 4.4. Indicadores de distribuicao das cadeiras ---------------------------  
 
 # Quociente eleitoral
@@ -229,6 +435,7 @@ vags_est <- left_join(vags_est, de1, by = c("ANO_ELEICAO", "UF"))
 vags_fed$QUOCIENTE_ELEITORAL <- vags_fed$VOTOS_VALIDOS_UF/as.numeric(vags_fed$VAGAS)
 
 ## Deputados Estaduais
+
 
 vags_est$QUOCIENTE_ELEITORAL <- vags_est$VOTOS_VALIDOS_UF/as.numeric(vags_est$VAGAS)
 
@@ -242,17 +449,6 @@ vags_fed$QUOCIENTE_PARTIDARIO <- vags_fed$VOT_PART_UF/vags_fed$QUOCIENTE_ELEITOR
 ## Deputados Estaduais
 
 vags_est$QUOCIENTE_PARTIDARIO <- vags_est$VOT_PART_UF/vags_est$QUOCIENTE_ELEITORAL
-
-# Numero de cadeiras
-
-## Deputados Federais
-
-#vags_fed$NUM_CADEIRAS <- floor(vags_fed$QUOCIENTE_PARTIDARIO)
-
-## Deputados Estaduais
-
-#vags_est$NUM_CADEIRAS <- floor(vags_est$QUOCIENTE_PARTIDARIO)
-
 
 
 # 5. Tabelas --------------------------------------------------------------
@@ -282,7 +478,7 @@ vags_fed <- vags_fed %>%
 # Deputado Federal
 
 vags_fed <- vags_fed %>% 
-  select(ANO_ELEICAO, UF, C, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
+  dplyr::select(ANO_ELEICAO, UF, C, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
    dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Vagas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
                  "Sigla do partido" = "SIGLA_PARTIDO", "Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
                  "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
@@ -299,7 +495,7 @@ qef <- vags_fed %>%
    mutate(C = str_to_title(vags_est$CARGO))
  
  vags_est <- vags_est %>% 
-   select(ANO_ELEICAO, UF, C, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
+   dplyr::select(ANO_ELEICAO, UF, C, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
    dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Vagas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
                  "Sigla do partido" = "SIGLA_PARTIDO", "Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
                  "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
@@ -315,7 +511,7 @@ qee <- vags_est %>%
 # Deputado Federal
  
  qpf <- vags_fed %>% 
-   select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
+   dplyr::select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
  
  qpf <- unique(qpf)
  
@@ -324,7 +520,7 @@ qee <- vags_est %>%
  # Deputado estadual
  
  qpe <- vags_est %>% 
-   select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
+   dplyr::select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
 
  qpe <- unique(vags_est)
  

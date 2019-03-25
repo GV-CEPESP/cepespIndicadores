@@ -63,7 +63,7 @@ vags_fed <- dplyr::rename(vags_fed,"UF" = "V6",
 
 vags_est <- vags %>% 
   select(V6, V9, V10) %>% 
-  filter(V9 == "DEPUTADO ESTADUAL")
+  filter(V9 == "DEPUTADO ESTADUAL" | V9 == "DEPUTADO DISTRITAL")
 
 vags_est <- unique(vags_est)
 
