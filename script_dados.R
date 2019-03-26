@@ -371,12 +371,6 @@ t14df$Fragmentação <- frag(t14df$Fracionalização, t14df$`Fracionalização m
 t18df$Fragmentação <- frag(t18df$Fracionalização, t18df$`Fracionalização máxima`)
 
 
-frag_partdf <- bind_rows(t98df, t02df, t06df, t10df, t14df, t18df) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do partido" = SIGLA_PARTIDO)
-
-frag_partdf$Cargo <- str_to_title(frag_partdf$Cargo)
-
-
 # 4.1.5.  Desproporcionalidade de Gallagher -------------------------------
 
   # Deputado Federal
@@ -392,6 +386,31 @@ desp_gallg <- function(Vi, Si){
 
 
 # 4.1.7. Número efetivo de partidos por cadeiras ---------------------------------------
+
+options(scipen=999)
+NEP<-NA
+NEPC <- function(p){
+  for(i in 1:length(p)){
+    NEP[[i]]<-(p[[i]]*p[[i]])
+  }
+  1/sum(NEP)}
+
+p<-t98df$`Percentual de cadeiras`
+p[[1]]*p[[1]]
+X<-NEPC(p)
+
+t98df$`Numero Efetivo de Partidos - Cadeiras` <- NEPC(t98df$`Percentual de cadeiras`)
+t02df$`Numero Efetivo de Partidos - Cadeiras` <- NEPC(t02df$`Percentual de cadeiras`)
+t06df$`Numero Efetivo de Partidos - Cadeiras` <- NEPC(t06df$`Percentual de cadeiras`)
+t10df$`Numero Efetivo de Partidos - Cadeiras` <- NEPC(t10df$`Percentual de cadeiras`)
+t14df$`Numero Efetivo de Partidos - Cadeiras` <- NEPC(t14df$`Percentual de cadeiras`)
+t18df$`Numero Efetivo de Partidos - Cadeiras` <- NEPC(t18df$`Percentual de cadeiras`)
+
+
+frag_partdf <- bind_rows(t98df, t02df, t06df, t10df, t14df, t18df) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do partido" = SIGLA_PARTIDO)
+
+frag_partdf$Cargo <- str_to_title(frag_partdf$Cargo)
 
 
 
