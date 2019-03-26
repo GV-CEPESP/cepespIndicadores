@@ -500,7 +500,39 @@ server <- function(input, output,session){
   output$table20 <- DT::renderDataTable({
     frag_est()
   })
+
+  # 3.1.7. Numero efetivo de partidos por cadeiras -----------------------------------------------------
   
+  # Deputado Federal
+  
+  depfed_NEP <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table21)
+    }
+  })
+  
+  output$table21 <- DT::renderDataTable({
+    NEPC_fed()
+  })
+  
+  # Deputado Estadual
+  
+  depest_NEP <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    uf <- input$UF2
+    if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Estadual"){
+      return(input$table22)
+    }
+  })
+  
+  output$table22 <- DT::renderDataTable({
+    NEPC_est()
+  })  
 # 3.2. Graficos -----------------------------------------------------------
   
   
@@ -817,7 +849,38 @@ server <- function(input, output,session){
       }
     })
   })
+
+  # 3.4.7. Numero efetivo de partidos por cadeiras -----------------------------------------------------
   
+  
+  # Deputado Federal
+  
+  agfrag_NEP <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table23)
+    }
+  })
+  
+  output$table23 <- DT::renderDataTable({
+    NEPC_fed()
+  })
+  
+  NEPC_fed <- eventReactive(input$BCALC2, {
+    datatable({
+      indicador <- input$INDICADORES_FRAG
+      cargo <- input$DESCRICAO_CARGO2
+      agregacao <- input$AGREGACAO_REGIONAL2
+      uf <- input$UF2
+      if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+        data = frag_partdf %>% 
+          select(`Ano da eleição`, Cargo, `Total de cadeiras conquistadas`, `Percentual de cadeiras`, `Numero Efetivo de Partidos - Cadeiras`)
+      }
+    })
+  })  
 # 3.5. Botao de acao ------------------------------------------------------
   
   
@@ -1005,6 +1068,43 @@ frag_fed <- eventReactive(input$BCALC2, {
     }
   })
 }) 
+
+ # 3.5.7. Numero efetivo de partidos por cadeiras -----------------------------------------------------
+
+# Deputado Federal
+
+NEPC_fed <- eventReactive(input$BCALC2, {
+  datatable({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      frag_partdf %>% 
+        ungroup() %>% 
+        dplyr::select(`Ano da eleição`,`Numero Efetivo de Partidos - Cadeiras`) %>% 
+        unique() %>% 
+        spread(`Ano da eleição`,`Numero Efetivo de Partidos - Cadeiras`)
+      
+    }
+  })
+})
+  NEPC_est <- eventReactive(input$BCALC2, {
+    datatable({
+      indicador <- input$INDICADORES_FRAG
+      cargo <- input$DESCRICAO_CARGO2
+      
+      uf <- input$UF2
+      if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Estadual" ){
+        frag_partdf %>% 
+          ungroup() %>% 
+          dplyr::select(`Ano da eleição`,`Numero Efetivo de Partidos - Cadeiras`) %>% 
+          unique() %>% 
+          spread(`Ano da eleição`,`Numero Efetivo de Partidos - Cadeiras`)
+        
+      }
+    })
+  })
 }
 
 

@@ -52,7 +52,7 @@ vags <- list()
 vags <- rbind.fill(vags)
 
 vags_fed <- vags %>% 
-  select(V6, V9, V10) %>%
+  dplyr::select(V6, V9, V10) %>%
   dplyr::filter(V9 == "DEPUTADO FEDERAL")
 
 vags_fed <- unique(vags_fed)
