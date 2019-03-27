@@ -69,14 +69,14 @@ dec_ <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", position = "De
 
 # Deputado Federal
 
-df1 <- df %>%  
+df <- df %>%  
   dplyr::group_by(ANO_ELEICAO, UF, SIGLA_PARTIDO) %>% 
   dplyr::summarise(
     VOT_PART_UF = sum(QTDE_VOTOS))
 
 # Deputado Estadual
 
-de1 <- de %>% 
+de <- de %>% 
   dplyr::group_by(ANO_ELEICAO, UF,SIGLA_PARTIDO) %>% 
   dplyr::summarise(
     VOT_PART_UF = sum(QTDE_VOTOS)
@@ -106,7 +106,7 @@ dec1 <- dec %>%
 
 vags_fed <- left_join(vags_fed,dfc1, by = "UF")
 
-vags_fed <- left_join(vags_fed, df1, by = c("ANO_ELEICAO", "UF"))
+vags_fed <- left_join(vags_fed, df, by = c("ANO_ELEICAO", "UF"))
 
 
 # Deputado Estadual
@@ -114,7 +114,7 @@ vags_fed <- left_join(vags_fed, df1, by = c("ANO_ELEICAO", "UF"))
 vags_est <- left_join(vags_est,dec1, by = "UF")
 
 
-vags_est <- left_join(vags_est, de1, by = c("ANO_ELEICAO", "UF"))
+vags_est <- left_join(vags_est, de, by = c("ANO_ELEICAO", "UF"))
 
 
 # 4. Calculo --------------------------------------------------------------
@@ -123,25 +123,26 @@ vags_est <- left_join(vags_est, de1, by = c("ANO_ELEICAO", "UF"))
 # 4.1. Indicadores de distribuicao das cadeiras ---------------------------  
 
 
-# 4.1.1. Deputado Federal -------------------------------------------------
+# 4.1.1. Quociente eleitoral -------------------------------------------------
 
-# Quociente eleitoral
+# Deputado Federal
 
 vags_fed$QUOCIENTE_ELEITORAL <- vags_fed$VOTOS_VALIDOS_UF/as.numeric(vags_fed$VAGAS)
 
-# Quociente partidario
-
-vags_fed$QUOCIENTE_PARTIDARIO <- vags_fed$VOT_PART_UF/vags_fed$QUOCIENTE_ELEITORAL
-
-
-# 4.1.2. Deputado Estadual ------------------------------------------------
-
-# Quociente eleitoral
+# Deputado Estadual
 
 vags_est$QUOCIENTE_ELEITORAL <- vags_est$VOTOS_VALIDOS_UF/as.numeric(vags_est$VAGAS)
 
 
-# Quociente partidario
+# 4.1.2. Quociente partidario ------------------------------------------------
+
+# Deputado Federal
+
+vags_fed$QUOCIENTE_PARTIDARIO <- vags_fed$VOT_PART_UF/vags_fed$QUOCIENTE_ELEITORAL
+
+
+# Deputado Estadual
+
 
 vags_est$QUOCIENTE_PARTIDARIO <- vags_est$VOT_PART_UF/vags_est$QUOCIENTE_ELEITORAL
 
@@ -186,8 +187,8 @@ num_de <- num_de %>%
 numc_de <- num_de %>% 
   dplyr::select(ANO_ELEICAO, UF,DESCRICAO_CARGO, SIGLA_PARTIDO, `Cadeiras conquistadas`)
 
-num_de < numc_de %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do partido" = "SIGLA_PARTIDO")
+
+ numc_de <- dplyr::rename(numc_de, "Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do partido" = "SIGLA_PARTIDO")
 
 numc_de$Cargo <- str_to_title(numc_de$Cargo)
 
@@ -314,7 +315,10 @@ dfc2 <- dfc2 %>%
 
 dfc2$Cargo <- str_to_title(dfc2$Cargo)
 
-dfc2$Alienação <- dfc2$`Quantidade de abstenções` + dfc2$`Quantidade de votos brancos` + dfc2$`Quantidade de votos nulos`
+dfc2$Alienação <- dfc2$`Quantidade de abstenções` + dfc2$`Quantidade de votos brancos` + dfc2$`Quantidade de votos nulos` 
+
+dfc2 <- dfc2 %>% 
+  arrange(`Ano da eleição`)
 
 
 
@@ -328,7 +332,10 @@ dfc <- dfc %>%
                 "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS")
 
 
-dfc$Cargo <- str_to_title(dfc$Cargo)
+dfc$Cargo <- str_to_title(dfc$Cargo) 
+
+dfc <- dfc %>% 
+  arrange(`Ano da eleição`)
 
 # Deputado Estadual BR
 
@@ -341,6 +348,9 @@ dec2$Cargo <- str_to_title(dec2$Cargo)
 
 dec2$Alienação <- dec2$`Quantidade de abstenções` + dec2$`Quantidade de votos brancos` + dec2$`Quantidade de votos nulos`
 
+dec2 <- dec2 %>% 
+  arrange(`Ano da eleição`)
+
 
 # Deputado Estadual UF
 
@@ -352,6 +362,9 @@ dec <- dec %>%
                 "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS")
 
 dec$Cargo <- str_to_title(dec$Cargo)
+
+dec <- dec %>% 
+  arrange(`Ano da eleição`)
 
 # 5. Tabelas --------------------------------------------------------------
 
@@ -381,14 +394,9 @@ vags_fed <- vags_fed %>%
 
 vags_fed <- vags_fed %>% 
   dplyr::select(ANO_ELEICAO, UF, C, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Vagas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Cadeiras oferecidas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
                 "Sigla do partido" = "SIGLA_PARTIDO", "Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
                 "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
-
-qef <- vags_fed %>% 
-  select(`Ano da eleição`, UF, `Quociente eleitoral`)
-
-qef <- unique(qef)
 
 
 # Deputado Estadual
@@ -398,33 +406,13 @@ vags_est <- vags_est %>%
 
 vags_est <- vags_est %>% 
   dplyr::select(ANO_ELEICAO, UF, C, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Vagas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Cadeiras oferecidas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
                 "Sigla do partido" = "SIGLA_PARTIDO", "Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
                 "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
 
-qee <- vags_est %>% 
-  select(`Ano da eleição`, UF, `Quociente eleitoral`)
-
-qee <- unique(qee)
-
-
-# 5.2. Quociente partidario -----------------------------------------------
-
-# Deputado Federal
-
-qpf <- vags_fed %>% 
-  dplyr::select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
-
-qpf <- unique(qpf)
 
 
 
-# Deputado estadual
-
-qpe <- vags_est %>% 
-  dplyr::select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
-
-qpe <- unique(vags_est)
 
 
 
