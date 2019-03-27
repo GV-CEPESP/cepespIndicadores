@@ -4,7 +4,7 @@
 
 
 
-rm(list = ls())
+#rm(list = ls())
 
 # Pacotes utilizados
 
@@ -42,7 +42,7 @@ ui <- fluidPage(
              
              
           
-             tabPanel("Sobre"),
+             tabPanel("Sobre", htmlOutput("Note")),
              
              tabPanel("Distribuição de cadeiras",
                       
@@ -93,7 +93,7 @@ ui <- fluidPage(
                                                              DT::dataTableOutput("table6"),
                                                              DT::dataTableOutput("table7"),
                                                              DT::dataTableOutput("table8"))),
-                                                    tabPanel("Definição")))))),  
+                                                    tabPanel("Definição", htmlOutput("Def_dist_cadeiras"))))))),  
   
              tabPanel("Fragmentação legislativa",
             
@@ -147,7 +147,7 @@ ui <- fluidPage(
                                                         DT::dataTableOutput("table16"),
                                                         DT::dataTableOutput("table17"),
                                                         DT::dataTableOutput("table18"))),
-                                           tabPanel("Definição")))))),
+                                           tabPanel("Definição", htmlOutput("Def_frag"))))))),
         
         tabPanel("Alienação",
                  
@@ -199,7 +199,7 @@ ui <- fluidPage(
                                                             DT::dataTableOutput("table24"),
                                                             DT::dataTableOutput("table25"),
                                                             DT::dataTableOutput("table26"))),
-                                               tabPanel("Definição"))))
+                                               tabPanel("Definição", htmlOutput("Def_aliena")))))
                    
                    
                  ))))
@@ -213,6 +213,11 @@ ui <- fluidPage(
 
 
 server <- function(input, output,session){
+  output$Note <- renderUI({
+    note <- paste0("<font size='3'> Os indicadores eleitorais são uma iniciativa de disseminar análise de dados eleitorais. Os indicadores aqui calculados foram inspirados pelo livro 'Votos e Partidos - Almanaque de Dados Eleitorais' de Wanderley Guilherme dos Santos. Todos os indicadores foram calculados a partir dos dados do <a href='http://cepesp.io/'> CepespData </a>. Desenvolvido pela equipe CEPESP. </font>")
+    HTML(note)
+  })
+  
   
   
   
@@ -926,6 +931,27 @@ server <- function(input, output,session){
   }) 
   
 # 3.4. Definicao ----------------------------------------------------------  
+  #Distribuição de cadeiras
+  output$Def_dist_cadeiras <- renderUI({
+    note <- paste0("<font size='3'> Definição dos indicadores </font>
+                   <br><font size='2'>Quociente Eleitoral</br>
+                   <br>Quociente Partidário</br></font>")
+    HTML(note)
+  })
+  
+  output$Def_frag <- renderUI({
+    note <- paste0("<font size='3'> Definição dos indicadores </font>
+                   <br><font size='2'>Fragmentação</br>
+                   <br></br></font>")
+    HTML(note)
+  })
+
+  output$Def_aliena <- renderUI({
+    note <- paste0("<font size='3'> Definição dos indicadores </font>
+                   <br><font size='2'>Alienação</br>
+                   <br></br></font>")
+    HTML(note)
+  })
   
 # 3.5. Botao de acao ------------------------------------------------------
   
