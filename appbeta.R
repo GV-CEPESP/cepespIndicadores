@@ -511,25 +511,21 @@ server <- function(input, output,session){
   })
   
   output$plot1 <- renderPlotly({
-    plot1 <- qef %>% 
-      dplyr::filter(UF == input$UF) %>%
-      ggplot(aes(x = reorder(`Ano da eleição`, order(`Ano da eleição`)), y=`Quociente eleitoral`)) + 
+    plot1 <- vags_fed %>% 
+     dplyr::filter(UF == input$UF) %>%
+      ggplot(aes(x= UF, y = `Quociente eleitoral`)) + 
       geom_bar(stat="identity", width=0.5, fill="#023858", colour = "#023858") +
+      facet_grid(. ~ `Ano da eleição`) +
       labs(title="Quociente eleitoral: Deputado Federal", 
            subtitle="Período de 1998-2018", 
            caption="fonte: CepespIndicadores") + 
       theme(plot.background=element_blank(),
-            panel.border=element_blank(),
             plot.title = element_text(size = rel(1.2)),
-            axis.title.x = ,
+            axis.title = element_blank(),
             axis.ticks = element_blank(),
             legend.title = element_blank(),
             legend.position = "right",
-            axis.line = element_blank(),
-            panel.background = element_blank(),
-            strip.background = element_blank(),
-            panel.grid = element_blank(),
-            axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) 
+            axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
     
   })
   

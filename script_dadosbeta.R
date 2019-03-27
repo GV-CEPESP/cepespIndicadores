@@ -171,7 +171,7 @@ numc_df <- left_join(num_df, num_df1, by = c("ANO_ELEICAO", "DESCRICAO_CARGO", "
 
 numc_df <- numc_df %>% 
   dplyr::select(ANO_ELEICAO, UF,DESCRICAO_CARGO, SIGLA_PARTIDO, `Cadeiras conquistadas por UF`, `Total de cadeiras conquistadas`) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do Partido" = "SIGLA_PARTIDO")
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do partido" = "SIGLA_PARTIDO")
 
 numc_df$Cargo <- str_to_title(numc_df$Cargo)
 
@@ -424,6 +424,7 @@ vags_fed <- vags_fed %>%
                 "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
 
 
+
 # Deputado Estadual
 
 vags_est <- vags_est %>% 
@@ -434,7 +435,6 @@ vags_est <- vags_est %>%
   dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Cadeiras oferecidas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
                 "Sigla do partido" = "SIGLA_PARTIDO", "Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
                 "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
-
 
 
 
