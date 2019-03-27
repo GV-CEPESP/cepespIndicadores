@@ -58,16 +58,7 @@ dec_ <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", position = "De
 # vrc <- get_elections(year = "2000, 2004, 2008, 2012, 2016", position = "Vereador",
                      #regional_aggregation = "Municipio", political_aggregation = "Consolidado")
 
- # Cidades
-
-#cidades <- dplyr::count_(vr, c("UF", "NOME_MUNICIPIO"))
-
-#cidades <- select(cidades, "UF", "NOME_MUNICIPIO")
-
-# Quociente eleitoral e magnitude distrital 2018
-
-
-
+ 
 
 
 # 2. Tranformacoes primarias ----------------------------------------------
@@ -98,14 +89,14 @@ dec_ <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", position = "De
 
 # Deputado Federal
 
-df1 <- df %>%  
+df <- df %>%  
   dplyr::group_by(ANO_ELEICAO, UF, SIGLA_PARTIDO) %>% 
   dplyr::summarise(
     VOT_PART_UF = sum(QTDE_VOTOS))
 
 # Deputado Estadual
 
-de1 <- de %>% 
+de <- de %>% 
   dplyr::group_by(ANO_ELEICAO, UF,SIGLA_PARTIDO) %>% 
   dplyr::summarise(
     VOT_PART_UF = sum(QTDE_VOTOS)
@@ -113,7 +104,7 @@ de1 <- de %>%
 
 # Vereador
 
-#vr1 <- vr %>% 
+#vr <- vr %>% 
   #dplyr::group_by(ANO_ELEICAO, COD_MUN_TSE,NOME_MUNICIPIO,SIGLA_PARTIDO) %>% 
   #dplyr::summarise(
     #VOT_PART_MUN = sum(QTDE_VOTOS)) 
@@ -151,7 +142,7 @@ dec1 <- dec %>%
 
 vags_fed <- left_join(vags_fed,dfc1, by = "UF")
 
-vags_fed <- left_join(vags_fed, df1, by = c("ANO_ELEICAO", "UF"))
+vags_fed <- left_join(vags_fed, df, by = c("ANO_ELEICAO", "UF"))
 
 
  # Deputado Estadual
@@ -161,7 +152,7 @@ vags_est <- left_join(vags_est,dec1, by = "UF")
 
 de <- left_join(de,dec1, by = c("ANO_ELEICAO","UF"))
 
-vags_est <- left_join(vags_est, de1, by = c("ANO_ELEICAO", "UF"))
+vags_est <- left_join(vags_est, de, by = c("ANO_ELEICAO", "UF"))
 
 
  # Vereador
@@ -278,13 +269,13 @@ t18df$Fracionalização <- fracio(t18df$`Percentual de cadeiras`)
 numc_de$`Percentual de cadeiras` <- numc_de$`Cadeiras conquistadas`/as.numeric(numc_de$Vagas)
 
 
-estados <- list("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
+#estados <- list("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
                 "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", "PR", 
                 "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO")
 
-anos <- list(1998,2002,2006,2010,2014,2018)
+#anos <- list(1998,2002,2006,2010,2014,2018)
 
-frac <- list()
+#frac <- list()
 
 
 #for(i in estados){

@@ -298,6 +298,31 @@ frag_partdf$Cargo <- str_to_title(frag_partdf$Cargo)
 
 # 4.2.7. Número efetivo de partidos por cadeiras ---------------------------------------
 
+options(scipen=999)
+NEP<-NA
+NEPC <- function(p){
+  for(i in 1:length(p)){
+    NEP[[i]]<-(p[[i]]*p[[i]])
+  }
+  1/sum(NEP)}
+
+p<-t98df$`Percentual de cadeiras`
+p[[1]]*p[[1]]
+X<-NEPC(p)
+
+t98df$`Numero efetivo de partidos por cadeiras` <- NEPC(t98df$`Percentual de cadeiras`)
+t02df$`Numero efetivo de partidos por cadeiras` <- NEPC(t02df$`Percentual de cadeiras`)
+t06df$`Numero efetivo de partidos por cadeiras` <- NEPC(t06df$`Percentual de cadeiras`)
+t10df$`Numero efetivo de partidos por cadeiras` <- NEPC(t10df$`Percentual de cadeiras`)
+t14df$`Numero efetivo de partidos por cadeiras` <- NEPC(t14df$`Percentual de cadeiras`)
+t18df$`Numero efetivo de partidos por cadeiras` <- NEPC(t18df$`Percentual de cadeiras`)
+
+
+frag_partdf <- bind_rows(t98df, t02df, t06df, t10df, t14df, t18df) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Sigla do partido" = SIGLA_PARTIDO)
+
+frag_partdf$Cargo <- str_to_title(frag_partdf$Cargo)
+
 
 
 # 4.3. Indicadores de renovacao das bancadas ------------------------------

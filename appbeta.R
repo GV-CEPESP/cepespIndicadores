@@ -30,7 +30,7 @@ library(DT)
 
 # 1. Data ----------------------------------------------------------------
 
-source("script_dadosbeta.R", encoding = "UTF-8")
+#source("script_dadosbeta.R", encoding = "UTF-8")
 
 # 2. User interface -------------------------------------------------------
 
@@ -104,10 +104,9 @@ ui <- fluidPage(
                             
                             selectInput(inputId = "INDICADORES_FRAG",
                                         label = "Escolha um indicador", 
-                                        choices = c("Desproporcionalidade de Gallagher", "Fracionalização", "Fracionalização máxima",
-                                                    "Fragmentação", "Número efetivo de partidos por cadeiras",
-                                                    "Número efetivo de partidos por votos"),
-                                        selected = "Desproporcionalidade de Gallagher"),
+                                        choices = c("Fracionalização", "Fracionalização máxima",
+                                                    "Fragmentação", "Número efetivo de partidos por cadeiras"),
+                                        selected = "Fracionalização"),
                             
                             selectInput(inputId = "DESCRICAO_CARGO2",
                                         label = "Escolha um cargo",
@@ -137,13 +136,17 @@ ui <- fluidPage(
                                                     div(style = 'overflow-x: scroll',
                                                         DT::dataTableOutput("table9"),
                                                         DT::dataTableOutput("table10"),
-                                                        DT::dataTableOutput("table11"))),
+                                                        DT::dataTableOutput("table11"),
+                                                        DT::dataTableOutput("table12"),
+                                                        DT::dataTableOutput("table13"))),
                                            tabPanel("Gráficos"),
                                            tabPanel("Dados agregados", br(),
                                                     div(style = 'overflow-x: scroll',
-                                                        DT::dataTableOutput("table12"),
-                                                        DT::dataTableOutput("table13"),
-                                                        DT::dataTableOutput("table14"))),
+                                                        DT::dataTableOutput("table14"),
+                                                        DT::dataTableOutput("table15"),
+                                                        DT::dataTableOutput("table16"),
+                                                        DT::dataTableOutput("table17"),
+                                                        DT::dataTableOutput("table18"))),
                                            tabPanel("Definição")))))),
         
         tabPanel("Alienação",
@@ -185,17 +188,17 @@ ui <- fluidPage(
                                    tabsetPanel(type = "pills",
                                                tabPanel("Tabelas",br(),
                                                         div(style = 'overflow-x: scroll',
-                                                            DT::dataTableOutput("table15"),
-                                                            DT::dataTableOutput("table16"),
-                                                            DT::dataTableOutput("table17"),
-                                                            DT::dataTableOutput("table18"))),
-                                               tabPanel("Gráficos"),
-                                               tabPanel("Dados agregados",br(),
-                                                        div(style = 'overflow-x: scroll',
                                                             DT::dataTableOutput("table19"),
                                                             DT::dataTableOutput("table20"),
                                                             DT::dataTableOutput("table21"),
                                                             DT::dataTableOutput("table22"))),
+                                               tabPanel("Gráficos"),
+                                               tabPanel("Dados agregados",br(),
+                                                        div(style = 'overflow-x: scroll',
+                                                            DT::dataTableOutput("table23"),
+                                                            DT::dataTableOutput("table24"),
+                                                            DT::dataTableOutput("table25"),
+                                                            DT::dataTableOutput("table26"))),
                                                tabPanel("Definição"))))
                    
                    
@@ -210,6 +213,8 @@ ui <- fluidPage(
 
 
 server <- function(input, output,session){
+  
+  
   
   
  # 3.1. Agregacao regional -------------------------------------------------
@@ -271,6 +276,7 @@ server <- function(input, output,session){
   
   
   # Deputado federal
+  
   
   depfed <- reactive({
     indicador <- input$INDICADORES_DISTR
@@ -389,8 +395,41 @@ server <- function(input, output,session){
     frag_fed()
   })
   
+  
+  # 3.1.6. Numero efetivo de partidos por cadeiras -----------------------------------------------------
+  
+  # Deputado Federal
+  
+  depfed_nep <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table12)
+    }
+  })
+  
+  output$table12 <- DT::renderDataTable({
+    nepc_fed()
+  })
+  
+  # Deputado Estadual
+  
+  depest_nep <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    uf <- input$UF2
+    if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Estadual"){
+      return(input$table13)
+    }
+  })
+  
+  output$table13 <- DT::renderDataTable({
+    nepc_est()
+  })   
  
-  # 3.1.6. Alienacao --------------------------------------------------------
+  # 3.1.7. Alienacao --------------------------------------------------------
   
   # Deputado Federal BR
   
@@ -399,11 +438,11 @@ server <- function(input, output,session){
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$DESCRICAO_CARGO3
     if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
-      return(input$table15)
+      return(input$table19)
     }
   })
   
-  output$table15 <- DT::renderDataTable({
+  output$table19 <- DT::renderDataTable({
     alien_fed1()
   })
   
@@ -415,11 +454,11 @@ server <- function(input, output,session){
     agregacao <- input$DESCRICAO_CARGO3
     uf <- input$UF3
     if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
-      return(input$table16)
+      return(input$table20)
     }
   })
   
-  output$table16 <- DT::renderDataTable({
+  output$table20 <- DT::renderDataTable({
     alien_fed()
   })
   
@@ -430,11 +469,11 @@ server <- function(input, output,session){
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
    if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
-      return(input$table17)
+      return(input$table21)
     }
   })
   
-  output$table17 <- DT::renderDataTable({
+  output$table21 <- DT::renderDataTable({
     alien_est1()
   })
   
@@ -447,11 +486,11 @@ server <- function(input, output,session){
     agregacao <- input$AGREGACAO_REGIONAL3
     uf <- input$UF3
     if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "UF"){
-      return(input$table18)
+      return(input$table22)
     }
   })
   
-  output$table18 <- DT::renderDataTable({
+  output$table22 <- DT::renderDataTable({
     alien_est()
   })
   
@@ -624,11 +663,11 @@ server <- function(input, output,session){
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
     if(indicador == "Fracionalização" & cargo == "Deputado Federal" & agregacao == "Brasil"){
-      return(input$table12)
+      return(input$table14)
     }
   })
   
-  output$table12 <- DT::renderDataTable({
+  output$table14 <- DT::renderDataTable({
     agregfrac_fed()
   })
   
@@ -656,11 +695,11 @@ server <- function(input, output,session){
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
     if(indicador == "Fracionalização máxima" & cargo == "Deputado Federal" & agregacao == "Brasil"){
-      return(input$table13)
+      return(input$table15)
     }
   })
   
-  output$table13 <- DT::renderDataTable({
+  output$table15 <- DT::renderDataTable({
     agregfracmax_fed()
   })
   
@@ -689,11 +728,11 @@ server <- function(input, output,session){
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
     if(indicador == "Fragmentação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
-      return(input$table14)
+      return(input$table16)
     }
   })
   
-  output$table14 <- DT::renderDataTable({
+  output$table16 <- DT::renderDataTable({
     agregfrag_fed()
   })
   
@@ -711,6 +750,66 @@ server <- function(input, output,session){
     })
   })
   
+  #3.3.6. Numero efetivo de partidos por cadeiras --------------------------
+    
+  
+  # Deputado Federal
+  
+  agnep_fed <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table17)
+    }
+  })
+  
+  output$table17 <- DT::renderDataTable({
+    agregnep_fed()
+  })
+  
+  agregnep_fed <- eventReactive(input$BCALC2, {
+    datatable({
+      indicador <- input$INDICADORES_FRAG
+      cargo <- input$DESCRICAO_CARGO2
+      agregacao <- input$AGREGACAO_REGIONAL2
+      if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+        data = frag_partdf %>% 
+          select(`Ano da eleição`, Cargo, Fracionalização,`Fracionalização máxima`, Fragmentação, `Numero efetivo de partidos por cadeiras`) %>% 
+          unique()
+      }
+    })
+  })
+  
+  # Deputado Estadual
+  
+  agnep_est <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
+      return(input$table18)
+    }
+  })
+  
+  output$table18 <- DT::renderDataTable({
+    agregnep_est()
+  })
+  
+  agregnep_est <- eventReactive(input$BCALC2, {
+    datatable({
+      indicador <- input$INDICADORES_FRAG
+      cargo <- input$DESCRICAO_CARGO2
+      agregacao <- input$AGREGACAO_REGIONAL2
+      if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
+        data = frag_partdf %>% 
+          select(`Ano da eleição`, Cargo, Fracionalização,`Fracionalização máxima`, Fragmentação, `Numero efetivo de partidos por cadeiras`) %>% 
+          unique()
+      }
+    })
+  })
+  
+  
   # 3.3.3. Alienacao --------------------------------------------------------
   
   # Deputado Federal BR
@@ -720,11 +819,11 @@ server <- function(input, output,session){
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
    if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
-      return(input$table19)
+      return(input$table23)
     }
   })
   
-  output$table19 <- DT::renderDataTable({
+  output$table23 <- DT::renderDataTable({
     agregali_fed1()
   })
   
@@ -751,11 +850,11 @@ server <- function(input, output,session){
     agregacao <- input$AGREGACAO_REGIONAL3
     uf <- input$UF3
     if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
-      return(input$table20)
+      return(input$table24)
     }
   })
   
-  output$table20 <- DT::renderDataTable({
+  output$table24 <- DT::renderDataTable({
     agregali_fed()
   })
   
@@ -780,11 +879,11 @@ server <- function(input, output,session){
     agregacao <- input$AGREGACAO_REGIONAL3
     uf <- input$UF3
     if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
-      return(input$table21)
+      return(input$table25)
     }
   })
   
-  output$table21 <- DT::renderDataTable({
+  output$table25 <- DT::renderDataTable({
     agregali_est1()
   })
   
@@ -809,11 +908,11 @@ server <- function(input, output,session){
     agregacao <- input$AGREGACAO_REGIONAL3
     uf <- input$UF3
     if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "UF"){
-      return(input$table22)
+      return(input$table26)
     }
   })
   
-  output$table22 <- DT::renderDataTable({
+  output$table26 <- DT::renderDataTable({
     agregali_est()
   })
   
@@ -984,6 +1083,45 @@ server <- function(input, output,session){
     })
   }) 
 
+# 3.5.6. Numero efetivo de partidos por cadeiras --------------------------
+
+  # Deputado Federal
+  
+  nepc_fed <- eventReactive(input$BCALC2, {
+    datatable({
+      indicador <- input$INDICADORES_FRAG
+      cargo <- input$DESCRICAO_CARGO2
+      agregacao <- input$AGREGACAO_REGIONAL2
+      uf <- input$UF2
+      if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+        frag_partdf %>% 
+          dplyr::select(`Ano da eleição`,`Numero efetivo de partidos por cadeiras`) %>% 
+          unique() %>% 
+          spread(`Ano da eleição`,`Numero efetivo de partidos por cadeiras`)
+        
+      }
+    })
+  }) 
+  
+  
+  # Deputado Estadual
+  
+  nepc_est <- eventReactive(input$BCALC2, {
+    datatable({
+      indicador <- input$INDICADORES_FRAG
+      cargo <- input$DESCRICAO_CARGO2
+      agregacao <- input$AGREGACAO_REGIONAL2
+      uf <- input$UF2
+      if(indicador == "Número efetivo de partidos por cadeiras" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
+        frag_partdf %>% 
+          dplyr::select(`Ano da eleição`,`Numero efetivo de partidos por cadeiras`) %>% 
+          unique() %>% 
+          spread(`Ano da eleição`,`Numero efetivo de partidos por cadeiras`)
+        
+      }
+    })
+  })  
+  
 
 
 # 3.5.6. Alienacao --------------------------------------------------------
