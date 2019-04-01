@@ -35,10 +35,10 @@ library(DT)
 # 2. User interface -------------------------------------------------------
 
 
-ui <- fluidPage(
-  
-  
-  navbarPage("CepespIndicadores", theme = shinytheme("flatly"),
+ui <- fluidPage( 
+
+
+  navbarPage("CepespIndicadores", theme = shinytheme("flatly"), 
              
              
           
@@ -85,8 +85,6 @@ ui <- fluidPage(
                                                              DT::dataTableOutput("table2"),
                                                              DT::dataTableOutput("table3"),
                                                              DT::dataTableOutput("table4"))),
-                                                    tabPanel("Gráficos", br(), 
-                                                             plotlyOutput("plot1")),
                                                     tabPanel("Dados agregados", br(),
                                                              div(style = 'overflow-x: scroll',
                                                              DT::dataTableOutput("table5"),
@@ -139,8 +137,7 @@ ui <- fluidPage(
                                                         DT::dataTableOutput("table11"),
                                                         DT::dataTableOutput("table12"),
                                                         DT::dataTableOutput("table13"))),
-                                           tabPanel("Gráficos"),
-                                           tabPanel("Dados agregados", br(),
+                                          tabPanel("Dados agregados", br(),
                                                     div(style = 'overflow-x: scroll',
                                                         DT::dataTableOutput("table14"),
                                                         DT::dataTableOutput("table15"),
@@ -192,7 +189,6 @@ ui <- fluidPage(
                                                             DT::dataTableOutput("table20"),
                                                             DT::dataTableOutput("table21"),
                                                             DT::dataTableOutput("table22"))),
-                                               tabPanel("Gráficos"),
                                                tabPanel("Dados agregados",br(),
                                                         div(style = 'overflow-x: scroll',
                                                             DT::dataTableOutput("table23"),
@@ -213,8 +209,17 @@ ui <- fluidPage(
 
 
 server <- function(input, output,session){
-  output$Note <- renderUI({
-    note <- paste0("<font size='3'> Os indicadores eleitorais são uma iniciativa de disseminar análise de dados eleitorais. Os indicadores aqui calculados foram inspirados pelo livro 'Votos e Partidos - Almanaque de Dados Eleitorais' de Wanderley Guilherme dos Santos. Todos os indicadores foram calculados a partir dos dados do <a href='http://cepesp.io/'> CepespData </a>. Desenvolvido pela equipe CEPESP. </font>")
+  
+  
+# Funcao para descricao do sobre
+  
+    output$Note <- renderUI({
+    note <- paste0("
+                   <font size='3'> 
+                   Os indicadores eleitorais são uma iniciativa de disseminar análise de dados eleitorais. 
+                   Os indicadores aqui calculados foram inspirados pelo livro 'Votos e Partidos - Almanaque de Dados Eleitorais' 
+                   de Wanderley Guilherme dos Santos. Todos os indicadores foram calculados a partir dos dados do 
+                   <a href='http://cepesp.io/'> CepespData </a>. Desenvolvido pela equipe CEPESP. </font>")
     HTML(note)
   })
   
@@ -226,7 +231,10 @@ server <- function(input, output,session){
   
   # Fragmentacao partidaria
   
-  agreg <- reactive({
+  
+# Funcao que retorna uma nova caixa de selecao quando o usuario seleciona "UF" na agregacao regional
+    
+    agreg <- reactive({
     agregacao <- input$AGREGACAO_REGIONAL2
     if(agregacao == "UF"){
       return(input$UF2)
@@ -510,14 +518,14 @@ server <- function(input, output,session){
   grqe_df <- reactive({
     indicador <- input$INDICADORES_DISTR
     cargo <- input$DESCRICAO_CARGO1
-    if(indicador == "Quociente partidário" & cargo == "Deputado Federal"){
+    if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal"){
       return(input$plot1)
     }
   })
   
   output$plot1 <- renderPlotly({
     plot1 <- vags_fed %>% 
-     dplyr::filter(UF == input$UF) %>%
+      dplyr::filter(UF == input$UF) %>%
       ggplot(aes(x= UF, y = `Quociente eleitoral`)) + 
       geom_bar(stat="identity", width=0.5, fill="#023858", colour = "#023858") +
       facet_grid(. ~ `Ano da eleição`) +
@@ -531,8 +539,8 @@ server <- function(input, output,session){
             legend.title = element_blank(),
             legend.position = "right",
             axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
-    
   })
+  
   
   
   

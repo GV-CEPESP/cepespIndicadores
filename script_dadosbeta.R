@@ -323,7 +323,10 @@ frag_partdf <- bind_rows(t98df, t02df, t06df, t10df, t14df, t18df) %>%
 
 frag_partdf$Cargo <- str_to_title(frag_partdf$Cargo)
 
-
+frag_partdf$Fracionalização <- format(round(frag_partdf$Fracionalização, digits = 2),  nsmall = 2)
+frag_partdf$`Fracionalização máxima` <- format(round(frag_partdf$`Fracionalização máxima`, digits = 2), nsmall = 2)
+frag_partdf$Fragmentação <- format(round(frag_partdf$Fragmentação, digits = 2), nsmall = 2)
+frag_partdf$`Numero efetivo de partidos por cadeiras` <- format(round(frag_partdf$`Numero efetivo de partidos por cadeiras`, digits = 2), nsmall = 2)
 
 # 4.3. Indicadores de renovacao das bancadas ------------------------------
 
@@ -396,6 +399,7 @@ dec <- dec %>%
 
 # 5.1. Quociente eleitoral ------------------------------------------------
 
+
 gabi<-function(string){
   
   paste0(round(string/1000,0),".", substr(round(string,0), start = nchar(round(string,0))- 2, stop = nchar(round(string,0))),
@@ -404,40 +408,45 @@ gabi<-function(string){
 }
 
 
-vags_fed$QUOCIENTE_ELEITORAL <-gabi(vags_fed$QUOCIENTE_ELEITORAL)
+vags_fed$QUOCIENTE_ELEITORAL <- gabi(vags_fed$QUOCIENTE_ELEITORAL)
+
 vags_fed$QUOCIENTE_PARTIDARIO <- round(vags_fed$QUOCIENTE_PARTIDARIO, digits = 2)
 
 vags_est$QUOCIENTE_ELEITORAL <-gabi(vags_est$QUOCIENTE_ELEITORAL)
+
 vags_est$QUOCIENTE_PARTIDARIO <- round(vags_est$QUOCIENTE_PARTIDARIO, digits = 2)
-
-vags_fed <- vags_fed %>% 
-  mutate(C = str_to_title(vags_fed$CARGO))
-
 
 
 # Deputado Federal
 
 vags_fed <- vags_fed %>% 
-  dplyr::select(ANO_ELEICAO, UF, C, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Cadeiras oferecidas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
+  dplyr::select(ANO_ELEICAO, UF, CARGO, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "CARGO", "Cadeiras oferecidas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
                 "Sigla do partido" = "SIGLA_PARTIDO", "Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
                 "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
 
-
+vags_fed$Cargo <- str_to_title(vags_fed$Cargo)
 
 # Deputado Estadual
 
-vags_est <- vags_est %>% 
-  mutate(C = str_to_title(vags_est$CARGO))
 
 vags_est <- vags_est %>% 
-  dplyr::select(ANO_ELEICAO, UF, C, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "C", "Cadeiras oferecidas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
+  dplyr::select(ANO_ELEICAO, UF, CARGO, VAGAS, VOTOS_VALIDOS_UF,SIGLA_PARTIDO, VOT_PART_UF, QUOCIENTE_ELEITORAL, QUOCIENTE_PARTIDARIO) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "CARGO", "Cadeiras oferecidas" = "VAGAS", "Votos válidos " = "VOTOS_VALIDOS_UF",
                 "Sigla do partido" = "SIGLA_PARTIDO", "Votos válidos do partido" = "VOT_PART_UF", "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
                 "Quociente partidário" = "QUOCIENTE_PARTIDARIO") 
 
 
+#f <- vags_fed %>% 
+  #filter(UF == "AC") %>% 
+  #ggplot2::ggplot(aes(x = UF, y = `Quociente eleitoral`)) +
+  #geom_bar(stat="identity", fill="#023858", colour = "#023858") +
+  #facet_wrap(~ `Ano da eleição`) +
+  #theme(panel.spacing.y =  unit(4, "mm"), 
+        #axis.text.y = element_text(angle = 360, hjust = 1, vjust = 1))
+   
 
+#print(f)
 
-
+#?theme
 
