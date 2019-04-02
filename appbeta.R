@@ -190,6 +190,8 @@ ui <- fluidPage(
                                                             DT::dataTableOutput("table21"),
                                                             DT::dataTableOutput("table22"))),
                                                tabPanel("Dados agregados",br(),
+                                                        #downloadButton("downloadData", 
+                                                                       #label = strong("Download")),
                                                         div(style = 'overflow-x: scroll',
                                                             DT::dataTableOutput("table23"),
                                                             DT::dataTableOutput("table24"),
@@ -201,7 +203,7 @@ ui <- fluidPage(
                  ))))
                
                
-             
+ ?Do            
 
 
 
@@ -1227,11 +1229,21 @@ alien_est <- eventReactive(input$BCALC3, {
     }
   })
 })  
+
+
+
+# 4. Download -------------------------------------------------------------
+
+#output$downloadData <- downloadHandler(
+  #filename = function() {
+    #paste(input$INDICADORES_ALIE, ".csv", sep = "")
+  #},
+  #content = function(file) {
+   # write.csv(agregali_fed1(), file, row.names = FALSE)
+  #}
+  #)
 }
 
-
-
-
-# 4. ShinyApp -------------------------------------------------------------
+# 5. ShinyApp -------------------------------------------------------------
 
 shinyApp(ui = ui, server = server)
