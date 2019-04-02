@@ -30,7 +30,7 @@ library(DT)
 
 # 1. Data ----------------------------------------------------------------
 
-#source("script_dadosbeta.R", encoding = "UTF-8")
+source("script_dadosbeta.R", encoding = "UTF-8")
 
 # 2. User interface -------------------------------------------------------
 
@@ -870,8 +870,9 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL3
       uf <- input$UF3
       if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
-        data = dfc %>% 
-          dplyr::filter(UF == input$UF3) 
+        data = dfc 
+        #%>% 
+         # dplyr::filter(UF == input$UF3) 
       }
     })
   })  
