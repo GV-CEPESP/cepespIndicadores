@@ -1028,23 +1028,59 @@ server <- function(input, output,session){
 # 3.4. Definicao ----------------------------------------------------------  
   #Distribuição de cadeiras
   output$Def_dist_cadeiras <- renderUI({
-    note <- paste0("<font size='3'> Definição dos indicadores </font>
-                   <br><font size='2'>Quociente Eleitoral</br>
-                   <br>Quociente Partidário</br></font>")
+    note <- paste0("<h3>Defini&ccedil;&atilde;o dos indicadores</h3>
+<h4><br />Quociente Eleitoral</h4>
+                   <p>&Eacute; o n&uacute;mero m&iacute;nimo de votos que um partido ou coliga&ccedil;&atilde;o deve atingir em determinada UF e elei&ccedil;&atilde;o para garantir uma vaga.</p>
+                   <p>Quociente Eleitoral (QE) = (Votos V&aacute;lidos)/(N&uacute;mero de vagas existentes)&nbsp;</p>
+                   <p><br /><strong>Fonte:</strong>&nbsp;Tribunal Superior Eleitoral - TSE -&nbsp;<a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-eleitoral'>Link</a></p>
+                   <h4>Quociente Partid&aacute;rio</h4>
+                   <p>O indicador representa o n&uacute;mero de vagas que o partido ou coliga&ccedil;&atilde;o obteve, excluindo as vagas distribu&iacute;das por m&eacute;dia.</p>
+                   <p>Quociente partid&aacute;rio (QP) = n&uacute;mero de votos v&aacute;lidos do partido ou coliga&ccedil;&atilde;o / quociente eleitoral</p>
+                   <p><strong>Fonte:</strong>&nbsp;Tribunal Superior Eleitoral - TSE -&nbsp;<a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-partidario'>Link</a></p>")
     HTML(note)
   })
   
   output$Def_frag <- renderUI({
-    note <- paste0("<font size='3'> Definição dos indicadores </font>
-                   <br><font size='2'>Fragmentação</br>
-                   <br></br></font>")
+    note <- paste0("<h3>Defini&ccedil;&atilde;o dos indicadores</h3>
+<h4><br />Fracionaliza&ccedil;&atilde;o</h4>
+                   <p>Este indicador tem por objetivo medir a dispers&atilde;o partid&aacute;ria de um parlamento. Ele indica qual a probabilidade de dois parlamentares desse parlamento, tomados ao acaso, pertecerem a partidos diferentes.</p>
+                   <p><strong>Formula:</strong>&nbsp;</p>
+                   <p>Fracionaliza&ccedil;&atilde;o = 1 - &sum;(pe<sup>2</sup>), onde pe = percentual de cadeiras ocupadas por partido</p>
+<p>&nbsp;</p>                   
+<h4>Fracionaliza&ccedil;&atilde;o M&aacute;xima</h4>
+                   <p>A fracionaliza&ccedil;&atilde;o m&aacute;xima n&atilde;o depende da vota&ccedil;&atilde;o dos partidos, mas da quantidade de cadeiras e partidos com representa&ccedil;&atilde;o parlamentar.&nbsp;</p>
+                   <p><strong>Formula:</strong>&nbsp;</p>
+                   <p>Fracionaliza&ccedil;&atilde;o m&aacute;xima = N*(n-1)/n*(N-1), onde N = n&uacute;mero de cadeiras e n = n&uacute;mero de partidos com representa&ccedil;&atilde;o parlamentar</p>
+<p>&nbsp;</p>                   
+<h4>Fragmenta&ccedil;&atilde;o</h4>
+                   <p>A fragmenta&ccedil;&atilde;o mede quanto o &iacute;ndice de fracionaliza&ccedil;&atilde;o se aproxima da fracionaliza&ccedil;&atilde;o m&aacute;xima.</p>
+                   <p><strong>Formula</strong></p>
+                   <p>(&Iacute;ndice de fracionaliza&ccedil;&atilde;o)/(&Iacute;ndice de fracionaliza&ccedil;&atilde;o m&aacute;xima)</p>
+<p>&nbsp;</p>                   
+<h4>N&uacute;mero efetivo de partidos por cadeiras&nbsp;</h4>
+                   <p>O conceito de n&uacute;mero efetivo de partidos define o grau de fragmenta&ccedil;&atilde;o do sistema partid&aacute;rio, atrav&eacute;s da pondera&ccedil;&atilde;o da for&ccedil;a relativa das legendas que comp&otilde;em o parlamento. O valor calculado aponta a quantidade de partidos com alguma relev&acirc;ncia em um dado sistema pol&iacute;tico.</p>
+                   <p><strong>Formula</strong></p>
+                   <p>NEPC = 1/ &sum;(pe<sup>2</sup>)</p>
+                   <p>&nbsp;</p>
+                   <p>&nbsp;</p>
+                   <p>Fonte: Votos e partidos: almanaque de dados eleitorais (Organiza&ccedil;&atilde;o de Wanderley Guilherme dos Santos, 2002) e <a href='http://datapolitica.com.br/eleicao/metodologia.html'>Data Politica</a></p>")
     HTML(note)
   })
 
   output$Def_aliena <- renderUI({
-    note <- paste0("<font size='3'> Definição dos indicadores </font>
-                   <br><font size='2'>Alienação</br>
-                   <br></br></font>")
+    note <- paste0("<h3>Defini&ccedil;&atilde;o dos indicadores</h3>
+<p>Indicadores de aliena&ccedil;&atilde;o medem a participa&ccedil;&atilde;o nas elei&ccedil;&otilde;es, por unidade eleitoral.</p>
+                   <h4><br />Aliena&ccedil;&atilde;o Absoluta</h4>
+                   <p>A aliena&ccedil;&atilde;o &eacute; a soma de quantidade de absten&ccedil;&otilde;es, votos brancos e votos nulos de determinada elei&ccedil;&atilde;o.</p>
+                   <p><strong>Formula:</strong>&nbsp;</p>
+                   <p>(Absten&ccedil;&otilde;es + Votos Brancos + Votos Nulos)</p>
+                   <p>&nbsp;</p>
+                   <h4>Aliena&ccedil;&atilde;o Percentual</h4>
+                   <p>Aliena&ccedil;&atilde;o percentual &eacute; alieana&ccedil;&atilde;o (absten&ccedil;&otilde;es, brancos e nulos), dividido pelo total de eleitores aptos da unidade eleitoral.</p>
+                   <p><strong>Formula:</strong>&nbsp;</p>
+                   <p>(Absten&ccedil;&otilde;es + Votos Brancos + Votos Nulos)/(Total de eleitores aptos)</p>
+                   <p>&nbsp;</p>
+                   <p>Fonte: Votos e partidos: almanaque de dados eleitorais (Organiza&ccedil;&atilde;o de Wanderley Guilherme dos Santos, 2002)")
     HTML(note)
   })
   
