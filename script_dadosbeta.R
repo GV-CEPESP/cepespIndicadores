@@ -100,6 +100,34 @@ dec1 <- dec %>%
     VOTOS_VALIDOS_UF = sum(QT_VOTOS_NOMINAIS,QT_VOTOS_LEGENDA)
   )
 
+#Tratar deputado estadual e deputado distrital
+dec <- dec %>% 
+  dplyr::group_by(ANO_ELEICAO,UF) %>% 
+  dplyr::summarise(
+    QTD_APTOS = sum(QTD_APTOS),             
+    QTD_COMPARECIMENTO=sum(QTD_COMPARECIMENTO),
+    QTD_ABSTENCOES=sum(QTD_ABSTENCOES),
+    QT_VOTOS_NOMINAIS=sum(QT_VOTOS_NOMINAIS),
+    QT_VOTOS_BRANCOS=sum(QT_VOTOS_BRANCOS),
+    QT_VOTOS_NULOS=sum(QT_VOTOS_NULOS),
+    QT_VOTOS_LEGENDA=sum(QT_VOTOS_LEGENDA),         
+    QT_VOTOS_ANULADOS_APU_SEP=sum(QT_VOTOS_ANULADOS_APU_SEP))
+dec$DESCRICAO_CARGO<-"Deputado Estadual"
+
+
+dec2 <- dec2 %>% 
+  dplyr::group_by(ANO_ELEICAO) %>% 
+  dplyr::summarise(
+    QTD_APTOS = sum(QTD_APTOS),             
+    QTD_COMPARECIMENTO=sum(QTD_COMPARECIMENTO),
+    QTD_ABSTENCOES=sum(QTD_ABSTENCOES),
+    QT_VOTOS_NOMINAIS=sum(QT_VOTOS_NOMINAIS),
+    QT_VOTOS_BRANCOS=sum(QT_VOTOS_BRANCOS),
+    QT_VOTOS_NULOS=sum(QT_VOTOS_NULOS),
+    QT_VOTOS_LEGENDA=sum(QT_VOTOS_LEGENDA),         
+    QT_VOTOS_ANULADOS_APU_SEP=sum(QT_VOTOS_ANULADOS_APU_SEP))
+dec2$DESCRICAO_CARGO<-"Deputado Estadual"
+
 # 3. Join -----------------------------------------------------------------
 
 # Deputado Federal
@@ -337,13 +365,15 @@ frag_partdf$`Numero efetivo de partidos por cadeiras` <- format(round(frag_partd
 # Deputado Federal BR
 
 dfc2 <- dfc2 %>% 
-  select(ANO_ELEICAO, DESCRICAO_CARGO, QTD_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS) %>% 
+  select(ANO_ELEICAO, DESCRICAO_CARGO, QTD_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, QTD_COMPARECIMENTO) %>% 
   rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Quantidade de abstenções" = "QTD_ABSTENCOES",
-         "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS") 
+         "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS", 
+         "Comparecimento total" = "QTD_COMPARECIMENTO") 
 
 dfc2$Cargo <- str_to_title(dfc2$Cargo)
 
-dfc2$Alienação <- dfc2$`Quantidade de abstenções` + dfc2$`Quantidade de votos brancos` + dfc2$`Quantidade de votos nulos` 
+dfc2$`Alienação Absoluta` <- dfc2$`Quantidade de abstenções` + dfc2$`Quantidade de votos brancos` + dfc2$`Quantidade de votos nulos` 
+dfc2$`Alienação Percentual` <- round(100*(dfc2$`Quantidade de abstenções` + dfc2$`Quantidade de votos brancos` + dfc2$`Quantidade de votos nulos`)/dfc2$`Comparecimento total`,2)
 
 dfc2 <- dfc2 %>% 
   arrange(`Ano da eleição`)
@@ -352,12 +382,15 @@ dfc2 <- dfc2 %>%
 
 # Deputado Federal UF
 
-dfc$Alienação <- dfc$QTD_ABSTENCOES + dfc$QT_VOTOS_BRANCOS + dfc$QT_VOTOS_NULOS
 
 dfc <- dfc %>% 
-  dplyr::select(ANO_ELEICAO,UF, DESCRICAO_CARGO, QTD_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, Alienação) %>% 
+  dplyr::select(ANO_ELEICAO,UF, DESCRICAO_CARGO, QTD_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, QTD_COMPARECIMENTO) %>% 
   dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Quantidade de abstenções" = "QTD_ABSTENCOES",
-                "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS")
+                "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS", 
+                "Comparecimento total"="QTD_COMPARECIMENTO")
+
+dfc$`Alienação Absoluta` <- dfc$`Quantidade de abstenções` + dfc$`Quantidade de votos brancos` + dfc$`Quantidade de votos nulos` 
+dfc$`Alienação Percentual` <- round(100*(dfc$`Quantidade de abstenções` + dfc$`Quantidade de votos brancos` + dfc$`Quantidade de votos nulos`)/dfc$`Comparecimento total`,2)
 
 
 dfc$Cargo <- str_to_title(dfc$Cargo) 
@@ -368,13 +401,15 @@ dfc <- dfc %>%
 # Deputado Estadual BR
 
 dec2 <- dec2 %>% 
-  select(ANO_ELEICAO, DESCRICAO_CARGO, QTD_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS) %>% 
+  select(ANO_ELEICAO, DESCRICAO_CARGO, QTD_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, QTD_COMPARECIMENTO) %>% 
   rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Quantidade de abstenções" = "QTD_ABSTENCOES",
-         "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS") 
+         "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS", 
+         "Comparecimento total"="QTD_COMPARECIMENTO") 
 
 dec2$Cargo <- str_to_title(dec2$Cargo)
 
-dec2$Alienação <- dec2$`Quantidade de abstenções` + dec2$`Quantidade de votos brancos` + dec2$`Quantidade de votos nulos`
+dec2$`Alienação Absoluta` <- dec2$`Quantidade de abstenções` + dec2$`Quantidade de votos brancos` + dec2$`Quantidade de votos nulos`
+dec2$`Alienação Percentual` <- round(100*(dec2$`Quantidade de abstenções` + dec2$`Quantidade de votos brancos` + dec2$`Quantidade de votos nulos`)/dec2$`Comparecimento total`,2)
 
 dec2 <- dec2 %>% 
   arrange(`Ano da eleição`)
@@ -382,12 +417,15 @@ dec2 <- dec2 %>%
 
 # Deputado Estadual UF
 
-dec$Alienação <- dec$QTD_ABSTENCOES + dec$QT_VOTOS_BRANCOS + dec$QT_VOTOS_NULOS
-
 dec <- dec %>% 
-  dplyr::select(ANO_ELEICAO,UF, DESCRICAO_CARGO, QTD_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, Alienação) %>% 
+  dplyr::select(ANO_ELEICAO,UF, DESCRICAO_CARGO, QTD_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, QTD_COMPARECIMENTO) %>% 
   dplyr::rename("Ano da eleição" = "ANO_ELEICAO", "Cargo" = "DESCRICAO_CARGO", "Quantidade de abstenções" = "QTD_ABSTENCOES",
-                "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS")
+                "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", "Quantidade de votos nulos" = "QT_VOTOS_NULOS", 
+                "Comparecimento total"="QTD_COMPARECIMENTO")
+
+dec$`Alienação Absoluta` <- dec$`Quantidade de abstenções` + dec$`Quantidade de votos brancos` + dec$`Quantidade de votos nulos`
+dec$`Alienação Percentual` <- round(100*(dec$`Quantidade de abstenções` + dec$`Quantidade de votos brancos` + dec$`Quantidade de votos nulos`)/dec$`Comparecimento total`,2)
+
 
 dec$Cargo <- str_to_title(dec$Cargo)
 
@@ -398,15 +436,18 @@ dec <- dec %>%
 
 
 # 5.1. Quociente eleitoral ------------------------------------------------
-
+string<-3679996
 
 gabi<-function(string){
-  
-  paste0(round(string/1000,0),".", substr(round(string,0), start = nchar(round(string,0))- 2, stop = nchar(round(string,0))),
+  ifelse(string>1000000, 
+         (paste0(round(string/1000000,0),".",round(string/1000000,0)*1000-round(string/1000,0),".", substr(round(string,0), start = nchar(round(string,0))- 2, stop = nchar(round(string,0))),
+           ifelse(round(string,2)==round(string,0),"",
+                  paste0(",",substr(1 + round(string,2)-round(string,0),start = 3, stop = 4))))),
+    (paste0(round(string/1000,0),".", substr(round(string,0), start = nchar(round(string,0))- 2, stop = nchar(round(string,0))),
          ifelse(round(string,2)==round(string,0),"",
-                paste0(",",substr(1 + round(string,2)-round(string,0),start = 3, stop = 4))))
+                paste0(",",substr(1 + round(string,2)-round(string,0),start = 3, stop = 4))))))
 }
-
+gabi(string)
 
 vags_fed$QUOCIENTE_ELEITORAL <- gabi(vags_fed$QUOCIENTE_ELEITORAL)
 
@@ -416,6 +457,13 @@ vags_est$QUOCIENTE_ELEITORAL <-gabi(vags_est$QUOCIENTE_ELEITORAL)
 
 vags_est$QUOCIENTE_PARTIDARIO <- round(vags_est$QUOCIENTE_PARTIDARIO, digits = 2)
 
+dec$`Alienação Absoluta` <- gabi(dec$`Alienação Absoluta`)
+
+dec2$`Alienação Absoluta` <- gabi(dec2$`Alienação Absoluta`)
+
+dfc$`Alienação Absoluta` <- gabi(dfc$`Alienação Absoluta`)
+
+dfc2$`Alienação Absoluta` <- gabi(dfc2$`Alienação Absoluta`)
 
 # Deputado Federal
 

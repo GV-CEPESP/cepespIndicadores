@@ -30,7 +30,7 @@ library(DT)
 
 # 1. Data ----------------------------------------------------------------
 
-source("script_dadosbeta.R", encoding = "UTF-8")
+#source("script_dadosbeta.R", encoding = "UTF-8")
 
 # 2. User interface -------------------------------------------------------
 
@@ -65,8 +65,8 @@ ui <- fluidPage(
                                                  label = "Escolha um estado",
                                                  choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
                                                     "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", "PR", 
-                                                    "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
-                                                 selected = "AC"),
+                                                    "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO", "Todas UFs"),
+                                                 selected = "Todas UFs"),
                                      
                                  
                                      actionButton(inputId = "BCALC1",
@@ -155,8 +155,8 @@ ui <- fluidPage(
                                 
                                 selectInput(inputId = "INDICADORES_ALIE",
                                             label = "Escolha um indicador", 
-                                            choices = "Alienação",
-                                            selected = "Alienação"),
+                                            choices = c("Alienação Absoluta", "Alienação Percentual"),
+                                            selected = "Alienação Absoluta"),
                                 
                                 selectInput(inputId = "DESCRICAO_CARGO3",
                                             label = "Escolha um cargo",
@@ -185,10 +185,14 @@ ui <- fluidPage(
                                    tabsetPanel(type = "pills",
                                                tabPanel("Tabelas",br(),
                                                         div(style = 'overflow-x: scroll',
-                                                            DT::dataTableOutput("table19"),
-                                                            DT::dataTableOutput("table20"),
-                                                            DT::dataTableOutput("table21"),
-                                                            DT::dataTableOutput("table22"))),
+                                                            DT::dataTableOutput("table_alienacao_df"),
+                                                            DT::dataTableOutput("table_alienacao_df_p"), 
+                                                            DT::dataTableOutput("table_alienacao_df2"), 
+                                                            DT::dataTableOutput("table_alienacao_df2_p"), 
+                                                            DT::dataTableOutput("table_alienacao_de"),
+                                                            DT::dataTableOutput("table_alienacao_de_p"), 
+                                                            DT::dataTableOutput("table_alienacao_de2"), 
+                                                            DT::dataTableOutput("table_alienacao_de2_p"))),
                                                tabPanel("Dados agregados",br(),
                                                         #downloadButton("downloadData", 
                                                                        #label = strong("Download")),
@@ -203,7 +207,6 @@ ui <- fluidPage(
                  ))))
                
                
- ?Do            
 
 
 
@@ -275,8 +278,8 @@ server <- function(input, output,session){
                      label = "Escolha um estado",
                      choices = c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
                                  "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", 
-                                 "PR", "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
-                     selected = "AC")
+                                 "PR", "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO", "Todas UFs"),
+                     selected = "Todas UFs")
     }
   })
   
@@ -452,15 +455,29 @@ server <- function(input, output,session){
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$DESCRICAO_CARGO3
-    if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
-      return(input$table19)
+    if(indicador == "Alienação Absoluta" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table_alienacao_df)
     }
   })
   
-  output$table19 <- DT::renderDataTable({
+  output$table_alienacao_df <- DT::renderDataTable({
     alien_fed1()
   })
+
+  depfed_ali1_p <- reactive({
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO3
+    if(indicador == "Alienação Percentual" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table_alienacao_df_p)
+    }
+  })
   
+  output$table_alienacao_df_p <- DT::renderDataTable({
+    alien_fed1_p()
+  })
+  
+
   # Deputado Federal UF
   
   depfed_ali <- reactive({
@@ -468,13 +485,26 @@ server <- function(input, output,session){
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$DESCRICAO_CARGO3
     uf <- input$UF3
-    if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
-      return(input$table20)
+    if(indicador == "Alienação Absoluta" & cargo == "Deputado Federal" & agregacao == "UF"){
+      return(input$table_alienacao_df2)
     }
   })
   
-  output$table20 <- DT::renderDataTable({
+  output$table_alienacao_df2 <- DT::renderDataTable({
     alien_fed()
+  })
+  
+  depfed_ali_p <- reactive({
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO3
+    uf <- input$UF3
+    if(indicador == "Alienação Percentual" & cargo == "Deputado Federal" & agregacao == "UF"){
+      return(input$table_alienacao_df2_p)
+    }
+  })
+  output$table_alienacao_df2_p <- DT::renderDataTable({
+    alien_fed_p()
   })
   
   # Deputado Estadual BR
@@ -483,16 +513,29 @@ server <- function(input, output,session){
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
-   if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
-      return(input$table21)
+    if(indicador == "Alienação Absoluta" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
+      return(input$table_alienacao_de)
     }
   })
   
-  output$table21 <- DT::renderDataTable({
+  output$table_alienacao_de <- DT::renderDataTable({
     alien_est1()
   })
   
+  depest_ali1_p <- reactive({
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    if(indicador == "Alienação Percentual" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
+      return(input$table_alienacao_de_p)
+    }
+  })
   
+  output$table_alienacao_de_p <- DT::renderDataTable({
+    alien_est1_p()
+  })
+  
+    
   # Deputado Estadual UF
   
   depest_ali <- reactive({
@@ -500,14 +543,29 @@ server <- function(input, output,session){
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     uf <- input$UF3
-    if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "UF"){
-      return(input$table22)
+    if(indicador == "Alienação Absoluta" & cargo == "Deputado Estadual" & agregacao == "UF"){
+      return(input$table_alienacao_de2)
     }
   })
   
-  output$table22 <- DT::renderDataTable({
+  output$table_alienacao_de2 <- DT::renderDataTable({
     alien_est()
   })
+  
+  depest_ali_p <- reactive({
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    uf <- input$UF3
+    if(indicador == "Alienação Absoluta" & cargo == "Deputado Estadual" & agregacao == "UF"){
+      return(input$table_alienacao_de2_p)
+    }
+  })
+  
+  output$table_alienacao_de2_p <- DT::renderDataTable({
+    alien_est_p()
+  })
+  
   
   
   # 3.2. Graficos -----------------------------------------------------------
@@ -829,7 +887,7 @@ server <- function(input, output,session){
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
-   if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+   if(indicador == "Alienação Absoluta" & cargo == "Deputado Federal" & agregacao == "Brasil"){
       return(input$table23)
     }
   })
@@ -844,9 +902,35 @@ server <- function(input, output,session){
       cargo <- input$DESCRICAO_CARGO3
       agregacao <- input$AGREGACAO_REGIONAL3
       uf <- input$UF3
-      if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      if(indicador == "Alienação Absoluta" & cargo == "Deputado Federal" & agregacao == "Brasil"){
         data = dfc2 
          
+      }
+    })
+  })  
+
+  agali_fed1_p <- reactive({
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    if(indicador == "Alienação Percentual" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      return(input$table23_p)
+    }
+  })
+  
+  output$table23_p <- DT::renderDataTable({
+    agregali_fed1_p()
+  })
+  
+  agregali_fed1_p <- eventReactive(input$BCALC3, {
+    datatable({
+      indicador <- input$INDICADORES_ALIE
+      cargo <- input$DESCRICAO_CARGO3
+      agregacao <- input$AGREGACAO_REGIONAL3
+      uf <- input$UF3
+      if(indicador == "Alienação Percentual" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+        data = dfc2 
+        
       }
     })
   })  
@@ -860,7 +944,7 @@ server <- function(input, output,session){
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     uf <- input$UF3
-    if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
+    if(indicador == "Alienação Absoluta" & cargo == "Deputado Federal" & agregacao == "UF"){
       return(input$table24)
     }
   })
@@ -875,7 +959,7 @@ server <- function(input, output,session){
       cargo <- input$DESCRICAO_CARGO3
       agregacao <- input$AGREGACAO_REGIONAL3
       uf <- input$UF3
-      if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
+      if(indicador == "Alienação Absoluta" & cargo == "Deputado Federal" & agregacao == "UF"){
         data = dfc 
         #%>% 
          # dplyr::filter(UF == input$UF3) 
@@ -890,7 +974,7 @@ server <- function(input, output,session){
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     uf <- input$UF3
-    if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
+    if(indicador == "Alienação Absoluta" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
       return(input$table25)
     }
   })
@@ -904,7 +988,7 @@ server <- function(input, output,session){
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO3
       agregacao <- input$AGREGACAO_REGIONAL3
-      if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
+      if(indicador == "Alienação Absoluta" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
         data = dec2 
       }
     })
@@ -979,11 +1063,17 @@ server <- function(input, output,session){
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
       if(indicador == "Quociente eleitoral" & cargo == "Deputado Federal"){
+        if(input$UF == "Todas UFs"){
+          vags_fed %>% 
+            select(`Ano da eleição`, UF, `Quociente eleitoral`) %>% 
+            unique() %>% 
+            spread(`Ano da eleição`, `Quociente eleitoral`)
+        }else{
         vags_fed %>% 
           dplyr::filter(UF == input$UF) %>% 
           select(`Ano da eleição`, UF, `Quociente eleitoral`) %>% 
           unique() %>% 
-          spread(`Ano da eleição`, `Quociente eleitoral`)
+          spread(`Ano da eleição`, `Quociente eleitoral`)}
         
       }
     })
@@ -998,11 +1088,18 @@ server <- function(input, output,session){
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
       if(indicador == "Quociente eleitoral" & cargo == "Deputado Estadual"){
+        if(input$UF=="Todas UFs"){
+          expr = vags_est %>% 
+            select(`Ano da eleição`, UF, `Quociente eleitoral`) %>% 
+            unique %>% 
+            spread(`Ano da eleição`, `Quociente eleitoral`)
+        
+        }else{
         expr = vags_est %>% 
           dplyr::filter(UF == input$UF) %>% 
           select(`Ano da eleição`, UF, `Quociente eleitoral`) %>% 
           unique %>% 
-          spread(`Ano da eleição`, `Quociente eleitoral`)
+          spread(`Ano da eleição`, `Quociente eleitoral`)}
       }
     })
   })  
@@ -1020,10 +1117,15 @@ server <- function(input, output,session){
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
       if(indicador == "Quociente partidário" & cargo == "Deputado Federal"){
+        if(input$UF=="Todas UFs"){
+          expr = vags_fed %>% 
+            select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
+          
+        }else{
         expr = vags_fed %>% 
           dplyr::filter(UF == input$UF) %>% 
           select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
-        
+        }
         
       }
     })
@@ -1037,10 +1139,15 @@ server <- function(input, output,session){
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
       if(indicador == "Quociente partidário" & cargo == "Deputado Estadual"){
+        if(input$UF=="Todas UFs"){
+          expr = vags_est %>% 
+            select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
+          
+        }else{
         expr = vags_est %>% 
           dplyr::filter(UF == input$UF) %>% 
           select(`Ano da eleição`, UF, `Sigla do partido`, `Quociente partidário`)
-      }
+      }}
     })
   })
   
@@ -1166,15 +1273,28 @@ server <- function(input, output,session){
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO3
       agregacao <- input$AGREGACAO_REGIONAL3
-      if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+      if(indicador == "Alienação Absoluta" & cargo == "Deputado Federal" & agregacao == "Brasil"){
         dfc2 %>% 
-          dplyr::select(`Ano da eleição`, Alienação) %>% 
-          spread(`Ano da eleição`,Alienação)
+          dplyr::select(`Ano da eleição`, `Alienação Absoluta`) %>% 
+          spread(`Ano da eleição`,`Alienação Absoluta`)
         
       }
     })
   })  
   
+  alien_fed1_p <- eventReactive(input$BCALC3, {
+    datatable({
+      indicador <- input$INDICADORES_ALIE
+      cargo <- input$DESCRICAO_CARGO3
+      agregacao <- input$AGREGACAO_REGIONAL3
+      if(indicador == "Alienação Percentual" & cargo == "Deputado Federal" & agregacao == "Brasil"){
+        dfc2 %>% 
+          dplyr::select(`Ano da eleição`, `Alienação Percentual`) %>% 
+          spread(`Ano da eleição`,`Alienação Percentual`)
+        
+      }
+    })
+  })  
   
   # Deputado Federal UF
 
@@ -1184,15 +1304,42 @@ alien_fed <- eventReactive(input$BCALC3, {
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     uf <- input$UF3
-    if(indicador == "Alienação" & cargo == "Deputado Federal" & agregacao == "UF"){
+    if(indicador == "Alienação Absoluta" & cargo == "Deputado Federal" & agregacao == "UF"){
+      if(uf=="Todas UFs"){
+        dfc %>% 
+          dplyr::select(`Ano da eleição`,UF, `Alienação Absoluta`) %>% 
+          spread(`Ano da eleição`,`Alienação Absoluta`)
+      }else{
       dfc %>% 
         dplyr::filter(UF == input$UF3) %>% 
-        dplyr::select(`Ano da eleição`,UF, Alienação) %>% 
-        spread(`Ano da eleição`,Alienação)
+        dplyr::select(`Ano da eleição`,UF, `Alienação Absoluta`) %>% 
+        spread(`Ano da eleição`,`Alienação Absoluta`)}
       
     }
   })
 })  
+
+alien_fed_p <- eventReactive(input$BCALC3, {
+  datatable({
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    uf <- input$UF3
+    if(indicador == "Alienação Percentual" & cargo == "Deputado Federal" & agregacao == "UF"){
+      if(uf=="Todas UFs"){
+        dfc %>% 
+          dplyr::select(`Ano da eleição`,UF, `Alienação Percentual`) %>% 
+          spread(`Ano da eleição`,`Alienação Percentual`)
+      }else{
+        dfc %>% 
+          dplyr::filter(UF == input$UF3) %>% 
+          dplyr::select(`Ano da eleição`,UF, `Alienação Percentual`) %>% 
+          spread(`Ano da eleição`,`Alienação Percentual`)}
+      
+    }
+  })
+})  
+
 
 # Deputado Estadual BR
 
@@ -1201,16 +1348,31 @@ alien_est1 <- eventReactive(input$BCALC3, {
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
-   if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
+   if(indicador == "Alienação Absoluta" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
       dec2 %>% 
-        dplyr::select(`Ano da eleição`, Cargo,Alienação) %>% 
-        spread(`Ano da eleição`,Alienação)
+        dplyr::select(`Ano da eleição`, Cargo,`Alienação Absoluta`) %>% 
+        spread(`Ano da eleição`,`Alienação Absoluta`)
       
       
     }
   })
 })  
 
+
+alien_est1_p <- eventReactive(input$BCALC3, {
+  datatable({
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    if(indicador == "Alienação Percentual" & cargo == "Deputado Estadual" & agregacao == "Brasil"){
+      dec2 %>% 
+        dplyr::select(`Ano da eleição`, Cargo,`Alienação Percentual`) %>% 
+        spread(`Ano da eleição`,`Alienação Percentual`)
+      
+      
+    }
+  })
+})  
 
 # Deputado Estadual UF  
 
@@ -1220,17 +1382,44 @@ alien_est <- eventReactive(input$BCALC3, {
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     uf <- input$UF3
-    if(indicador == "Alienação" & cargo == "Deputado Estadual" & agregacao == "UF"){
+    if(indicador == "Alienação Absoluta" & cargo == "Deputado Estadual" & agregacao == "UF"){
+      if(uf=="Todas UFs"){
+        dec %>% 
+          dplyr::select(`Ano da eleição`, UF, `Alienação Absoluta`) %>% 
+          spread(`Ano da eleição`,`Alienação Absoluta`)
+      }else{
       dec %>% 
         dplyr::filter(UF == input$UF3) %>% 
-        dplyr::select(`Ano da eleição`, UF, Alienação) %>% 
-        spread(`Ano da eleição`,Alienação)
+        dplyr::select(`Ano da eleição`, UF, `Alienação Absoluta`) %>% 
+        spread(`Ano da eleição`,`Alienação Absoluta`)}
       
       
     }
   })
 })  
 
+
+alien_est_p <- eventReactive(input$BCALC3, {
+  datatable({
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    uf <- input$UF3
+    if(indicador == "Alienação Percentual" & cargo == "Deputado Estadual" & agregacao == "UF"){
+      if(uf=="Todas UFs"){
+        dec %>% 
+          dplyr::select(`Ano da eleição`, UF, `Alienação Percentual`) %>% 
+          spread(`Ano da eleição`,`Alienação Percentual`)
+      }else{
+        dec %>% 
+          dplyr::filter(UF == input$UF3) %>% 
+          dplyr::select(`Ano da eleição`, UF, `Alienação Percentual`) %>% 
+          spread(`Ano da eleição`,`Alienação Percentual`)}
+      
+      
+    }
+  })
+})  
 
 
 # 4. Download -------------------------------------------------------------
@@ -1248,3 +1437,4 @@ alien_est <- eventReactive(input$BCALC3, {
 # 5. ShinyApp -------------------------------------------------------------
 
 shinyApp(ui = ui, server = server)
+
