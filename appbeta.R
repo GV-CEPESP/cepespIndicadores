@@ -30,7 +30,7 @@ library(DT)
 
 # 1. Data ----------------------------------------------------------------
 
-#source("script_dadosbeta.R", encoding = "UTF-8")
+source("script_dadosbeta.R", encoding = "UTF-8")
 
 # 2. User interface -------------------------------------------------------
 
