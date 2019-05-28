@@ -238,7 +238,7 @@ server <- function(input, output,session){
                    Os indicadores aqui calculados foram inspirados pelo livro 'Votos e Partidos - Almanaque 
                    de Dados Eleitorais' de Wanderley Guilherme dos Santos. Todos os indicadores foram calculados 
                    a partir dos dados do <a href='http://www.cepesp.io/cepesp-data/'> CepespData </a>. Desenvolvido 
-                   por Rebeca Carvalho, Gabriela Campos e apoio da <a href='http://www.cepesp.io/quem-somos/pesquisadores/'> 
+                   por Rebeca Carvalho, Gabriela Campos e apoio da <a href='http://cepespdata.io/sobre'> 
                    equipe CEPESP </a>. </font>")
     HTML(note)
   })
