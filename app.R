@@ -48,12 +48,67 @@ ui <- fluidPage(
   tags$head(
   tags$style(HTML(".navbar .navbar-nav {float: left}
           .navbar .navbar-header {float: right}"))),
-    navbarPage(
-      tags$div(class = "header", checked = NA,
-               tags$a(href = "http://www.cepesp.io/cepesp-data/", "Ir para CepespData")),
+  
+  title = "CEPESP Indicadores",
     
-    id = "CepespIndicadores",theme = shinytheme("flatly"),
-             
+  navbarPage(id = "CepespIndicadores",theme = shinytheme("flatly"),
+               
+             tags$div(class = "header", checked = NA,
+                      
+                      tags$a(href = "http://www.cepesp.io/cepesp-data/", class = 
+                               "ir-cepesp-data w-hidden-medium w-hidden-small w-hidden-tiny" ,"CEPESP Data",
+                             style = 
+                             "top: -2px;   
+                             background-color:white;
+                             border-bottom-color:#1897d5;
+                             right: 0;
+                             width: 170px;
+                             padding: 10px 15px; 
+                             padding-top: 10px;
+                             padding-right: 15px;
+                             padding-bottom: 10px;
+                             padding-left: 15px;
+                             border-style: none solid solid;
+                             border-width: 0 1px 1px;
+                             border-radius: 0 0 3px 3px;
+                             border-color: #1897d5;
+                             border-image-source: initial;
+                             border-image-slice: initial;
+                             border-image-width: initial;
+                             border-image-outset: initial;
+                             border-image-repeat: initial;
+                             text-align: center;
+                             vertical-align: middle;
+                             text-decoration: none;
+                             text-decoration-line: none;
+                             text-decoration-style: initial;
+                             text-decoration-color: initial;
+                             user-select: none;
+                             border: 1px solid transparent;
+                             color: #1897d5;
+                             font-size: 11px;
+                             line-height: 12px;
+                             text-transform: uppercase;
+                             display: inline-block!important;
+                             display: flex;
+                             flex-direction: column;
+                             padding-left: 0;
+                             margin-bottom: 0;
+                             font-family: Gotham,Open Sans,sans-serif!important;
+                             box-sizing: border-box;
+                             transition-property: color, border-color, box-shadow;
+                             transition-duration: 0.15s, 0.15s, 0.15s, 0.15s;
+                             -timing-function: ease-in-out, ease-in-out, ease-in-out, ease-in-out;
+                             transition-delay: 0s, 0s, 0s, 0s;
+                             webkit-tap-highlight-color: rgba(0,0,0,0);
+                             list-style: none;
+                             list-style-type: none;
+                             list-style-position: initial;
+                             list-style-image: initial"
+                    
+                    )),
+    
+  
              
               tabPanel("Distribuição de cadeiras",
                       
@@ -218,7 +273,10 @@ ui <- fluidPage(
                                                tabPanel("Definição", htmlOutput("Def_aliena"))))))),
         
         
-        tabPanel("Sobre", htmlOutput("Note"))))
+        tabPanel("Sobre", htmlOutput("Note"))
+      
+      
+      ))
                
                
 
@@ -1380,7 +1438,9 @@ alien_fed_p <- eventReactive(input$BCALC3, {
       
     }
   })
-})  
+})
+
+
 
 
 # 4. Download -------------------------------------------------------------
