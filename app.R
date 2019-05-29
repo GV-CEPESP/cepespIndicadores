@@ -63,6 +63,7 @@ ui <- fluidPage(
                              border-bottom-color:#1897d5;
                              right: 0;
                              width: 170px;
+                             hover: background:#1897d5;
                              padding: 10px 15px; 
                              padding-top: 10px;
                              padding-right: 15px;
@@ -86,7 +87,8 @@ ui <- fluidPage(
                              user-select: none;
                              border: 1px solid transparent;
                              color: #1897d5;
-                             font-size: 11px;
+                             font-size: 14px;
+                             font-weight: bold;
                              line-height: 12px;
                              text-transform: uppercase;
                              display: inline-block!important;
