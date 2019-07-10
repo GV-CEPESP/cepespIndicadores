@@ -30,13 +30,15 @@ library(DT)
 
 # 1. Data ----------------------------------------------------------------
 
-#source("script_dadosbeta.R", encoding = "UTF-8", local = TRUE)
+## Carrega os arquivos com os indicadore pré-calculados
 
-files<-list.files(file.path(getwd(),"data"))
+files <- list.files(file.path(getwd(),"data"))
 
 for(i in files){
-  df<-read.csv(file.path(getwd(),"data",i), encoding = "UTF-8", check.names = FALSE)
-  df<-df[,2:length(df)]
+  df <- read.csv(file.path(getwd(),"data",i),
+                 encoding = "UTF-8", 
+                 check.names = FALSE)
+  df <- df[,2:length(df)]
   assign(paste(substr(i,1,nchar(i)-4)), df)
   
 }
