@@ -14,7 +14,7 @@ library(abjutils)
 #Objetivo
 
 #'       - Fazer o download dos arquivos de vagas do TSE;
-#'       - Juntar os bancos de todos as eleicoes em um único.
+#'       - Juntar os bancos de todas as eleicoes em um único.
 
 
 # 1. Download dos dados ---------------------------------------------------
