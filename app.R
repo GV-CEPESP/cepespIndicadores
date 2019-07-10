@@ -1,11 +1,4 @@
 
-# Shiny (BETA) dos indicadores CepespData
-# Autor: Rebeca Carvalho
-
-
-
-rm(list = ls())
-
 # Pacotes utilizados
 
 library(cepespR)
@@ -28,14 +21,18 @@ library(shinyjs)
 library(plotly)
 library(DT)
 
+# Objetivo
+#'        - Criar uma interface em shiny para exibir os indicadores calculados.
+
+
 # 1. Data ----------------------------------------------------------------
 
-## Carrega os arquivos com os indicadore pré-calculados
+## Carrega os arquivos com os indicadores pré-calculados
 
-files <- list.files(file.path(getwd(),"data"))
+files <- list.files(file.path(getwd(),"data/output"))
 
 for(i in files){
-  df <- read.csv(file.path(getwd(),"data",i),
+  df <- read.csv(file.path(getwd(),"data/output",i),
                  encoding = "UTF-8", 
                  check.names = FALSE)
   df <- df[,2:length(df)]
@@ -45,21 +42,22 @@ for(i in files){
 
 # 2. User interface -------------------------------------------------------
 
+## Secao correspondente a interface que o usuario visualizara
 
 ui <- fluidPage(
   tags$head(
   tags$style(HTML(".navbar .navbar-nav {float: left}
           .navbar .navbar-header {float: right}"))),
   
-  title = "CEPESP Indicadores",
+  title = "CEPESP Indicadores", ## Titulo da pagina do aplicativo em versao web
     
   navbarPage(id = "CepespIndicadores",theme = shinytheme("flatly"),
                
              tags$div(class = "header", checked = NA,
                       
                       tags$a(href = "http://www.cepesp.io/cepesp-data/", class = 
-                               "ir-cepesp-data w-hidden-medium w-hidden-small w-hidden-tiny" ,"CEPESP Data",
-                             style = 
+                               "ir-cepesp-data w-hidden-medium w-hidden-small w-hidden-tiny" ,"CEPESP Data", ## Link que redireciona para
+                             style =                                                                         ## a pagina do CEPESP Data
                              "top: -2px;   
                              background-color:white;
                              border-bottom-color:#1897d5;
@@ -114,8 +112,8 @@ ui <- fluidPage(
     
   
              
-              tabPanel("Distribuição de cadeiras",
-                      
+              tabPanel("Distribuição de cadeiras", ## Definicao das ferramentas de selecao para a guia
+                                                   ## "Distribuicao de cadeiras"
                       
                       sidebarLayout(
                         
@@ -124,13 +122,13 @@ ui <- fluidPage(
                                      
                                      selectizeInput(inputId = "INDICADORES_DISTR",
                                                  label = NULL, 
-                                                 choices = c("","Quociente eleitoral", "Quociente partidário"),
+                                                 choices = c("","Quociente eleitoral", "Quociente partidário"), ## Indicadores disponiveis
                                                  selected = NULL,
                                                  options = list(placeholder = 'Escolha um indicador')),
                                      
                                      selectizeInput(inputId = "DESCRICAO_CARGO1",
                                                  label = NULL,
-                                                 choices = c("","Deputado Federal", "Deputado Estadual"),
+                                                 choices = c("","Deputado Federal", "Deputado Estadual"), ## Cargos disponiveis
                                                  selected = NULL,
                                                  options = list(placeholder = 'Escolha um cargo')),
                                  
@@ -144,7 +142,7 @@ ui <- fluidPage(
                                      
                                  
                                      actionButton(inputId = "BCALC1",
-                                                  label = strong("Calcular"),
+                                                  label = strong("Calcular"), ## Botao de acao "Calcular"
                                                   width = "95%")
                                      
                         ),
@@ -153,19 +151,20 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills", 
-                                                    tabPanel("Tabelas", br(),
+                                                    tabPanel("Tabelas", br(), ## Tabelas que serao exibidas
                                                              DT::dataTableOutput("table1"),
                                                              DT::dataTableOutput("table2"),
                                                              DT::dataTableOutput("table3"),
                                                              DT::dataTableOutput("table4")),
-                                                    tabPanel("Dados agregados", br(),
+                                                    tabPanel("Dados agregados", br(), ## Dados agregados
                                                              DT::dataTableOutput("table5"),
                                                              DT::dataTableOutput("table6"),
                                                              DT::dataTableOutput("table7"),
                                                              DT::dataTableOutput("table8")),
-                                                    tabPanel("Definição", htmlOutput("Def_dist_cadeiras"))))))),  
+                                                    tabPanel("Definição", htmlOutput("Def_dist_cadeiras"))))))), ## Definicao dos indicadores  
   
-             tabPanel("Fragmentação legislativa",
+             tabPanel("Fragmentação legislativa",  ## Definicao das ferramentas de selecao para a guia
+                                                   ## "Fragmentacao legislativa"
                       
                      
              sidebarLayout(
@@ -175,14 +174,14 @@ ui <- fluidPage(
                             
                             selectizeInput(inputId = "INDICADORES_FRAG",
                                         label = NULL, 
-                                        choices = c("","Fracionalização", "Fracionalização máxima",
+                                        choices = c("","Fracionalização", "Fracionalização máxima", ## Indicadores disponiveis
                                                     "Fragmentação", "Número efetivo de partidos por cadeiras"),
                                         selected = NULL,
                                         options = list(placeholder = 'Escolha um indicador')),
                             
                             selectizeInput(inputId = "DESCRICAO_CARGO2",
                                         label = NULL,
-                                        choices = c("","Deputado Federal"),
+                                        choices = c("","Deputado Federal"), ## Cargos disponiveis
                                         selected = NULL,
                                         options = list(placeholder = 'Escolha um cargo')),
                             
@@ -196,7 +195,7 @@ ui <- fluidPage(
                             
                            
                             actionButton(inputId = "BCALC2",
-                                         label = strong("Calcular"),
+                                         label = strong("Calcular"), ## Botao de acao calcular
                                          width = "95%")
                             
                             
@@ -206,21 +205,22 @@ ui <- fluidPage(
                  
                  absolutePanel(top = 0, right = 0, left = 100,
                                tabsetPanel(type = "pills",
-                                           tabPanel("Tabelas",br(), 
+                                           tabPanel("Tabelas",br(), ## Tabelas que serao exibidas
                                                         DT::dataTableOutput("table9"),
                                                         DT::dataTableOutput("table10"),
                                                         DT::dataTableOutput("table11"),
                                                         DT::dataTableOutput("table12"),
                                                         DT::dataTableOutput("table13")),
-                                          tabPanel("Dados agregados",br(),
+                                          tabPanel("Dados agregados",br(), ## Dados agregados
                                                         DT::dataTableOutput("table14"),
                                                         DT::dataTableOutput("table15"),
                                                         DT::dataTableOutput("table16"),
                                                         DT::dataTableOutput("table17"),
                                                         DT::dataTableOutput("table18")),
-                                           tabPanel("Definição", htmlOutput("Def_frag"))))))),
+                                           tabPanel("Definição", htmlOutput("Def_frag"))))))), ## Definicao dos indicadores
         
-        tabPanel("Alienação",
+        tabPanel("Alienação",  ## Definicao das ferramentas de selecao para a guia
+                               ## "Alienacao"
                  
                  
                  sidebarLayout(
@@ -230,13 +230,13 @@ ui <- fluidPage(
                                 
                                 selectizeInput(inputId = "INDICADORES_ALIE",
                                             label = NULL, 
-                                            choices = c("","Alienação Absoluta", "Alienação Percentual"),
+                                            choices = c("","Alienação Absoluta", "Alienação Percentual"), ## Indicadores disponiveis
                                             selected = NULL,
                                             options = list(placeholder = 'Escolha um indicador')),
                                 
                                 selectizeInput(inputId = "DESCRICAO_CARGO3",
                                             label = NULL,
-                                            choices = c("","Presidente", "Governador", "Senador", "Deputado Federal", 
+                                            choices = c("","Presidente", "Governador", "Senador", "Deputado Federal", ## Cargos disponiveis
                                                         "Deputado Estadual"),
                                             selected = NULL,
                                             options = list(placeholder = 'Escolha um cargo')),
@@ -252,7 +252,7 @@ ui <- fluidPage(
                                 
                                 
                                 actionButton(inputId = "BCALC3",
-                                             label = strong("Calcular"),
+                                             label = strong("Calcular"), ## Botao de acao "Calcular"
                                              width = "95%")
                                 
                                 
@@ -262,22 +262,65 @@ ui <- fluidPage(
                      
                      absolutePanel(top = 0, right = 0, left = 100,
                                    tabsetPanel(type = "pills",
-                                               tabPanel("Tabelas", br(),
+                                               tabPanel("Tabelas", br(), ## Tabelas que serao exibidas
                                                             DT::dataTableOutput("table_alienacao_df"),
                                                             DT::dataTableOutput("table_alienacao_df_p"), 
                                                             DT::dataTableOutput("table_alienacao_df2"), 
                                                             DT::dataTableOutput("table_alienacao_df2_p")),
-                                               tabPanel("Dados agregados", br(),
+                                               tabPanel("Dados agregados", br(), ## Dados agregados
                                                         #downloadButton("downloadData", 
                                                                        #label = strong("Download")),
                                                             DT::dataTableOutput("table23"),
                                                             DT::dataTableOutput("table23_p"),
                                                             DT::dataTableOutput("table24"),
                                                             DT::dataTableOutput("table24_p")),
-                                               tabPanel("Definição", htmlOutput("Def_aliena"))))))),
+                                               tabPanel("Definição", htmlOutput("Def_aliena"))))))), ## Definicao dos indicadores
         
         
-        tabPanel("Sobre", htmlOutput("Note"))
+        tabPanel("Sobre", htmlOutput("Note")), ## Guia correspondente ao "Sobre"
+        
+       
+        tags$footer(class = "rodape",
+                    
+                    style =
+                      
+                      "max-width: 100%;
+                    padding: 10px 0;
+                    min-height: 40px;
+                    background-color: #222d32;;
+                    color: #fff;
+                    font-family: 'Segoe UI';
+                    font-size: 14px;
+                    text-align: left;",
+                         
+                         tags$div(class = "rodape-container",
+                                  
+                                  style =
+                                    
+                                  "max-width: 960px;
+                                  margin: 0 auto;
+                                  display: flex;
+                                  flex-wrap: wrap;
+                                  box-sizing: border-box;
+                                  padding: 0;",
+                                  
+                                  
+                                  tags$div(class = "rodape-texto", "© 2019 CEPESP Todos os direitos reservados.",
+                                           
+                                           style = 
+                                             
+                                             "
+                                           max-width: 50%;
+                                           align: left;
+                                           flex: 1 1 200px;
+                                           display: flex;
+                                           padding-left: 5%;
+                                           padding-top: 10px;
+                                           font-size: .9em;
+                                           box-sizing: border-box;
+                                           margin: 0;
+                                           padding: 0;")))
+                                            
       
       
       ))
