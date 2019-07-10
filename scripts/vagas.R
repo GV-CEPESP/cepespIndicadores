@@ -145,7 +145,7 @@ vags_mun2016 <- rbind.fill(vags_mun2016)
 ## Divide o arquivo de eleicoes estaduais em dois: "vags_fed" e "vags_est" 
 ## Isto é, para os cargos de Deputado federal e Deputado estadual
 
-## Seleciona as colunas necessarias,filtra, unifica e renomeia as colunas restantes
+## Descarta as colunas desnecessarias,filtra, unifica e renomeia as colunas restantes
 
 ### Deputado Federal
 
