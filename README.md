@@ -1,7 +1,5 @@
-README
+Aplicativo de indicadores políticos
 ================
-Rebeca Carvalho
-11 de julho de 2019
 
 Responsáveis
 ------------

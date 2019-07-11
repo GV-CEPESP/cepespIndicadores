@@ -1,7 +1,5 @@
 ---
-title: "README"
-author: "Rebeca Carvalho"
-date: "11 de julho de 2019"
+title: "Aplicativo de indicadores políticos"
 output: github_document
 ---
 
