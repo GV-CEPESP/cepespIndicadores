@@ -8,11 +8,9 @@
 # 1. Server ---------------------------------------------------------------
 
 
-
 server <- function(input, output,session){
   
-  
-## Funcao para descricao do sobre
+ ## Funcao para descricao do sobre
   
   output$Note <- renderUI({
     note <- paste0("
@@ -87,7 +85,6 @@ server <- function(input, output,session){
   
   
   
-  
 # 2. Indicadores ------------------------------------------------------------
   
   ## Definicao das atribuicoes das tabela dos indicadores e seus respectivos botoes de acao
@@ -116,6 +113,26 @@ server <- function(input, output,session){
   }) 
   
   
+  ## Funcao que permite o download dos dados agregados dos indicadores 
+  ## de distribuicao de cadeiras
+  
+  #indic_distr <- reactive({ ## Funcao reativa que coincide o indicador escolhido com sua respectiva tabela
+    #switch(input$INDICADORES_DISTR,
+           #"Quociente eleitoral" = vags_fed,
+           #"Quociente partidário" = vags_est
+    #)
+  #})  
+  
+  output$BD1 <- downloadHandler( ## Atribuicoes da funcao download
+    filename = function () {
+      paste("indicadores_distribuicao .csv", sep = "")
+    },
+    content = function (filename) {
+      write.csv(vags_fed, filename)
+    }
+  )
+  
+  
 # 2.1.1. Quociente eleitoral -----------------------------------------------
   
 
@@ -137,7 +154,7 @@ server <- function(input, output,session){
   
   
   bquoce_fed <- eventReactive(input$BCALC1, { ## Botao de acao
-    datatable({
+    datatable(options = list(ordering = TRUE, searching = FALSE,lengthChange = FALSE,lengthMenu = FALSE),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -174,7 +191,7 @@ server <- function(input, output,session){
   
   
   bquoce_est <- eventReactive(input$BCALC1, { ## Botao de acao
-    datatable({
+    datatable(options = list(ordering = TRUE, searching = FALSE,lengthChange = FALSE,lengthMenu = FALSE),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -214,7 +231,7 @@ server <- function(input, output,session){
   })
   
   bquocp_fed <- eventReactive(input$BCALC1, { ## Botao de acao
-    datatable({
+    datatable(options = list(ordering = TRUE, lengthChange = FALSE,lengthMenu = FALSE),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -248,7 +265,7 @@ server <- function(input, output,session){
   })
   
   bquocp_est <- eventReactive(input$BCALC1, { ## Botao de acao
-    datatable({
+    datatable(options = list(ordering = TRUE, lengthChange = FALSE,lengthMenu = FALSE),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -303,6 +320,29 @@ server <- function(input, output,session){
                    <a href='http://datapolitica.com.br/eleicao/metodologia.html'>Data Politica</a></p>")
     HTML(note)
   }) 
+  
+  
+  ## Funcao que permite o download dos dados agregados dos indicadores 
+  ## de fragmentacao partidaria
+  
+  #indic_frag <- reactive({ ## Funcao reativa que coincide o indicador escolhido com sua respectiva tabela
+    #switch(input$INDICADORES_DISTR,
+           #"Fracionalização" = frag_partdf,
+           #"Fracionalização máxima" = frag_partdf,
+           #"Fragmentação" = frag_partdf,
+           #"Número efetivo de partidos por cadeiras" = frag_partdf
+    #)
+  #})  
+  
+  output$BD2 <- downloadHandler( ## Atribuicoes da funcao download
+    filename = function () {
+      paste("indicadores_fragmentacao.csv", sep = "")
+    },
+    content = function (filename) {
+      write.csv(frag_partdf, filename)
+    }
+  )
+  
 
 # 2.2.1. Fracionalizacao -------------------------------------------------- 
   
@@ -324,7 +364,7 @@ server <- function(input, output,session){
   })
   
   bfracio_fed <- eventReactive(input$BCALC2, { ## Botao de acao
-    datatable({
+    datatable(options = list(dom = 't'),{
       indicador <- input$INDICADORES_FRAG
       cargo <- input$DESCRICAO_CARGO2
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -357,12 +397,12 @@ server <- function(input, output,session){
     }
   })
   
-  output$table10 <- DT::renderDataTable({ ## Tabela que devera ser chamada na ui
+  output$fraciomax_fed <- DT::renderDataTable({ ## Tabela que devera ser chamada na ui
     bfraciomax_fed()
   })
   
   bfraciomax_fed <- eventReactive(input$BCALC2, { ## Botao de acao
-    datatable({
+    datatable(options = list(dom = 't'),{
       indicador <- input$INDICADORES_FRAG
       cargo <- input$DESCRICAO_CARGO2
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -400,7 +440,7 @@ server <- function(input, output,session){
   
   
   bfrag_fed <- eventReactive(input$BCALC2, { ## Botao de acao
-    datatable({
+    datatable(options = list(dom = 't'),{
       indicador <- input$INDICADORES_FRAG
       cargo <- input$DESCRICAO_CARGO2
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -437,7 +477,7 @@ server <- function(input, output,session){
   })
   
   bnepc_fed <- eventReactive(input$BCALC2, { ## Botao de acao
-    datatable({
+    datatable(options = list(dom = 't'),{
       indicador <- input$INDICADORES_FRAG
       cargo <- input$DESCRICAO_CARGO2
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -469,7 +509,7 @@ server <- function(input, output,session){
   })   
   
   bnepc_est <- eventReactive(input$BCALC2, { ## Botao de acao
-    datatable({
+    datatable(options = list(dom = 't'),{
       indicador <- input$INDICADORES_FRAG
       cargo <- input$DESCRICAO_CARGO2
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -509,6 +549,26 @@ server <- function(input, output,session){
     HTML(note)
   })
    
+  
+  ## Funcao que permite o download dos dados agregados dos indicadores 
+  ## de alienacao
+  
+  #indic_alien <- reactive({ ## Funcao reativa que coincide o indicador escolhido com sua respectiva tabela
+    #switch(input$INDICADORES_DISTR,
+           #"Alienação absoluta" = alienacao,
+           #"Alienação percentual" = alienacao
+    #)
+  #})  
+  
+  output$BD3 <- downloadHandler( ## Atribuicoes da funcao download
+    filename = function () {
+      paste("indicadores_alienacao.csv", sep = "")
+    },
+    content = function (filename) {
+      write.csv(alienacao, filename)
+    }
+  )
+  
 # 2.3.1. Alienacao --------------------------------------------------------
   
 ### Deputado Federal BR
@@ -529,7 +589,7 @@ server <- function(input, output,session){
   })
   
   balien_feda_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
-    datatable({
+    datatable(options = list(ordering = TRUE, searching = FALSE,lengthChange = FALSE,lengthMenu = FALSE),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO3
       agregacao <- input$AGREGACAO_REGIONAL3
@@ -548,7 +608,7 @@ server <- function(input, output,session){
   })
   
   balien_fedp_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
-    datatable({
+    datatable(options = list(ordering = TRUE, searching = FALSE,lengthChange = FALSE,lengthMenu = FALSE),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO3
       agregacao <- input$AGREGACAO_REGIONAL3
@@ -581,7 +641,7 @@ server <- function(input, output,session){
   })
   
   balien_feda_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
-    datatable({
+    datatable(options = list(ordering = TRUE, searching = FALSE,lengthChange = FALSE,lengthMenu = FALSE),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO3
       agregacao <- input$AGREGACAO_REGIONAL3
@@ -607,7 +667,7 @@ server <- function(input, output,session){
   })
    
    balien_fedp_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
-     datatable({
+     datatable(options = list(ordering = TRUE, searching = FALSE,lengthChange = FALSE,lengthMenu = FALSE),{
        indicador <- input$INDICADORES_ALIE
        cargo <- input$DESCRICAO_CARGO3
        agregacao <- input$AGREGACAO_REGIONAL3
@@ -628,27 +688,6 @@ server <- function(input, output,session){
        }
      })
    })
-  
-  
- 
-  
-  
- 
-  
-  
-  
-  
-
-
-# 3. Download -------------------------------------------------------------
-  
-  #output$downloadData <- downloadHandler(
-  #filename = function() {
-  #paste(input$INDICADORES_ALIE, ".csv", sep = "")
-  #},
-  #content = function(file) {
-  # write.csv(agregali_fed1(), file, row.names = FALSE)
-  #}
-  #)
 }
+  
 

@@ -113,12 +113,17 @@ ui <- fluidPage(
                                      
                         ),
                         
+                        
                         mainPanel(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills", 
-                                                    tabPanel("Tabelas", br(), ## Tabelas que serao exibidas
-                                                             DT::dataTableOutput("quoce_fed"),
+                                                    tabPanel("Tabelas", br(),
+                                                             fluidRow(
+                                                             column(2, offset = 10,
+                                                             downloadButton(outputId = "BD1",## Botao para download dos dados
+                                                             label = "Download dos dados agregados"))),
+                                                             DT::dataTableOutput("quoce_fed"), ## Tabelas que serao exibidas
                                                              DT::dataTableOutput("quoce_est"),
                                                              DT::dataTableOutput("quocp_fed"),
                                                              DT::dataTableOutput("quocp_est")),
@@ -142,7 +147,7 @@ ui <- fluidPage(
                                      
                                      selectizeInput(inputId = "DESCRICAO_CARGO2",
                                                     label = NULL,
-                                                    choices = c("","Deputado Federal"), ## Cargos disponiveis
+                                                    choices = c("","Deputado Federal", "Deputado Estadual"), ## Cargos disponiveis
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um cargo')),
                                      
@@ -166,8 +171,12 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabelas",br(), ## Tabelas que serao exibidas
-                                                             DT::dataTableOutput("fracio_fed"),
+                                                    tabPanel("Tabelas",br(),
+                                                             fluidRow(
+                                                             column(2, offset = 10,
+                                                             downloadButton(outputId = "BD2",
+                                                             label = "Download dos dados agregados"))), ## Botao para download dos dados
+                                                             DT::dataTableOutput("fracio_fed"),## Tabelas que serao exibidas
                                                              DT::dataTableOutput("fraciomax_fed"),
                                                              DT::dataTableOutput("frag_fed"),
                                                              DT::dataTableOutput("nepc_fed"),
@@ -217,8 +226,12 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabelas", br(), ## Tabelas que serao exibidas
-                                                             DT::dataTableOutput("alien_feda_br"),
+                                                    tabPanel("Tabelas", br(), 
+                                                             fluidRow(
+                                                             column(2, offset = 10,
+                                                             downloadButton(outputId = "BD3",
+                                                             label = "Download dos dados agregados"))),## Botao para download dos dados
+                                                             DT::dataTableOutput("alien_feda_br"), ## Tabelas que serao exibidas
                                                              DT::dataTableOutput("alien_fedp_br"), 
                                                              DT::dataTableOutput("alien_feda_uf"), 
                                                              DT::dataTableOutput("alien_fedp_uf")),
@@ -244,7 +257,7 @@ ui <- fluidPage(
                          text-align: left;
                          z-index: 10;
                          height: 3em;
-                         margin-top: 40em;",
+                         margin-top: 41em;",
                          
                          tags$div(class = "rodape-container",
                                   
