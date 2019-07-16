@@ -124,4 +124,8 @@ write.csv(cons_br, "data/output/alien_br.csv")
 
 write.csv(cons_uf, "data/output/alien_uf.csv")
 
+## Remove da area de trabalho os bancos que nao serao mais utilizados
+
+rm(cons_br, cons_uf)
+
 

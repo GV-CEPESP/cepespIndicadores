@@ -229,7 +229,7 @@ server <- function(input, output,session){
                    UF,
                    Cargo,
                    `Cadeiras oferecidas`,
-                   `Votos válidos `, 
+                   `Votos válidos`, 
                    `Quociente eleitoral`) %>% 
             unique()
         }
@@ -240,7 +240,7 @@ server <- function(input, output,session){
                    UF,
                    Cargo,
                    `Cadeiras oferecidas`,
-                   `Votos válidos `, 
+                   `Votos válidos`, 
                    `Quociente eleitoral`) %>% 
             unique()
         }}
@@ -349,7 +349,7 @@ server <- function(input, output,session){
                    UF, 
                    Cargo,
                    `Cadeiras oferecidas` ,
-                   `Votos válidos `, 
+                   `Votos válidos`, 
                    `Quociente eleitoral`) %>% 
             unique()
         } else {
@@ -359,7 +359,7 @@ server <- function(input, output,session){
                    UF, 
                    Cargo, 
                    `Cadeiras oferecidas` ,
-                   `Votos válidos `, 
+                   `Votos válidos`, 
                    `Quociente eleitoral`) %>% 
             unique()
           

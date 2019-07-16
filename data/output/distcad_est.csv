@@ -1,4 +1,4 @@
-"","Ano da eleição","UF","Cargo","Vagas","Votos válidos por UF","Sigla do partido","Votos do partido por UF","Quociente eleitoral","Quociente partidário"
+"","Ano da eleição","UF","Cargo","Cadeiras oferecidas","Votos válidos","Sigla do partido","Votos do partido","Quociente eleitoral","Quociente partidário"
 "1",1998,"AC","Deputado Estadual",24,"219.824","PC do B","5.186","9.159,32",0.57
 "2",1998,"AC","Deputado Estadual",24,"219.824","PDT","3.879","9.159,32",0.42
 "3",1998,"AC","Deputado Estadual",24,"219.824","PFL","25.322","9.159,32",2.76

@@ -93,19 +93,19 @@ vags_fed <-  vags_fed %>%
                 QUOCIENTE_PARTIDARIO) %>% 
   dplyr::rename("Ano da eleição" = "ANO_ELEICAO",
                 "Cargo" = "CARGO",
-                "Vagas" = "VAGAS",
-                "Votos válidos por UF" = "VOTOS_VALIDOS_UF",
+                "Cadeiras oferecidas" = "VAGAS",
+                "Votos válidos" = "VOTOS_VALIDOS_UF",
                 "Sigla do partido" = "SIGLA_PARTIDO",
-                "Votos do partido por UF" = "VOT_PART_UF",
+                "Votos do partido" = "VOT_PART_UF",
                 "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
                 "Quociente partidário" = "QUOCIENTE_PARTIDARIO")
   
 vags_fed$Cargo <- str_to_title(vags_fed$Cargo) ## Transforma a primeira letra de cada palavra
                                                ## em maiuscula
 
-vags_fed$`Votos válidos por UF` <- gabi(vags_fed$`Votos válidos por UF`)
+vags_fed$`Votos válidos` <- gabi(vags_fed$`Votos válidos`)
 
-vags_fed$`Votos do partido por UF` <- gabi(vags_fed$`Votos do partido por UF`)
+vags_fed$`Votos do partido` <- gabi(vags_fed$`Votos do partido`)
 
 
 ### Deputado Estadual
@@ -122,19 +122,19 @@ vags_est <-  vags_est %>%
                 QUOCIENTE_PARTIDARIO) %>% 
   dplyr::rename("Ano da eleição" = "ANO_ELEICAO",
                 "Cargo" = "CARGO",
-                "Vagas" = "VAGAS",
-                "Votos válidos por UF" = "VOTOS_VALIDOS_UF",
+                "Cadeiras oferecidas" = "VAGAS",
+                "Votos válidos" = "VOTOS_VALIDOS_UF",
                 "Sigla do partido" = "SIGLA_PARTIDO",
-                "Votos do partido por UF" = "VOT_PART_UF",
+                "Votos do partido" = "VOT_PART_UF",
                 "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
                 "Quociente partidário" = "QUOCIENTE_PARTIDARIO")
 
 vags_est$Cargo <- str_to_title(vags_est$Cargo) ## Transforma a primeira letra de cada palavra
                                                ## em maiuscula
 
-vags_est$`Votos válidos por UF` <- gabi(vags_est$`Votos válidos por UF`)
+vags_est$`Votos válidos` <- gabi(vags_est$`Votos válidos`)
 
-vags_est$`Votos do partido por UF` <- gabi(vags_est$`Votos do partido por UF`)
+vags_est$`Votos do partido` <- gabi(vags_est$`Votos do partido`)
 
 
 
