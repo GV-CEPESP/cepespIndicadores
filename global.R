@@ -34,8 +34,7 @@ files <- list.files(file.path(getwd(),"data/output"))
 
 for(i in files){
   df <- read.csv(file.path(getwd(),"data/output",i),
-                 encoding = "UTF-8", 
-                 check.names = FALSE)
+                check.names = FALSE)
   df <- df[,2:length(df)]
   assign(paste(substr(i,1,nchar(i)-4)), df)
   

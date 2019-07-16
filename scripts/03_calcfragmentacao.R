@@ -80,35 +80,23 @@ df <- left_join(df, df1,
 
 ### Deputado Federal
 
-df$`Percentual de cadeiras conquistadas` <- df$`Total de cadeiras conquistadas`/513
+df1$`Percentual de cadeiras conquistadas` <- df1$`Total de cadeiras conquistadas`/513
 
 ## Elimina colunas desnecessarias, renomeia as colunas restantes e padroniza-as
 
 ### Deputado Federal
 
-df <- df %>% 
-  dplyr::select(ANO_ELEICAO, 
-                UF,
-                DESCRICAO_CARGO, 
-                SIGLA_PARTIDO, 
-                `Cadeiras conquistadas por UF`,
-                `Total de cadeiras conquistadas`, 
-                `Percentual de cadeiras conquistadas`) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
+df1 <- df1 %>% 
+   dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
                 "Cargo" = "DESCRICAO_CARGO", 
                 "Sigla do partido" = "SIGLA_PARTIDO")
 
-df$Cargo <- str_to_title(df$Cargo)
+df1$Cargo <- str_to_title(df1$Cargo)
 
 ### Deputado Estadual
 
 de <- de %>% 
-  dplyr::select(ANO_ELEICAO, 
-                UF,
-                DESCRICAO_CARGO, 
-                SIGLA_PARTIDO, 
-                `Cadeiras conquistadas`) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
+    dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
                 "Cargo" = "DESCRICAO_CARGO", 
                 "Sigla do partido" = "SIGLA_PARTIDO") 
 
@@ -126,14 +114,35 @@ fracio <- function(x){
 
 ## Calculo do indice de fracionalizacao em cada eleicao
 
-d <- list()
+t98df <- df1 %>% 
+  filter(`Ano da eleição` == 1998) 
 
-for(i in seq(1998,2018, by = 4)){
-  d[i] <- filter(df, `Ano da eleição` == i)
-  d[i]$`Fracionalização` <- fracio(d[i]$`Percentual de cadeiras consquistadas`)
-  df <- bind_rows(df, d[i])
-}
+t98df$Fracionalização <- fracio(t98df$`Percentual de cadeiras conquistadas`)
 
+t02df <- df1 %>% 
+  filter(`Ano da eleição` == 2002) 
+
+t02df$Fracionalização <- fracio(t02df$`Percentual de cadeiras conquistadas`)
+
+t06df <- df1 %>% 
+  filter(`Ano da eleição` == 2006) 
+
+t06df$Fracionalização <- fracio(t06df$`Percentual de cadeiras conquistadas`)
+
+t10df <- df1 %>% 
+  filter(`Ano da eleição` == 2010) 
+
+t10df$Fracionalização <- fracio(t10df$`Percentual de cadeiras conquistadas`)
+
+t14df <- df1 %>% 
+  filter(`Ano da eleição` == 2014)
+
+t14df$Fracionalização <- fracio(t14df$`Percentual de cadeiras conquistadas`)
+
+t18df <- df1 %>% 
+  filter(`Ano da eleição` == 2018) 
+
+t18df$Fracionalização <- fracio(t18df$`Percentual de cadeiras conquistadas`)
 
 
 # 3. Fracionalizacao maxima -----------------------------------------------
@@ -148,10 +157,17 @@ fracio_max <- function(N, n){
 
 ## Calculo do indice de fracionalizacao maxima em cada eleicao
 
-for(i in seq(1998,2018, by = 4)){
-  df$`Fracionalização máxima` <- fracio_max(513)
- }
+t98df$`Fracionalização máxima`<- fracio_max(513,18)
 
+t02df$`Fracionalização máxima`<- fracio_max(513,19) 
+
+t06df$`Fracionalização máxima`<- fracio_max(513,21)
+
+t10df$`Fracionalização máxima`<- fracio_max(513,22)
+
+t14df$`Fracionalização máxima`<- fracio_max(513,28)
+
+t18df$`Fracionalização máxima`<- fracio_max(513,30)
 
 
 # 4. Fragmentacao ---------------------------------------------------------
@@ -164,6 +180,18 @@ frag <- function(fracio, fracio_max){
 }
 
 ## Calculo do indice de fragmentacao em cada eleicao
+
+t98df$Fragmentação <- frag(t98df$Fracionalização, t98df$`Fracionalização máxima`)
+
+t02df$Fragmentação <- frag(t02df$Fracionalização, t02df$`Fracionalização máxima`)
+
+t06df$Fragmentação <- frag(t06df$Fracionalização, t06df$`Fracionalização máxima`)
+
+t10df$Fragmentação <- frag(t10df$Fracionalização, t10df$`Fracionalização máxima`)
+
+t14df$Fragmentação <- frag(t14df$Fracionalização, t14df$`Fracionalização máxima`)
+
+t18df$Fragmentação <- frag(t18df$Fracionalização, t18df$`Fracionalização máxima`)
 
 
 
@@ -192,11 +220,60 @@ NEPC <- function(p){
   }
   1/sum(NEP)}
 
-## Calculo do numero efetivo de partidos (cadeiras)
+## Calculo do numero efetivo de partidos por cadeiras
+
+t98df$`Número efetivo de partidos por cadeiras` <- NEPC(t98df$`Percentual de cadeiras conquistadas`)
+
+t02df$`Número efetivo de partidos por cadeiras` <- NEPC(t02df$`Percentual de cadeiras conquistadas`)
+
+t06df$`Número efetivo de partidos por cadeiras` <- NEPC(t06df$`Percentual de cadeiras conquistadas`)
+
+t10df$`Número efetivo de partidos por cadeiras` <- NEPC(t10df$`Percentual de cadeiras conquistadas`)
+
+t14df$`Número efetivo de partidos por cadeiras` <- NEPC(t14df$`Percentual de cadeiras conquistadas`)
+
+t18df$`Número efetivo de partidos por cadeiras` <- NEPC(t18df$`Percentual de cadeiras conquistadas`)
 
 
 
 # 7. Padronizacao dos dados -----------------------------------------------
 
+## Junta todos bancos de fragmentacao partidaria em um único
+
+frag_part_fed <- bind_rows(t98df, t02df, t06df, t10df, t14df, t18df) 
+
+## Arredonda em duas casas decimas os indices calculados
+
+frag_part_fed$Fracionalização <- 
+  format(round(frag_part_fed$Fracionalização, 
+               digits = 2),  
+         nsmall = 2)
+
+frag_part_fed$`Fracionalização máxima` <- 
+  format(round(frag_part_fed$`Fracionalização máxima`, 
+               digits = 2), 
+         nsmall = 2)
+
+frag_part_fed$Fragmentação <- 
+  format(round(frag_part_fed$Fragmentação, 
+               digits = 2),
+         nsmall = 2)
+
+frag_part_fed$`Numero efetivo de partidos por cadeiras` <- 
+  format(round(frag_part_fed$`Número efetivo de partidos por cadeiras`, 
+               digits = 2), 
+         nsmall = 2)
 
 
+# 8. Salva o arquivo ------------------------------------------------------
+
+## Salva os arquivos referentes aos indicadores de fragmentacao
+## partidaria em .csv
+
+## Deputado Federal
+
+write.csv(frag_part_fed, "data/output/frag_part_fed.csv")
+
+## Remove da area de trabalho os bancos que nao serao mais utilizados
+
+rm(t98df,t02df,t06df,t10df,t14df,t18df,df1,frag_part_fed,df,de)

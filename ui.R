@@ -10,6 +10,7 @@
 ## Secao correspondente a interface que o usuario visualizara
 
 ui <- fluidPage(
+  
   tags$head(
     tags$style(HTML(".navbar .navbar-nav {float: left}
                     .navbar .navbar-header {float: right}"))),
@@ -119,14 +120,15 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills", 
                                                     tabPanel("Tabelas", br(),
-                                                             fluidRow(
-                                                             column(2, offset = 10,
-                                                             downloadButton(outputId = "BD1",## Botao para download dos dados
-                                                             label = "Download dos dados agregados"))),
                                                              DT::dataTableOutput("quoce_fed"), ## Tabelas que serao exibidas
                                                              DT::dataTableOutput("quoce_est"),
                                                              DT::dataTableOutput("quocp_fed"),
                                                              DT::dataTableOutput("quocp_est")),
+                                                   tabPanel("Dados agregados", br(),
+                                                            DT::dataTableOutput("agreg_quocefed"),
+                                                            DT::dataTableOutput("agreg_quoceest"),
+                                                            DT::dataTableOutput("agreg_quocpfed"),
+                                                            DT::dataTableOutput("agreg_quocpest")),
                                                    tabPanel("Definição", htmlOutput("def_distc"))))))), ## Definicao dos indicadores  
              
              tabPanel("Fragmentação legislativa",  ## Definicao das ferramentas de selecao para a guia
@@ -171,16 +173,18 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabelas",br(),
-                                                             fluidRow(
-                                                             column(2, offset = 10,
-                                                             downloadButton(outputId = "BD2",
-                                                             label = "Download dos dados agregados"))), ## Botao para download dos dados
+                                                    tabPanel("Tabelas", br(),
                                                              DT::dataTableOutput("fracio_fed"),## Tabelas que serao exibidas
                                                              DT::dataTableOutput("fraciomax_fed"),
                                                              DT::dataTableOutput("frag_fed"),
                                                              DT::dataTableOutput("nepc_fed"),
                                                              DT::dataTableOutput("nepc_est")),
+                                                   tabPanel("Dados agregados", br(),
+                                                            DT::dataTableOutput("agreg_fracfed"),
+                                                            DT::dataTableOutput("agreg_fracmaxfed"),
+                                                            DT::dataTableOutput("agreg_fragfed"),
+                                                            DT::dataTableOutput("agreg_nepfed"),
+                                                            DT::dataTableOutput("agreg_nepest")),  
                                                    tabPanel("Definição", htmlOutput("def_frag"))))))), ## Definicao dos indicadores
              
              tabPanel("Alienação",  ## Definicao das ferramentas de selecao para a guia
@@ -227,18 +231,19 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
                                                     tabPanel("Tabelas", br(), 
-                                                             fluidRow(
-                                                             column(2, offset = 10,
-                                                             downloadButton(outputId = "BD3",
-                                                             label = "Download dos dados agregados"))),## Botao para download dos dados
                                                              DT::dataTableOutput("alien_feda_br"), ## Tabelas que serao exibidas
                                                              DT::dataTableOutput("alien_fedp_br"), 
                                                              DT::dataTableOutput("alien_feda_uf"), 
                                                              DT::dataTableOutput("alien_fedp_uf")),
+                                                    tabPanel("Dados agregados", br(),
+                                                             DT::dataTableOutput("agreg_alifeda_br"),
+                                                             DT::dataTableOutput("agreg_alifeda_uf"),
+                                                             DT::dataTableOutput("agreg_alifedp_br"),
+                                                             DT::dataTableOutput("agreg_alifedp_uf")),
                                                     tabPanel("Definição", htmlOutput("def_alien"))))))), ## Definicao dos indicadores
              
              
-             tabPanel("Sobre", htmlOutput("Note")), ## Guia correspondente ao "Sobre"
+             tabPanel("Sobre", htmlOutput("sobre")), ## Guia correspondente ao "Sobre"
              
              
              tags$footer(class = "rodape",

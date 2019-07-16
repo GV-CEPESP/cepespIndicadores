@@ -63,12 +63,52 @@ de <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018",
                     regional_aggregation = "Estado", 
                     political_aggregation = "Candidato")
 
+## Outros cargos BR
+
+pr_br <- get_elections(year = "2002,2006,2010,2014,2018", 
+                        position = "Presidente",
+                        regional_aggregation = "Brasil", 
+                        political_aggregation = "Consolidado")
+
+gov_br <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
+                        position = "Governador",
+                        regional_aggregation = "Brasil", 
+                        political_aggregation = "Consolidado")
+
+sen_br <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
+                        position = "Senador",
+                        regional_aggregation = "Brasil", 
+                        political_aggregation = "Consolidado")
+
+
+## Outros Cargos UF
+
+pr_uf <- get_elections(year = "2002,2006,2010,2014,2018", 
+                    position = "Presidente",
+                    regional_aggregation = "Estado", 
+                    political_aggregation = "Consolidado")
+
+gov_uf <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
+                     position = "Governador",
+                     regional_aggregation = "Estado", 
+                     political_aggregation = "Consolidado")
+
+sen_uf <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
+                     position = "Senador",
+                     regional_aggregation = "Estado", 
+                     political_aggregation = "Consolidado")
+
+
 
 ## Carrega os arquivos de vagas
 
-vags_fed <- read_csv("vags_fed.csv") ### Deputado Federal
+### Deputado Federal
 
-vags_est <- read_csv("vags_est.csv") ### Deputado Estadual
+vags_fed <- read_csv("data/input/vags_fed.csv") 
+
+### Deputado Estadual
+
+vags_est <- read_csv("data/input/vags_est.csv") 
 
 
 # 2. Calculo da votacao dos partidos e dos votos validos ------------------
@@ -143,5 +183,20 @@ vags_est <- left_join(vags_est,
                       dep, 
                       by = c("ANO_ELEICAO", "UF"))
 
+## Junta o bancos sobre o consolidado em um unico
+
+## Consolidado BR
+
+cons_br <- rbind(pr_br, gov_br, sen_br, dfcb, decb)
+
+## Consolidado UF
+
+cons_uf <- rbind(pr_uf, gov_uf,sen_uf, dfc, dec)
+
+
+## Remove da area de trabalho os bancos que nao serao mais utilizados
+
+rm(dec,dec1,decb,dfc,dfc1,dfcb,pr_br, pr_uf,
+   gov_br,gov_uf, sen_br, sen_uf,dep,dfp)
 
 

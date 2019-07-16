@@ -28,7 +28,7 @@ library(abjutils)
  for(i in seq(1998,2018, by = 4)){
   vagas_est <- stringr::str_replace(url_vagas_est, "ANO", as.character(i)) 
   print(vagas_est)
-  download.file(vagas_est, str_c("vagas", i, ".zip"))
+  download.file(vagas_est, str_c("vagas_est", i, ".zip"))
  }
 
 ### Eleicoes municipais
@@ -86,7 +86,7 @@ vags_est <- list()
                               header=F,sep=";", stringsAsFactors = FALSE)
  }
 
- for(i in seq_along("vagas_est")){
+ for(i in seq_along(vags_est)){
   br_files_vagas <- list.files(path = "vagas_est", pattern = "BR",full.names = T)
   file.remove(br_files_vagas)
  }
@@ -129,7 +129,7 @@ for(i in seq_along(vags_mun2016)){
 
 ### Eleicoes estaduais
 
-vags_est <- rbind.fill(vags)
+vags_est <- rbind.fill(vags_est)
 
 ### Eleicoes municipais
 
@@ -149,7 +149,7 @@ vags_mun2016 <- rbind.fill(vags_mun2016)
 
 ### Deputado Federal
 
-vags_fed <- vags %>% 
+vags_fed <- vags_est %>% 
   dplyr::select(V6, V9, V10) %>%
   dplyr::filter(V9 == "DEPUTADO FEDERAL")
 
@@ -161,7 +161,7 @@ vags_fed <- dplyr::rename(vags_fed,"UF" = "V6",
 
 ### Deputado Estadual
 
-vags_est <- vags %>% 
+vags_est <- vags_est %>% 
   select(V6, V9, V10) %>% 
   filter(V9 == "DEPUTADO ESTADUAL" | V9 == "DEPUTADO DISTRITAL")
 
@@ -174,7 +174,7 @@ vags_est <- dplyr::rename(vags_est,"UF" = "V6",
 
 ### Vereador
 
-vags_vr <- vags_mun_ %>% 
+vags_vr <- vags_mun %>% 
   select(V3,V5,V6, V7,V9, V10) %>% 
   filter(V9 == "VEREADOR")
 

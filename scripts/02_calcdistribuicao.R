@@ -135,3 +135,22 @@ vags_est$Cargo <- str_to_title(vags_est$Cargo) ## Transforma a primeira letra de
 vags_est$`Votos válidos por UF` <- gabi(vags_est$`Votos válidos por UF`)
 
 vags_est$`Votos do partido por UF` <- gabi(vags_est$`Votos do partido por UF`)
+
+
+
+# 4. Salva os arquivos ----------------------------------------------------
+
+## Salva os arquivos referentes aos indicadores de distribuicao
+## de cadeiras em .csv
+
+### Deputado Federal
+
+write.csv(vags_fed, "data/output/distcad_fed.csv")
+
+### Deputado Estadual
+
+write.csv(vags_est, "data/output/distcad_est.csv")
+
+## Remove da area de trabalho os bancos que nao serao mais utilizados
+
+rm(vags_est,vags_fed)
