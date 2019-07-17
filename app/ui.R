@@ -89,14 +89,14 @@ ui <- fluidPage(
                                      
                                      selectizeInput(inputId = "INDICADORES_DISTR",
                                                     label = NULL, 
-                                                    choices = c("","Quociente eleitoral", "Quociente partidário"), ## Indicadores disponiveis
-                                                    selected = NULL,
+                                                    choices = c("","Quociente eleitoral", "Quociente partidário"), ## Indicadores 
+                                                    selected = NULL,                                               ## disponiveis
                                                     options = list(placeholder = 'Escolha um indicador')),
                                      
                                      selectizeInput(inputId = "DESCRICAO_CARGO1",
                                                     label = NULL,
-                                                    choices = c("","Deputado Federal", "Deputado Estadual"), ## Cargos disponiveis
-                                                    selected = NULL,
+                                                    choices = c("","Deputado Federal", "Deputado Estadual"), ## Cargos 
+                                                    selected = NULL,                                         ## disponiveis
                                                     options = list(placeholder = 'Escolha um cargo')),
                                      
                                      selectizeInput(inputId = "UF",

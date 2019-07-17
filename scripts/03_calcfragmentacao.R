@@ -259,7 +259,7 @@ frag_part_fed$Fragmentação <-
                digits = 2),
          nsmall = 2)
 
-frag_part_fed$`Numero efetivo de partidos por cadeiras` <- 
+frag_part_fed$`Número efetivo de partidos por cadeiras` <- 
   format(round(frag_part_fed$`Número efetivo de partidos por cadeiras`, 
                digits = 2), 
          nsmall = 2)
