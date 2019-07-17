@@ -197,6 +197,6 @@ cons_uf <- rbind(pr_uf, gov_uf,sen_uf, dfc, dec)
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
 rm(dec,dec1,decb,dfc,dfc1,dfcb,pr_br, pr_uf,
-   gov_br,gov_uf, sen_br, sen_uf,dep,dfp)
+   gov_br,gov_uf, sen_br, sen_uf)
 
 

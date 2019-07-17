@@ -46,6 +46,7 @@ df <- df %>%
                   UF) %>% 
   dplyr::summarise("Cadeiras conquistadas por UF" = n())
 
+
 ### Deputado Estadual
 
 de <- de %>% 
@@ -75,6 +76,31 @@ df <- left_join(df, df1,
                 by = c("ANO_ELEICAO", 
                        "DESCRICAO_CARGO",
                        "SIGLA_PARTIDO"))
+
+## Soma os votos consquistados por cada partido
+
+### Deputado Federal
+
+x <- dfp %>% 
+  dplyr::group_by(ANO_ELEICAO) %>% 
+  summarise(
+    "Total de votos" = sum(QTDE_VOTOS)
+  )
+
+t <- dfp %>% 
+  dplyr::group_by(ANO_ELEICAO,
+                  DESCRICAO_CARGO,
+                  SIGLA_PARTIDO) %>% 
+  dplyr::summarise("Votos conquistados" = sum(QTDE_VOTOS))
+
+t98 <- t %>% 
+  filter(ANO_ELEICAO == 1998)
+
+## Calcula o percentual de votos conquistados por cada partido
+
+### Deputado Federal
+
+t98$`Percentual de votos conquistados` <- t98$`Votos conquistados`/66721744
 
 ## Percentual de cadeiras conquistas pelos partidos
 
@@ -197,8 +223,16 @@ t18df$Fragmentação <- frag(t18df$Fracionalização, t18df$`Fracionalização m
 
 # 5. Desproporcionalidade de Gallagher ------------------------------------
 
+desp_gallag <- function(V,C){
+  idx <- sqrt(sum((V - C) ^ 2, na.rm = TRUE) / 2)
+}
 
+partidos <- list(df1$`Sigla do partido`)
 
+for(i in partidos){
+t98$`Desproporcionalidade de Gallagher` <- desp_gallag(t98$`Percentual de votos conquistados`, 
+                                                       df1$`Percentual de cadeiras conquistadas`)
+}
 
 # 6. Numero efetivo de partidos ---------------------------------
 

@@ -661,10 +661,10 @@ server <- function(input, output,session){
         frag_part_fed %>% 
           ungroup() %>% 
           dplyr::select(`Ano da eleição`,
-                        Fracionalização) %>% 
+                        `Fracionalização`) %>% 
           unique() %>% 
           spread(`Ano da eleição`,
-                 Fracionalização)
+                 `Fracionalização`)
         
         
       }
@@ -715,7 +715,7 @@ server <- function(input, output,session){
         data = frag_part_fed %>% 
           select(`Ano da eleição`, 
                  Cargo, 
-                 Fracionalização) %>% 
+                 `Fracionalização`) %>% 
           unique()
       }
     })
@@ -820,7 +820,7 @@ server <- function(input, output,session){
         data = frag_part_fed %>% 
           select(`Ano da eleição`, 
                  Cargo,
-                 Fracionalização, 
+                 `Fracionalização`, 
                  `Fracionalização máxima`) %>% 
           unique()
       }
@@ -874,10 +874,10 @@ server <- function(input, output,session){
         frag_part_fed %>% 
           ungroup() %>% 
           dplyr::select(`Ano da eleição`,
-                        Fragmentação) %>% 
+                        `Fragmentação`) %>% 
           unique() %>% 
           spread(`Ano da eleição`,
-                 Fragmentação)
+                 `Fragmentação`)
         
       }
     })
@@ -927,9 +927,9 @@ server <- function(input, output,session){
         data = frag_part_fed %>% 
           select(`Ano da eleição`, 
                  Cargo, 
-                 Fracionalização,
+                 `Fracionalização`,
                  `Fracionalização máxima`, 
-                 Fragmentação) %>% 
+                 `Fragmentação`) %>% 
           unique()
       }
     })
@@ -981,10 +981,10 @@ server <- function(input, output,session){
          & agregacao == "Brasil"){
         frag_part_fed %>% 
           dplyr::select(`Ano da eleição`,
-                        `Numero efetivo de partidos por cadeiras`) %>% 
+                        `Número efetivo de partidos por cadeiras`) %>% 
           unique() %>% 
           spread(`Ano da eleição`,
-                 `Numero efetivo de partidos por cadeiras`)
+                 `Número efetivo de partidos por cadeiras`)
         
       }
     })
@@ -1032,10 +1032,10 @@ server <- function(input, output,session){
         data = frag_part_fed %>% 
           select(`Ano da eleição`, 
                  Cargo, 
-                 Fracionalização,
+                 `Fracionalização`,
                  `Fracionalização máxima`, 
-                 Fragmentação, 
-                 `Numero efetivo de partidos por cadeiras`) %>% 
+                 `Fragmentação`, 
+                 `Número efetivo de partidos por cadeiras`) %>% 
           unique()
       }
     })
@@ -1082,10 +1082,10 @@ server <- function(input, output,session){
          & agregacao == "Brasil"){
         frag_part_fed %>% 
           dplyr::select(`Ano da eleição`,
-                        `Numero efetivo de partidos por cadeiras`) %>% 
+                        `Número efetivo de partidos por cadeiras`) %>% 
           unique() %>% 
           spread(`Ano da eleição`,
-                 `Numero efetivo de partidos por cadeiras`)
+                 `Número efetivo de partidos por cadeiras`)
         
       }
     })
@@ -1133,10 +1133,10 @@ server <- function(input, output,session){
         data = frag_part_fed %>% 
           select(`Ano da eleição`, 
                  Cargo, 
-                 Fracionalização,
+                 `Fracionalização`,
                  `Fracionalização máxima`, 
-                 Fragmentação, 
-                 `Numero efetivo de partidos por cadeiras`) %>% 
+                 `Fragmentação`, 
+                 `Número efetivo de partidos por cadeiras`) %>% 
           unique()
       }
     })
