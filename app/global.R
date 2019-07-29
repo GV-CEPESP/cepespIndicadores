@@ -33,8 +33,7 @@ library(DT)
 files <- list.files(file.path("C:/Users/rebeca.carvalho/Documents/cepesp/cepespIndicadores/data/output"))
 
 for(i in files){
-  df <- read.csv(file.path("C:/Users/rebeca.carvalho/Documents/cepesp/cepespIndicadores/data/output",i),
-                check.names = FALSE)
+  df <- read_csv(file.path("C:/Users/rebeca.carvalho/Documents/cepesp/cepespIndicadores/data/output",i))
   df <- df[,2:length(df)]
   assign(paste(substr(i,1,nchar(i)-4)), df)
   

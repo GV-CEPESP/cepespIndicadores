@@ -1,5 +1,6 @@
 
 
+
 # Objetivo
 #'        - Criar uma interface em shiny para exibir os indicadores calculados.
 
@@ -11,21 +12,26 @@
 
 ui <- fluidPage(
   
-  tags$head(
+  tags$head("CEPESP Indicadores",
     tags$style(HTML(".navbar .navbar-nav {float: left}
                     .navbar .navbar-header {float: right}"))),
+  
   
   title = "CEPESP Indicadores", ## Titulo da pagina do aplicativo em versao web
   
   navbarPage(id = "CepespIndicadores",theme = shinytheme("flatly"),
              
+             
+            
              tags$div(class = "header", checked = NA,
+                      
+                      
                       
                       tags$a(href = "http://www.cepesp.io/cepesp-data/", class = 
                                "ir-cepesp-data w-hidden-medium w-hidden-small w-hidden-tiny" ,
                              "CEPESP Data", ## Link que redireciona para
                              style =        ## a pagina do CEPESP Data
-                               "top: -2px;   
+                               "top: -2px;
                              background-color:white;
                              border-bottom-color:#1897d5;
                              right: 0;
@@ -251,6 +257,7 @@ ui <- fluidPage(
                          style =
                            
                            "max-width: 100%;
+                         noprint: none; 
                          padding: 10px 0;
                          min-height: 40px;
                          position: relative;
@@ -262,7 +269,7 @@ ui <- fluidPage(
                          text-align: left;
                          z-index: 10;
                          height: 3em;
-                         margin-top: 41em;",
+                         margin-top: 38em;",
                          
                          tags$div(class = "rodape-container",
                                   

@@ -4,6 +4,7 @@ rm(list = ls()) # Limpa a área de trabalho do R
 
 ## Pacotes
 
+
 library(cepespR)
 library(magrittr)
 library(dplyr)
@@ -20,4 +21,4 @@ source("scripts/01_join.R", encoding = "UTF-8")
 source("scripts/02_calcdistribuicao.R", encoding = "UTF-8")
 source("scripts/03_calcfragmentacao.R", encoding = "UTF-8")
 source("scripts/04_calcrenovacao.R", encoding = "UTF-8")
-source("Scripts/05_calcalienacao.R", encoding = "UTF-8")
+source("scripts/05_calcalienacao.R", encoding = "UTF-8")

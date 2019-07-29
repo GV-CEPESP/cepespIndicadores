@@ -1,4 +1,4 @@
-"","Ano da eleiÁ„o","UF","Cargo","Cadeiras oferecidas","Votos v·lidos","Sigla do partido","Votos do partido","Quociente eleitoral","Quociente partid·rio"
+Ôªø"","Ano da elei√ß√£o","UF","Cargo","Cadeiras oferecidas","Votos v√°lidos","Sigla do partido","Votos do partido","Quociente eleitoral","Quociente partid√°rio"
 "1",1998,"AC","Deputado Estadual",24,"219.824","PC do B","5.186","9.159,32",0.57
 "2",1998,"AC","Deputado Estadual",24,"219.824","PDT","3.879","9.159,32",0.42
 "3",1998,"AC","Deputado Estadual",24,"219.824","PFL","25.322","9.159,32",2.76

@@ -1,4 +1,4 @@
-"","Ano da eleição","UF","Turno","Cargo","Quantidade de abstenções","Quantidade de votos brancos","Quantidade de votos nulos","Quantidade de eleitores aptos","Alienação Absoluta","Alienação Percentual"
+ï»¿"","Ano da eleiÃ§Ã£o","UF","Turno","Cargo","Quantidade de abstenÃ§Ãµes","Quantidade de votos brancos","Quantidade de votos nulos","Quantidade de eleitores aptos","AlienaÃ§Ã£o Absoluta","AlienaÃ§Ã£o Percentual"
 "1",1998,"AC",1,"Governador",79357,25886,18067,318955,123310,38.66
 "2",1998,"AL",1,"Governador",390465,73109,253827,1383600,717401,51.85
 "3",1998,"AM",1,"Governador",398436,62428,88792,1368084,549656,40.18
