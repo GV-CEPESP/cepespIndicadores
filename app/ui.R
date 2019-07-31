@@ -150,7 +150,8 @@ ui <- fluidPage(
                                                     label = NULL, 
                                                     choices = c("","Desproporcionalidade de gallagher","Fracionalização", 
                                                                 "Fracionalização máxima", ## Indicadores disponiveis
-                                                                "Fragmentação", "Número efetivo de partidos por cadeiras"),
+                                                                "Fragmentação", "Número efetivo de partidos por cadeiras",
+                                                                "Número efetivo de partidos por votos"),
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um indicador')),
                                      
@@ -186,14 +187,16 @@ ui <- fluidPage(
                                                              DT::dataTableOutput("fraciomax_fed"),
                                                              DT::dataTableOutput("frag_fed"),
                                                              DT::dataTableOutput("nepc_fed"),
-                                                             DT::dataTableOutput("nepc_est")),
+                                                             DT::dataTableOutput("nepc_est"),
+                                                             DT::dataTableOutput("nepv_fed")),
                                                    tabPanel("Dados agregados", br(),
                                                             DT::dataTableOutput("agreg_dpgfed"),
                                                             DT::dataTableOutput("agreg_fracfed"),
                                                             DT::dataTableOutput("agreg_fracmaxfed"),
                                                             DT::dataTableOutput("agreg_fragfed"),
                                                             DT::dataTableOutput("agreg_nepfed"),
-                                                            DT::dataTableOutput("agreg_nepest")),  
+                                                            DT::dataTableOutput("agreg_nepest"),
+                                                            DT::dataTableOutput("agreg_nepvfed")),  
                                                    tabPanel("Definição", htmlOutput("def_frag"))))))), ## Definicao dos indicadores
              
              tabPanel("Alienação",  ## Definicao das ferramentas de selecao para a guia

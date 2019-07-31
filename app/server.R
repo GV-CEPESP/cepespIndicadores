@@ -1248,6 +1248,112 @@ server <- function(input, output,session){
     })
   })
   
+# 2.2.6. Numero efetivo de partidos por votos -----------------------------  
+  
+  ## Tabela para visualizacao  
+  
+  ### Deputado Federal
+  
+  depfedvn <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Número efetivo de partidos por votos" & 
+       cargo == "Deputado Federal" 
+       & agregacao == "Brasil"){
+      return(input$nepv_fed)
+    }
+  })
+  
+  output$nepv_fed <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bnepv_fed()
+  })
+  
+  bnepv_fed <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'nepc_fed',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_FRAG
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- input$UF2
+        if(indicador == "Número efetivo de partidos por votos" & 
+           cargo == "Deputado Federal" 
+           & agregacao == "Brasil"){
+          frag_part_fed %>% 
+            dplyr::select(`Ano da eleição`,
+                          `Número efetivo de partidos por votos`) %>% 
+            unique() %>% 
+            spread(`Ano da eleição`,
+                   `Número efetivo de partidos por votos`)
+          
+        }
+      })
+  })
+  
+  ## Dados agregados
+  
+  ### Deputado Federal  
+  
+  ag_nepvfed <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Número efetivo de partidos por votos" & 
+       cargo == "Deputado Federal" 
+       & agregacao == "Brasil"){
+      return(input$agreg_nepvfed)
+    }
+  })
+  
+  output$agreg_nepvfed <- DT::renderDataTable(server = FALSE,{
+    bagreg_nepvfed()
+  })
+  
+  bagreg_nepvfed <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'nepc_fed_agreg',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_FRAG
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
+        if(indicador == "Número efetivo de partidos por votos" & 
+           cargo == "Deputado Federal" 
+           & agregacao == "Brasil"){
+          data = frag_part_fed %>% 
+            select(`Ano da eleição`, 
+                   Cargo, 
+                   `Fracionalização`,
+                   `Fracionalização máxima`, 
+                   `Fragmentação`, 
+                   `Número efetivo de partidos por cadeiras`,
+                   `Número efetivo de partidos por votos`) %>% 
+            unique()
+        }
+      })
+  })  
+  
   
 # 2.3. Alienacao ----------------------------------------------------------  
   
@@ -1275,6 +1381,8 @@ server <- function(input, output,session){
   
  
 # 2.3.1. Alienacao absoluta --------------------------------------------------------
+
+
 
 ## Tabela para visualizacao    
   

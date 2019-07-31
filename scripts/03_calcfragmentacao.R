@@ -259,37 +259,51 @@ t18df$`Desproporcionalidade de gallagher` <- desp_gallag(t18df$`Percentual de vo
 
 # 6. Numero efetivo de partidos ---------------------------------
 
+## Funcao para o calculo do numero efetivo de partidos 
+
+options(scipen=999)
+
+NEPV <- NA
+
+NEP <- function(p){
+  for(i in 1:length(p)){
+    NEPV[[i]]<-(p[[i]]*p[[i]])
+  }
+  1/sum(NEPV)}
 
 # 6.1. Por votos ----------------------------------------------------------
+
+## Calculo do numero efetivo de partidos por votos
+
+t98df$`Número efetivo de partidos por votos` <- NEP(t98df$`Percentual de votos conquistados`)
+
+t02df$`Número efetivo de partidos por votos` <- NEP(t02df$`Percentual de votos conquistados`)
+
+t06df$`Número efetivo de partidos por votos` <- NEP(t06df$`Percentual de votos conquistados`)
+
+t10df$`Número efetivo de partidos por votos` <- NEP(t10df$`Percentual de votos conquistados`)
+
+t14df$`Número efetivo de partidos por votos` <- NEP(t14df$`Percentual de votos conquistados`)
+
+t18df$`Número efetivo de partidos por votos` <- NEP(t18df$`Percentual de votos conquistados`)
 
 
 # 6.2. Por cadeiras -------------------------------------------------------
 
-## Funcao para o calculo do numero efetivo de partidos (cadeiras)
-
-options(scipen=999)
-
-NEP<-NA
-
-NEPC <- function(p){
-  for(i in 1:length(p)){
-    NEP[[i]]<-(p[[i]]*p[[i]])
-  }
-  1/sum(NEP)}
 
 ## Calculo do numero efetivo de partidos por cadeiras
 
-t98df$`Número efetivo de partidos por cadeiras` <- NEPC(t98df$`Percentual de cadeiras conquistadas`)
+t98df$`Número efetivo de partidos por cadeiras` <- NEP(t98df$`Percentual de cadeiras conquistadas`)
 
-t02df$`Número efetivo de partidos por cadeiras` <- NEPC(t02df$`Percentual de cadeiras conquistadas`)
+t02df$`Número efetivo de partidos por cadeiras` <- NEP(t02df$`Percentual de cadeiras conquistadas`)
 
-t06df$`Número efetivo de partidos por cadeiras` <- NEPC(t06df$`Percentual de cadeiras conquistadas`)
+t06df$`Número efetivo de partidos por cadeiras` <- NEP(t06df$`Percentual de cadeiras conquistadas`)
 
-t10df$`Número efetivo de partidos por cadeiras` <- NEPC(t10df$`Percentual de cadeiras conquistadas`)
+t10df$`Número efetivo de partidos por cadeiras` <- NEP(t10df$`Percentual de cadeiras conquistadas`)
 
-t14df$`Número efetivo de partidos por cadeiras` <- NEPC(t14df$`Percentual de cadeiras conquistadas`)
+t14df$`Número efetivo de partidos por cadeiras` <- NEP(t14df$`Percentual de cadeiras conquistadas`)
 
-t18df$`Número efetivo de partidos por cadeiras` <- NEPC(t18df$`Percentual de cadeiras conquistadas`)
+t18df$`Número efetivo de partidos por cadeiras` <- NEP(t18df$`Percentual de cadeiras conquistadas`)
 
 
 
@@ -328,6 +342,11 @@ frag_part_fed$Fragmentação <-
 
 frag_part_fed$`Desproporcionalidade de gallagher` <- 
   format(round(frag_part_fed$`Desproporcionalidade de gallagher`, 
+               digits = 2), 
+         nsmall = 2)
+
+frag_part_fed$`Número efetivo de partidos por votos` <- 
+  format(round(frag_part_fed$`Número efetivo de partidos por votos`, 
                digits = 2), 
          nsmall = 2)
 
