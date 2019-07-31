@@ -139,11 +139,17 @@ dep <- dep %>%
 ### Deputado Federal
 
 dfc1 <- dfc %>% 
-  dplyr::group_by(ANO_ELEICAO,
-                  UF) %>% 
+  dplyr::group_by(ANO_ELEICAO,UF) %>% 
   dplyr::summarise(
     VOTOS_VALIDOS_UF = sum(QT_VOTOS_NOMINAIS,
                            QT_VOTOS_LEGENDA)
+  )
+
+dfc2 <- dfc %>% 
+  dplyr::group_by(ANO_ELEICAO) %>% 
+  dplyr::summarise(
+    VOTOS_VALIDOS = sum(QT_VOTOS_NOMINAIS,
+                        QT_VOTOS_LEGENDA)
   )
 
 ### Deputado Estadual
@@ -170,7 +176,8 @@ vags_fed <- left_join(vags_fed,
 
 vags_fed <- left_join(vags_fed, 
                       dfp,
-                      by = c("ANO_ELEICAO", "UF"))
+                      by = c("ANO_ELEICAO", 
+                             "UF"))
 
 
 ### Deputado Estadual
@@ -183,7 +190,7 @@ vags_est <- left_join(vags_est,
                       dep, 
                       by = c("ANO_ELEICAO", "UF"))
 
-## Junta o bancos sobre o consolidado em um unico
+## Junta os bancos sobre o consolidado em um unico
 
 ## Consolidado BR
 
@@ -196,7 +203,7 @@ cons_uf <- rbind(pr_uf, gov_uf,sen_uf, dfc, dec)
 
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
-rm(dec,dec1,decb,dfc,dfc1,dfcb,pr_br, pr_uf,
+rm(dec,dec1,dfc,dfc1,decb,dfcb,pr_br, pr_uf,
    gov_br,gov_uf, sen_br, sen_uf)
 
 

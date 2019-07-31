@@ -612,9 +612,115 @@ server <- function(input, output,session){
     HTML(note)
   }) 
   
+# 2.2.1. Desproporcionalidade de gallagher --------------------------------  
+  
+  ## Tabela para visualizacao    
+  
+  ### Deputado Federal
   
   
-# 2.2.1. Fracionalizacao -------------------------------------------------- 
+  depfedg <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Desproporcionalidade de gallagher" & 
+       cargo == "Deputado Federal" & 
+       agregacao == "Brasil"){
+      return(input$dpg_fed)
+    }
+  })
+  
+  output$dpg_fed <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bdpg_fed()
+  })
+  
+  bdpg_fed <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'fracio_fed',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_FRAG
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- input$UF2
+        if(indicador == "Desproporcionalidade de gallagher" & 
+           cargo == "Deputado Federal" 
+           & agregacao == "Brasil"){
+          frag_part_fed %>% 
+            ungroup() %>% 
+            dplyr::select(`Ano da eleição`,
+                          `Desproporcionalidade de gallagher`) %>% 
+            unique() %>% 
+            spread(`Ano da eleição`,
+                   `Desproporcionalidade de gallagher`)
+          
+          
+        }
+      })
+  })  
+  
+  ## Dados agregados
+  
+  ### Deputado Federal  
+  
+  ag_dpgfed <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Desproporcionalidade de gallagher" & 
+       cargo == "Deputado Federal" & 
+       agregacao == "Brasil"){
+      return(input$agreg_dpgfed)
+    }
+  })
+  
+  output$agreg_dpgfed <- DT::renderDataTable(server = FALSE,{
+    bagreg_dpgfed()
+  })
+  
+  bagreg_dpgfed <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'fracio_fed_agreg',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_FRAG
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- input$UF2
+        if(indicador == "Desproporcionalidade de gallagher" & 
+           cargo == "Deputado Federal" 
+           & agregacao == "Brasil"){
+          data = frag_part_fed %>% 
+            select(`Ano da eleição`, 
+                   Cargo, 
+                   `Desproporcionalidade de gallagher`) %>% 
+            unique()
+        }
+      })
+  })  
+# 2.2.2. Fracionalizacao -------------------------------------------------- 
+
+
 
 ## Tabela para visualizacao    
   
@@ -721,7 +827,7 @@ server <- function(input, output,session){
     })
   })  
   
-# 2.2.2. Fracionalizacao maxima -------------------------------------------
+# 2.2.3. Fracionalizacao maxima -------------------------------------------
   
 ## Tabela para visualizacao  
   
@@ -827,7 +933,7 @@ server <- function(input, output,session){
     })
   })  
   
-# 2.2.3. Fragmentacao -----------------------------------------------------
+# 2.2.4. Fragmentacao -----------------------------------------------------
 
 ## Tabela para visualizacao  
     
@@ -936,7 +1042,7 @@ server <- function(input, output,session){
   })  
   
   
-# 2.2.4. Numero efetivo de partidos por cadeiras -----------------------------------------------------
+# 2.2.5. Numero efetivo de partidos por cadeiras -----------------------------------------------------
   
 ## Tabela para visualizacao  
   

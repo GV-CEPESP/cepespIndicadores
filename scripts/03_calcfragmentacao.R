@@ -81,26 +81,23 @@ df <- left_join(df, df1,
 
 ### Deputado Federal
 
-x <- dfp %>% 
-  dplyr::group_by(ANO_ELEICAO) %>% 
+dfp <- dfp %>% 
+  dplyr::group_by(ANO_ELEICAO, SIGLA_PARTIDO) %>% 
   summarise(
-    "Total de votos" = sum(QTDE_VOTOS)
+    "Total de votos conquistados" = sum(VOT_PART_UF)
   )
 
-t <- dfp %>% 
-  dplyr::group_by(ANO_ELEICAO,
-                  DESCRICAO_CARGO,
-                  SIGLA_PARTIDO) %>% 
-  dplyr::summarise("Votos conquistados" = sum(QTDE_VOTOS))
+df1 <- left_join(dfp,df1, by = c("ANO_ELEICAO", 
+                                 "SIGLA_PARTIDO"))
 
-t98 <- t %>% 
-  filter(ANO_ELEICAO == 1998)
+df1 <- left_join(df1, dfc2, by = c("ANO_ELEICAO"))
+
 
 ## Calcula o percentual de votos conquistados por cada partido
 
 ### Deputado Federal
 
-t98$`Percentual de votos conquistados` <- t98$`Votos conquistados`/66721744
+df1$`Percentual de votos conquistados` <- df1$`Total de votos conquistados`/df1$VOTOS_VALIDOS
 
 ## Percentual de cadeiras conquistas pelos partidos
 
@@ -113,11 +110,23 @@ df1$`Percentual de cadeiras conquistadas` <- df1$`Total de cadeiras conquistadas
 ### Deputado Federal
 
 df1 <- df1 %>% 
+  dplyr::select(ANO_ELEICAO,
+                DESCRICAO_CARGO,
+                VOTOS_VALIDOS,
+                SIGLA_PARTIDO,
+                `Total de votos conquistados`,
+                `Total de cadeiras conquistadas`,
+                `Percentual de votos conquistados`,
+                `Percentual de cadeiras conquistadas`) %>% 
    dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
-                "Cargo" = "DESCRICAO_CARGO", 
+                 "Cargo" = "DESCRICAO_CARGO",
+                "Votos válidos" = "VOTOS_VALIDOS", 
                 "Sigla do partido" = "SIGLA_PARTIDO")
 
 df1$Cargo <- str_to_title(df1$Cargo)
+
+df1 <- na.omit(df1)
+
 
 ### Deputado Estadual
 
@@ -223,16 +232,30 @@ t18df$Fragmentação <- frag(t18df$Fracionalização, t18df$`Fracionalização m
 
 # 5. Desproporcionalidade de Gallagher ------------------------------------
 
+
+
 desp_gallag <- function(V,C){
-  idx <- sqrt(sum((V - C) ^ 2, na.rm = TRUE) / 2)
+  idx <- sqrt(sum((V*100 - C*100) ^ 2, na.rm = TRUE) / 2)
 }
 
-partidos <- list(df1$`Sigla do partido`)
 
-for(i in partidos){
-t98$`Desproporcionalidade de Gallagher` <- desp_gallag(t98$`Percentual de votos conquistados`, 
-                                                       df1$`Percentual de cadeiras conquistadas`)
-}
+t98df$`Desproporcionalidade de gallagher` <- desp_gallag(t98df$`Percentual de votos conquistados`,
+                 t98df$`Percentual de cadeiras conquistadas`)
+
+t02df$`Desproporcionalidade de gallagher` <- desp_gallag(t02df$`Percentual de votos conquistados`,
+                                                         t02df$`Percentual de cadeiras conquistadas`)
+
+t06df$`Desproporcionalidade de gallagher` <- desp_gallag(t06df$`Percentual de votos conquistados`,
+                                                         t06df$`Percentual de cadeiras conquistadas`)
+
+t10df$`Desproporcionalidade de gallagher` <- desp_gallag(t10df$`Percentual de votos conquistados`,
+                                                         t10df$`Percentual de cadeiras conquistadas`)
+
+t14df$`Desproporcionalidade de gallagher` <- desp_gallag(t14df$`Percentual de votos conquistados`,
+                                                         t14df$`Percentual de cadeiras conquistadas`)
+
+t18df$`Desproporcionalidade de gallagher` <- desp_gallag(t18df$`Percentual de votos conquistados`,
+                                                         t18df$`Percentual de cadeiras conquistadas`)
 
 # 6. Numero efetivo de partidos ---------------------------------
 
@@ -278,6 +301,16 @@ frag_part_fed <- bind_rows(t98df, t02df, t06df, t10df, t14df, t18df)
 
 ## Arredonda em duas casas decimas os indices calculados
 
+frag_part_fed$`Percentual de votos conquistados`<- 
+  format(round(frag_part_fed$`Percentual de votos conquistados`, 
+               digits = 2),  
+         nsmall = 2)
+
+frag_part_fed$`Percentual de cadeiras conquistadas` <- 
+  format(round(frag_part_fed$`Percentual de cadeiras conquistadas`, 
+               digits = 2),  
+         nsmall = 2)
+
 frag_part_fed$Fracionalização <- 
   format(round(frag_part_fed$Fracionalização, 
                digits = 2),  
@@ -293,11 +326,20 @@ frag_part_fed$Fragmentação <-
                digits = 2),
          nsmall = 2)
 
+frag_part_fed$`Desproporcionalidade de gallagher` <- 
+  format(round(frag_part_fed$`Desproporcionalidade de gallagher`, 
+               digits = 2), 
+         nsmall = 2)
+
 frag_part_fed$`Número efetivo de partidos por cadeiras` <- 
   format(round(frag_part_fed$`Número efetivo de partidos por cadeiras`, 
                digits = 2), 
          nsmall = 2)
 
+
+frag_part_fed$`Votos válidos` <- gabi(frag_part_fed$`Votos válidos`)
+
+frag_part_fed$`Total de votos conquistados` <- gabi(frag_part_fed$`Total de votos conquistados`)
 
 # 8. Salva o arquivo ------------------------------------------------------
 
@@ -311,3 +353,5 @@ write.csv(frag_part_fed, "data/output/frag_part_fed.csv")
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
 rm(t98df,t02df,t06df,t10df,t14df,t18df,df1,frag_part_fed,df,de)
+
+

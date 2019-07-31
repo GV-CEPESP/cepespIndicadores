@@ -12,7 +12,7 @@
 
 ui <- fluidPage(
   
-  tags$head("CEPESP Indicadores",
+  tags$head(
     tags$style(HTML(".navbar .navbar-nav {float: left}
                     .navbar .navbar-header {float: right}"))),
   
@@ -148,7 +148,8 @@ ui <- fluidPage(
                                      
                                      selectizeInput(inputId = "INDICADORES_FRAG",
                                                     label = NULL, 
-                                                    choices = c("","Fracionalização", "Fracionalização máxima", ## Indicadores disponiveis
+                                                    choices = c("","Desproporcionalidade de gallagher","Fracionalização", 
+                                                                "Fracionalização máxima", ## Indicadores disponiveis
                                                                 "Fragmentação", "Número efetivo de partidos por cadeiras"),
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um indicador')),
@@ -180,12 +181,14 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
                                                     tabPanel("Tabelas", br(),
+                                                             DT::dataTableOutput("dpg_fed"),
                                                              DT::dataTableOutput("fracio_fed"),## Tabelas que serao exibidas
                                                              DT::dataTableOutput("fraciomax_fed"),
                                                              DT::dataTableOutput("frag_fed"),
                                                              DT::dataTableOutput("nepc_fed"),
                                                              DT::dataTableOutput("nepc_est")),
                                                    tabPanel("Dados agregados", br(),
+                                                            DT::dataTableOutput("agreg_dpgfed"),
                                                             DT::dataTableOutput("agreg_fracfed"),
                                                             DT::dataTableOutput("agreg_fracmaxfed"),
                                                             DT::dataTableOutput("agreg_fragfed"),
