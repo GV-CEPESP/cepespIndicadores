@@ -199,8 +199,8 @@ ui <- fluidPage(
                                                             DT::dataTableOutput("agreg_nepvfed")),  
                                                    tabPanel("Definição", htmlOutput("def_frag"))))))), ## Definicao dos indicadores
              
-             tabPanel("Alienação",  ## Definicao das ferramentas de selecao para a guia
-                                    ## "Alienacao"
+             tabPanel("Renovação parlamentar",  ## Definicao das ferramentas de selecao para a guia
+                      ## "Renovação parlamentar"
                       
                       
                       sidebarLayout(
@@ -208,15 +208,16 @@ ui <- fluidPage(
                         sidebarPanel(h4("Opções"),width = 3,
                                      
                                      
-                                     selectizeInput(inputId = "INDICADORES_ALIE",
+                                     selectizeInput(inputId = "INDICADORES_RENOV",
                                                     label = NULL, 
-                                                    choices = c("","Alienação Absoluta", "Alienação Percentual"), ## Indicadores disponiveis
+                                                    choices = c("","Conservação", "Renovação bruta",
+                                                                "Renovação líquida", "Volatilidade eleitoral"), ## Indicadores disponiveis
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um indicador')),
                                      
                                      selectizeInput(inputId = "DESCRICAO_CARGO3",
                                                     label = NULL,
-                                                    choices = c("","Presidente", "Governador", "Senador", "Deputado Federal", ## Cargos disponiveis
+                                                    choices = c("","Deputado Federal", ## Cargos disponiveis
                                                                 "Deputado Estadual"),
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um cargo')),
@@ -243,6 +244,55 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
                                                     tabPanel("Tabelas", br(), 
+                                                             DT::dataTableOutput("renov_parl")), ## Tabelas que serao exibidas
+                                                             tabPanel("Dados agregados", br(), 
+                                                             DT::dataTableOutput("agreg_renov_parl")),
+                                                    tabPanel("Definição", htmlOutput(""))))))),
+             
+             tabPanel("Alienação",  ## Definicao das ferramentas de selecao para a guia
+                                    ## "Alienacao"
+                      
+                      
+                      sidebarLayout(
+                        
+                        sidebarPanel(h4("Opções"),width = 3,
+                                     
+                                     
+                                     selectizeInput(inputId = "INDICADORES_ALIE",
+                                                    label = NULL, 
+                                                    choices = c("","Alienação Absoluta", "Alienação Percentual"), ## Indicadores disponiveis
+                                                    selected = NULL,
+                                                    options = list(placeholder = 'Escolha um indicador')),
+                                     
+                                     selectizeInput(inputId = "DESCRICAO_CARGO4",
+                                                    label = NULL,
+                                                    choices = c("","Presidente", "Governador", "Senador", "Deputado Federal", ## Cargos disponiveis
+                                                                "Deputado Estadual"),
+                                                    selected = NULL,
+                                                    options = list(placeholder = 'Escolha um cargo')),
+                                     
+                                     selectizeInput(inputId = "AGREGACAO_REGIONAL4",
+                                                    label = NULL,
+                                                    choices = c("","Brasil", "UF"),
+                                                    selected = NULL,
+                                                    options = list(placeholder = 'Escolha uma agregação regional')),
+                                     
+                                     
+                                     uiOutput("UF4"),
+                                     
+                                     
+                                     actionButton(inputId = "BCALC4",
+                                                  label = strong("Calcular"), ## Botao de acao "Calcular"
+                                                  width = "95%")
+                                     
+                                     
+                        ),
+                        
+                        mainPanel(
+                          
+                          absolutePanel(top = 0, right = 0, left = 100,
+                                        tabsetPanel(type = "pills",
+                                                    tabPanel("Tabelas", br(), 
                                                              DT::dataTableOutput("alien_feda_br"), ## Tabelas que serao exibidas
                                                              DT::dataTableOutput("alien_fedp_br"), 
                                                              DT::dataTableOutput("alien_feda_uf"), 
@@ -253,6 +303,8 @@ ui <- fluidPage(
                                                              DT::dataTableOutput("agreg_alifedp_br"),
                                                              DT::dataTableOutput("agreg_alifedp_uf")),
                                                     tabPanel("Definição", htmlOutput("def_alien"))))))), ## Definicao dos indicadores
+             
+             
              
              
              tabPanel("Sobre", htmlOutput("sobre")), ## Guia correspondente ao "Sobre"

@@ -66,7 +66,7 @@ server <- function(input, output,session){
   })
   
   
-### Alienacao
+### Renovacao parlamentar
   
   
   agreg <- reactive({
@@ -81,6 +81,33 @@ server <- function(input, output,session){
     agregacao <- input$AGREGACAO_REGIONAL3
     if(agregacao == "UF"){
       selectizeInput("UF3",
+                     label = NULL,
+                     choices = 
+                       c("","Todas UFs","AC", "AL", "AM", 
+                         "AP", "BA", "CE", "DF", "ES","GO",
+                         "MA", "MG","MS", "MT", "PA", "PB", 
+                         "PE", "PI","PR", "RJ", "RN", "RO", 
+                         "RR","RS", "SC", "SE", "SP", "TO"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha uma UF'))
+    }
+  })
+  
+  
+  ## Alienacao
+  
+  agreg <- reactive({
+    agregacao <- input$AGREGACAO_REGIONAL3
+    if(agregacao == "UF"){
+      return(input$UF4)
+    } 
+  })
+  
+  
+  output$UF4 <- renderUI({
+    agregacao <- input$AGREGACAO_REGIONAL3
+    if(agregacao == "UF"){
+      selectizeInput("UF4",
                      label = NULL,
                      choices = 
                        c("","Todas UFs","AC", "AL", "AM", 
@@ -1355,7 +1382,108 @@ server <- function(input, output,session){
   })  
   
   
-# 2.3. Alienacao ----------------------------------------------------------  
+# 2.3. Renovacao parlamentar ----------------------------------------------  
+  
+  ## Funcao para descricao dos indicadores de renovacao parlamentar
+  
+# 2.3.1. Conservacao ------------------------------------------------------
+  
+  ## Tabela para visualizacao    
+  
+  ### Deputado Federal 
+  
+  depfedr_p <- reactive({ ## Atributos das tabelas 
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO3
+    if(indicador == "Conservação" & 
+       agregacao == "Brasil"){
+      return(input$renov_parl)
+    }
+  })
+  
+  
+  output$renov_parl <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao absoluta que devera ser chamada na ui
+    brenov_parl()
+  })
+  
+  brenov_parl <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'renov_parl_fed',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_RENOV
+        cargo <- input$DESCRICAO_CARGO3
+        agregacao <- input$AGREGACAO_REGIONAL3
+        if(indicador == "Conservação" & 
+           agregacao == "Brasil"){
+          renov_parl %>% 
+            dplyr::filter(Cargo ==input$DESCRICAO_CARGO3) %>% 
+            dplyr::select(`Ano da eleição`,
+                          `Conservação`) %>% 
+            spread(`Ano da eleição`,
+                   `Conservação`)
+          
+        }
+      })
+  }) 
+  
+  ## Dados agregados
+  
+  ### Deputado Federal 
+  
+  ag_alifedr_p<- reactive({
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    if(indicador == "Conservação" & 
+       agregacao == "Brasil"){
+      return(input$agreg_renov_parl)
+    }
+  })
+  
+  output$agreg_renov_parl <- DT::renderDataTable(server = FALSE,{
+    bagreg_renov_parl()
+  })
+  
+  bagreg_renov_parl <- eventReactive(input$BCALC3, {
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'renov_parl_agreg',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_RENOV
+        cargo <- input$DESCRICAO_CARGO3
+        agregacao <- input$AGREGACAO_REGIONAL3
+        uf <- input$UF3
+        if(indicador == "Conservação" & 
+           agregacao == "Brasil"){
+          data = renov_parl %>%
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) 
+          
+        }
+      })
+  })
+  
+  
+# 2.4. Alienacao ----------------------------------------------------------  
   
   ## Funcao para descricao dos indicadores de alienacao
   
@@ -1380,8 +1508,7 @@ server <- function(input, output,session){
    
   
  
-# 2.3.1. Alienacao absoluta --------------------------------------------------------
-
+# 2.4.1. Alienacao absoluta --------------------------------------------------------
 
 
 ## Tabela para visualizacao    
@@ -1390,8 +1517,8 @@ server <- function(input, output,session){
   
   depfeda_br <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$DESCRICAO_CARGO3
+    cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$DESCRICAO_CARGO4
     if(indicador == "Alienação Absoluta" & 
        agregacao == "Brasil"){
       return(input$alien_feda_br)
@@ -1403,7 +1530,7 @@ server <- function(input, output,session){
     balien_feda_br()
   })
   
-  balien_feda_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
+  balien_feda_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
                 autoWidth = TRUE,
                 ordering = TRUE, 
@@ -1418,12 +1545,12 @@ server <- function(input, output,session){
               class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_ALIE
-      cargo <- input$DESCRICAO_CARGO3
-      agregacao <- input$AGREGACAO_REGIONAL3
+      cargo <- input$DESCRICAO_CARGO4
+      agregacao <- input$AGREGACAO_REGIONAL4
       if(indicador == "Alienação Absoluta" & 
          agregacao == "Brasil"){
         alien_br %>% 
-          dplyr::filter(Cargo ==input$DESCRICAO_CARGO3) %>% 
+          dplyr::filter(Cargo ==input$DESCRICAO_CARGO4) %>% 
           dplyr::select(`Ano da eleição`,
                         Turno,
                         `Alienação Absoluta`) %>% 
@@ -1440,8 +1567,8 @@ server <- function(input, output,session){
   
   ag_alifeda_br <- reactive({
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$AGREGACAO_REGIONAL3
+    cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$AGREGACAO_REGIONAL4
     if(indicador == "Alienação Absoluta" & 
        agregacao == "Brasil"){
       return(input$agreg_alifeda_br)
@@ -1452,7 +1579,7 @@ server <- function(input, output,session){
     bagreg_alifed_br()
   })
   
-  bagreg_alifed_br <- eventReactive(input$BCALC3, {
+  bagreg_alifed_br <- eventReactive(input$BCALC4, {
     datatable(options = list(
                 autoWidth = TRUE,
                 ordering = TRUE, 
@@ -1467,13 +1594,13 @@ server <- function(input, output,session){
               class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_ALIE
-      cargo <- input$DESCRICAO_CARGO3
-      agregacao <- input$AGREGACAO_REGIONAL3
-      uf <- input$UF3
+      cargo <- input$DESCRICAO_CARGO4
+      agregacao <- input$AGREGACAO_REGIONAL4
+      uf <- input$UF4
       if(indicador == "Alienação Absoluta" & 
          agregacao == "Brasil"){
         data = alien_br %>%
-          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) 
+          dplyr::filter(Cargo==input$DESCRICAO_CARGO4) 
         
       }
     })
@@ -1485,9 +1612,9 @@ server <- function(input, output,session){
   
   depfeda_uf <- reactive({ ## Atributos das tabelas de alienacao absoluta 
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$DESCRICAO_CARGO3
-    uf <- input$UF3
+    cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$DESCRICAO_CARGO4
+    uf <- input$UF4
     if(indicador == "Alienação Absoluta" & 
        agregacao == "UF"){
       return(input$alien_feda_uf)
@@ -1498,7 +1625,7 @@ server <- function(input, output,session){
     balien_feda_uf()
   })
   
-  balien_feda_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
+  balien_feda_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
                 autoWidth = TRUE,
                 ordering = TRUE, 
@@ -1513,13 +1640,13 @@ server <- function(input, output,session){
               class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_ALIE
-      cargo <- input$DESCRICAO_CARGO3
-      agregacao <- input$AGREGACAO_REGIONAL3
-      uf <- input$UF3
+      cargo <- input$DESCRICAO_CARGO4
+      agregacao <- input$AGREGACAO_REGIONAL4
+      uf <- input$UF4
       if(indicador == "Alienação Absoluta" & agregacao == "UF"){
         if(uf=="Todas UFs"){
           alien_uf %>% 
-            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           Turno, 
@@ -1528,8 +1655,8 @@ server <- function(input, output,session){
                    `Alienação Absoluta`)
         }else{
           alien_uf %>% 
-            dplyr::filter(UF == input$UF3 & 
-                          Cargo==input$DESCRICAO_CARGO3) %>% 
+            dplyr::filter(UF == input$UF4 & 
+                          Cargo==input$DESCRICAO_CARGO4) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           Turno,
@@ -1547,9 +1674,9 @@ server <- function(input, output,session){
   
   ag_alifeda_uf <- reactive({
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$AGREGACAO_REGIONAL3
-    uf <- input$UF3
+    cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$AGREGACAO_REGIONAL4
+    uf <- input$UF4
     if(indicador == "Alienação Absoluta" & 
        agregacao == "UF"){
       return(input$agreg_alifeda_uf)
@@ -1560,7 +1687,7 @@ server <- function(input, output,session){
     bagreg_alifeda_uf()
   })
   
-  bagreg_alifeda_uf <- eventReactive(input$BCALC3, {
+  bagreg_alifeda_uf <- eventReactive(input$BCALC4, {
     datatable(options = list(
                 autoWidth = TRUE,
                 ordering = TRUE, 
@@ -1575,22 +1702,22 @@ server <- function(input, output,session){
               class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_ALIE
-      cargo <- input$DESCRICAO_CARGO3
-      agregacao <- input$AGREGACAO_REGIONAL3
-      uf <- input$UF3
+      cargo <- input$DESCRICAO_CARGO4
+      agregacao <- input$AGREGACAO_REGIONAL4
+      uf <- input$UF4
       if(indicador == "Alienação Absoluta" & 
          agregacao == "UF"){
-        if(input$UF3 == "Todas UFs"){
+        if(input$UF4 == "Todas UFs"){
           data = alien_uf %>% 
-            dplyr::filter(Cargo==input$DESCRICAO_CARGO3)} else{ 
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO4)} else{ 
               data = alien_uf %>% 
-                dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
-                              UF == input$UF3) 
+                dplyr::filter(Cargo==input$DESCRICAO_CARGO4 & 
+                              UF == input$UF4) 
             }}
     })
   })  
 
-# 2.3.2. Alienacao percentual ---------------------------------------------
+# 2.4.2. Alienacao percentual ---------------------------------------------
 
 ## Tabela para visualizacao
     
@@ -1598,8 +1725,8 @@ server <- function(input, output,session){
 
 depfedp_br <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO3
-  agregacao <- input$DESCRICAO_CARGO3
+  cargo <- input$DESCRICAO_CARGO4
+  agregacao <- input$DESCRICAO_CARGO4
   if(indicador == "Alienação Percentual" & 
      agregacao == "Brasil"){
     return(input$alien_fedp_br)
@@ -1611,7 +1738,7 @@ output$alien_fedp_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
   balien_fedp_br()
 })
 
-balien_fedp_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
   datatable(options = list(
               autoWidth = TRUE,
               ordering = TRUE, 
@@ -1626,12 +1753,12 @@ balien_fedp_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
             class = "display",
             extensions = 'Buttons',{
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$AGREGACAO_REGIONAL3
+    cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$AGREGACAO_REGIONAL4
     if(indicador == "Alienação Percentual" & 
        agregacao == "Brasil"){
       alien_br %>% 
-        dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+        dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
         dplyr::select(`Ano da eleição`,
                       Turno, 
                       `Alienação Percentual`) %>% 
@@ -1648,8 +1775,8 @@ balien_fedp_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
 
 ag_alifedp_br <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO3
-  agregacao <- input$AGREGACAO_REGIONAL3
+  cargo <- input$DESCRICAO_CARGO4
+  agregacao <- input$AGREGACAO_REGIONAL4
   if(indicador == "Alienação Percentual" & 
      agregacao == "Brasil"){
     return(input$agreg_alifedp_br)
@@ -1660,7 +1787,7 @@ output$agreg_alifedp_br <- DT::renderDataTable(server = FALSE,{
   bagreg_alifedp_br()
 })
 
-bagreg_alifedp_br <- eventReactive(input$BCALC3, {
+bagreg_alifedp_br <- eventReactive(input$BCALC4, {
   datatable(options = list(
               autoWidth = TRUE,
               ordering = TRUE, 
@@ -1675,13 +1802,13 @@ bagreg_alifedp_br <- eventReactive(input$BCALC3, {
             class = "display",
             extensions = 'Buttons',{
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$AGREGACAO_REGIONAL3
-    uf <- input$UF3
+    cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$AGREGACAO_REGIONAL4
+    uf <- input$UF4
     if(indicador == "Alienação Percentual" & 
        agregacao == "Brasil"){
       alien_br %>%
-        dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+        dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
         select(`Ano da eleição`, 
                Cargo, 
                `Alienação Percentual`)
@@ -1697,9 +1824,9 @@ bagreg_alifedp_br <- eventReactive(input$BCALC3, {
 
 depfedp_uf <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO3
-  agregacao <- input$DESCRICAO_CARGO3
-  uf <- input$UF3
+  cargo <- input$DESCRICAO_CARGO4
+  agregacao <- input$DESCRICAO_CARGO4
+  uf <- input$UF4
   if(indicador == "Alienação Percentual" & 
      agregacao == "UF"){
     return(input$alien_fedp_uf)
@@ -1711,7 +1838,7 @@ output$alien_fedp_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
   balien_fedp_uf()
 })
 
-balien_fedp_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
   datatable(options = list(
               autoWidth = TRUE,
               ordering = TRUE, 
@@ -1726,14 +1853,14 @@ balien_fedp_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
             class = "display",
             extensions = 'Buttons',{
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$AGREGACAO_REGIONAL3
-    uf <- input$UF3
+    cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$AGREGACAO_REGIONAL4
+    uf <- input$UF4
     if(indicador == "Alienação Percentual" & 
        agregacao == "UF"){
       if(uf=="Todas UFs"){
         alien_uf %>% 
-          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+          dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
                         Cargo,
@@ -1744,8 +1871,8 @@ balien_fedp_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
       }
       else{
         alien_uf %>% 
-          dplyr::filter(UF == input$UF3 & 
-                          Cargo==input$DESCRICAO_CARGO3) %>% 
+          dplyr::filter(UF == input$UF4 & 
+                          Cargo==input$DESCRICAO_CARGO4) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
                         Turno,
@@ -1763,9 +1890,9 @@ balien_fedp_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
 
 ag_alifedp_uf <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO3
-  agregacao <- input$AGREGACAO_REGIONAL3
-  uf <- input$UF3
+  cargo <- input$DESCRICAO_CARGO4
+  agregacao <- input$AGREGACAO_REGIONAL4
+  uf <- input$UF4
   if(indicador == "Alienação Percentual" & 
      agregacao == "UF"){
     return(input$agreg_alifedp_uf)
@@ -1776,7 +1903,7 @@ output$agreg_alifedp_uf <- DT::renderDataTable(server = FALSE,{
   bagreg_alifedp_uf()
 })
 
-bagreg_alifedp_uf <- eventReactive(input$BCALC3, {
+bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
   datatable(options = list(
               autoWidth = TRUE,
               ordering = TRUE, 
@@ -1791,21 +1918,21 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC3, {
             class = "display",
             extensions = 'Buttons',{
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$AGREGACAO_REGIONAL3
-    uf <- input$UF3
+    cargo <- input$DESCRICAO_CARGO4
+    agregacao <- input$AGREGACAO_REGIONAL4
+    uf <- input$UF4
     if(indicador == "Alienação Percentual" & 
        agregacao == "UF"){
-      if(input$UF3 == "Todas UFs"){
+      if(input$UF4 == "Todas UFs"){
         data =alien_uf %>% 
-          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+          dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
           select(`Ano da eleição`, 
                  UF, 
                  `Alienação Percentual`)
       } else{ 
         data = alien_uf %>% 
-          dplyr::filter(UF == input$UF3) %>% 
-          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+          dplyr::filter(UF == input$UF4) %>% 
+          dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
           select(`Ano da eleição`, 
                  UF, 
                  `Alienação Percentual`)

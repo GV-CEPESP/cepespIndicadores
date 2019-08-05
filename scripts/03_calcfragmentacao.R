@@ -23,14 +23,14 @@ library(tidyverse)
 
 ### Deputado Federal
 
-df <- df %>% 
+dft <- df %>% 
   filter(DESC_SIT_TOT_TURNO == "ELEITO"|
          DESC_SIT_TOT_TURNO == "ELEITO POR QP"|
          DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA")
 
 ### Deputado Estadual
 
-de <- de %>% 
+det <- de %>% 
   filter(DESC_SIT_TOT_TURNO == "ELEITO"|
          DESC_SIT_TOT_TURNO == "ELEITO POR QP"|
          DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA")
@@ -39,7 +39,7 @@ de <- de %>%
 
 ### Deputado Federal
 
-df <- df %>% 
+dft <- dft %>% 
   dplyr::group_by(ANO_ELEICAO,
                   DESCRICAO_CARGO, 
                   SIGLA_PARTIDO, 
@@ -49,7 +49,7 @@ df <- df %>%
 
 ### Deputado Estadual
 
-de <- de %>% 
+det <- det %>% 
   dplyr::group_by(ANO_ELEICAO, 
                   DESCRICAO_CARGO, 
                   SIGLA_PARTIDO, 
@@ -60,7 +60,7 @@ de <- de %>%
 
 ### Deputado Federal
 
-df1 <- df %>% 
+df1 <- dft %>% 
   dplyr::group_by(ANO_ELEICAO,
                   DESCRICAO_CARGO,
                   SIGLA_PARTIDO) %>% 
@@ -68,16 +68,19 @@ df1 <- df %>%
     "Total de cadeiras conquistadas" = 
       sum(`Cadeiras conquistadas por UF`))
 
+### Deputado Estadual
+
+
+de1 <- det %>% 
+  dplyr::group_by(ANO_ELEICAO,
+                  DESCRICAO_CARGO,
+                  SIGLA_PARTIDO) %>% 
+  dplyr::summarise(
+    "Total de cadeiras conquistadas" = 
+      sum(`Cadeiras conquistadas`))
+
+
 ## Junta os bancos de cadeiras conquistadas por UF com o total de cadeiras conquistadas
-
-### Deputado Federal
-
-df <- left_join(df, df1, 
-                by = c("ANO_ELEICAO", 
-                       "DESCRICAO_CARGO",
-                       "SIGLA_PARTIDO"))
-
-## Soma os votos consquistados por cada partido
 
 ### Deputado Federal
 
@@ -130,12 +133,6 @@ df1 <- na.omit(df1)
 
 ### Deputado Estadual
 
-de <- de %>% 
-    dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
-                "Cargo" = "DESCRICAO_CARGO", 
-                "Sigla do partido" = "SIGLA_PARTIDO") 
-
-de$Cargo <- str_to_title(de$Cargo)
 
 
 # 2. Fracionalizacao ------------------------------------------------------
@@ -371,6 +368,6 @@ write.csv(frag_part_fed, "data/output/frag_part_fed.csv")
 
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
-rm(t98df,t02df,t06df,t10df,t14df,t18df,df1,frag_part_fed,df,de)
+rm(df1,frag_part_fed,dft,det,dfc2,dfp,de1,dep)
 
 
