@@ -97,7 +97,7 @@ server <- function(input, output,session){
   ## Alienacao
   
   agreg <- reactive({
-    agregacao <- input$AGREGACAO_REGIONAL3
+    agregacao <- input$AGREGACAO_REGIONAL4
     if(agregacao == "UF"){
       return(input$UF4)
     } 
@@ -105,7 +105,7 @@ server <- function(input, output,session){
   
   
   output$UF4 <- renderUI({
-    agregacao <- input$AGREGACAO_REGIONAL3
+    agregacao <- input$AGREGACAO_REGIONAL4
     if(agregacao == "UF"){
       selectizeInput("UF4",
                      label = NULL,
@@ -179,6 +179,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -238,6 +240,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -300,6 +304,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -358,6 +364,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -420,6 +428,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -476,6 +486,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -524,6 +536,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -578,6 +592,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -669,6 +685,8 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
       buttons = list('copy', 'print', list(
         extend = 'csv',
@@ -723,6 +741,8 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
       buttons = list('copy', 'print', list(
         extend = 'csv',
@@ -777,6 +797,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -831,6 +853,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -883,6 +907,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -936,6 +962,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -990,6 +1018,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -1043,6 +1073,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -1098,6 +1130,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -1149,6 +1183,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -1199,6 +1235,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -1250,6 +1288,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -1304,6 +1344,8 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
       buttons = list('copy', 'print', list(
         extend = 'csv',
@@ -1355,6 +1397,8 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
       buttons = list('copy', 'print', list(
         extend = 'csv',
@@ -1392,28 +1436,30 @@ server <- function(input, output,session){
   
   ### Deputado Federal 
   
-  depfedr_p <- reactive({ ## Atributos das tabelas 
+  depfedc <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$DESCRICAO_CARGO3
     if(indicador == "Conservação" & 
        agregacao == "Brasil"){
-      return(input$renov_parl)
+      return(input$conserv)
     }
   })
   
   
-  output$renov_parl <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao absoluta que devera ser chamada na ui
-    brenov_parl()
+  output$conserv <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bconserv()
   })
   
-  brenov_parl <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
+  bconserv <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
       buttons = list('copy', 'print', list(
         extend = 'csv',
@@ -1441,27 +1487,29 @@ server <- function(input, output,session){
   
   ### Deputado Federal 
   
-  ag_alifedr_p<- reactive({
+  ag_alifedc<- reactive({
     indicador <- input$INDICADORES_RENOV
     cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     if(indicador == "Conservação" & 
        agregacao == "Brasil"){
-      return(input$agreg_renov_parl)
+      return(input$agreg_conserv)
     }
   })
   
-  output$agreg_renov_parl <- DT::renderDataTable(server = FALSE,{
-    bagreg_renov_parl()
+  output$agreg_conserv <- DT::renderDataTable(server = FALSE,{
+    bagreg_conserv()
   })
   
-  bagreg_renov_parl <- eventReactive(input$BCALC3, {
+  bagreg_conserv <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
       buttons = list('copy', 'print', list(
         extend = 'csv',
@@ -1481,6 +1529,308 @@ server <- function(input, output,session){
         }
       })
   })
+  
+# 2.3.2. Renovacao bruta --------------------------------------------------
+  
+  ## Tabela para visualizacao    
+  
+  ### Deputado Federal 
+  
+  depfedrb <- reactive({ ## Atributos das tabelas 
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO3
+    if(indicador == "Renovação bruta" & 
+       agregacao == "Brasil"){
+      return(input$renov_br)
+    }
+  })
+  
+  
+  output$renov_br <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_br()
+  })
+  
+  brenov_br <- eventReactive(input$BCALC3, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'renov_parl_fed',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_RENOV
+        cargo <- input$DESCRICAO_CARGO3
+        agregacao <- input$AGREGACAO_REGIONAL3
+        if(indicador == "Renovação bruta" & 
+           agregacao == "Brasil"){
+          renov_parl %>% 
+            dplyr::filter(Cargo ==input$DESCRICAO_CARGO3) %>% 
+            dplyr::select(`Ano da eleição`,
+                          `Renovação bruta`) %>% 
+            spread(`Ano da eleição`,
+                   `Renovação bruta`)
+          
+        }
+      })
+  }) 
+  
+  ## Dados agregados
+  
+  ### Deputado Federal 
+  
+  ag_alifedrb <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    if(indicador == "Renovação bruta" & 
+       agregacao == "Brasil"){
+      return(input$agreg_renov_br)
+    }
+  })
+  
+  output$agreg_renov_br <- DT::renderDataTable(server = FALSE,{
+    bagreg_renov_br()
+  })
+  
+  bagreg_renov_br <- eventReactive(input$BCALC3, {
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'renov_parl_agreg',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_RENOV
+        cargo <- input$DESCRICAO_CARGO3
+        agregacao <- input$AGREGACAO_REGIONAL3
+        uf <- input$UF3
+        if(indicador == "Renovação bruta" & 
+           agregacao == "Brasil"){
+          data = renov_parl %>%
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO3)
+        }
+      })
+  })
+  
+  
+# 2.3.3. Renovacao liquida ------------------------------------------------
+  
+  ## Tabela para visualizacao    
+  
+  ### Deputado Federal 
+  
+  depfedrl <- reactive({ ## Atributos das tabelas 
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO3
+    if(indicador == "Renovação líquida" & 
+       agregacao == "Brasil"){
+      return(input$renov_liq)
+    }
+  })
+  
+  
+  output$renov_liq <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_liq()
+  })
+  
+  brenov_liq <- eventReactive(input$BCALC3, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'renov_parl_fed',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_RENOV
+        cargo <- input$DESCRICAO_CARGO3
+        agregacao <- input$AGREGACAO_REGIONAL3
+        if(indicador == "Renovação líquida" & 
+           agregacao == "Brasil"){
+          renov_parl %>% 
+            dplyr::filter(Cargo ==input$DESCRICAO_CARGO3) %>% 
+            dplyr::select(`Ano da eleição`,
+                          `Renovação líquida`) %>% 
+            spread(`Ano da eleição`,
+                   `Renovação líquida`)
+          
+        }
+      })
+  }) 
+  
+  ## Dados agregados
+  
+  ### Deputado Federal 
+  
+  ag_alifedrl <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    if(indicador == "Renovação líquida" & 
+       agregacao == "Brasil"){
+      return(input$agreg_renov_liq)
+    }
+  })
+  
+  output$agreg_renov_liq <- DT::renderDataTable(server = FALSE,{
+    bagreg_renov_liq()
+  })
+  
+  bagreg_renov_liq <- eventReactive(input$BCALC3, {
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'renov_parl_agreg',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_RENOV
+        cargo <- input$DESCRICAO_CARGO3
+        agregacao <- input$AGREGACAO_REGIONAL3
+        uf <- input$UF3
+        if(indicador == "Renovação líquida" & 
+           agregacao == "Brasil"){
+          data = renov_parl %>%
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) 
+          
+        }
+      })
+  })
+  
+  
+# 2.3.4. Volatilidade eleitoral -------------------------------------------
+  
+  ## Tabela para visualizacao    
+  
+  ### Deputado Federal 
+  
+  depfedve <- reactive({ ## Atributos das tabelas 
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO3
+    if(indicador == "Volatilidade eleitoral" & 
+       agregacao == "Brasil"){
+      return(input$vol_ele)
+    }
+  })
+  
+  
+  output$vol_ele <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bvol_ele()
+  })
+  
+  bvol_ele <- eventReactive(input$BCALC3, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'renov_parl_fed',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_RENOV
+        cargo <- input$DESCRICAO_CARGO3
+        agregacao <- input$AGREGACAO_REGIONAL3
+        if(indicador == "Volatilidade eleitoral" & 
+           agregacao == "Brasil"){
+          renov_parl %>% 
+            dplyr::filter(Cargo ==input$DESCRICAO_CARGO3) %>% 
+            dplyr::select(`Ano da eleição`,
+                          `Volatilidade eleitoral`) %>% 
+            spread(`Ano da eleição`,
+                   `Volatilidade eleitoral`)
+          
+        }
+      })
+  }) 
+  
+  ## Dados agregados
+  
+  ### Deputado Federal 
+  
+  ag_alifedve <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    if(indicador == "Volatilidade eleitoral" & 
+       agregacao == "Brasil"){
+      return(input$agreg_vol_ele)
+    }
+  })
+  
+  output$agreg_vol_ele <- DT::renderDataTable(server = FALSE,{
+    bagreg_vol_ele()
+  })
+  
+  bagreg_vol_ele <- eventReactive(input$BCALC3, {
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list('copy', 'print', list(
+        extend = 'csv',
+        title = 'renov_parl_agreg',
+        bom = TRUE))), 
+      class = "display",
+      extensions = 'Buttons',{
+        indicador <- input$INDICADORES_RENOV
+        cargo <- input$DESCRICAO_CARGO3
+        agregacao <- input$AGREGACAO_REGIONAL3
+        uf <- input$UF3
+        if(indicador == "Volatilidade eleitoral" & 
+           agregacao == "Brasil"){
+          data = renov_parl %>%
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) 
+          
+        }
+      })
+  })
+  
   
   
 # 2.4. Alienacao ----------------------------------------------------------  
@@ -1537,6 +1887,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -1586,6 +1938,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -1632,6 +1986,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -1694,6 +2050,8 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                columnDefs = list(list(
+                  className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list('copy', 'print', list(
                   extend = 'csv',
@@ -1745,6 +2103,8 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
               searching = TRUE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
+              columnDefs = list(list(
+                className = 'dt-right', targets = '_all')),
               dom = 'Bfrtip',
               buttons = list('copy', 'print', list(
                 extend = 'csv',
@@ -1794,6 +2154,8 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
               searching = TRUE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
+              columnDefs = list(list(
+                className = 'dt-right', targets = '_all')),
               dom = 'Bfrtip',
               buttons = list('copy', 'print', list(
                 extend = 'csv',
@@ -1845,6 +2207,8 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
               searching = TRUE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
+              columnDefs = list(list(
+                className = 'dt-right', targets = '_all')),
               dom = 'Bfrtip',
               buttons = list('copy', 'print', list(
                 extend = 'csv',
@@ -1910,6 +2274,8 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
               searching = TRUE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
+              columnDefs = list(list(
+                className = 'dt-right', targets = '_all')),
               dom = 'Bfrtip',
               buttons = list('copy', 'print', list(
                 extend = 'csv',

@@ -244,9 +244,15 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
                                                     tabPanel("Tabelas", br(), 
-                                                             DT::dataTableOutput("renov_parl")), ## Tabelas que serao exibidas
+                                                             DT::dataTableOutput("conserv"),
+                                                             DT::dataTableOutput("renov_br"),
+                                                             DT::dataTableOutput("renov_liq"),
+                                                             DT::dataTableOutput("vol_ele")), ## Tabelas que serao exibidas
                                                              tabPanel("Dados agregados", br(), 
-                                                             DT::dataTableOutput("agreg_renov_parl")),
+                                                             DT::dataTableOutput("agreg_conserv"),
+                                                             DT::dataTableOutput("agreg_renov_br"),
+                                                             DT::dataTableOutput("agreg_renov_liq"),
+                                                             DT::dataTableOutput("agreg_vol_ele")),
                                                     tabPanel("Definição", htmlOutput(""))))))),
              
              tabPanel("Alienação",  ## Definicao das ferramentas de selecao para a guia
@@ -327,7 +333,7 @@ ui <- fluidPage(
                          text-align: left;
                          z-index: 10;
                          height: 3em;
-                         margin-top: 38em;",
+                         margin-top: 40em;",
                          
                          tags$div(class = "rodape-container",
                                   

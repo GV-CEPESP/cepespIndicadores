@@ -110,6 +110,32 @@ cons_uf$Cargo <-ifelse(cons_uf$Cargo =="DEPUTADO DISTRITAL",
 
 cons_uf$Cargo <- str_to_title(cons_uf$Cargo)
 
+## Padroniza o formato numerico das colunas
+
+### Brasil
+
+cons_br$`Quantidade de abstenções` <- gabi(cons_br$`Quantidade de abstenções`)
+
+cons_br$`Quantidade de votos brancos` <- gabi(cons_br$`Quantidade de votos brancos`)
+
+cons_br$`Quantidade de votos nulos` <- gabi(cons_br$`Quantidade de votos nulos`)
+
+cons_br$`Quantidade de eleitores aptos` <- gabi(cons_br$`Quantidade de eleitores aptos`)
+
+cons_br$`Alienação Absoluta` <- gabi(cons_br$`Alienação Absoluta`)
+
+### UF
+
+cons_uf$`Quantidade de abstenções` <- gabi(cons_uf$`Quantidade de abstenções`)
+
+cons_uf$`Quantidade de votos brancos` <- gabi(cons_uf$`Quantidade de votos brancos`)
+
+cons_uf$`Quantidade de votos nulos` <- gabi(cons_uf$`Quantidade de votos nulos`)
+
+cons_uf$`Quantidade de eleitores aptos` <- gabi(cons_uf$`Quantidade de eleitores aptos`)
+
+cons_uf$`Alienação Absoluta` <- gabi(cons_uf$`Alienação Absoluta`)
+
 
 
 # 4. Salva os arquivos ----------------------------------------------------
@@ -126,6 +152,6 @@ write.csv(cons_uf, "data/output/alien_uf.csv")
 
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
-rm(cons_br, cons_uf)
+rm(list = ls())
 
 
