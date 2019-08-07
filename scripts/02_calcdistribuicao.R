@@ -22,12 +22,14 @@ library(tidyverse)
 ### Deputado Federal
 
 
-vags_fed$QUOCIENTE_ELEITORAL <- vags_fed$VOTOS_VALIDOS_UF/as.numeric(vags_fed$VAGAS)
+vags_fed$QUOCIENTE_ELEITORAL <- as.numeric(vags_fed$VOTOS_VALIDOS_UF)/as.numeric(vags_fed$VAGAS)
+
+
 
 ### Deputado Estadual
 
 
-vags_est$QUOCIENTE_ELEITORAL <- vags_est$VOTOS_VALIDOS_UF/as.numeric(vags_est$VAGAS)
+vags_est$QUOCIENTE_ELEITORAL <- as.numeric(vags_est$VOTOS_VALIDOS_UF)/as.numeric(vags_est$VAGAS)
 
 
 
@@ -37,11 +39,11 @@ vags_est$QUOCIENTE_ELEITORAL <- vags_est$VOTOS_VALIDOS_UF/as.numeric(vags_est$VA
 
 ### Deputado Federal
 
-vags_fed$QUOCIENTE_PARTIDARIO <- vags_fed$VOT_PART_UF/vags_fed$QUOCIENTE_ELEITORAL
+vags_fed$QUOCIENTE_PARTIDARIO <- as.numeric(vags_fed$VOT_PART_UF)/as.numeric(vags_fed$QUOCIENTE_ELEITORAL)
 
 ### Deputado Estadual
 
-vags_est$QUOCIENTE_PARTIDARIO <- vags_est$VOT_PART_UF/vags_est$QUOCIENTE_ELEITORAL
+vags_est$QUOCIENTE_PARTIDARIO <- as.numeric(vags_est$VOT_PART_UF)/as.numeric(vags_est$QUOCIENTE_ELEITORAL)
 
 
 
@@ -66,15 +68,28 @@ gabi <- function(string){
 
 ### Deputado federal
 
-vags_fed$QUOCIENTE_ELEITORAL <- gabi(vags_fed$QUOCIENTE_ELEITORAL)
+vags_fed$QUOCIENTE_ELEITORAL<- round(vags_fed$QUOCIENTE_ELEITORAL, digits = 0)
 
 vags_fed$QUOCIENTE_PARTIDARIO <- round(vags_fed$QUOCIENTE_PARTIDARIO, digits = 2)
+
+vags_fed$QUOCIENTE_ELEITORAL <- gabi(vags_fed$QUOCIENTE_ELEITORAL)
+
+vags_fed$VOTOS_VALIDOS_UF <- gabi(vags_fed$VOTOS_VALIDOS_UF)
+
+vags_fed$VOT_PART_UF <- gabi(vags_fed$VOT_PART_UF)
+
 
 ### Deputado estadual
 
 vags_est$QUOCIENTE_ELEITORAL <-gabi(vags_est$QUOCIENTE_ELEITORAL)
 
 vags_est$QUOCIENTE_PARTIDARIO <- round(vags_est$QUOCIENTE_PARTIDARIO, digits = 2)
+
+
+vags_est$VOTOS_VALIDOS_UF <- gabi(vags_est$VOTOS_VALIDOS_UF)
+
+vags_est$VOT_PART_UF <- gabi(vags_est$VOT_PART_UF)
+
 
 
 ## Descarta as colunas desnecessarias, padroniza e renomeia as restantes
@@ -103,9 +118,6 @@ vags_fed <-  vags_fed %>%
 vags_fed$Cargo <- str_to_title(vags_fed$Cargo) ## Transforma a primeira letra de cada palavra
                                                ## em maiuscula
 
-vags_fed$`Votos válidos` <- gabi(vags_fed$`Votos válidos`)
-
-vags_fed$`Votos do partido` <- gabi(vags_fed$`Votos do partido`)
 
 
 ### Deputado Estadual
@@ -131,10 +143,6 @@ vags_est <-  vags_est %>%
 
 vags_est$Cargo <- str_to_title(vags_est$Cargo) ## Transforma a primeira letra de cada palavra
                                                ## em maiuscula
-
-vags_est$`Votos válidos` <- gabi(vags_est$`Votos válidos`)
-
-vags_est$`Votos do partido` <- gabi(vags_est$`Votos do partido`)
 
 
 

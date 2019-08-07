@@ -333,7 +333,7 @@ ui <- fluidPage(
                          text-align: left;
                          z-index: 10;
                          height: 3em;
-                         margin-top: 40em;",
+                         margin-top: 41em;",
                          
                          tags$div(class = "rodape-container",
                                   

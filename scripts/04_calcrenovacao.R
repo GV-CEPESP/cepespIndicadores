@@ -18,6 +18,9 @@ library(abjutils)
 
 ## Cria bancos individuais para os candidatos de cada eleicao
 
+### 1994
+
+
 ### 1998
 
 df98 <- df %>% 
