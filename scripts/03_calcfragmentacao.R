@@ -54,7 +54,10 @@ det <- det %>%
                   DESCRICAO_CARGO, 
                   SIGLA_PARTIDO, 
                   UF) %>% 
-  dplyr::summarise("Cadeiras conquistadas" = n())
+  dplyr::summarise("Cadeiras conquistadas por UF" = n())
+
+det <- det %>% 
+  rename("CARGO" = "DESCRICAO_CARGO")
 
 ## Soma o total de cadeiras conquistadas pelos partidos em cada eleicao
 
@@ -68,16 +71,6 @@ df1 <- dft %>%
     "Total de cadeiras conquistadas" = 
       sum(`Cadeiras conquistadas por UF`))
 
-### Deputado Estadual
-
-
-de1 <- det %>% 
-  dplyr::group_by(ANO_ELEICAO,
-                  DESCRICAO_CARGO,
-                  SIGLA_PARTIDO) %>% 
-  dplyr::summarise(
-    "Total de cadeiras conquistadas" = 
-      sum(`Cadeiras conquistadas`))
 
 
 ## Junta os bancos de cadeiras conquistadas por UF com o total de cadeiras conquistadas
@@ -95,6 +88,14 @@ df1 <- left_join(dfp,df1, by = c("ANO_ELEICAO",
 
 df1 <- left_join(df1, dfc2, by = c("ANO_ELEICAO"))
 
+### Deputado Estadual
+
+
+de1 <- left_join(est,det, by = c("ANO_ELEICAO", 
+                                 "CARGO",
+                                 "UF",
+                                 "SIGLA_PARTIDO"))
+
 
 ## Calcula o percentual de votos conquistados por cada partido
 
@@ -102,11 +103,19 @@ df1 <- left_join(df1, dfc2, by = c("ANO_ELEICAO"))
 
 df1$`Percentual de votos conquistados` <- df1$`Total de votos conquistados`/df1$VOTOS_VALIDOS
 
+### Deputado Estadual
+
+de1$`Percentual de votos conquistados` <- de1$VOT_PART_UF/de1$VOTOS_VALIDOS_UF
+
 ## Percentual de cadeiras conquistas pelos partidos
 
 ### Deputado Federal
 
 df1$`Percentual de cadeiras conquistadas` <- df1$`Total de cadeiras conquistadas`/513
+
+### Deputado Estadual
+
+de1$`Percentual de cadeiras conquistadas` <- de1$`Cadeiras conquistadas por UF`/de1$VAGAS
 
 ## Elimina colunas desnecessarias, renomeia as colunas restantes e padroniza-as
 
@@ -133,6 +142,28 @@ df1 <- na.omit(df1)
 
 ### Deputado Estadual
 
+de1 <- de1 %>% 
+  dplyr::select(ANO_ELEICAO,
+                UF,
+                CARGO,
+                VAGAS,
+                VOTOS_VALIDOS_UF,
+                SIGLA_PARTIDO,
+                VOT_PART_UF,
+                `Cadeiras conquistadas por UF`,
+                `Percentual de votos conquistados`,
+                `Percentual de cadeiras conquistadas`) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
+                "Cargo" = "CARGO",
+                "Vagas" = "VAGAS",
+                "Votos válidos" = "VOTOS_VALIDOS_UF",
+                "Sigla do partido" = "SIGLA_PARTIDO",
+                "Total de votos conquistados" = "VOT_PART_UF",
+                "Total de cadeiras conquistadas" = "Cadeiras conquistadas por UF")
+
+de1$Cargo <- str_to_title(de1$Cargo)
+
+de1 <- na.omit(de1)
 
 
 # 2. Fracionalizacao ------------------------------------------------------
@@ -146,35 +177,41 @@ fracio <- function(x){
 
 ## Calculo do indice de fracionalizacao em cada eleicao
 
-t98df <- df1 %>% 
-  filter(`Ano da eleição` == 1998) 
 
-t98df$Fracionalização <- fracio(t98df$`Percentual de cadeiras conquistadas`)
+### Deputado Federal
 
-t02df <- df1 %>% 
-  filter(`Ano da eleição` == 2002) 
+df2 <- list()
 
-t02df$Fracionalização <- fracio(t02df$`Percentual de cadeiras conquistadas`)
 
-t06df <- df1 %>% 
-  filter(`Ano da eleição` == 2006) 
+for(ano in sort(unique(df1$`Ano da eleição`))){
+    cat("Lendo",ano,"\n")
+    t <- filter(df1,
+                `Ano da eleição` == ano)
+    t$`Fracionalização` <- fracio(t$`Percentual de cadeiras conquistadas`)
+    print(t)
+    df2 <- bind_rows(df2,t)
+  }
 
-t06df$Fracionalização <- fracio(t06df$`Percentual de cadeiras conquistadas`)
+rm(df1)
 
-t10df <- df1 %>% 
-  filter(`Ano da eleição` == 2010) 
+### Deputado Estadual
 
-t10df$Fracionalização <- fracio(t10df$`Percentual de cadeiras conquistadas`)
 
-t14df <- df1 %>% 
-  filter(`Ano da eleição` == 2014)
 
-t14df$Fracionalização <- fracio(t14df$`Percentual de cadeiras conquistadas`)
+t2 <- list()
 
-t18df <- df1 %>% 
-  filter(`Ano da eleição` == 2018) 
+for(ano in sort(unique(de1$`Ano da eleição`))){
+  for(uf in sort(unique(de1$UF))){
+    cat(ano,uf, "\n")
+    t <- filter(de1,
+        `Ano da eleição` == ano & 
+          UF == uf)
+  t$`Fracionalização` <- fracio(t$`Percentual de cadeiras conquistadas`)
+  print(t)
+  t2 <- bind_rows(t2,t)
+  }
+}
 
-t18df$Fracionalização <- fracio(t18df$`Percentual de cadeiras conquistadas`)
 
 
 # 3. Fracionalizacao maxima -----------------------------------------------

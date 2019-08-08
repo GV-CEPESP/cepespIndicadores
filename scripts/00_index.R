@@ -22,3 +22,4 @@ source("scripts/02_calcdistribuicao.R", encoding = "UTF-8")
 source("scripts/03_calcfragmentacao.R", encoding = "UTF-8")
 source("scripts/04_calcrenovacao.R", encoding = "UTF-8")
 source("scripts/05_calcalienacao.R", encoding = "UTF-8")
+

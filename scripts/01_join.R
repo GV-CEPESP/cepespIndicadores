@@ -194,6 +194,8 @@ vags_est <- left_join(vags_est,
                       dep, 
                       by = c("ANO_ELEICAO", "UF"))
 
+est <- vags_est
+
 ## Junta os bancos sobre o consolidado em um unico
 
 ## Consolidado BR
@@ -208,6 +210,6 @@ cons_uf <- rbind(pr_uf, gov_uf,sen_uf, dfc, dec)
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
 rm(dec,dec1,dfc,dfc1,decb,dfcb,pr_br, pr_uf,
-   gov_br,gov_uf, sen_br, sen_uf)
+   gov_br,gov_uf, sen_br, sen_uf,dep)
 
 
