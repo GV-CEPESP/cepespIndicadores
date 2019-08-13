@@ -439,6 +439,6 @@ write.csv(frag_part_est, "data/output/frag_part_est.csv")
 
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
-rm(frag_part_fed,frag_part_est,dft,det,dfc2,dfp,dfr,de1,df1,t)
+rm(frag_part_fed,frag_part_est,dft,det,dfc2,dfp,dfr,t,est)
 
 

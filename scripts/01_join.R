@@ -196,6 +196,7 @@ vags_est <- left_join(vags_est,
 
 est <- vags_est
 
+
 ## Junta os bancos sobre o consolidado em um unico
 
 ## Consolidado BR

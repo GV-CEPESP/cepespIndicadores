@@ -56,14 +56,15 @@ eleicoes_94 <- rbind.fill(elei_94)
 # 2. Padronizacao dos dados -----------------------------------------------
 
 eleicoes_94 <- eleicoes_94 %>% 
-  select(V3,V6,V10,V11,V19,V43) %>% 
-  rename("ANO_ELEICAO" = "V3",
+  filter(V10 == "DEPUTADO FEDERAL") %>% 
+  select(V3,V6,V10,V11,V19,V28,V43) %>% 
+  dplyr::rename("ANO_ELEICAO" = "V3",
          "UF" = "V6",
          "DESCRICAO_CARGO" = "V10",
          "NOME_CANDIDATO" = "V11",
          "SIGLA_PARTIDO" = "V19",
-         "DESC_SIT_TOT_TURNO" = "V43") %>% 
-  filter(DESCRICAO_CARGO == "DEPUTADO FEDERAL")
+         "NUM_TITULO_ELEITORAL_CANDIDATO" = "V28",
+         "DESC_SIT_TOT_TURNO" = "V43")
 
 
 
