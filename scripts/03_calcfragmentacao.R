@@ -250,7 +250,6 @@ for(ano in sort(unique(df1$`Ano da eleição`))){
                                                        t$`Percentual de cadeiras conquistadas`)
   t$`Número efetivo de partidos por votos` <- nep(t$`Percentual de votos conquistados`)
   t$`Número efetivo de partidos por cadeiras` <- nep(t$`Percentual de cadeiras conquistadas`)
-  print(t)
   frag_part_fed <- bind_rows(frag_part_fed,t)
 }
 
@@ -279,7 +278,6 @@ for(ano in sort(unique(de1$`Ano da eleição`))){
     NEPV <- NA
     t$`Número efetivo de partidos por votos` <- nep(t$`Percentual de votos conquistados`)
     t$`Número efetivo de partidos por cadeiras` <- nep(t$`Percentual de cadeiras conquistadas`)
-    print(t)
     frag_part_est <- bind_rows(frag_part_est,t)
   }
 }

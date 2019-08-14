@@ -41,20 +41,40 @@ volat_elet <- function(vt1,vt2) {
 }
       
 
+det1 <- de %>% 
+  filter(ANO_ELEICAO == 1998 & 
+           UF == "RJ")
+
+det1 <-  det1 %>% 
+  dplyr::filter(DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" | DESC_SIT_TOT_TURNO == "ELEITO")
+
+det3 <- de %>% 
+  filter(ANO_ELEICAO == 2002 & 
+           UF == "RJ")
+
+det2 <-  det2 %>% 
+  dplyr::filter(DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" | DESC_SIT_TOT_TURNO == "ELEITO")
+
+
+t <- det3 %>% 
+  filter(NUM_TITULO_ELEITORAL_CANDIDATO %in% det1$NUM_TITULO_ELEITORAL_CANDIDATO &
+           DATA_NASCIMENTO %in% det1$DATA_NASCIMENTO |
+           NOME_MUNICIPIO_NASCIMENTO %in% det1$NOME_MUNICIPIO_NASCIMENTO)
+
 # 2. Calculo dos indicadores ----------------------------------------------------------
 
 ## Transforma a variavel `NUM_TITULO_ELEITORAL_CANDIDATO` em character
 
 ### Deputado Federal
 
-eleicao_94$NUM_TITULO_ELEITORAL_CANDIDATO <- 
-  as.character(eleicao_94$NUM_TITULO_ELEITORAL_CANDIDATO)
+#eleicao_94$NUM_TITULO_ELEITORAL_CANDIDATO <- 
+  #as.character(eleicao_94$NUM_TITULO_ELEITORAL_CANDIDATO)
 
 ## Junta o banco com os candidatos de 94 aos demais candidatos
 
 ### Deputado Federal
 
-df <- bind_rows(df,eleicao_94)
+#df <- bind_rows(df,eleicao_94)
 
 ## Descarta as colunas desnecessarias
 
@@ -65,6 +85,8 @@ df <- df %>%
          UF,
          DESCRICAO_CARGO,
          NOME_CANDIDATO,
+         DATA_NASCIMENTO,
+         CPF_CANDIDATO,
          NUM_TITULO_ELEITORAL_CANDIDATO,
          SIGLA_PARTIDO,
          DESC_SIT_TOT_TURNO)%>% 
@@ -77,6 +99,8 @@ de <- de %>%
          UF,
          DESCRICAO_CARGO,
          NOME_CANDIDATO,
+         DATA_NASCIMENTO,
+         CPF_CANDIDATO,
          NUM_TITULO_ELEITORAL_CANDIDATO,
          SIGLA_PARTIDO,
          DESC_SIT_TOT_TURNO)%>% 
@@ -108,7 +132,6 @@ de <- na.omit(de)
 
 cand_df <- df %>% 
   filter(DESC_SIT_TOT_TURNO == "ELEITO"|
-         DESC_SIT_TOT_TURNO == "MEDIA"|
          DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA"|
          DESC_SIT_TOT_TURNO == "ELEITO POR QP"
            ) %>%
@@ -116,6 +139,8 @@ cand_df <- df %>%
          UF,
          DESCRICAO_CARGO,
          NOME_CANDIDATO,
+         DATA_NASCIMENTO,
+         CPF_CANDIDATO,
          NUM_TITULO_ELEITORAL_CANDIDATO,
          SIGLA_PARTIDO,
          DESC_SIT_TOT_TURNO)
@@ -124,7 +149,6 @@ cand_df <- df %>%
 
 cand_de <- de %>% 
   filter(DESC_SIT_TOT_TURNO == "ELEITO"|
-           DESC_SIT_TOT_TURNO == "MEDIA"|
            DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA"|
            DESC_SIT_TOT_TURNO == "ELEITO POR QP"
   ) %>%
@@ -132,6 +156,8 @@ cand_de <- de %>%
          UF,
          DESCRICAO_CARGO,
          NOME_CANDIDATO,
+         DATA_NASCIMENTO,
+         CPF_CANDIDATO,
          NUM_TITULO_ELEITORAL_CANDIDATO,
          SIGLA_PARTIDO,
          DESC_SIT_TOT_TURNO)
@@ -145,27 +171,29 @@ ind_eleicoes_fed <- list()
 
 for(ano in sort(unique(df$ANO_ELEICAO))){
   cat("Lendo",ano,"\n")
-  ano1 <- filter(cand_df,
+  candidatos_ano2 <- filter(df,
+                       ANO_ELEICAO == ano + 4)
+  eleitos_ano1 <- filter(cand_df,
                   ANO_ELEICAO == ano)
-  ano2 <- filter(df,
+  eleitos_ano2 <- filter(df,
                  ANO_ELEICAO == ano+4)
-  ano2 <- filter(ano2,
-             NUM_TITULO_ELEITORAL_CANDIDATO %in% 
-               ano1$NUM_TITULO_ELEITORAL_CANDIDATO)
-  indic1 <- ano2 %>% 
+  eleitos_ano2 <- filter(eleitos_ano2, CPF_CANDIDATO %in% 
+                           eleitos_ano1$CPF_CANDIDATO)
+  indic1 <- filter(candidatos_ano2,
+                   NUM_TITULO_ELEITORAL_CANDIDATO %in%
+                     eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO) %>% 
     summarise(
       `Reapresentação` = n()
     )
   indic1$`Ano da eleição` <- ano + 4
-  indic2 <- ano2 %>% 
+  indic2 <- eleitos_ano2 %>% 
     filter(DESC_SIT_TOT_TURNO == "ELEITO"|
-           DESC_SIT_TOT_TURNO == "MEDIA"|
            DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA"|
            DESC_SIT_TOT_TURNO == "ELEITO POR QP") %>% 
     summarise(
       Reeleitos = n()
     )
-  rm(ano1,ano2)
+  rm(eleitos_ano1,eleitos_ano2)
   ano1 <- filter(df1,
                  `Ano da eleição` == ano)
   ano2 <- filter(df1,
@@ -174,12 +202,14 @@ for(ano in sort(unique(df$ANO_ELEICAO))){
   indic1 <- left_join(indic1,indic2, by = "Ano da eleição")
   indic1$Derrotados <- indic1$Reapresentação - indic1$Reeleitos
   indic1$Desistência <- 513 - indic1$Reapresentação
+  if(indic1$Reapresentação > 0){
   indic1$`Conservação` <- conserv(indic1$Reeleitos, 
                              indic1$Derrotados)
   indic1$`Renovação bruta` <- renov_br(indic1$Desistência,
                                   indic1$Derrotados)
   indic1$`Renovação líquida` <- renov_liq(indic1$Derrotados, 
                                      indic1$Reeleitos)
+  }
   indic1$`Volatilidade eleitoral` <- volat_elet(ano1$`Percentual de votos conquistados`,
                                                 ano2$`Percentual de votos conquistados`)
   ind_eleicoes_fed <- bind_rows(ind_eleicoes_fed,indic1)
@@ -220,30 +250,34 @@ ind_eleicoes_est <- list()
 for(ano in sort(unique(de$ANO_ELEICAO))){
   for(uf in estados){
   cat("Lendo",ano,uf,"\n")
-  ano1 <- filter(cand_de,
+  candidatos <- filter(de,
+                       ANO_ELEICAO == ano + 4,
+                       UF == uf)
+  eleitos_ano1 <- filter(cand_de,
                  ANO_ELEICAO == ano,
                  UF == uf)
-  ano2 <- filter(df,
+  eleitos_ano2 <- filter(cand_de,
                  ANO_ELEICAO == ano+4,
                  UF == uf)
-  ano2 <- filter(ano2,
+  eleitos_ano2 <- dplyr::filter(eleitos_ano2,
                  NUM_TITULO_ELEITORAL_CANDIDATO %in% 
-                   ano1$NUM_TITULO_ELEITORAL_CANDIDATO)
-  indic1 <- ano2 %>% 
+                   eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO)
+  indic1 <- filter(candidatos,
+                  NUM_TITULO_ELEITORAL_CANDIDATO %in%
+                    eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO) %>% 
     summarise(
       `Reapresentação` = n()
     )
   indic1$`Ano da eleição` <- ano + 4
   indic1$UF <- uf
-  indic2 <- ano2 %>% 
+  indic2 <- eleitos_ano2 %>% 
     filter(DESC_SIT_TOT_TURNO == "ELEITO"|
-             DESC_SIT_TOT_TURNO == "MEDIA"|
-             DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA"|
-             DESC_SIT_TOT_TURNO == "ELEITO POR QP") %>% 
+           DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA"|
+           DESC_SIT_TOT_TURNO == "ELEITO POR QP") %>% 
     summarise(
       Reeleitos = n()
     )
-  rm(ano1,ano2)
+  rm(eleitos_ano1,eleitos_ano2)
   ano1 <- filter(de1,
                  `Ano da eleição` == ano,
                  UF == uf)
@@ -256,12 +290,14 @@ for(ano in sort(unique(de$ANO_ELEICAO))){
                                             "UF"))
   indic1$Derrotados <- indic1$Reapresentação - indic1$Reeleitos
   indic1$Desistência <- unique(ano1$Vagas) - indic1$Reapresentação
+  if(indic1$Reapresentação > 0){
   indic1$`Conservação` <- conserv(indic1$Reeleitos, 
                                   indic1$Derrotados)
   indic1$`Renovação bruta` <- renov_br(indic1$Desistência,
                                        indic1$Derrotados)
   indic1$`Renovação líquida` <- renov_liq(indic1$Derrotados, 
                                           indic1$Reeleitos)
+  }
   indic1$`Volatilidade eleitoral` <- volat_elet(ano1$`Percentual de votos conquistados`,
                                                 ano2$`Percentual de votos conquistados`)
   ind_eleicoes_est <- bind_rows(ind_eleicoes_est,indic1)
@@ -339,6 +375,13 @@ ind_eleicoes_est$`Volatilidade eleitoral` <-
                digits = 2),  
          nsmall = 2)
 
+ind_eleicoes_est$Conservação <- as.numeric(ind_eleicoes_est$Conservação)
+
+ind_eleicoes_est$`Renovação bruta` <- as.numeric(ind_eleicoes_est$`Renovação bruta`)
+
+ind_eleicoes_est$`Renovação líquida` <- as.numeric(ind_eleicoes_est$`Renovação líquida`)
+
+ind_eleicoes_est[is.na(ind_eleicoes_est)] <- 0
 
 # 4. Salvando os arquivos -------------------------------------------------
 
