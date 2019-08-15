@@ -85,6 +85,8 @@ ui <- fluidPage(
              
              
              
+             
+             
              tabPanel("Distribuição de cadeiras", ## Definicao das ferramentas de selecao para a guia
                                                   ## "Distribuicao de cadeiras"
                       
@@ -126,15 +128,23 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills", 
                                                     tabPanel("Tabelas", br(),
+                                                             fixedPage(
+                                                               fixedRow(
+                                                                 column(12,
+                                                              #tags$div(class = "col-sm-12")          
                                                              DT::dataTableOutput("quoce_fed"), ## Tabelas que serao exibidas
                                                              DT::dataTableOutput("quoce_est"),
                                                              DT::dataTableOutput("quocp_fed"),
-                                                             DT::dataTableOutput("quocp_est")),
+                                                             DT::dataTableOutput("quocp_est"))))),
                                                    tabPanel("Dados agregados", br(),
+                                                            fixedPage(
+                                                              fixedRow(
+                                                                column(12,
+                                                                       
                                                             DT::dataTableOutput("agreg_quocefed"),
                                                             DT::dataTableOutput("agreg_quoceest"),
                                                             DT::dataTableOutput("agreg_quocpfed"),
-                                                            DT::dataTableOutput("agreg_quocpest")),
+                                                            DT::dataTableOutput("agreg_quocpest"))))),
                                                    tabPanel("Definição", htmlOutput("def_distc"))))))), ## Definicao dos indicadores  
              
              tabPanel("Fragmentação legislativa",  ## Definicao das ferramentas de selecao para a guia
@@ -161,11 +171,7 @@ ui <- fluidPage(
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um cargo')),
                                      
-                                     selectizeInput(inputId = "AGREGACAO_REGIONAL2",
-                                                    label = NULL,
-                                                    choices = c("","Brasil"),
-                                                    selected = NULL,
-                                                    options = list(placeholder = 'Escolha uma agregação regional')),
+                                     uiOutput("AGREGACAO_REGIONAL2"),
                                      
                                      uiOutput("UF2"),
                                      
@@ -182,21 +188,39 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
                                                     tabPanel("Tabelas", br(),
+                                                             fixedPage(
+                                                               fixedRow(
+                                                                 column(12,
+                                                                        tags$style(type = "text/css",
+                                                                                   ".position: absolute;}"),
                                                              DT::dataTableOutput("dpg_fed"),
-                                                             DT::dataTableOutput("fracio_fed"),## Tabelas que serao exibidas
+                                                             DT::dataTableOutput("dpg_est"),
+                                                             DT::dataTableOutput("fracio_fed"),
+                                                             DT::dataTableOutput("fracio_est"),## Tabelas que serao exibidas
                                                              DT::dataTableOutput("fraciomax_fed"),
+                                                             DT::dataTableOutput("fraciomax_est"),
                                                              DT::dataTableOutput("frag_fed"),
+                                                             DT::dataTableOutput("frag_est"),
                                                              DT::dataTableOutput("nepc_fed"),
                                                              DT::dataTableOutput("nepc_est"),
-                                                             DT::dataTableOutput("nepv_fed")),
+                                                             DT::dataTableOutput("nepv_fed"),
+                                                             DT::dataTableOutput("nepv_est"))))),
                                                    tabPanel("Dados agregados", br(),
+                                                            fixedPage(
+                                                              fixedRow(
+                                                                column(12,
                                                             DT::dataTableOutput("agreg_dpgfed"),
+                                                            DT::dataTableOutput("agreg_dpgest"),
                                                             DT::dataTableOutput("agreg_fracfed"),
+                                                            DT::dataTableOutput("agreg_fracest"),
                                                             DT::dataTableOutput("agreg_fracmaxfed"),
+                                                            DT::dataTableOutput("agreg_fracmaxest"),
                                                             DT::dataTableOutput("agreg_fragfed"),
+                                                            DT::dataTableOutput("agreg_fragest"),
                                                             DT::dataTableOutput("agreg_nepfed"),
                                                             DT::dataTableOutput("agreg_nepest"),
-                                                            DT::dataTableOutput("agreg_nepvfed")),  
+                                                            DT::dataTableOutput("agreg_nepvfed"),
+                                                            DT::dataTableOutput("agreg_nepvest"))))),
                                                    tabPanel("Definição", htmlOutput("def_frag"))))))), ## Definicao dos indicadores
              
              tabPanel("Renovação parlamentar",  ## Definicao das ferramentas de selecao para a guia
@@ -222,11 +246,7 @@ ui <- fluidPage(
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um cargo')),
                                      
-                                     selectizeInput(inputId = "AGREGACAO_REGIONAL3",
-                                                    label = NULL,
-                                                    choices = c("","Brasil", "UF"),
-                                                    selected = NULL,
-                                                    options = list(placeholder = 'Escolha uma agregação regional')),
+                                     uiOutput("AGREGACAO_REGIONAL3"),
                                      
                                      
                                      uiOutput("UF3"),
@@ -243,16 +263,30 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabelas", br(), 
-                                                             DT::dataTableOutput("conserv"),
-                                                             DT::dataTableOutput("renov_br"),
-                                                             DT::dataTableOutput("renov_liq"),
-                                                             DT::dataTableOutput("vol_ele")), ## Tabelas que serao exibidas
-                                                             tabPanel("Dados agregados", br(), 
-                                                             DT::dataTableOutput("agreg_conserv"),
-                                                             DT::dataTableOutput("agreg_renov_br"),
-                                                             DT::dataTableOutput("agreg_renov_liq"),
-                                                             DT::dataTableOutput("agreg_vol_ele")),
+                                                    tabPanel("Tabelas", br(),
+                                                             fixedPage(
+                                                               fixedRow(
+                                                                 column(12,
+                                                             DT::dataTableOutput("conserv_fed"),
+                                                             DT::dataTableOutput("conserv_est"),
+                                                             DT::dataTableOutput("renov_br_fed"),
+                                                             DT::dataTableOutput("renov_br_est"),
+                                                             DT::dataTableOutput("renov_liq_fed"),
+                                                             DT::dataTableOutput("renov_liq_est"),
+                                                             DT::dataTableOutput("vol_ele_fed"),
+                                                             DT::dataTableOutput("vol_ele_est"))))), ## Tabelas que serao exibidas
+                                                             tabPanel("Dados agregados", br(),
+                                                                      fixedPage(
+                                                                        fixedRow(
+                                                                          column(12,
+                                                             DT::dataTableOutput("agreg_conserv_fed"),
+                                                             DT::dataTableOutput("agreg_conserv_est"),
+                                                             DT::dataTableOutput("agreg_renov_br_fed"),
+                                                             DT::dataTableOutput("agreg_renov_br_est"),
+                                                             DT::dataTableOutput("agreg_renov_liq_fed"),
+                                                             DT::dataTableOutput("agreg_renov_liq_est"),
+                                                             DT::dataTableOutput("agreg_vol_ele_fed"),
+                                                             DT::dataTableOutput("agreg_vol_ele_est"))))),
                                                     tabPanel("Definição", htmlOutput(""))))))),
              
              tabPanel("Alienação",  ## Definicao das ferramentas de selecao para a guia
@@ -298,22 +332,33 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabelas", br(), 
+                                                    tabPanel("Tabelas", br(),
+                                                             fixedPage(
+                                                               fixedRow(
+                                                                 column(12,
                                                              DT::dataTableOutput("alien_feda_br"), ## Tabelas que serao exibidas
                                                              DT::dataTableOutput("alien_fedp_br"), 
                                                              DT::dataTableOutput("alien_feda_uf"), 
-                                                             DT::dataTableOutput("alien_fedp_uf")),
+                                                             DT::dataTableOutput("alien_fedp_uf"))))),
                                                     tabPanel("Dados agregados", br(),
+                                                             fixedPage(
+                                                               fixedRow(
+                                                                 column(12,
                                                              DT::dataTableOutput("agreg_alifeda_br"),
                                                              DT::dataTableOutput("agreg_alifeda_uf"),
                                                              DT::dataTableOutput("agreg_alifedp_br"),
-                                                             DT::dataTableOutput("agreg_alifedp_uf")),
+                                                             DT::dataTableOutput("agreg_alifedp_uf"))))),
                                                     tabPanel("Definição", htmlOutput("def_alien"))))))), ## Definicao dos indicadores
              
              
              
              
              tabPanel("Sobre", htmlOutput("sobre")), ## Guia correspondente ao "Sobre"
+             
+             tags$style(type="text/css",
+                        ".shiny-output-error { visibility: hidden; }",
+                        ".shiny-output-error:before { visibility: hidden; }"
+             ),
              
              
              tags$footer(class = "rodape",

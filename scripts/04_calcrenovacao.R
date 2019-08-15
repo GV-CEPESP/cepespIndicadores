@@ -41,25 +41,22 @@ volat_elet <- function(vt1,vt2) {
 }
       
 
-det1 <- de %>% 
-  filter(ANO_ELEICAO == 1998 & 
-           UF == "RJ")
+det1 <- df %>% 
+  filter(ANO_ELEICAO == 2014)
 
 det1 <-  det1 %>% 
-  dplyr::filter(DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" | DESC_SIT_TOT_TURNO == "ELEITO")
+  dplyr::filter(DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" | DESC_SIT_TOT_TURNO == "ELEITO POR QP")
 
-det3 <- de %>% 
-  filter(ANO_ELEICAO == 2002 & 
-           UF == "RJ")
+det3 <- df %>% 
+  filter(ANO_ELEICAO == 2018)
 
 det2 <-  det2 %>% 
-  dplyr::filter(DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" | DESC_SIT_TOT_TURNO == "ELEITO")
+  dplyr::filter(DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" | DESC_SIT_TOT_TURNO == "ELEITO POR QP")
 
 
 t <- det3 %>% 
-  filter(NUM_TITULO_ELEITORAL_CANDIDATO %in% det1$NUM_TITULO_ELEITORAL_CANDIDATO &
-           DATA_NASCIMENTO %in% det1$DATA_NASCIMENTO |
-           NOME_MUNICIPIO_NASCIMENTO %in% det1$NOME_MUNICIPIO_NASCIMENTO)
+  filter(NUM_TITULO_ELEITORAL_CANDIDATO %in% det1$NUM_TITULO_ELEITORAL_CANDIDATO |
+           CPF_CANDIDATO %in% det1$CPF_CANDIDATO) 
 
 # 2. Calculo dos indicadores ----------------------------------------------------------
 
@@ -171,53 +168,87 @@ ind_eleicoes_fed <- list()
 
 for(ano in sort(unique(df$ANO_ELEICAO))){
   cat("Lendo",ano,"\n")
+  
+## Banco com os candidatos da proxima eleicao
+  
   candidatos_ano2 <- filter(df,
                        ANO_ELEICAO == ano + 4)
+## Bancos com os candidatos eleitos na primeira e
+## segunda eleicao de referencia
+  
   eleitos_ano1 <- filter(cand_df,
                   ANO_ELEICAO == ano)
   eleitos_ano2 <- filter(df,
                  ANO_ELEICAO == ano+4)
-  eleitos_ano2 <- filter(eleitos_ano2, CPF_CANDIDATO %in% 
-                           eleitos_ano1$CPF_CANDIDATO)
-  indic1 <- filter(candidatos_ano2,
-                   NUM_TITULO_ELEITORAL_CANDIDATO %in%
-                     eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO) %>% 
-    summarise(
-      `Reapresentação` = n()
-    )
-  indic1$`Ano da eleição` <- ano + 4
-  indic2 <- eleitos_ano2 %>% 
+## Filtra os candidatos que se reapresentaram na eleicao
+## seguinte e os que foram reeleitos
+  
+  eleitos_ano2 <- filter(eleitos_ano2, NUM_TITULO_ELEITORAL_CANDIDATO %in% 
+                          eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO)
+  indicadores1 <- filter(candidatos_ano2,
+                         NUM_TITULO_ELEITORAL_CANDIDATO %in%
+                         eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO) %>% 
+                  summarise(
+                          `Reapresentação` = n()
+                  )
+  
+## Dos candidatos que se reapresentaram na eleicao seguinte a
+## eleicao de referencia, filtra-se somente os eleitos
+  
+  indicadores1$`Ano da eleição` <- ano + 4
+  indicadores2 <- eleitos_ano2 %>% 
     filter(DESC_SIT_TOT_TURNO == "ELEITO"|
            DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA"|
            DESC_SIT_TOT_TURNO == "ELEITO POR QP") %>% 
     summarise(
       Reeleitos = n()
     )
+
+## Remove os bancos que nao serao mais utilizados
+  
   rm(eleitos_ano1,eleitos_ano2)
-  ano1 <- filter(df1,
-                 `Ano da eleição` == ano)
-  ano2 <- filter(df1,
-                 `Ano da eleição` == ano+4)
-  indic2$`Ano da eleição` <- ano + 4
-  indic1 <- left_join(indic1,indic2, by = "Ano da eleição")
-  indic1$Derrotados <- indic1$Reapresentação - indic1$Reeleitos
-  indic1$Desistência <- 513 - indic1$Reapresentação
-  if(indic1$Reapresentação > 0){
-  indic1$`Conservação` <- conserv(indic1$Reeleitos, 
-                             indic1$Derrotados)
-  indic1$`Renovação bruta` <- renov_br(indic1$Desistência,
-                                  indic1$Derrotados)
-  indic1$`Renovação líquida` <- renov_liq(indic1$Derrotados, 
-                                     indic1$Reeleitos)
+  
+## Filtra nos bancos referentes as estatiscas gerais das
+## eleicoes, somente os anos que estao sendo 
+## utilizados no momento  
+  estatisticas_ano1 <- filter(df1,
+                            `Ano da eleição` == ano)
+  estatisticas_ano2 <- filter(df1,
+                            `Ano da eleição` == ano + 4)
+  
+## Acrescenta as colunas `Ano de eleição` bancos gerados
+    
+  indicadores1$`Ano da eleição` <- ano + 4
+  indicadores2$`Ano da eleição` <- ano + 4
+
+## Junta os bancos em um unico  
+  
+  indicadores1 <- left_join(indicadores1,
+                            indicadores2, 
+                            by = "Ano da eleição")
+  
+## Calculo dos indicadores de renovacao parlamentar  
+  
+  indicadores1$Derrotados <- indicadores1$Reapresentação - indicadores1$Reeleitos
+  indicadores1$Desistência <- 513 - indicadores1$Reapresentação
+  if(indicadores1$Reapresentação > 0){
+  indicadores1$`Conservação` <- conserv(indicadores1$Reeleitos, 
+                                        indicadores1$Derrotados)
+  indicadores1$`Renovação bruta` <- renov_br(indicadores1$Desistência,
+                                             indicadores1$Derrotados)
+  indicadores1$`Renovação líquida` <- renov_liq(indicadores1$Derrotados, 
+                                          indicadores1$Reeleitos)
   }
-  indic1$`Volatilidade eleitoral` <- volat_elet(ano1$`Percentual de votos conquistados`,
-                                                ano2$`Percentual de votos conquistados`)
-  ind_eleicoes_fed <- bind_rows(ind_eleicoes_fed,indic1)
-   }
+  indicadores1$`Volatilidade eleitoral` <- volat_elet(estatisticas_ano1$`Percentual de votos conquistados`,
+                                                      estatisticas_ano2$`Percentual de votos conquistados`)
+  ## Empilha todas as eleicoes 
+  
+  ind_eleicoes_fed <- bind_rows(ind_eleicoes_fed,indicadores1)
+  }
 
 ## Remove as linhas desnecessarias
 
-ind_eleicoes_fed <- ind_eleicoes_fed[-c(1,7),]
+ind_eleicoes_fed <- ind_eleicoes_fed[-c(6),]
 
 ind_eleicoes_fed$Cargo <- "Deputado Federal"
 
@@ -246,61 +277,107 @@ estados <- c("AC", "AL", "AM", "AP", "BA", "CE", "ES",
 
 ind_eleicoes_est <- list()
 
-
 for(ano in sort(unique(de$ANO_ELEICAO))){
   for(uf in estados){
   cat("Lendo",ano,uf,"\n")
+    
+## Banco com os candidatos da proxima eleicao
+    
   candidatos <- filter(de,
                        ANO_ELEICAO == ano + 4,
                        UF == uf)
+## Bancos com os candidatos eleitos na primeira e
+## segunda eleicao de referencia
+  
   eleitos_ano1 <- filter(cand_de,
                  ANO_ELEICAO == ano,
                  UF == uf)
   eleitos_ano2 <- filter(cand_de,
                  ANO_ELEICAO == ano+4,
                  UF == uf)
-  eleitos_ano2 <- dplyr::filter(eleitos_ano2,
-                 NUM_TITULO_ELEITORAL_CANDIDATO %in% 
-                   eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO)
-  indic1 <- filter(candidatos,
-                  NUM_TITULO_ELEITORAL_CANDIDATO %in%
-                    eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO) %>% 
-    summarise(
-      `Reapresentação` = n()
-    )
-  indic1$`Ano da eleição` <- ano + 4
-  indic1$UF <- uf
-  indic2 <- eleitos_ano2 %>% 
+## Filtra os candidatos que se reapresentaram na eleicao
+## seguinte e os que foram reeleitos
+## OBS: O estado do Rio de Janeiro possui dados incompletos
+## e, por isso, foi necessario um tratamento especifico para ele
+  
+  if(uf =="RJ" & ano == 1998){
+  eleitos_ano2 <- filter(eleitos_ano2,
+                         NUM_TITULO_ELEITORAL_CANDIDATO %in% 
+                         eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO &
+                         DATA_NASCIMENTO %in% det1$DATA_NASCIMENTO)
+  indicadores1 <- filter(candidatos,
+                         NUM_TITULO_ELEITORAL_CANDIDATO %in%
+                         eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO &
+                         DATA_NASCIMENTO %in% eleitos_ano1$DATA_NASCIMENTO) %>% 
+                  summarise(
+                         `Reapresentação` = n())
+  }else {
+  eleitos_ano2 <- filter(eleitos_ano2,
+                         NUM_TITULO_ELEITORAL_CANDIDATO %in% 
+                         eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO)
+  indicadores1 <- filter(candidatos,
+                         NUM_TITULO_ELEITORAL_CANDIDATO %in%
+                         eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO) %>% 
+                  summarise(
+                         `Reapresentação` = n())
+        }
+
+## Dos candidatos que se reapresentaram na eleicao seguinte a
+## eleicao de referencia, filtra-se somente os eleitos
+  
+  indicadores2 <- eleitos_ano2 %>% 
     filter(DESC_SIT_TOT_TURNO == "ELEITO"|
            DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA"|
            DESC_SIT_TOT_TURNO == "ELEITO POR QP") %>% 
     summarise(
       Reeleitos = n()
     )
+## Remove os bancos que nao serao mais utilizados
+  
   rm(eleitos_ano1,eleitos_ano2)
-  ano1 <- filter(de1,
+  
+## Filtra nos bancos referentes as estatiscas gerais das
+## eleicoes, somente os anos e uf's que estao sendo 
+## utilizados no momento
+  
+  estatisticas_ano1 <- filter(de1,
                  `Ano da eleição` == ano,
                  UF == uf)
-  ano2 <- filter(de1,
+  estatisticas_ano2 <- filter(de1,
                  `Ano da eleição` == ano+4,
                  UF == uf)
-  indic2$`Ano da eleição` <- ano + 4
-  indic2$UF <- uf
-  indic1 <- left_join(indic1,indic2, by = c("Ano da eleição",
-                                            "UF"))
-  indic1$Derrotados <- indic1$Reapresentação - indic1$Reeleitos
-  indic1$Desistência <- unique(ano1$Vagas) - indic1$Reapresentação
-  if(indic1$Reapresentação > 0){
-  indic1$`Conservação` <- conserv(indic1$Reeleitos, 
-                                  indic1$Derrotados)
-  indic1$`Renovação bruta` <- renov_br(indic1$Desistência,
-                                       indic1$Derrotados)
-  indic1$`Renovação líquida` <- renov_liq(indic1$Derrotados, 
-                                          indic1$Reeleitos)
+## Acrescenta as colunas `Ano de eleição` e UF aos bancos gerados
+  
+  indicadores1$`Ano da eleição` <- ano + 4
+  indicadores1$UF <- uf
+  indicadores2$`Ano da eleição` <- ano + 4
+  indicadores2$UF <- uf
+
+## Junta os bancos em um unico  
+    
+  indicadores1 <- left_join(indicadores1,
+                            indicadores2, 
+                            by = c("Ano da eleição",
+                                   "UF"))
+  
+## Calculo dos indicadores de renovacao parlamentar
+  
+  indicadores1$Derrotados <- indicadores1$Reapresentação - indicadores1$Reeleitos
+  indicadores1$Desistência <- unique(estatisticas_ano1$Vagas) - indicadores1$Reapresentação
+  if(indicadores1$Reapresentação > 0){
+  indicadores1$`Conservação` <- conserv(indicadores1$Reeleitos, 
+                                        indicadores1$Derrotados)
+  indicadores1$`Renovação bruta` <- renov_br(indicadores1$Desistência,
+                                             indicadores1$Derrotados)
+  indicadores1$`Renovação líquida` <- renov_liq(indicadores1$Derrotados, 
+                                                indicadores1$Reeleitos)
   }
-  indic1$`Volatilidade eleitoral` <- volat_elet(ano1$`Percentual de votos conquistados`,
-                                                ano2$`Percentual de votos conquistados`)
-  ind_eleicoes_est <- bind_rows(ind_eleicoes_est,indic1)
+  indicadores1$`Volatilidade eleitoral` <- volat_elet(estatisticas_ano1$`Percentual de votos conquistados`,
+                                                     estatisticas_ano2$`Percentual de votos conquistados`)
+  
+## Empilha todas as ufs e eleicoes 
+  
+  ind_eleicoes_est <- bind_rows(ind_eleicoes_est,indicadores1)
   }
 }
 
