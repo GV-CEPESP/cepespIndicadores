@@ -41,22 +41,6 @@ volat_elet <- function(vt1,vt2) {
 }
       
 
-det1 <- df %>% 
-  filter(ANO_ELEICAO == 2014)
-
-det1 <-  det1 %>% 
-  dplyr::filter(DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" | DESC_SIT_TOT_TURNO == "ELEITO POR QP")
-
-det3 <- df %>% 
-  filter(ANO_ELEICAO == 2018)
-
-det2 <-  det2 %>% 
-  dplyr::filter(DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" | DESC_SIT_TOT_TURNO == "ELEITO POR QP")
-
-
-t <- det3 %>% 
-  filter(NUM_TITULO_ELEITORAL_CANDIDATO %in% det1$NUM_TITULO_ELEITORAL_CANDIDATO |
-           CPF_CANDIDATO %in% det1$CPF_CANDIDATO) 
 
 # 2. Calculo dos indicadores ----------------------------------------------------------
 
@@ -304,7 +288,7 @@ for(ano in sort(unique(de$ANO_ELEICAO))){
   eleitos_ano2 <- filter(eleitos_ano2,
                          NUM_TITULO_ELEITORAL_CANDIDATO %in% 
                          eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO &
-                         DATA_NASCIMENTO %in% det1$DATA_NASCIMENTO)
+                         DATA_NASCIMENTO %in% eleitos_ano1$DATA_NASCIMENTO)
   indicadores1 <- filter(candidatos,
                          NUM_TITULO_ELEITORAL_CANDIDATO %in%
                          eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO &

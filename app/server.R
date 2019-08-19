@@ -19,7 +19,7 @@ server <- function(input, output,session){
                    <h2 align = 'center'>
                    <font size ='6' color = 'black'><strong>
                    
-                   Sobre </font></h4>
+                   Sobre </font></h2>
                    
                    <font size = '1' color = 'black'>
 
@@ -84,7 +84,7 @@ server <- function(input, output,session){
       selectizeInput("UF2",
                      label = NULL,
                      choices = 
-                       c("", "AC", "AL", "AM", "AP", "BA",
+                       c("","Todas UFs", "AC", "AL", "AM", "AP", "BA",
                          "CE", "DF", "ES","GO", "MA", "MG",
                          "MS", "MT", "PA", "PB", "PE", "PI",
                          "PR", "RJ", "RN", "RO", "RR","RS", 
@@ -191,20 +191,32 @@ server <- function(input, output,session){
   ## Funcao para descricao dos indicadores de distribuicao de cadeiras
   
   output$def_distc <- renderUI({
-    note <- paste0("<h3>Defini&ccedil;&atilde;o dos indicadores</h3>
+    note <- paste0("<h3 align = 'center'>
+                   <font color = 'black'>
+                   Definição dos indicadores </h3>
                    <h4><br />Quociente Eleitoral</h4>
-                   <p>&Eacute; o n&uacute;mero m&iacute;nimo de votos que um partido ou coliga&ccedil;
-                   &atilde;o deve atingir em determinada UF e elei&ccedil;&atilde;o para garantir uma vaga.</p>
-                   <p>Quociente Eleitoral (QE) = (Votos V&aacute;lidos)/(N&uacute;mero de vagas existentes)&nbsp;</p>
-                   <p><br /><strong>Fonte:</strong>&nbsp;Tribunal Superior Eleitoral - TSE -&nbsp;
-                   <a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-eleitoral'>Link</a></p>
-                   <h4>Quociente Partid&aacute;rio</h4>
-                   <p>O indicador representa o n&uacute;mero de vagas que o partido ou coliga&ccedil;&atilde;o obteve, 
-                   excluindo as vagas distribu&iacute;das por m&eacute;dia.</p>
-                   <p>Quociente partid&aacute;rio (QP) = n&uacute;mero de votos v&aacute;lidos do partido ou coliga&ccedil;&atilde;o
-                   / quociente eleitoral</p>
-                   <p><strong>Fonte:</strong>&nbsp;Tribunal Superior Eleitoral - TSE -&nbsp;
-                   <a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-partidario'>Link</a></p>")
+                   <h5 align = 'justify'><br />
+                   É o número mínimo de votos que um partido ou coligação deve atingir 
+                   em determinada UF e eleição para garantir uma vaga.</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   QE = (Votos válidos)/(Número de vagas existentes)
+                   <p>
+                   <strong>Fonte:</strong><a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-eleitoral'>
+                   Tribunal Superior Eleitoral - TSE </a></p>
+                   <p><br />
+                   <h4>Quociente Partidário</h4>
+                   <h5 align = 'justify'><br />
+                   O indicador representa o número de vagas que o partido ou coligação obteve, 
+                   excluindo as vagas distribuídas por média.</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   QP = Número de votos válidos do partido ou coligação/Quociente eleitoral
+                   <p>
+                   <strong>Fonte:</strong><a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-partidario'>
+                   Tribunal Superior Eleitoral - TSE </a></p></font>")
     HTML(note)
   }) 
   
@@ -681,36 +693,67 @@ server <- function(input, output,session){
   ## Funcao para descricao dos indicadores de fragmentacao partidaria
   
   output$def_frag <- renderUI({
-    note <- paste0("<h3>Defini&ccedil;&atilde;o dos indicadores</h3>
-                   <h4><br />Fracionaliza&ccedil;&atilde;o</h4>
-                   <p>Este indicador tem por objetivo medir a dispers&atilde;o partid&aacute;ria de um parlamento. 
-                   Ele indica qual a probabilidade de dois parlamentares desse parlamento, tomados ao acaso, pertecerem a partidos diferentes.</p>
-                   <p><strong>Formula:</strong>&nbsp;</p>
-                   <p>Fracionaliza&ccedil;&atilde;o = 1 - &sum;(pe<sup>2</sup>), onde pe = percentual de cadeiras ocupadas por partido</p>
-                   <p>&nbsp;</p>                   
-                   <h4>Fracionaliza&ccedil;&atilde;o M&aacute;xima</h4>
-                   <p>A fracionaliza&ccedil;&atilde;o m&aacute;xima n&atilde;o depende da vota&ccedil;&atilde;o dos partidos, mas da quantidade 
-                   de cadeiras e partidos com representa&ccedil;&atilde;o parlamentar.&nbsp;</p>
-                   <p><strong>Formula:</strong>&nbsp;</p>
-                   <p>Fracionaliza&ccedil;&atilde;o m&aacute;xima = N*(n-1)/n*(N-1), onde N = n&uacute;mero de cadeiras e n = n&uacute;mero 
-                   de partidos com representa&ccedil;&atilde;o parlamentar</p>
-                   <p>&nbsp;</p>                   
-                   <h4>Fragmenta&ccedil;&atilde;o</h4>
-                   <p>A fragmenta&ccedil;&atilde;o mede quanto o &iacute;ndice de fracionaliza&ccedil;&atilde;o se aproxima da fracionaliza&ccedil;
-                   &atilde;o m&aacute;xima.</p>
-                   <p><strong>Formula</strong></p>
-                   <p>(&Iacute;ndice de fracionaliza&ccedil;&atilde;o)/(&Iacute;ndice de fracionaliza&ccedil;&atilde;o m&aacute;xima)</p>
-                   <p>&nbsp;</p>                   
-                   <h4>N&uacute;mero efetivo de partidos por cadeiras&nbsp;</h4>
-                   <p>O conceito de n&uacute;mero efetivo de partidos define o grau de fragmenta&ccedil;&atilde;o do sistema partid&aacute;rio, 
-                   atrav&eacute;s da pondera&ccedil;&atilde;o da for&ccedil;a relativa das legendas que comp&otilde;em o parlamento. O valor calculado 
-                   aponta a quantidade de partidos com alguma relev&acirc;ncia em um dado sistema pol&iacute;tico.</p>
-                   <p><strong>Formula</strong></p>
-                   <p>NEPC = 1/ &sum;(pe<sup>2</sup>)</p>
-                   <p>&nbsp;</p>
-                   <p>&nbsp;</p>
-                   <p>Fonte: Votos e partidos: almanaque de dados eleitorais (Organiza&ccedil;&atilde;o de Wanderley Guilherme dos Santos, 2002) e 
-                   <a href='http://datapolitica.com.br/eleicao/metodologia.html'>Data Politica</a></p>")
+    note <- paste0("
+                   <h3 align = 'center'>
+                   <font color = 'black'>
+                   Definição dos indicadores de fragmentação partidária</h3>
+                   <h4><br />Desproporcionalidade de gallagher </h4>
+                   <h5 align = 'justify'><br />
+                   O índice Gallagher consiste na diferença dos percentuais de votos e de cadeiras obtidas por cada partido.</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   DG = &radic;&sum;(vi - si)<sup>2</sup>/2,
+                   <p>onde vi = percentual de votos e si = percentual de cadeiras.</p>
+                   <p><br />      
+                   <h4>Fracionalização </h4>
+                   <h5 align = 'justify'><br />
+                   Este indicador tem por objetivo medir a dispersão partidária de um parlamento. 
+                   Ele indica qual a probabilidade de dois parlamentares desse parlamento, 
+                   tomados ao acaso, pertecerem a partidos diferentes.</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   FC = 1 - &sum;(pe<sup>2</sup>), 
+                   <p>onde pe = percentual de cadeiras ocupadas por partido.</p>
+                   <p><br />                 
+                   <h4>Fracionalização máxima</h4>
+                   <h5 align = 'justify'><br />
+                   A 'fracionalização máxima' não depende da votação dos partidos, mas da quantidade 
+                   de cadeiras e partidos com representação parlamentar.</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   FM = N*(n-1)/n*(N-1), 
+                   <p> onde N = número de cadeiras e n = número de partidos com representação parlamentar.</p>
+                   <p><br />      
+                   <h4>Fragmentação</h4>
+                   <h5 align = 'justify'><br />
+                   A fragmentação mede quanto o índice de fracionalização se aproxima da fracionalização
+                   máxima.</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   FG = (Índice de fracionalização)/(Índice de fracionalização máxima)
+                   <p><br />                  
+                   <h4>Número efetivo de partidos</h4>
+                   <h5 align = 'justify'><br />
+                   O conceito de número efetivo de partidos define o grau de fragmentação do sistema partidário, 
+                   através da ponderação da força relativa das legendas que compõem o parlamento. O valor calculado 
+                   aponta a quantidade de partidos com alguma relevância em um dado sistema político. O NEP é 
+                   calculado dividindo-se 1 pelo somatório do quadrado das proporções de <b>votos</b> ou de 
+                   <b>cadeiras</b> obtidos pelos partidos em uma dada eleição.</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   NEP = 1/ &sum;(pe<sup>2</sup>),
+                   <p>onde pe = proporção de votos ou cadeiras obtidos pelos partidos.</p>
+                   <p><br />
+                   <strong>Fonte:</strong> 
+                   <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
+                   países/ Organização de Wanderley Guilherme dos Santos, com a colaboração de Fabrícia Guimarães. -
+                   Rio de Janeiro: Editora FGV, 2002); 
+                   <p>2. <a href='http://datapolitica.com.br/eleicao/metodologia.html'>Data Politica</a></p></font>")
     HTML(note)
   }) 
   
@@ -795,6 +838,7 @@ server <- function(input, output,session){
   
   bagreg_dpgfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
+      scrollX = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -807,7 +851,7 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'fracio_fed_agreg',
         bom = TRUE))), 
-      class = "display",
+      class = "compact stripe row-border",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         cargo <- input$DESCRICAO_CARGO2
@@ -817,7 +861,8 @@ server <- function(input, output,session){
            cargo == "Deputado Federal" 
            & agregacao == "Brasil"){
           data = frag_part_fed %>% 
-            unique()
+            unique() %>% 
+            dplyr::filter(UF == input$UF2)
         }
       })
   })
@@ -865,8 +910,20 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Desproporcionalidade de gallagher" & 
-           cargo == "Deputado Estadual" 
-           & agregacao == "UF"){
+           cargo == "Deputado Estadual" &
+           agregacao == "UF" 
+           & uf == "Todas UFs"){
+          frag_part_est %>% 
+            ungroup() %>% 
+            dplyr::select(`Ano da eleição`,
+                          UF,
+                          `Desproporcionalidade de gallagher`) %>% 
+            unique() %>% 
+            spread(`Ano da eleição`,
+                   `Desproporcionalidade de gallagher`)
+          
+          
+        } else{
           frag_part_est %>% 
             ungroup() %>% 
             dplyr::filter(UF == input$UF2) %>% 
@@ -904,6 +961,7 @@ server <- function(input, output,session){
   
   bagreg_dpgest <- eventReactive(input$BCALC2, {
     datatable(options = list(
+      scrollX = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -916,17 +974,22 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'fracio_est_agreg',
         bom = TRUE))), 
-      class = "display",
+      class = "compact stripe row-border",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Desproporcionalidade de gallagher" & 
-           cargo == "Deputado Estadual" 
-           & agregacao == "UF"){
+           cargo == "Deputado Estadual" &
+           agregacao == "UF"
+           & uf == "Todas UFs"){
           data = frag_part_est %>% 
             unique()
+        } else{
+          data = frag_part_est %>% 
+            unique() %>% 
+            dplyr::filter(UF == input$UF2)
         }
       })
   })
@@ -1014,6 +1077,7 @@ server <- function(input, output,session){
   
   bagreg_fracfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
+                scrollX = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1026,7 +1090,7 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'fracio_fed_agreg',
                   bom = TRUE))), 
-              class = "display",
+              class = "compact stripe row-border",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       cargo <- input$DESCRICAO_CARGO2
@@ -1036,7 +1100,8 @@ server <- function(input, output,session){
          cargo == "Deputado Federal" 
          & agregacao == "Brasil"){
         data = frag_part_fed %>% 
-          unique()
+          unique() %>% 
+          dplyr::filter(UF == input$UF2)
       }
     })
   })
@@ -1083,8 +1148,17 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Fracionalização" & 
-           cargo == "Deputado Estadual" 
-           & agregacao == "UF"){
+           cargo == "Deputado Estadual" &
+           agregacao == "UF" 
+           & uf == "Todas UFs"){
+          frag_part_est %>% 
+            ungroup() %>% 
+            dplyr::select(`Ano da eleição`,
+                          `Fracionalização`) %>% 
+            unique() %>% 
+            spread(`Ano da eleição`,
+                   `Fracionalização`)
+        } else{
           frag_part_est %>% 
             ungroup() %>% 
             dplyr::filter(UF == input$UF2) %>% 
@@ -1093,9 +1167,8 @@ server <- function(input, output,session){
             unique() %>% 
             spread(`Ano da eleição`,
                    `Fracionalização`)
-          
-          
-        }
+        
+      }
       })
   })  
   
@@ -1121,6 +1194,7 @@ server <- function(input, output,session){
   
   bagreg_fracest <- eventReactive(input$BCALC2, {
     datatable(options = list(
+      scrollX = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1133,17 +1207,22 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'fracio_est_agreg',
         bom = TRUE))), 
-      class = "display",
+      class = "compact stripe row-border",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Fracionalização" & 
-           cargo == "Deputado Estadual" 
-           & agregacao == "UF"){
+           cargo == "Deputado Estadual" &
+           agregacao == "UF"
+           & uf == "Todas UFs"){
           data = frag_part_est %>% 
             unique()
+        } else{
+          data = frag_part_est %>% 
+            unique() %>% 
+            dplyr::filter(UF == input$UF2)
         }
       })
   })  
@@ -1227,6 +1306,7 @@ server <- function(input, output,session){
   
   bagreg_fracmaxfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
+                scrollX = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1239,7 +1319,7 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'fracio_max_fed_agreg',
                   bom = TRUE))), 
-              class = "display",
+              class = "compact stripe row-border",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       cargo <- input$DESCRICAO_CARGO2
@@ -1249,7 +1329,8 @@ server <- function(input, output,session){
          cargo == "Deputado Federal"
          & agregacao == "Brasil"){
         data = frag_part_fed %>% 
-          unique()
+          unique() %>% 
+          dplyr::filter(UF == input$UF2)
       }
     })
   })
@@ -1295,19 +1376,28 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Fracionalização máxima" & 
-           cargo == "Deputado Estadual" 
-           & agregacao == "UF"){
+           cargo == "Deputado Estadual" &
+           agregacao == "UF"
+           & uf == "Todas UFs"){
           frag_part_est %>% 
             ungroup() %>%
-            dplyr::filter(UF == input$UF2) %>% 
+            dplyr::select(`Ano da eleição`,
+                          UF,
+                          `Fracionalização máxima`) %>% 
+            unique() %>% 
+            spread(`Ano da eleição`,
+                  `Fracionalização máxima`)
+        } else{
+          frag_part_est %>% 
+            ungroup() %>%
+            dplyr::filter(UF == input$UF2)
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Fracionalização máxima`) %>% 
             unique() %>% 
             spread(`Ano da eleição`,
                    `Fracionalização máxima`)
-          
-        }
+      }
       })
   })
   
@@ -1333,6 +1423,7 @@ server <- function(input, output,session){
   
   bagreg_fracmaxest <- eventReactive(input$BCALC2, {
     datatable(options = list(
+      scrollX = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1345,17 +1436,22 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'fracio_max_est_agreg',
         bom = TRUE))), 
-      class = "display",
+      class = "compact stripe row-border",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Fracionalização máxima" & 
-           cargo == "Deputado Estadual"
-           & agregacao == "UF"){
+           cargo == "Deputado Estadual" &
+           agregacao == "UF"
+           & uf == "Todas UFs"){
           data = frag_part_est %>% 
             unique()
+        } else{
+          data = frag_part_est %>% 
+            unique() %>% 
+            dplyr::filter(UF == input$UF2)
         }
       })
   })  
@@ -1440,6 +1536,7 @@ server <- function(input, output,session){
   
   bagreg_fragfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
+                scrollX = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1452,7 +1549,7 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'frag_fed_agreg',
                   bom = TRUE))), 
-              class = "display",
+              class = "compact stripe row-border",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       cargo <- input$DESCRICAO_CARGO2
@@ -1462,7 +1559,8 @@ server <- function(input, output,session){
          cargo == "Deputado Federal" 
          & agregacao == "Brasil"){
         data = frag_part_fed %>% 
-          unique()
+          unique() %>% 
+          dplyr::filter(UF == input$UF2)
       }
     })
   })  
@@ -1510,8 +1608,19 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Fragmentação" & 
-           cargo == "Deputado Estadual" 
-           & agregacao == "UF"){
+           cargo == "Deputado Estadual" &
+           agregacao == "UF"
+           & uf == "Todas UFs"){
+          frag_part_est %>% 
+            ungroup() %>% 
+            dplyr::select(`Ano da eleição`,
+                          UF,
+                          `Fragmentação`) %>% 
+            unique() %>% 
+            spread(`Ano da eleição`,
+                   `Fragmentação`)
+          
+        } else{
           frag_part_est %>% 
             ungroup() %>% 
             dplyr::filter(UF == input$UF2) %>% 
@@ -1521,7 +1630,6 @@ server <- function(input, output,session){
             unique() %>% 
             spread(`Ano da eleição`,
                    `Fragmentação`)
-          
         }
       })
   })
@@ -1548,6 +1656,7 @@ server <- function(input, output,session){
   
   bagreg_fragest <- eventReactive(input$BCALC2, {
     datatable(options = list(
+      scrollX = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1560,17 +1669,22 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'frag_est_agreg',
         bom = TRUE))), 
-      class = "display",
+      class = "compact stripe row-border",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Fragmentação" & 
-           cargo == "Deputado Estadual" 
-           & agregacao == "UF"){
+           cargo == "Deputado Estadual" &
+           agregacao == "UF"
+           & uf == "Todas UFs"){
           data = frag_part_est %>% 
             unique()
+        } else{
+          data = frag_part_est %>% 
+            unique() %>% 
+            dplyr::filter(UF == input$UF2)
         }
       })
   })  
@@ -1652,6 +1766,7 @@ server <- function(input, output,session){
   
   bagreg_nepfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
+                scrollX = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1664,16 +1779,17 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'nepc_fed_agreg',
                   bom = TRUE))), 
-              class = "display",
+              class = "compact stripe row-border",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       cargo <- input$DESCRICAO_CARGO2
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Número efetivo de partidos por cadeiras" & 
          cargo == "Deputado Federal" 
-         & agregacao == "UF"){
+         & agregacao == "Brasil"){
         data = frag_part_fed %>% 
-          unique()
+          unique() %>% 
+          dplyr::filter(UF == input$UF2)
       }
     })
   })  
@@ -1718,8 +1834,18 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       uf <- input$UF2
       if(indicador == "Número efetivo de partidos por cadeiras" & 
-         cargo == "Deputado Estadual" 
-         & agregacao == "UF"){
+         cargo == "Deputado Estadual" &
+         agregacao == "UF"
+         & uf == "Todas UFs"){
+        frag_part_est %>% 
+          dplyr::select(`Ano da eleição`,
+                        UF,
+                        `Número efetivo de partidos por cadeiras`) %>% 
+          unique() %>% 
+          spread(`Ano da eleição`,
+                 `Número efetivo de partidos por cadeiras`)
+        
+      } else{
         frag_part_est %>% 
           dplyr::filter(UF == input$UF2) %>% 
           dplyr::select(`Ano da eleição`,
@@ -1728,7 +1854,6 @@ server <- function(input, output,session){
           unique() %>% 
           spread(`Ano da eleição`,
                  `Número efetivo de partidos por cadeiras`)
-        
       }
     })
   })  
@@ -1754,6 +1879,7 @@ server <- function(input, output,session){
   
   bagreg_nepest <- eventReactive(input$BCALC2, {
     datatable(options = list(
+                scrollX = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1766,16 +1892,21 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'nepc_est_agreg',
                   bom = TRUE))), 
-              class = "display",
+              class = "compact stripe row-border",
       extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       cargo <- input$DESCRICAO_CARGO2
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Número efetivo de partidos por cadeiras" & 
-         cargo == "Deputado Estadual" 
-         & agregacao == "UF"){
+         cargo == "Deputado Estadual" &
+         agregacao == "UF"
+         & uf == "Todas UFs"){
         data = frag_part_est %>% 
           unique()
+      } else{
+        data = frag_part_est %>% 
+          unique() %>% 
+          dplyr::filter(UF == input$UF2)
       }
     })
   })
@@ -1857,6 +1988,7 @@ server <- function(input, output,session){
   
   bagreg_nepvfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
+      scrollX = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1869,7 +2001,7 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'nepc_fed_agreg',
         bom = TRUE))), 
-      class = "display",
+      class = "compact stripe row-border",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         cargo <- input$DESCRICAO_CARGO2
@@ -1878,7 +2010,8 @@ server <- function(input, output,session){
            cargo == "Deputado Federal" 
            & agregacao == "Brasil"){
           data = frag_part_fed %>% 
-            unique()
+            unique() %>% 
+            dplyr::filter(UF == input$UF2)
         }
       })
   })  
@@ -1924,10 +2057,10 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Número efetivo de partidos por votos" & 
-           cargo == "Deputado Estadual" 
-           & agregacao == "UF"){
+           cargo == "Deputado Estadual" &
+           agregacao == "UF"
+           & uf == "Todas UFs"){
           frag_part_est %>% 
-            dplyr::filter(UF == input$UF2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Número efetivo de partidos por votos`) %>% 
@@ -1935,6 +2068,15 @@ server <- function(input, output,session){
             spread(`Ano da eleição`,
                   `Número efetivo de partidos por votos`)
           
+        } else{
+          frag_part_est %>% 
+            dplyr::filter(UF == input$UF2) %>% 
+            dplyr::select(`Ano da eleição`,
+                          UF,
+                          `Número efetivo de partidos por votos`) %>% 
+            unique() %>% 
+            spread(`Ano da eleição`,
+                   `Número efetivo de partidos por votos`)
         }
       })
   })
@@ -1947,6 +2089,7 @@ server <- function(input, output,session){
     indicador <- input$INDICADORES_FRAG
     cargo <- input$DESCRICAO_CARGO2
     agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
     if(indicador == "Número efetivo de partidos por votos" & 
        cargo == "Deputado Estadual" 
        & agregacao == "UF"){
@@ -1973,16 +2116,22 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'nepc_est_agreg',
         bom = TRUE))), 
-      class = "display",
+      class = "compact stripe row-border",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- input$UF2
         if(indicador == "Número efetivo de partidos por votos" & 
-           cargo == "Deputado Estadual" 
-           & agregacao == "UF"){
+           cargo == "Deputado Estadual" &
+           agregacao == "UF" 
+           & uf == "Todas UFs"){
           data = frag_part_est %>% 
             unique()
+        } else{
+          data = frag_part_est %>% 
+            unique() %>% 
+            dplyr::filter(UF == input$UF2)
         }
       })
   })  
@@ -1991,6 +2140,58 @@ server <- function(input, output,session){
 # 2.3. Renovacao parlamentar ----------------------------------------------  
   
   ## Funcao para descricao dos indicadores de renovacao parlamentar
+  
+  output$def_renovp <- renderUI({
+    note <- paste0("
+                   <h3 align = 'center'>
+                   <font color = 'black'>
+                   Definição dos indicadores de renovação parlamentar</h3>
+                   <h4><br /> Conservação </h4>
+                   <h5 align = 'justify'><br />
+                   Exprime a percentagem dos reeleitos em relação ao total de recandidatos.</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   CS = (REELEIT)/(DERROT +  REELEIT) * 100
+                   <p>
+                   <h4><br /> Renovação bruta </h4>
+                   <h5 align = 'justify'><br />
+                   Esta fórmula computa o número total de representantes novos em uma legislatura,
+                   comparado à composição da legislatura anterior.</h5>
+                   <p><
+                   <strong>Fórmula: </strong>
+                   <p>
+                   RN = (DESIST + DERROT)/(TOT) * 100
+                   <h4><br /> Renovação líquida </h4>
+                   <h5 align = 'justify'><br />
+                   A 'renovação líquida' é composta pelo número de candidatos à reeleição que foram
+                   derrotados divido pelo total de recandidatos (derrotados e reeleitos).</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   RL = (DERROT)/(REELEIT + DERROT) * 100
+                   <h4><br /> Volatilidade eleitoral </h4>
+                   <h5 align = 'justify'><br />
+                  O indicador 'volatilidade eleitoral' é uma medida agregada que resulta do
+                  somatório das perdas e ganhos dos partidos entre duas eleições, dividido por dois.
+                  As perdas e ganhos dos partidos tanto podem ser expressas em proporções de
+                  votos ou cadeiras no parlamento.</h5>
+                  <p>
+                  <strong>Fórmula: </strong>
+                  <p>
+                  VT = &sum;(Vti - Vti-1)/2
+                  <p><br /> 
+                  <strong>Fonte:</strong> 
+                  <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
+                  países/ Organização de Wanderley Guilherme dos Santos, com a colaboração de Fabrícia Guimarães. -
+                  Rio de Janeiro: Editora FGV, 2002);  
+                  <p>2. FIGUEIREDO, M. Volatilidade eleitoral em eleições parlamentares, 1950-1978.
+                  Opinião Pública, Campinas, vol. III, nº 3, Dezembro, 1995, p.186-196.
+                  <a href= 'https://www.cesop.unicamp.br/vw/1IEjOMDM_MDA_3e2e0_/v3n3a03.pdf'></a></font>
+
+                   ")
+    HTML(note)
+  }) 
   
 # 2.3.1. Conservacao ------------------------------------------------------
   
@@ -2822,21 +3023,33 @@ server <- function(input, output,session){
   ## Funcao para descricao dos indicadores de alienacao
   
   output$def_alien <- renderUI({
-    note <- paste0("<h3>Defini&ccedil;&atilde;o dos indicadores</h3>
-                   <p>Indicadores de aliena&ccedil;&atilde;o medem a participa&ccedil;&atilde;o nas elei&ccedil;&otilde;es, por unidade eleitoral.</p>
-                   <h4><br />Aliena&ccedil;&atilde;o Absoluta</h4>
-                   <p>A aliena&ccedil;&atilde;o &eacute; a soma de quantidade de absten&ccedil;&otilde;es, votos brancos e votos nulos
-                   de determinada elei&ccedil;&atilde;o.</p>
-                   <p><strong>Formula:</strong>&nbsp;</p>
-                   <p>(Absten&ccedil;&otilde;es + Votos Brancos + Votos Nulos)</p>
-                   <p>&nbsp;</p>
-                   <h4>Aliena&ccedil;&atilde;o Percentual</h4>
-                   <p>Aliena&ccedil;&atilde;o percentual &eacute; alieana&ccedil;&atilde;o (absten&ccedil;&otilde;es, brancos e nulos), 
-                   dividido pelo total de eleitores aptos da unidade eleitoral.</p>
-                   <p><strong>Formula:</strong>&nbsp;</p>
-                   <p>(Absten&ccedil;&otilde;es + Votos Brancos + Votos Nulos)/(Total de eleitores aptos)</p>
-                   <p>&nbsp;</p>
-                   <p>Fonte: Votos e partidos: almanaque de dados eleitorais (Organiza&ccedil;&atilde;o de Wanderley Guilherme dos Santos, 2002)")
+    note <- paste0("
+                   <h3 align = 'center'>
+                   <font color = 'black'>
+                   Definição dos indicadores de alienação</h3>
+                   <h4><br />Alienação absoluta</h4>
+                   <h5 align = 'justify'><br />
+                   Indicadores de alienação medem a participação nas eleições, por unidade eleitoral.
+                   A 'alienação absoluta' é a soma da quantidade de abstenções, votos brancos e votos nulos
+                   de determinada eleição.</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   AA = (Abstenções + Votos brancos + Votos nulos)
+                   <p>
+                   <h4><br />Alienação Percentual</h4>
+                   <h5 align = 'justify'><br />
+                   A 'alienação percentual' é o índice de 'alienação absoluta' dividido pelo total de eleitores 
+                   aptos da unidade eleitoral.</h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   AP = (Índice de alienação absoluta)/(Total de eleitores aptos)
+                   <p><br />
+                  <strong>Fonte:</strong> 
+                  <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
+                   países/ Organização de Wanderley Guilherme dos Santos, com a colaboração de Fabrícia Guimarães. -
+                   Rio de Janeiro: Editora FGV, 2002).</p></font>")
     HTML(note)
   })
    
