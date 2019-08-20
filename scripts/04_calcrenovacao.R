@@ -458,5 +458,5 @@ write.csv(ind_eleicoes_est, "data/output/renov_parl_est.csv")
 
 ## Remove os arquivos que nao serao mais utilizados
 
-rm(ano1,ano2,cand_de,cand_df,de,de1,df,df1,eleicao_94,ind_eleicoes_est,
-   ind_eleicoes_fed,indic1,indic2)
+rm(estatisticas_ano1,estatisticas_ano2,cand_de,cand_df,de,de1,df,df1,eleicao_94,ind_eleicoes_est,
+   ind_eleicoes_fed,indicadores1,indicadores2,candidatos_ano2,candidatos)

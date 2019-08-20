@@ -1,4 +1,4 @@
-﻿"","Ano da eleição","Turno","Cargo","Quantidade de abstenções","Quantidade de votos brancos","Quantidade de votos nulos","Quantidade de eleitores aptos","Alienação Absoluta","Alienação Percentual"
+﻿"","Ano da eleição","Turno","Cargo","Quantidade de abstenções","Quantidade de votos brancos","Quantidade de votos nulos","Quantidade de eleitores aptos","Alienação absoluta","Alienação percentual"
 "1",1998,1,"Governador","21.604.533","9.837.830","6.555.972","100.396.894","37.998.335",37.85
 "2",1998,2,"Governador","13.994.675","749.779","2.247.197","64.730.396","16.991.651",26.25
 "3",1998,1,"Senador","21.604.670","11.54.780","9.86.960","100.397.416","41.746.410",41.58

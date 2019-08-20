@@ -269,9 +269,15 @@ ui <- fluidPage(
                                                                                    left = 605,
                                                                                    DT::dataTableOutput("nepc_est"))),
                                                                  column(12,
-                                                                        fixedPanel(top = 145, right = 175, left = 605,DT::dataTableOutput("nepv_fed"))),
+                                                                        fixedPanel(top = 145, 
+                                                                                   right = 175, 
+                                                                                   left = 605,
+                                                                                   DT::dataTableOutput("nepv_fed"))),
                                                                  column(12,
-                                                                        fixedPanel(top = 145, right = 175, left = 605,DT::dataTableOutput("nepv_est")))))),
+                                                                        fixedPanel(top = 145, 
+                                                                                   right = 175, 
+                                                                                   left = 605,
+                                                                                   DT::dataTableOutput("nepv_est")))))),
                                                    tabPanel("Dados agregados", br(),
                                                             fixedPage(
                                                               fixedRow(
@@ -476,7 +482,7 @@ ui <- fluidPage(
                                      
                                      selectizeInput(inputId = "INDICADORES_ALIE",
                                                     label = NULL, 
-                                                    choices = c("","Alienação Absoluta", "Alienação Percentual"), ## Indicadores disponiveis
+                                                    choices = c("","Alienação absoluta", "Alienação percentual"), ## Indicadores disponiveis
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um indicador')),
                                      
