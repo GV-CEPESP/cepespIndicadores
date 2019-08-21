@@ -321,10 +321,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print',
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'quoc_elei_dep_fed_agreg',
-                  bom = TRUE))), 
+                  bom = TRUE),
+                  I('colvis'))), 
               class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_DISTR
@@ -334,24 +338,12 @@ server <- function(input, output,session){
          cargo == "Deputado Federal"){
         if(input$UF == "Todas UFs"){
           data = distcad_fed %>% 
-            select(`Ano da eleição`,
-                   UF,
-                   Cargo,
-                   `Cadeiras oferecidas`,
-                   `Votos válidos`, 
-                   `Quociente eleitoral`) %>% 
             unique()
         }
         else{
           data = distcad_fed %>% 
             dplyr::filter(UF == input$UF) %>% 
-            select(`Ano da eleição`, 
-                   UF,
-                   Cargo,
-                   `Cadeiras oferecidas`,
-                   `Votos válidos`, 
-                   `Quociente eleitoral`) %>% 
-            unique()
+              unique()
         }}
     })
   })  
@@ -445,10 +437,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print', 
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'quoc_elei_dep_est_agreg',
-                  bom = TRUE))), 
+                  bom = TRUE),
+                  I('colvis'))), 
               class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_DISTR
@@ -458,22 +454,10 @@ server <- function(input, output,session){
          cargo == "Deputado Estadual"){
         if(input$UF == "Todas UFs"){
           expr = distcad_est %>% 
-            select(`Ano da eleição`,
-                   UF, 
-                   Cargo,
-                   `Cadeiras oferecidas` ,
-                   `Votos válidos`, 
-                   `Quociente eleitoral`) %>% 
-            unique()
+           unique()
         } else {
           expr = distcad_est %>% 
             dplyr::filter(UF == input$UF) %>% 
-            select(`Ano da eleição`, 
-                   UF, 
-                   Cargo, 
-                   `Cadeiras oferecidas` ,
-                   `Votos válidos`, 
-                   `Quociente eleitoral`) %>% 
             unique()
           
         }}
@@ -567,10 +551,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print', 
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'quoc_part_dep_fed_agreg',
-                  bom = TRUE))), 
+                  bom = TRUE),
+                  I('colvis'))), 
               class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_DISTR
@@ -673,10 +661,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print', 
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'quoc_part_dep_est_agreg',
-                  bom = TRUE))), 
+                  bom = TRUE),
+                  I('colvis'))), 
               class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_DISTR
@@ -846,11 +838,15 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'fracio_fed_agreg',
-        bom = TRUE))), 
-      class = "compact stripe row-border",
+        bom = TRUE),
+        I('colvis'))), 
+      class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -962,11 +958,15 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'fracio_est_agreg',
-        bom = TRUE))), 
-      class = "compact stripe row-border",
+        bom = TRUE),
+        I('colvis'))), 
+      class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -1075,11 +1075,15 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print', 
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'fracio_fed_agreg',
-                  bom = TRUE))), 
-              class = "compact stripe row-border",
+                  bom = TRUE),
+                  I('colvis'))), 
+              class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -1187,11 +1191,15 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'fracio_est_agreg',
-        bom = TRUE))), 
-      class = "compact stripe row-border",
+        bom = TRUE),
+        I('colvis'))), 
+      class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -1294,11 +1302,15 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print', 
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'fracio_max_fed_agreg',
-                  bom = TRUE))), 
-              class = "compact stripe row-border",
+                  bom = TRUE),
+                  I('colvis'))), 
+              class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -1404,11 +1416,15 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'fracio_max_est_agreg',
-        bom = TRUE))), 
-      class = "compact stripe row-border",
+        bom = TRUE),
+        I('colvis'))), 
+      class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -1512,11 +1528,15 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print', 
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'frag_fed_agreg',
-                  bom = TRUE))), 
-              class = "compact stripe row-border",
+                  bom = TRUE),
+                  I('colvis'))), 
+              class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -1626,11 +1646,15 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'frag_est_agreg',
-        bom = TRUE))), 
-      class = "compact stripe row-border",
+        bom = TRUE),
+        I('colvis'))), 
+      class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -1732,11 +1756,15 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print', 
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'nepc_fed_agreg',
-                  bom = TRUE))), 
-              class = "compact stripe row-border",
+                  bom = TRUE),
+                  I('colvis'))), 
+              class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -1843,11 +1871,15 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print',
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'nepc_est_agreg',
-                  bom = TRUE))), 
-              class = "compact stripe row-border",
+                  bom = TRUE),
+                  I('colvis'))), 
+              class = "display",
       extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -1949,11 +1981,15 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'nepc_fed_agreg',
-        bom = TRUE))), 
-      class = "compact stripe row-border",
+        bom = TRUE),
+        I('colvis'))), 
+      class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -2059,11 +2095,15 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'nepc_est_agreg',
-        bom = TRUE))), 
-      class = "compact stripe row-border",
+        bom = TRUE),
+        I('colvis'))), 
+      class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -2223,10 +2263,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'renov_parl_fed_agreg',
-        bom = TRUE))), 
+        bom = TRUE),
+        I('colvis'))), 
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
@@ -2334,10 +2378,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'renov_parl_est_agreg',
-        bom = TRUE))), 
+        bom = TRUE),
+        I('colvis'))), 
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
@@ -2445,10 +2493,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'renov_parl_fed_agreg',
-        bom = TRUE))), 
+        bom = TRUE),
+        I('colvis'))), 
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
@@ -2556,10 +2608,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'renov_parl_est_agreg',
-        bom = TRUE))), 
+        bom = TRUE),
+        I('colvis'))), 
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
@@ -2665,10 +2721,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'renov_parl_fed_agreg',
-        bom = TRUE))), 
+        bom = TRUE),
+        I('colvis'))), 
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
@@ -2777,10 +2837,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'renov_parl_est_agreg',
-        bom = TRUE))), 
+        bom = TRUE),
+        I('colvis'))), 
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
@@ -2889,10 +2953,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'vol_ele_fed_agreg',
-        bom = TRUE))), 
+        bom = TRUE),
+        I('colvis'))), 
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
@@ -3001,10 +3069,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list('copy', 'print', 
+                     list(
         extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
         title = 'vol_ele_est_agreg',
-        bom = TRUE))), 
+        bom = TRUE),
+        I('colvis'))), 
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
@@ -3150,10 +3222,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print', 
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'alien_abs_fed_br_agreg',
-                  bom = TRUE))), 
+                  bom = TRUE),
+                  I('colvis'))), 
               class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_ALIE
@@ -3262,10 +3338,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list('copy', 'print', 
+                               list(
                   extend = 'csv',
+                  exportOptions = list(
+                    columns = ':visible'),
                   title = 'alien_abs_fed_uf_agreg',
-                  bom = TRUE))), 
+                  bom = TRUE),
+                  I('colvis'))), 
               class = "display",
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_ALIE
@@ -3367,10 +3447,14 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
               columnDefs = list(list(
                 className = 'dt-right', targets = '_all')),
               dom = 'Bfrtip',
-              buttons = list('copy', 'print', list(
+              buttons = list('copy', 'print', 
+                             list(
                 extend = 'csv',
+                exportOptions = list(
+                  columns = ':visible'),
                 title = 'alien_per_fed_br_agreg',
-                bom = TRUE))), 
+                bom = TRUE),
+                I('colvis'))), 
             class = "display",
             extensions = 'Buttons',{
     indicador <- input$INDICADORES_ALIE
@@ -3381,9 +3465,8 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
        agregacao == "Brasil"){
       alien_br %>%
         dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
-        select(`Ano da eleição`, 
-               Cargo, 
-               `Alienação percentual`)
+        unique()
+      
       
     }
   })
@@ -3446,7 +3529,7 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
       else{
         alien_uf %>% 
           dplyr::filter(UF == input$UF4 & 
-                          Cargo==input$DESCRICAO_CARGO4) %>% 
+                        Cargo==input$DESCRICAO_CARGO4) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
                         Turno,
@@ -3487,10 +3570,14 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
               columnDefs = list(list(
                 className = 'dt-right', targets = '_all')),
               dom = 'Bfrtip',
-              buttons = list('copy', 'print', list(
+              buttons = list('copy', 'print', 
+                             list(
                 extend = 'csv',
+                exportOptions = list(
+                  columns = ':visible'),
                 title = 'alien_per_fed_uf_agreg',
-                bom = TRUE))), 
+                bom = TRUE),
+                I('colvis'))), 
             class = "display",
             extensions = 'Buttons',{
     indicador <- input$INDICADORES_ALIE
@@ -3507,11 +3594,9 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
                  `Alienação percentual`)
       } else{ 
         data = alien_uf %>% 
-          dplyr::filter(UF == input$UF4) %>% 
-          dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
-          select(`Ano da eleição`, 
-                 UF, 
-                 `Alienação percentual`)
+          dplyr::filter(UF == input$UF4 &
+                        Cargo==input$DESCRICAO_CARGO4) %>% 
+          unique()
       }}
   })
 })
