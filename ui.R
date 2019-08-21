@@ -23,7 +23,7 @@ ui <- fluidPage(
              
              
             
-             tags$div(class = "header", checked = NA,
+             tags$div(class = "header", checked = NA, 
                       
                       
                       
@@ -84,9 +84,7 @@ ui <- fluidPage(
                       )),
              
              
-             
-             
-             
+          
              tabPanel("Distribuição de cadeiras", ## Definicao das ferramentas de selecao para a guia
                                                   ## "Distribuicao de cadeiras"
                       
@@ -131,9 +129,9 @@ ui <- fluidPage(
                                                              fixedPage(
                                                                fixedRow(
                                                                  column(12,
-                                                                        fixedPanel(top = 145, 
-                                                                                   right = 175, 
-                                                                                   left = 605, 
+                                                                        fixedPanel(top = 145,
+                                                                                   right = 175,
+                                                                                   left = 605,
                                                                                    DT::dataTableOutput("quoce_fed"))), ## Tabelas que serao exibidas
                                                                  column(12,
                                                                         fixedPanel(top = 145, 
@@ -572,6 +570,19 @@ ui <- fluidPage(
                         ".shiny-output-error:before { visibility: hidden; }"
              ),
              
+             tags$head(
+               tags$style(
+                 HTML("
+                      .datatables {
+                      font-size: 1.5vw;
+                      }
+                      
+                      @media screen and (min-width: 1024px) {
+                      .datatables {
+                      font-size: 15px;
+                      }
+                      }
+                      "))),
              
              tags$footer(class = "rodape",
                          

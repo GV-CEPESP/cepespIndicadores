@@ -65,6 +65,8 @@ server <- function(input, output,session){
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
       
+    } else{
+      return()
     }
   })
   
@@ -117,7 +119,7 @@ server <- function(input, output,session){
                        c("", "Brasil"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
-    } else{
+    } else if(cargo == "Deputado Estadual"){
       selectizeInput("AGREGACAO_REGIONAL3",
                      label = NULL,
                      choices = 
@@ -140,7 +142,9 @@ server <- function(input, output,session){
   
   output$UF3 <- renderUI({
     agregacao <- input$AGREGACAO_REGIONAL3
-    if(agregacao == "UF"){
+    cargo <- input$DESCRICAO_CARGO3
+    if(cargo == "Deputado Estadual" &
+      length(agregacao == "UF") > 0){
       selectizeInput("UF3",
                      label = NULL,
                      choices = 
@@ -244,6 +248,7 @@ server <- function(input, output,session){
     bquoce_fed()
   })
   
+  ?renderDataTable
   
   bquoce_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
@@ -867,6 +872,7 @@ server <- function(input, output,session){
   depestg <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
     if(indicador == "Desproporcionalidade de gallagher" & 
        agregacao == "UF"){
       return(input$dpg_est)
@@ -895,11 +901,13 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- input$UF2
+        uf <- req(input$UF2)
         if(indicador == "Desproporcionalidade de gallagher" & 
           agregacao == "UF"){
-          if(uf == "Todas UFs"){
-         frag_part_est %>% 
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            frag_part_est %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
@@ -909,9 +917,10 @@ server <- function(input, output,session){
                    `Desproporcionalidade de gallagher`)
           
           
-        } else{
-          frag_part_est %>% 
-            dplyr::filter(UF == input$UF2 & Cargo == input$DESCRICAO_CARGO2) %>% 
+          } else{
+            frag_part_est %>% 
+            dplyr::filter(UF == input$UF2 & 
+                            Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Desproporcionalidade de gallagher`) %>% 
@@ -961,17 +970,21 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- input$UF2
+        uf <- req(input$UF2)
         if(indicador == "Desproporcionalidade de gallagher" & 
-           agregacao == "UF"
-           & uf == "Todas UFs"){
-          data = frag_part_est %>%
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            data = frag_part_est %>%
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             unique()
-        } else{
-          data = frag_part_est %>% 
+          } else{
+            data = frag_part_est %>% 
             unique() %>% 
-            dplyr::filter(UF == input$UF2 & Cargo == input$DESCRICAO_CARGO2)
+            dplyr::filter(UF == input$UF2 & 
+                          Cargo == input$DESCRICAO_CARGO2)
+        }
         }
       })
   })
@@ -1115,11 +1128,13 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- input$UF2
+        uf <- req(input$UF2)
         if(indicador == "Fracionalização" & 
-           agregacao == "UF" 
-           & uf == "Todas UFs"){
-          frag_part_est %>% 
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            frag_part_est %>% 
             ungroup() %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
@@ -1128,8 +1143,8 @@ server <- function(input, output,session){
             unique() %>% 
             spread(`Ano da eleição`,
                    `Fracionalização`)
-        }else{
-          frag_part_est %>% 
+          } else{
+            frag_part_est %>% 
             ungroup() %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2) %>% 
@@ -1139,7 +1154,8 @@ server <- function(input, output,session){
             spread(`Ano da eleição`,
                    `Fracionalização`)
         
-      }
+           }
+        }
       })
   })  
   
@@ -1151,7 +1167,6 @@ server <- function(input, output,session){
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
     if(indicador == "Fracionalização" & 
-       cargo == "Deputado Estadual" & 
        agregacao == "UF"){
       return(input$agreg_fracest)
     }
@@ -1180,19 +1195,22 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- input$UF2
+        uf <- req(input$UF2)
         if(indicador == "Fracionalização" & 
-           agregacao == "UF"
-           & uf == "Todas UFs"){
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
           data = frag_part_est %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             unique() 
-        } else{
+          } else{
           data = frag_part_est %>% 
             unique() %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2)
         }
+           }
       })
   })  
   
@@ -1301,10 +1319,7 @@ server <- function(input, output,session){
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
-    if(is.null(uf) | is.na(uf)){
-      return()
-    }
-    else if(indicador == "Fracionalização máxima" 
+    if(indicador == "Fracionalização máxima" 
        & agregacao == "UF"){
       return(input$fraciomax_est)
     } 
@@ -1335,12 +1350,10 @@ server <- function(input, output,session){
         uf <- req(input$UF2)
         if(indicador == "Fracionalização máxima" & 
            agregacao == "UF"){
-          if(is.null(uf) | is.na(uf)){
+          if(uf == ""){
             return()
-          }
-           else if(uf == "Todas UFs"){
-          frag_part_est %>% 
-            ungroup() %>%
+          } else if(uf == "Todas UFs"){
+            data = frag_part_est %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
@@ -1348,11 +1361,10 @@ server <- function(input, output,session){
             unique() %>% 
             spread(`Ano da eleição`,
                   `Fracionalização máxima`)
-        } else{
-          frag_part_est %>% 
-            ungroup() %>%
+          } else{
+            data = frag_part_est %>% 
             dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2)
+                          Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Fracionalização máxima`) %>% 
@@ -1400,19 +1412,22 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- input$UF2
+        uf <- req(input$UF2)
         if(indicador == "Fracionalização máxima" & 
-           agregacao == "UF"
-           & uf == "Todas UFs"){
-          data = frag_part_est %>% 
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          }else if(uf == "Todas UFs"){
+            data = frag_part_est %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             unique()
-        } else{
-          data = frag_part_est %>% 
+          } else{
+            data = frag_part_est %>% 
             unique() %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2)
         }
+      }
       })
   })  
   
@@ -1551,11 +1566,13 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- input$UF2
+        uf <- req(input$UF2)
         if(indicador == "Fragmentação" & 
-           agregacao == "UF"
-           & uf == "Todas UFs"){
-          frag_part_est %>% 
+           agregacao == "UF"){
+           if(uf == ""){
+             return()
+           } else if(uf == "Todas UFs"){
+            frag_part_est %>% 
             ungroup() %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
@@ -1565,8 +1582,8 @@ server <- function(input, output,session){
             spread(`Ano da eleição`,
                    `Fragmentação`)
           
-        } else{
-          frag_part_est %>% 
+          } else{
+            frag_part_est %>% 
             ungroup() %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2) %>% 
@@ -1576,6 +1593,7 @@ server <- function(input, output,session){
             unique() %>% 
             spread(`Ano da eleição`,
                    `Fragmentação`)
+          }
         }
       })
   })
@@ -1616,18 +1634,21 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- input$UF2
+        uf <- req(input$UF2)
         if(indicador == "Fragmentação" & 
-           agregacao == "UF"
-           & uf == "Todas UFs"){
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          }else if(uf == "Todas UFs"){
           data = frag_part_est %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             unique()
-        } else{
+          } else{
           data = frag_part_est %>% 
             unique() %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2)
+        }
         }
       })
   })  
@@ -1763,11 +1784,13 @@ server <- function(input, output,session){
               extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
-      uf <- input$UF2
+      uf <- req(input$UF2)
       if(indicador == "Número efetivo de partidos por cadeiras" & 
-         agregacao == "UF"
-         & uf == "Todas UFs"){
-        frag_part_est %>% 
+         agregacao == "UF"){
+        if(uf == ""){
+          return()
+        } else if(uf == "Todas UFs"){
+          frag_part_est %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
@@ -1776,8 +1799,8 @@ server <- function(input, output,session){
           spread(`Ano da eleição`,
                  `Número efetivo de partidos por cadeiras`)
         
-      } else{
-        frag_part_est %>% 
+        } else{
+          frag_part_est %>% 
           dplyr::filter(UF == input$UF2 & 
                         Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
@@ -1786,6 +1809,7 @@ server <- function(input, output,session){
           unique() %>% 
           spread(`Ano da eleição`,
                  `Número efetivo de partidos por cadeiras`)
+        }
       }
     })
   })  
@@ -1797,6 +1821,7 @@ server <- function(input, output,session){
   ag_nepest <- reactive({
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- req(input$UF2)
     if(indicador == "Número efetivo de partidos por cadeiras" & 
        agregacao == "UF"){
       return(input$agreg_nepest)
@@ -1826,18 +1851,21 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
-      uf <- input$UF2
+      uf <- req(input$UF2)
       if(indicador == "Número efetivo de partidos por cadeiras" & 
-         agregacao == "UF"
-         & uf == "Todas UFs"){
-        data = frag_part_est %>% 
+         agregacao == "UF"){
+        if(uf == ""){
+          return()
+        } else if(uf == "Todas UFs"){
+          data = frag_part_est %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           unique()
-      } else{
-        data = frag_part_est %>% 
-          unique() %>% 
+        } else{
+          data = frag_part_est %>% 
           dplyr::filter(UF == input$UF2 &
-                        Cargo == input$UF2)
+                        Cargo == input$DESCRICAO_CARGO2) %>%   
+          unique() 
+      }
       }
     })
   })
@@ -1973,11 +2001,13 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- input$UF2
+        uf <- req(input$UF2)
         if(indicador == "Número efetivo de partidos por votos" & 
-           agregacao == "UF" &
-           uf == "Todas UFs"){
-          frag_part_est %>% 
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else if( uf == "Todas UFs"){
+            frag_part_est %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
@@ -1986,8 +2016,8 @@ server <- function(input, output,session){
             spread(`Ano da eleição`,
                   `Número efetivo de partidos por votos`)
           
-        } else{
-          frag_part_est %>% 
+          } else{
+            frag_part_est %>% 
             dplyr::filter(UF == input$UF2 &
                           Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
@@ -1996,6 +2026,7 @@ server <- function(input, output,session){
             unique() %>% 
             spread(`Ano da eleição`,
                    `Número efetivo de partidos por votos`)
+        }
         }
       })
   })
@@ -2036,18 +2067,21 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- input$UF2
+        uf <- req(input$UF2)
         if(indicador == "Número efetivo de partidos por votos" & 
-           agregacao == "UF" 
-           & uf == "Todas UFs"){
-          data = frag_part_est %>% 
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            data = frag_part_est %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             unique()
-        } else{
-          data = frag_part_est %>% 
+          } else{
+            data = frag_part_est %>% 
             unique() %>% 
             dplyr::filter(UF == input$UF2 &
                           Cargo == input$DESCRICAO_CARGO2)
+        }
         }
       })
   })  
@@ -2117,10 +2151,8 @@ server <- function(input, output,session){
   
   depfedc <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$DESCRICAO_CARGO3
     if(indicador == "Conservação" &
-       cargo == "Deputado Federal" &
        agregacao == "Brasil"){
       return(input$conserv_fed)
     }
@@ -2170,10 +2202,8 @@ server <- function(input, output,session){
   
   ag_alifedc<- reactive({
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     if(indicador == "Conservação" & 
-       cargo == "Deputado Federal" &
        agregacao == "Brasil"){
       return(input$agreg_conserv_fed)
     }
@@ -2219,10 +2249,8 @@ server <- function(input, output,session){
   
   depestc <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$DESCRICAO_CARGO3
     if(indicador == "Conservação" & 
-       cargo == "Deputado Estadual" &
        agregacao == "UF"){
       return(input$conserv_est)
     }
@@ -2251,18 +2279,30 @@ server <- function(input, output,session){
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
+        uf <- req(input$UF3)
         agregacao <- input$AGREGACAO_REGIONAL3
         if(indicador == "Conservação" &
-           cargo == "Deputado Estadual" &
-           agregacao == "UF"){
-          renov_parl_est %>% 
-            dplyr::filter(UF == input$UF3) %>% 
+           cargo == "Deputado Estadual")
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            renov_parl_est %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Conservação`) %>% 
             spread(`Ano da eleição`,
                   `Conservação`)
           
+          } else{
+            renov_parl_est %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
+                            UF == input$UF3) %>% 
+              dplyr::select(`Ano da eleição`,
+                            UF,
+                            `Conservação`) %>% 
+              spread(`Ano da eleição`,
+                     `Conservação`)
         }
       })
   }) 
@@ -2273,10 +2313,8 @@ server <- function(input, output,session){
   
   ag_aliestc<- reactive({
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     if(indicador == "Conservação" &
-       cargo == "Deputado Estadual" &
        agregacao == "UF"){
       return(input$agreg_conserv_est)
     }
@@ -2303,14 +2341,22 @@ server <- function(input, output,session){
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- input$UF3
+        uf <- req(input$UF3)
         if(indicador == "Conservação" & 
-           cargo == "Deputado Estadual" &
            agregacao == "UF"){
-          data = renov_parl_est
-          
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            data = renov_parl_est %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
+            unique()
+          } else{
+            data = renov_parl_est %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
+                     UF == input$UF3) %>% 
+            unique()
+          }
         }
       })
   })
@@ -2323,7 +2369,6 @@ server <- function(input, output,session){
   
   depfedrb <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$DESCRICAO_CARGO3
     if(indicador == "Renovação bruta" & 
        cargo == "Deputado Federal" &
@@ -2364,7 +2409,8 @@ server <- function(input, output,session){
             dplyr::select(`Ano da eleição`,
                           `Renovação bruta`) %>% 
             spread(`Ano da eleição`,
-                   `Renovação bruta`)
+                   `Renovação bruta`) %>% 
+            unique()
           
         }
       })
@@ -2412,7 +2458,7 @@ server <- function(input, output,session){
         if(indicador == "Renovação bruta" & 
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
-          data = renov_parl_fed %>%
+            data = renov_parl_fed %>%
             dplyr::filter(Cargo==input$DESCRICAO_CARGO3)
         }
       })
@@ -2424,10 +2470,8 @@ server <- function(input, output,session){
   
   depestrb <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$DESCRICAO_CARGO3
     if(indicador == "Renovação bruta" & 
-       cargo == "Deputado Estadual" &
        agregacao == "UF"){
       return(input$renov_br_est)
     }
@@ -2455,19 +2499,32 @@ server <- function(input, output,session){
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
+        uf <- req(input$UF3)
         if(indicador == "Renovação bruta" & 
-           cargo == "Deputado Estadual" &
            agregacao == "UF"){
-          renov_parl_est %>% 
-            dplyr::filter(UF == input$UF3) %>% 
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            renov_parl_est %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Renovação bruta`) %>% 
             spread(`Ano da eleição`,
-                   `Renovação bruta`)
-          
+                   `Renovação bruta`) %>% 
+            unique()
+          } else{
+            renov_parl_est %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
+                          UF == input$UF3) %>% 
+            dplyr::select(`Ano da eleição`,
+                          UF,
+                          `Renovação bruta`) %>% 
+            spread(`Ano da eleição`,
+                   `Renovação bruta`) %>% 
+            unique()
+          }
         }
       })
   }) 
@@ -2478,10 +2535,8 @@ server <- function(input, output,session){
   
   ag_aliestrb <- reactive({
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     if(indicador == "Renovação bruta" & 
-       cargo == "Deputado Estadual" &
        agregacao == "UF"){
       return(input$agreg_renov_br_est)
     }
@@ -2508,14 +2563,20 @@ server <- function(input, output,session){
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- input$UF3
+        uf <- req(input$UF3)
         if(indicador == "Renovação bruta" & 
-           cargo == "Deputado Estadual" &
            agregacao == "UF"){
-          data = renov_parl_est %>%
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            data = renov_parl_est %>%
             dplyr::filter(Cargo==input$DESCRICAO_CARGO3)
+          } else{
+            data = renov_parl_est %>%
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
+                            UF == input$UF3)
+          }
         }
       })
   })
@@ -2629,10 +2690,8 @@ server <- function(input, output,session){
   
   depestrl <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$DESCRICAO_CARGO3
     if(indicador == "Renovação líquida" &
-       cargo == "Deputado Estadual" &
        agregacao == "UF"){
       return(input$renov_liq_est)
     }
@@ -2660,19 +2719,33 @@ server <- function(input, output,session){
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
+        uf <- req(input$UF3)
         if(indicador == "Renovação líquida" &
-           cargo == "Deputado Estadual" &
            agregacao == "UF"){
-          renov_parl_est %>% 
-            dplyr::filter(UF == input$UF3) %>%
+          if(uf == ""){
+            return()
+          } else if (uf == "Todas UFs"){
+            renov_parl_est %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>%
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Renovação líquida`) %>% 
             spread(`Ano da eleição`,
-                  `Renovação líquida`)
+                  `Renovação líquida`) %>% 
+            unique()
           
+          } else{
+            renov_parl_est %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
+                          UF == input$UF3) %>%
+            dplyr::select(`Ano da eleição`,
+                          UF,
+                          `Renovação líquida`) %>% 
+            spread(`Ano da eleição`,
+                   `Renovação líquida`) %>% 
+            unique()
+          }
         }
       })
   }) 
@@ -2683,10 +2756,8 @@ server <- function(input, output,session){
   
   ag_aliestrl <- reactive({
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     if(indicador == "Renovação líquida" & 
-       cargo == "Deputado Estadual" &
        agregacao == "UF"){
       return(input$agreg_renov_liq_est)
     }
@@ -2713,14 +2784,22 @@ server <- function(input, output,session){
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- input$UF3
+        uf <- req(input$UF3)
         if(indicador == "Renovação líquida" & 
-           cargo == "Deputado Estadual" &
            agregacao == "UF"){
-          data = renov_parl_est 
-          
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            data = renov_parl_est %>% 
+            filter(Cargo == input$DESCRICAO_CARGO3) %>% 
+            unique()
+          } else{
+            data = renov_parl_est %>% 
+            filter(Cargo == input$DESCRICAO_CARGO3 &
+                   UF == input$UF3) %>% 
+            unique()
+          }
         }
       })
   })
@@ -2836,10 +2915,8 @@ server <- function(input, output,session){
   
   depestve <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$DESCRICAO_CARGO3
     if(indicador == "Volatilidade eleitoral" & 
-       cargo == "Deputado Estadual" &
        agregacao == "UF"){
       return(input$vol_ele_est)
     }
@@ -2867,19 +2944,32 @@ server <- function(input, output,session){
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
+        uf <- req(input$UF3)
         if(indicador == "Volatilidade eleitoral" &
-           cargo == "Deputado Estadual" &
            agregacao == "UF"){
-          renov_parl_est %>% 
-            dplyr::filter(UF == input$UF3) %>%
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            renov_parl_est %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>%
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Volatilidade eleitoral`) %>% 
             spread(`Ano da eleição`,
-                   `Volatilidade eleitoral`)
-          
+                   `Volatilidade eleitoral`) %>% 
+              unique()
+          } else{
+            renov_parl_est %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
+                          UF == input$UF3) %>%
+            dplyr::select(`Ano da eleição`,
+                          UF,
+                          `Volatilidade eleitoral`) %>% 
+            spread(`Ano da eleição`,
+                   `Volatilidade eleitoral`) %>% 
+            unique()
+          }
         }
       })
   }) 
@@ -2890,10 +2980,8 @@ server <- function(input, output,session){
   
   ag_aliestve <- reactive({
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
     agregacao <- input$AGREGACAO_REGIONAL3
     if(indicador == "Volatilidade eleitoral" &
-       cargo == "Deputado Estadual" &
        agregacao == "UF"){
       return(input$agreg_vol_ele_est)
     }
@@ -2920,14 +3008,22 @@ server <- function(input, output,session){
       class = "display",
       extensions = 'Buttons',{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- input$UF3
+        uf <- req(input$UF3)
         if(indicador == "Volatilidade eleitoral" & 
-           cargo == "Deputado Estadual" &
            agregacao == "UF"){
-          data = renov_parl_est 
-          
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            data = renov_parl_est %>% 
+            filter(Cargo == input$DESCRICAO_CARGO3) %>% 
+            unique()
+          } else{
+            data = renov_parl_est %>% 
+            filter(Cargo == input$DESCRICAO_CARGO3 &
+                   UF == input$UF3) %>% 
+            unique()
+          }
         }
       })
   })

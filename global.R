@@ -30,10 +30,10 @@ library(DT)
 
 ## Carrega os arquivos com os indicadores pré-calculados
 
-files <- list.files(file.path("C:/Users/rebeca.carvalho/Documents/cepesp/cepespIndicadores/data/output"))
+files <- list.files(file.path(getwd(),"/data/output"))
 
 for(i in files){
-  df <- read_csv(file.path("C:/Users/rebeca.carvalho/Documents/cepesp/cepespIndicadores/data/output",i))
+  df <- read_csv(file.path(getwd(),"/data/output",i))
   df <- df[,2:length(df)]
   assign(paste(substr(i,1,nchar(i)-4)), df)
   
