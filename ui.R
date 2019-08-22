@@ -128,11 +128,11 @@ ui <- fluidPage(
                                                     tabPanel("Tabelas", br(),
                                                              fixedPage(
                                                                fixedRow(
-                                                                 column(12,
+                                                                column(12,
                                                                         absolutePanel(top = 0,
                                                                                       right = 0 , 
                                                                                       left = 15,
-                                                                                   DT::dataTableOutput("quoce_fed"))), ## Tabelas que serao exibidas
+                                                                                      DT::dataTableOutput("quoce_fed"))), ## Tabelas que serao exibidas
                                                                  column(12,
                                                                         absolutePanel(top = 0, 
                                                                                    right = 0 , 
@@ -622,4 +622,7 @@ ui <- fluidPage(
              
              
   ))
+
+
+
 

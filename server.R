@@ -11,7 +11,19 @@
 server <- function(input, output,session){
  
 # 1.1. Sobre --------------------------------------------------------------
+  
+### Teste botao 'plot'  
      
+  #observe({
+    
+    #if(input$BCALC1){
+      #shinyjs::show("Plot", time = 0.1)
+    #} else{
+      #shinyjs::hide("Plot")
+      #}
+  #})
+  
+  
  ## Funcao para descricao do sobre
   
   output$sobre <- renderUI({
@@ -248,11 +260,12 @@ server <- function(input, output,session){
     bquoce_fed()
   })
   
-  ?renderDataTable
-  
+
   bquoce_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
+                responsive = TRUE,
                 autoWidth = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -260,12 +273,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'quoc_elei_dep_fed',
                   bom = TRUE))),
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons', 
+                             'Responsive', 
+                             'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -313,7 +328,9 @@ server <- function(input, output,session){
   
   bagreg_quocefed <- eventReactive(input$BCALC1, {
     datatable(options = list(
+                responsive = TRUE,
                 autoWidth = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -321,16 +338,20 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print',
-                               list(
+                buttons = list(list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
                   title = 'quoc_elei_dep_fed_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(
+                    extend = 'colvis',
+                    text = 'Colunas')
+                  )), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',
+                             'Responsive',
+                             'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -369,7 +390,9 @@ server <- function(input, output,session){
   
   bquoce_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
+                responsive = TRUE,
                 autoWidth = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -377,12 +400,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'quoc_elei_dep_est',
                   bom = TRUE))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons', 
+                             'Responsive', 
+                             'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -430,6 +455,8 @@ server <- function(input, output,session){
   bagreg_quoceest <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -437,16 +464,20 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', 
+                buttons = list(
                                list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
                   title = 'quoc_elei_dep_est_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(                     
+                    extend = 'colvis',                     
+                    text = 'Colunas'))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',
+                             'Responsive',
+                             'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -486,19 +517,23 @@ server <- function(input, output,session){
   bquocp_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
-                ordering = TRUE, 
+                responsive = TRUE,
+                ordering = TRUE,
+                select = TRUE,
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'quoc_part_dep_fed',
                   bom = TRUE))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',
+                             'Responsive', 
+                             'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -544,6 +579,8 @@ server <- function(input, output,session){
   bagreg_quocpfed <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -551,16 +588,20 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', 
+                buttons = list(
                                list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
                   title = 'quoc_part_dep_fed_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(                     
+                    extend = 'colvis',                     
+                    text = 'Colunas'))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',
+                             'Responsive', 
+                             'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -598,6 +639,8 @@ server <- function(input, output,session){
   bquocp_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -605,12 +648,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'quoc_part_dep_est',
                   bom = TRUE))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons', 
+                             'Responsive',
+                             'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -654,6 +699,8 @@ server <- function(input, output,session){
   bagreg_quocpest <- eventReactive(input$BCALC1,{
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -661,16 +708,20 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', 
+                buttons = list(
                                list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
                   title = 'quoc_part_dep_est_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(                     
+                    extend = 'colvis',                     
+                    text = 'Colunas'))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',
+                             'Responsive', 
+                             'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
       uf <- input$UF
@@ -779,6 +830,8 @@ server <- function(input, output,session){
   bdpg_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -786,12 +839,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'fracio_fed',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',  
+                     'Responsive', 
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Desproporcionalidade de gallagher" & 
@@ -829,7 +884,9 @@ server <- function(input, output,session){
   
   bagreg_dpgfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
+      responsive = TRUE,
       scrollX = TRUE,
+      select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -838,16 +895,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'fracio_fed_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',
+                     'Responsive',
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Desproporcionalidade de gallagher" & 
@@ -881,7 +942,9 @@ server <- function(input, output,session){
   
   bdpg_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
+      responsive = TRUE,
       autoWidth = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -889,12 +952,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'fracio_est',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons', 
+                     'Responsive',
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -950,7 +1015,9 @@ server <- function(input, output,session){
   bagreg_dpgest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
+      responsive = TRUE,
       autoWidth = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -958,16 +1025,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'fracio_est_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',
+                     'Responsive',
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1015,6 +1086,8 @@ server <- function(input, output,session){
   bfracio_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -1022,12 +1095,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'fracio_fed',
                   bom = TRUE))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',
+                             'Responsive', 
+                             'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       uf <- input$UF2
@@ -1067,7 +1142,9 @@ server <- function(input, output,session){
   bagreg_fracfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
+                responsive = TRUE,
                 autoWidth = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -1075,16 +1152,20 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', 
+                buttons = list(
                                list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
                   title = 'fracio_fed_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(                     
+                    extend = 'colvis',                     
+                    text = 'Colunas'))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons', 
+                             'Responsive', 
+                             'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização" & 
@@ -1117,6 +1198,8 @@ server <- function(input, output,session){
   bfracio_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -1124,12 +1207,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'fracio_est',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',
+                     'Responsive',
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1183,6 +1268,8 @@ server <- function(input, output,session){
   bagreg_fracest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1191,16 +1278,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'fracio_est_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons', 
+                     'Responsive',
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1244,6 +1335,8 @@ server <- function(input, output,session){
   bfraciomax_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -1251,12 +1344,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'fracio_max_fed',
                   bom = TRUE))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons', 
+                             'Responsive',
+                             'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização máxima" & 
@@ -1294,6 +1389,8 @@ server <- function(input, output,session){
   bagreg_fracmaxfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1302,16 +1399,20 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', 
+                buttons = list(
                                list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
                   title = 'fracio_max_fed_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(                     
+                    extend = 'colvis',                     
+                    text = 'Colunas'))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons', 
+                             'Responsive',   
+                             'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização máxima" & 
@@ -1344,6 +1445,8 @@ server <- function(input, output,session){
   bfraciomax_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -1351,12 +1454,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'fracio_max_est',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',
+                     'Responsive',  
+                     'Select'),{
         indicador <- req(input$INDICADORES_FRAG)
         agregacao <- req(input$AGREGACAO_REGIONAL2)
         uf <- req(input$UF2)
@@ -1408,6 +1513,8 @@ server <- function(input, output,session){
   bagreg_fracmaxest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1416,16 +1523,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'fracio_max_est_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',
+                     'Responsive', 
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1470,6 +1581,8 @@ server <- function(input, output,session){
   bfrag_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -1477,12 +1590,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'frag_fed',
                   bom = TRUE))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',
+                             'Responsive',
+                             'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fragmentação" &
@@ -1520,6 +1635,8 @@ server <- function(input, output,session){
   bagreg_fragfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1528,16 +1645,20 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', 
+                buttons = list(
                                list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
                   title = 'frag_fed_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(                     
+                    extend = 'colvis',                     
+                    text = 'Colunas'))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',
+                             'Responsive',   
+                             'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fragmentação" & 
@@ -1571,6 +1692,8 @@ server <- function(input, output,session){
   bfrag_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -1578,12 +1701,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'frag_est',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons', 
+                     'Responsive',   
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1638,6 +1763,8 @@ server <- function(input, output,session){
   bagreg_fragest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1646,16 +1773,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'frag_est_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons', 
+                     'Responsive', 
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1699,6 +1830,8 @@ server <- function(input, output,session){
   bnepc_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -1706,12 +1839,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'nepc_fed',
                   bom = TRUE))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',  
+                             'Responsive',  
+                             'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Número efetivo de partidos por cadeiras" & 
@@ -1748,6 +1883,8 @@ server <- function(input, output,session){
   bagreg_nepfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1756,16 +1893,20 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', 
+                buttons = list(
                                list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
                   title = 'nepc_fed_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(                     
+                    extend = 'colvis',                     
+                    text = 'Colunas'))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',   
+                             'Responsive',  
+                             'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Número efetivo de partidos por cadeiras" & 
@@ -1797,6 +1938,8 @@ server <- function(input, output,session){
   bnepc_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -1804,12 +1947,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'nepc_est',
                   bom = TRUE))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons', 
+                             'Responsive',
+                             'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       uf <- req(input$UF2)
@@ -1863,6 +2008,8 @@ server <- function(input, output,session){
   bagreg_nepest <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1878,9 +2025,13 @@ server <- function(input, output,session){
                     columns = ':visible'),
                   title = 'nepc_est_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(                     
+                    extend = 'colvis',                     
+                    text = 'Colunas'))), 
               class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',      
+                     'Responsive',    
+                     'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       uf <- req(input$UF2)
@@ -1924,6 +2075,8 @@ server <- function(input, output,session){
   bnepv_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -1931,12 +2084,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'nepc_fed',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',   
+                     'Responsive',  
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Número efetivo de partidos por votos" & 
@@ -1973,6 +2128,8 @@ server <- function(input, output,session){
   bagreg_nepvfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1981,16 +2138,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'nepc_fed_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                    
+          extend = 'colvis',                   
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',  
+                     'Responsive',    
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Número efetivo de partidos por votos" & 
@@ -2022,6 +2183,8 @@ server <- function(input, output,session){
   bnepv_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2029,12 +2192,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'nepc_est',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',   
+                     'Responsive',     
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -2087,6 +2252,8 @@ server <- function(input, output,session){
   bagreg_nepvest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2095,16 +2262,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'nepc_est_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons', 
+                     'Responsive', 
+                     'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -2206,6 +2377,8 @@ server <- function(input, output,session){
   bconserv_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2213,12 +2386,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'renov_parl_fed',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',       
+                     'Responsive',     
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2256,6 +2431,8 @@ server <- function(input, output,session){
   bagreg_conserv_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2263,16 +2440,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'renov_parl_fed_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons', 
+                     'Responsive',   
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2308,6 +2489,8 @@ server <- function(input, output,session){
   bconserv_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2315,12 +2498,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'renov_parl_est',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',
+                     'Responsive',    
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         uf <- req(input$UF3)
@@ -2371,6 +2556,8 @@ server <- function(input, output,session){
   bagreg_conserv_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2378,16 +2565,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'renov_parl_est_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                    
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',
+                     'Responsive',    
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -2433,6 +2624,8 @@ server <- function(input, output,session){
   brenov_br_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2440,12 +2633,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'renovbr_parl_fed',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons', 
+                     'Responsive',   
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2486,6 +2681,8 @@ server <- function(input, output,session){
   bagreg_renov_br_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2493,16 +2690,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'renov_parl_fed_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                    
+          extend = 'colvis',                   
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',
+                     'Responsive',    
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2537,6 +2738,8 @@ server <- function(input, output,session){
   brenov_br_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2544,12 +2747,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'renovbr_parl_est',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',     
+                     'Responsive',   
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -2601,6 +2806,8 @@ server <- function(input, output,session){
   bagreg_renov_br_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2608,16 +2815,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'renov_parl_est_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons', 
+                     'Responsive',    
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -2663,6 +2874,8 @@ server <- function(input, output,session){
   brenov_liq_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2670,12 +2883,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'renovliq_parl_fed',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',  
+                     'Responsive',  
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2714,6 +2929,8 @@ server <- function(input, output,session){
   bagreg_renov_liq_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2721,16 +2938,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'renov_parl_fed_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons', 
+                     'Responsive',  
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2765,6 +2986,8 @@ server <- function(input, output,session){
   brenov_liq_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2772,12 +2995,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'renovliq_parl_est',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',
+                     'Responsive',  
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -2830,6 +3055,8 @@ server <- function(input, output,session){
   bagreg_renov_liq_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2837,16 +3064,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'renov_parl_est_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons', 
+                     'Responsive',
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -2895,6 +3126,7 @@ server <- function(input, output,session){
   bvol_ele_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2902,12 +3134,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'vol_ele_fed',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',
+                     'Responsive',   
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2946,6 +3180,8 @@ server <- function(input, output,session){
   bagreg_vol_ele_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2953,16 +3189,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'vol_ele_fed_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',        
+                     'Responsive',  
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2998,6 +3238,8 @@ server <- function(input, output,session){
   bvol_ele_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
+      select = TRUE,
+      responsive = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -3005,12 +3247,14 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', list(
+      buttons = list(list(
         extend = 'csv',
         title = 'vol_ele_est',
         bom = TRUE))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',              
+                     'Responsive',        
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -3062,6 +3306,8 @@ server <- function(input, output,session){
   bagreg_vol_ele_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      responsive = TRUE,
+      select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -3069,16 +3315,20 @@ server <- function(input, output,session){
       columnDefs = list(list(
         className = 'dt-right', targets = '_all')),
       dom = 'Bfrtip',
-      buttons = list('copy', 'print', 
+      buttons = list(
                      list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
         title = 'vol_ele_est_agreg',
         bom = TRUE),
-        I('colvis'))), 
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
       class = "display",
-      extensions = 'Buttons',{
+      extensions = c('Buttons',        
+                     'Responsive',
+                     'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -3164,6 +3414,8 @@ server <- function(input, output,session){
   balien_feda_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -3171,12 +3423,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'alien_abs_fed_br',
                   bom = TRUE))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',  
+                             'Responsive',     
+                             'Select'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
       agregacao <- input$AGREGACAO_REGIONAL4
@@ -3215,6 +3469,8 @@ server <- function(input, output,session){
   bagreg_alifed_br <- eventReactive(input$BCALC4, {
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -3222,16 +3478,20 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', 
+                buttons = list(
                                list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
                   title = 'alien_abs_fed_br_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(                     
+                    extend = 'colvis',                     
+                    text = 'Colunas'))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',   
+                             'Responsive', 
+                             'Select'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
       agregacao <- input$AGREGACAO_REGIONAL4
@@ -3267,6 +3527,8 @@ server <- function(input, output,session){
   balien_feda_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
                 autoWidth = TRUE,
+                select = TRUE,
+                responsive = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -3274,12 +3536,14 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', list(
+                buttons = list(list(
                   extend = 'csv',
                   title = 'alien_abs_fed_uf',
                   bom = TRUE))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons', 
+                             'Responsive',   
+                             'Select'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
       agregacao <- input$AGREGACAO_REGIONAL4
@@ -3331,6 +3595,8 @@ server <- function(input, output,session){
   bagreg_alifeda_uf <- eventReactive(input$BCALC4, {
     datatable(options = list(
                 autoWidth = TRUE,
+                responsive = TRUE,
+                select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -3338,16 +3604,20 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print', 
+                buttons = list(
                                list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
                   title = 'alien_abs_fed_uf_agreg',
                   bom = TRUE),
-                  I('colvis'))), 
+                  list(                     
+                    extend = 'colvis',                     
+                    text = 'Colunas'))), 
               class = "display",
-              extensions = 'Buttons',{
+              extensions = c('Buttons',  
+                             'Responsive',       
+                             'Select'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
       agregacao <- input$AGREGACAO_REGIONAL4
@@ -3389,6 +3659,8 @@ output$alien_fedp_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
 balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
   datatable(options = list(
               autoWidth = TRUE,
+              responsive = TRUE,
+              select = TRUE,
               ordering = TRUE, 
               searching = TRUE,
               lengthChange = FALSE,
@@ -3396,12 +3668,14 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
               columnDefs = list(list(
                 className = 'dt-right', targets = '_all')),
               dom = 'Bfrtip',
-              buttons = list('copy', 'print', list(
+              buttons = list(list(
                 extend = 'csv',
                 title = 'alien_per_fed_br',
                 bom = TRUE))), 
             class = "display",
-            extensions = 'Buttons',{
+            extensions = c('Buttons',   
+                           'Responsive',   
+                           'Select'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
     agregacao <- input$AGREGACAO_REGIONAL4
@@ -3440,6 +3714,8 @@ output$agreg_alifedp_br <- DT::renderDataTable(server = FALSE,{
 bagreg_alifedp_br <- eventReactive(input$BCALC4, {
   datatable(options = list(
               autoWidth = TRUE,
+              responsive = TRUE,
+              select = TRUE,
               ordering = TRUE, 
               searching = TRUE,
               lengthChange = FALSE,
@@ -3447,16 +3723,20 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
               columnDefs = list(list(
                 className = 'dt-right', targets = '_all')),
               dom = 'Bfrtip',
-              buttons = list('copy', 'print', 
+              buttons = list(
                              list(
                 extend = 'csv',
                 exportOptions = list(
                   columns = ':visible'),
                 title = 'alien_per_fed_br_agreg',
                 bom = TRUE),
-                I('colvis'))), 
+                list(                     
+                  extend = 'colvis',                     
+                  text = 'Colunas'))), 
             class = "display",
-            extensions = 'Buttons',{
+            extensions = c('Buttons',
+                           'Responsive',   
+                           'Select'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
     agregacao <- input$AGREGACAO_REGIONAL4
@@ -3496,6 +3776,8 @@ output$alien_fedp_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
 balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
   datatable(options = list(
               autoWidth = TRUE,
+              select = TRUE,
+              responsive = TRUE,
               ordering = TRUE, 
               searching = TRUE,
               lengthChange = FALSE,
@@ -3503,12 +3785,14 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
               columnDefs = list(list(
                 className = 'dt-right', targets = '_all')),
               dom = 'Bfrtip',
-              buttons = list('copy', 'print', list(
+              buttons = list(list(
                 extend = 'csv',
                 title = 'alien_per_fed_uf',
                 bom = TRUE))), 
             class = "display",
-            extensions = 'Buttons',{
+            extensions = c('Buttons',                              
+                           'Responsive',                              
+                           'Select'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
     agregacao <- input$AGREGACAO_REGIONAL4
@@ -3563,6 +3847,8 @@ output$agreg_alifedp_uf <- DT::renderDataTable(server = FALSE,{
 bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
   datatable(options = list(
               autoWidth = TRUE,
+              responsive = TRUE,
+              select = TRUE,
               ordering = TRUE, 
               searching = TRUE,
               lengthChange = FALSE,
@@ -3570,16 +3856,20 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
               columnDefs = list(list(
                 className = 'dt-right', targets = '_all')),
               dom = 'Bfrtip',
-              buttons = list('copy', 'print', 
+              buttons = list(
                              list(
                 extend = 'csv',
                 exportOptions = list(
                   columns = ':visible'),
                 title = 'alien_per_fed_uf_agreg',
                 bom = TRUE),
-                I('colvis'))), 
+                list(                     
+                  extend = 'colvis',                     
+                  text = 'Colunas'))), 
             class = "display",
-            extensions = 'Buttons',{
+            extensions = c('Buttons',
+                           'Responsive',
+                           'Select'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
     agregacao <- input$AGREGACAO_REGIONAL4

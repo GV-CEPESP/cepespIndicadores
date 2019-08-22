@@ -20,6 +20,7 @@ library(shinyWidgets)
 library(shinyjs)
 library(plotly)
 library(DT)
+library(shinyjs)
 
 # Objetivo
 #'        - Carregar os arquivos usados no app;
