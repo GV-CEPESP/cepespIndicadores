@@ -11,18 +11,7 @@
 server <- function(input, output,session){
  
 # 1.1. Sobre --------------------------------------------------------------
-  
-### Teste botao 'plot'  
-     
-  #observe({
-    
-    #if(input$BCALC1){
-      #shinyjs::show("Plot", time = 0.1)
-    #} else{
-      #shinyjs::hide("Plot")
-      #}
-  #})
-  
+
   
  ## Funcao para descricao do sobre
   
@@ -276,7 +265,13 @@ server <- function(input, output,session){
                 buttons = list(list(
                   extend = 'csv',
                   title = 'quoc_elei_dep_fed',
-                  bom = TRUE))),
+                  bom = TRUE)
+               #   list(
+              #    extend = 'collection',
+               #   text = 'Plot',
+                #  action =  DT::JS("function ( e, dt, node, config ) {
+                 #                   Shiny.setInputValue('Plot', true, {priority: 'event'})}"))
+              )),
               class = "display",
               extensions = c('Buttons', 
                              'Responsive', 
@@ -306,8 +301,22 @@ server <- function(input, output,session){
         
       }
     })
-  })  
+    
+  })
   
+  
+  #output$x2 <- renderPlot({
+   # s = input$quoce_fed_rows_selected
+  #  par(mar = c(4, 4, 1, .1))
+  #  plot(distcad_fed)
+   # if(length(s)) points(distcad_fed[s, , drop = FALSE], pch = 19, cex = 2)
+#  })
+  
+  
+ 
+ 
+  
+ 
 ## Dados agregados
   
 ### Deputado Federal  

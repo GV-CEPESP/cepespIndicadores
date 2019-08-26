@@ -132,7 +132,9 @@ ui <- fluidPage(
                                                                         absolutePanel(top = 0,
                                                                                       right = 0 , 
                                                                                       left = 15,
-                                                                                      DT::dataTableOutput("quoce_fed"))), ## Tabelas que serao exibidas
+                                                                                      DT::dataTableOutput("quoce_fed")
+                                                                                      #plotOutput("x2")
+                                                                                      )), ## Tabelas que serao exibidas
                                                                  column(12,
                                                                         absolutePanel(top = 0, 
                                                                                    right = 0 , 
