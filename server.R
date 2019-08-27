@@ -259,18 +259,20 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
-                columnDefs = list(list(
+                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'quoc_elei_dep_fed',
                   bom = TRUE)
-               #   list(
-              #    extend = 'collection',
-               #   text = 'Plot',
-                #  action =  DT::JS("function ( e, dt, node, config ) {
-                 #                   Shiny.setInputValue('Plot', true, {priority: 'event'})}"))
+                 #list(
+                  #extend = 'collection',
+                 #text = 'Plot',
+                #action =  DT::JS("function ( e, dt, node, config ) {
+                 #                           }
+                              
+                  #               ")) 
               )),
               class = "display",
               extensions = c('Buttons', 
@@ -287,7 +289,7 @@ server <- function(input, output,session){
                    UF,
                    `Quociente eleitoral`) %>% 
             unique() %>% 
-            spread(`Ano da eleição`, 
+            spread(`Ano da eleição`,
                    `Quociente eleitoral`)
         }else{
           distcad_fed %>% 
@@ -305,18 +307,20 @@ server <- function(input, output,session){
   })
   
   
-  #output$x2 <- renderPlot({
-   # s = input$quoce_fed_rows_selected
-  #  par(mar = c(4, 4, 1, .1))
-  #  plot(distcad_fed)
-   # if(length(s)) points(distcad_fed[s, , drop = FALSE], pch = 19, cex = 2)
-#  })
-  
+  #output$x2 <-renderPlotly({
+   #s <- input$quoce_fed_rows_selected
+    #if(length(s))
+     #plot_ly(
+      #      data = distcad_fed[s, ,drop = FALSE], 
+       #     x = ~`Ano da eleição`,
+        #    y = ~`Quociente eleitoral`,
+         #   color = ~UF,
+          #  type = "scatter",
+           # mode = "lines+markers")
+    #})
   
  
- 
   
- 
 ## Dados agregados
   
 ### Deputado Federal  
