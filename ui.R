@@ -132,7 +132,6 @@ ui <- fluidPage(
                                                                         absolutePanel(top = 0,
                                                                                       right = 0 , 
                                                                                       left = 15,
-                                                                                      
                                                                                       DT::dataTableOutput("quoce_fed")
                                                                                       #plotlyOutput("x2")
                                                                                       )), ## Tabelas que serao exibidas

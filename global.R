@@ -18,6 +18,7 @@ library(shinyWidgets)
 library(plotly)
 library(DT)
 library(shinyjs)
+library(crosstalk)
 
 # Objetivo
 #'        - Carregar os arquivos usados no app;
@@ -38,5 +39,6 @@ for(i in files){
 }
 
 rm(df)
+
 
 

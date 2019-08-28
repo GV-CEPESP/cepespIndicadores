@@ -250,6 +250,7 @@ server <- function(input, output,session){
   })
   
 
+
   bquoce_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                 responsive = TRUE,
@@ -275,6 +276,9 @@ server <- function(input, output,session){
                   #               ")) 
               )),
               class = "display",
+              selection = list(mode = 'multiple',
+                               target = 'row+column'), 
+              rownames = FALSE,
               extensions = c('Buttons', 
                              'Responsive', 
                              'Select'),{
@@ -295,7 +299,7 @@ server <- function(input, output,session){
           distcad_fed %>% 
             dplyr::filter(UF == input$UF) %>% 
             select(`Ano da eleição`, 
-                   UF, 
+                   UF,
                    `Quociente eleitoral`) %>% 
             unique() %>% 
             spread(`Ano da eleição`,
@@ -307,17 +311,22 @@ server <- function(input, output,session){
   })
   
   
-  #output$x2 <-renderPlotly({
-   #s <- input$quoce_fed_rows_selected
-    #if(length(s))
-     #plot_ly(
-      #      data = distcad_fed[s, ,drop = FALSE], 
-       #     x = ~`Ano da eleição`,
-        #    y = ~`Quociente eleitoral`,
-         #   color = ~UF,
-          #  type = "scatter",
-           # mode = "lines+markers")
-    #})
+  
+  output$x2 <-renderPlotly({
+  s = input$quoce_fed_rows_selected
+  if(length(s))
+  plot_ly(
+    data = distcad_fed2, 
+    x = ~`Ano da eleição`,
+    y = ~`Quociente eleitoral`,
+    size = ~`Quociente eleitoral`,
+    color = ~UF,
+    type = "scatter",
+    mode = "lines+markers") %>% 
+    layout(
+      title = "Quociente eleitoral: 1998-2018",
+      showlegend = TRUE) 
+    })
   
  
   
@@ -418,6 +427,7 @@ server <- function(input, output,session){
                   title = 'quoc_elei_dep_est',
                   bom = TRUE))), 
               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons', 
                              'Responsive', 
                              'Select'),{
