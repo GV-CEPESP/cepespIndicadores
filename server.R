@@ -328,7 +328,7 @@ server <- function(input, output,session){
   
  
   
-## Dados agregados
+## Resumo
   
 ### Deputado Federal  
   
@@ -454,7 +454,7 @@ server <- function(input, output,session){
     })
   }) 
   
-## Dados agregados
+## Resumo
   
 ## Deputado Estadual  
   
@@ -576,7 +576,7 @@ server <- function(input, output,session){
     })
   })
   
-## Dados agregados
+## Resumo
   
 # Deputado Federal
   
@@ -694,7 +694,7 @@ server <- function(input, output,session){
     })
   })
  
-## Dados agregados
+## Resumo
   
 ### Deputado Estadual  
   
@@ -878,7 +878,7 @@ server <- function(input, output,session){
       })
   })  
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Federal  
   
@@ -1014,7 +1014,7 @@ server <- function(input, output,session){
       })
   })  
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Estadual  
   
@@ -1157,7 +1157,7 @@ server <- function(input, output,session){
     })
   })  
   
-## Dados agregados
+## Resumo
   
 ### Deputado Federal  
   
@@ -1289,7 +1289,7 @@ server <- function(input, output,session){
       })
   })  
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Estadual  
   
@@ -1426,7 +1426,7 @@ server <- function(input, output,session){
     })
   })
   
-## Dados agregados
+## Resumo
   
 ### Deputado Federal  
   
@@ -1556,7 +1556,7 @@ server <- function(input, output,session){
       })
   })
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Estadual 
   
@@ -1694,7 +1694,7 @@ server <- function(input, output,session){
     })
   })
   
-## Dados agregados
+## Resumo
   
 ### Deputado Federal  
   
@@ -1828,7 +1828,7 @@ server <- function(input, output,session){
       })
   })
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Estadual 
   
@@ -1964,7 +1964,7 @@ server <- function(input, output,session){
     })
   })
   
-## Dados agregados
+## Resumo
   
 ### Deputado Federal  
   
@@ -2094,7 +2094,7 @@ server <- function(input, output,session){
     })
   })  
  
-## Dados agregados
+## Resumo
   
 ### Deputado Estadual 
   
@@ -2230,7 +2230,7 @@ server <- function(input, output,session){
       })
   })
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Federal  
   
@@ -2360,7 +2360,7 @@ server <- function(input, output,session){
       })
   })
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Estadual  
   
@@ -2556,7 +2556,7 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Federal 
   
@@ -2678,7 +2678,7 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Estadual 
   
@@ -2799,7 +2799,7 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Federal 
   
@@ -2924,7 +2924,7 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Estadual 
   
@@ -3043,7 +3043,7 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Federal 
   
@@ -3169,7 +3169,7 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Estadual 
   
@@ -3290,7 +3290,7 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Federal 
   
@@ -3416,7 +3416,7 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Dados agregados
+  ## Resumo
   
   ### Deputado Estadual
   
@@ -3576,7 +3576,7 @@ server <- function(input, output,session){
     })
   }) 
   
-## Dados agregados
+## Resumo
   
 ### Deputado Federal BR  
   
@@ -3699,7 +3699,7 @@ server <- function(input, output,session){
     })
   })  
   
-## Dados agregados
+## Resumo
   
 ### Deputado Federal UF  
   
@@ -3817,7 +3817,7 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
   })
 }) 
 
-## Dados agregados
+## Resumo
 
 ### Deputado Federal BR
 
@@ -3947,7 +3947,7 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
   })
 })
 
-## Dados agregados
+## Resumo
 
 ### Deputado Federal UF
 

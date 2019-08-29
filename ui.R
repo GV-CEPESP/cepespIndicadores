@@ -150,7 +150,7 @@ ui <- fluidPage(
                                                                                    right = 0 ,  
                                                                                   left = 15,
                                                                                    DT::dataTableOutput("quocp_est")))))),
-                                                   tabPanel("Dados agregados", br(),
+                                                   tabPanel("Resumo", br(),
                                                             fixedPage(
                                                               fixedRow(
                                                                 column(12,
@@ -278,7 +278,7 @@ ui <- fluidPage(
                                                                                    right = 0 ,  
                                                                                   left = 15,
                                                                                    DT::dataTableOutput("nepv_est")))))),
-                                                   tabPanel("Dados agregados", br(),
+                                                   tabPanel("Resumo", br(),
                                                             fixedPage(
                                                               fixedRow(
                                                                 column(12,
@@ -426,7 +426,7 @@ ui <- fluidPage(
                                                                                right = 0 ,  
                                                                               left = 15,
                                                                                DT::dataTableOutput("vol_ele_est")))))), ## Tabelas que serao exibidas
-                                                             tabPanel("Dados agregados", br(),
+                                                             tabPanel("Resumo", br(),
                                                                       fixedPage(
                                                                         fixedRow(
                                                                           column(12,
@@ -537,7 +537,7 @@ ui <- fluidPage(
                                                                                right = 0 , 
                                                                               left = 15,
                                                                                DT::dataTableOutput("alien_fedp_uf")))))),
-                                                    tabPanel("Dados agregados", br(),
+                                                    tabPanel("Resumo", br(),
                                                              fixedPage(
                                                                fixedRow(
                                                                  column(12,
@@ -565,32 +565,28 @@ ui <- fluidPage(
              
              
              
-             tabPanel("Sobre", htmlOutput("sobre")), ## Guia correspondente ao "Sobre"
+             tabPanel("Sobre", htmlOutput("sobre")) ## Guia correspondente ao "Sobre"
              
-             tags$style(type="text/css",
-                        ".shiny-output-error { visibility: hidden; }",
-                        ".shiny-output-error:before { visibility: hidden; }"
-             ),
-            
-             
-             tags$footer(class = "rodape",
-                         
-                         style =
-                           
-                           "max-width: 100%;
-                         noprint: none; 
-                         padding: 10px 0;
-                         min-height: 40px;
-                         position: relative;
-                         clear: both;
-                         background-color: #222d32;;
-                         color: #fff;
-                         font-family: 'Segoe UI';
-                         font-size: 14px;
-                         text-align: left;
-                         z-index: 10;
-                         height: 3em;
-                         margin-top: 76em;",
+            ),
+  
+  tags$footer(class = "rodape",
+              
+              style =
+                
+                "max-width: 100%;
+              noprint: none; 
+              padding: 10px 0;
+              min-height: 40px;
+              position: relative;
+              clear: both;
+              background-color: #222d32;;
+              color: #fff;
+              font-family: 'Segoe UI';
+              font-size: 14px;
+              text-align: left;
+              z-index: 10;
+              height: 3em;
+              margin-top: 76em;",
                          
                          tags$div(class = "rodape-container",
                                   
@@ -620,10 +616,7 @@ ui <- fluidPage(
                                            box-sizing: border-box;
                                            margin: 0;
                                            padding: 0;")))
-             
-             
-             
-  ))
+  )
 
 
 
