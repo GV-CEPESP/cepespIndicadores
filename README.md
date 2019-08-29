@@ -1,4 +1,4 @@
-Aplicativo de indicadores políticos
+Aplicativo de indicadores eleitorais
 ================
 
 Responsáveis
