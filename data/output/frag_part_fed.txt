@@ -1,4 +1,4 @@
-﻿"","Ano da eleição","Cargo","Votos válidos","Sigla do partido","Total de votos conquistados","Total de cadeiras conquistadas","Percentual de votos conquistados","Percentual de cadeiras conquistadas","Fracionalização","Fracionalização máxima","Fragmentação","Desproporcionalidade de gallagher","Número efetivo de partidos por votos","Número efetivo de partidos por cadeiras"
+﻿"","Ano da eleição","Cargo","Votos válidos","Sigla do partido","Total de votos conquistados","Total de cadeiras conquistadas","Percentual de votos conquistados","Percentual de cadeiras conquistadas","Fracionalização","Fracionalização máxima","Fragmentação","Desproporcionalidade","Número efetivo de partidos eleitoral","Número efetivo de partidos legislativo"
 "1",1998,"Deputado Federal","62.712.552","PC do B","869.290",7,"0.01","0.01","0.86","0.95","0.91","2.66"," 7.20"," 7.13"
 "2",1998,"Deputado Federal","62.712.552","PDT","3.778.948",25,"0.06","0.05","0.86","0.95","0.91","2.66"," 7.20"," 7.13"
 "3",1998,"Deputado Federal","62.712.552","PFL","11.553.028",105,"0.18","0.20","0.86","0.95","0.91","2.66"," 7.20"," 7.13"

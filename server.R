@@ -26,12 +26,12 @@ server <- function(input, output,session){
 
 
                    <h4 align = 'justify'><br />
-                   Os indicadores eleitorais são uma iniciativa de disseminar análise de dados eleitorais. 
+                   <p style='line-height:150%'>Os indicadores eleitorais são uma iniciativa de disseminar análise de dados eleitorais. 
                    Os indicadores aqui calculados foram inspirados pelo livro 'Votos e Partidos - Almanaque 
-                   de Dados Eleitorais' de Wanderley Guilherme dos Santos. Todos os indicadores foram calculados 
+                   de Dados Eleitorais' de Wanderley Guilherme dos Santos e pelo antigo site de Jairo Nicolau. Todos os indicadores foram calculados 
                    a partir dos dados do <a href='http://www.cepesp.io/cepesp-data/'> CepespData </a>. Desenvolvido 
-                   por Rebeca Carvalho, Gabriela Campos e apoio da <a href='http://cepespdata.io/sobre'> 
-                   equipe CEPESP</a>. </h4></font>")
+                   por Rebeca Carvalho e Gabriela Campos com orientação de George Avelino e apoio da <a href='http://cepespdata.io/sobre'> 
+                   equipe CEPESP</a>. </p></h4></font>")
     HTML(note)
   })
   
@@ -200,11 +200,11 @@ server <- function(input, output,session){
   output$def_distc <- renderUI({
     note <- paste0("<h3 align = 'center'>
                    <font color = 'black'>
-                   Definição dos indicadores </h3>
+                   Definição dos indicadores de distribuição de cadeiras </h3>
                    <h4><br />Quociente Eleitoral</h4>
                    <h5 align = 'justify'><br />
-                   É o número mínimo de votos que um partido ou coligação deve atingir 
-                   em determinada UF e eleição para garantir uma vaga.</h5>
+                   <p style='line-height:150%'>É o número mínimo de votos que um partido ou coligação deve atingir 
+                   em determinada UF e eleição para garantir uma vaga.</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
@@ -215,8 +215,8 @@ server <- function(input, output,session){
                    <p><br />
                    <h4>Quociente Partidário</h4>
                    <h5 align = 'justify'><br />
-                   O indicador representa o número de vagas que o partido ou coligação obteve, 
-                   excluindo as vagas distribuídas por média.</h5>
+                   <p style='line-height:150%'>O indicador representa o número de vagas que o partido ou coligação obteve, 
+                   excluindo as vagas distribuídas por média.</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
@@ -253,7 +253,6 @@ server <- function(input, output,session){
 
   bquoce_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-                responsive = TRUE,
                 autoWidth = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
@@ -275,12 +274,11 @@ server <- function(input, output,session){
                               
                   #               ")) 
               )),
-              class = "display",
-              selection = list(mode = 'multiple',
-                               target = 'row+column'), 
+                class = "display",
+              #selection = list(mode = 'multiple',
+               #                target = 'row+column'), 
               rownames = FALSE,
               extensions = c('Buttons', 
-                             'Responsive', 
                              'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
@@ -350,7 +348,6 @@ server <- function(input, output,session){
   
   bagreg_quocefed <- eventReactive(input$BCALC1, {
     datatable(options = list(
-                responsive = TRUE,
                 autoWidth = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
@@ -370,9 +367,9 @@ server <- function(input, output,session){
                     extend = 'colvis',
                     text = 'Colunas')
                   )), 
-              class = "display",
+                class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',
-                             'Responsive',
                              'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
@@ -381,7 +378,7 @@ server <- function(input, output,session){
          cargo == "Deputado Federal"){
         if(input$UF == "Todas UFs"){
           data = distcad_fed %>% 
-            unique()
+            unique() 
         }
         else{
           data = distcad_fed %>% 
@@ -412,7 +409,7 @@ server <- function(input, output,session){
   
   bquoce_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-                responsive = TRUE,
+                
                 autoWidth = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
@@ -426,10 +423,9 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'quoc_elei_dep_est',
                   bom = TRUE))), 
-              class = "display",
+                class = "display",
               rownames = FALSE,
               extensions = c('Buttons', 
-                             'Responsive', 
                              'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
@@ -478,7 +474,6 @@ server <- function(input, output,session){
   bagreg_quoceest <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -497,9 +492,9 @@ server <- function(input, output,session){
                   list(                     
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
-              class = "display",
+                class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',
-                             'Responsive',
                              'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
@@ -540,7 +535,6 @@ server <- function(input, output,session){
   bquocp_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 ordering = TRUE,
                 select = TRUE,
                 searching = TRUE,
@@ -553,9 +547,9 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'quoc_part_dep_fed',
                   bom = TRUE))), 
-              class = "display",
+                class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',
-                             'Responsive', 
                              'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
@@ -602,7 +596,6 @@ server <- function(input, output,session){
   bagreg_quocpfed <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -621,9 +614,9 @@ server <- function(input, output,session){
                   list(                     
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
-              class = "display",
+                 class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',
-                             'Responsive', 
                              'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
@@ -662,7 +655,6 @@ server <- function(input, output,session){
   bquocp_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -675,9 +667,9 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'quoc_part_dep_est',
                   bom = TRUE))), 
-              class = "display",
+                class = "display",
+              rownames = FALSE,
               extensions = c('Buttons', 
-                             'Responsive',
                              'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
@@ -722,7 +714,6 @@ server <- function(input, output,session){
   bagreg_quocpest <- eventReactive(input$BCALC1,{
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -741,9 +732,9 @@ server <- function(input, output,session){
                   list(                     
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
-              class = "display",
+                class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',
-                             'Responsive', 
                              'Select'),{
       indicador <- input$INDICADORES_DISTR
       cargo <- input$DESCRICAO_CARGO1
@@ -781,9 +772,9 @@ server <- function(input, output,session){
                    <p><br />      
                    <h4>Fracionalização </h4>
                    <h5 align = 'justify'><br />
-                   Este indicador tem por objetivo medir a dispersão partidária de um parlamento. 
+                   <p style='line-height:150%'>Este indicador tem por objetivo medir a dispersão partidária de um parlamento. 
                    Ele indica qual a probabilidade de dois parlamentares desse parlamento, 
-                   tomados ao acaso, pertecerem a partidos diferentes.</h5>
+                   tomados ao acaso, pertecerem a partidos diferentes.</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
@@ -792,8 +783,8 @@ server <- function(input, output,session){
                    <p><br />                 
                    <h4>Fracionalização máxima</h4>
                    <h5 align = 'justify'><br />
-                   A 'fracionalização máxima' não depende da votação dos partidos, mas da quantidade 
-                   de cadeiras e partidos com representação parlamentar.</h5>
+                   <p style='line-height:150%'>A 'fracionalização máxima' não depende da votação dos partidos, mas da quantidade 
+                   de cadeiras e partidos com representação parlamentar<p>.</h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
@@ -811,11 +802,11 @@ server <- function(input, output,session){
                    <p><br />                  
                    <h4>Número efetivo de partidos</h4>
                    <h5 align = 'justify'><br />
-                   O conceito de número efetivo de partidos define o grau de fragmentação do sistema partidário, 
+                   <p style='line-height:150%'>O conceito de número efetivo de partidos define o grau de fragmentação do sistema partidário, 
                    através da ponderação da força relativa das legendas que compõem o parlamento. O valor calculado 
                    aponta a quantidade de partidos com alguma relevância em um dado sistema político. O NEP é 
                    calculado dividindo-se 1 pelo somatório do quadrado das proporções de <b>votos</b> ou de 
-                   <b>cadeiras</b> obtidos pelos partidos em uma dada eleição.</h5>
+                   <b>cadeiras</b> obtidos pelos partidos em uma dada eleição.</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
@@ -840,7 +831,7 @@ server <- function(input, output,session){
   depfedg <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Desproporcionalidade de gallagher" & 
+    if(indicador == "Desproporcionalidade" & 
       agregacao == "Brasil"){
       return(input$dpg_fed)
     }
@@ -853,7 +844,6 @@ server <- function(input, output,session){
   bdpg_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -866,22 +856,22 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'fracio_fed',
         bom = TRUE))), 
-      class = "display",
-      extensions = c('Buttons',  
-                     'Responsive', 
+        class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        if(indicador == "Desproporcionalidade de gallagher" & 
+        if(indicador == "Desproporcionalidade" & 
             agregacao == "Brasil"){
           frag_part_fed %>% 
             ungroup() %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
-                          `Desproporcionalidade de gallagher`) %>% 
+                          `Desproporcionalidade`) %>% 
             unique() %>% 
             spread(`Ano da eleição`,
-                   `Desproporcionalidade de gallagher`)
+                   `Desproporcionalidade`)
           
           
         }
@@ -895,7 +885,7 @@ server <- function(input, output,session){
   ag_dpgfed <- reactive({
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Desproporcionalidade de gallagher" & 
+    if(indicador == "Desproporcionalidade" & 
        agregacao == "Brasil"){
       return(input$agreg_dpgfed)
     }
@@ -907,7 +897,6 @@ server <- function(input, output,session){
   
   bagreg_dpgfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
-      responsive = TRUE,
       scrollX = TRUE,
       select = TRUE,
       autoWidth = TRUE,
@@ -928,17 +917,25 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+        class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',
-                     'Responsive',
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        if(indicador == "Desproporcionalidade de gallagher" & 
+        if(indicador == "Desproporcionalidade" & 
            agregacao == "Brasil"){
           data = frag_part_fed %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
-            unique() 
+            select(`Ano da eleição`,
+                   Cargo,
+                   Desproporcionalidade,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`) %>% 
+            unique()
         }
       })
   })
@@ -953,7 +950,7 @@ server <- function(input, output,session){
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
-    if(indicador == "Desproporcionalidade de gallagher" & 
+    if(indicador == "Desproporcionalidade" & 
        agregacao == "UF"){
       return(input$dpg_est)
     }
@@ -965,7 +962,6 @@ server <- function(input, output,session){
   
   bdpg_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      responsive = TRUE,
       autoWidth = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -979,14 +975,14 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'fracio_est',
         bom = TRUE))), 
-      class = "display",
+        class = "display",
+      rownames = FALSE,
       extensions = c('Buttons', 
-                     'Responsive',
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
-        if(indicador == "Desproporcionalidade de gallagher" & 
+        if(indicador == "Desproporcionalidade" & 
           agregacao == "UF"){
           if(uf == ""){
             return()
@@ -995,10 +991,10 @@ server <- function(input, output,session){
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
-                          `Desproporcionalidade de gallagher`) %>% 
+                          `Desproporcionalidade`) %>% 
             unique() %>% 
             spread(`Ano da eleição`,
-                   `Desproporcionalidade de gallagher`)
+                   `Desproporcionalidade`)
           
           
           } else{
@@ -1007,10 +1003,10 @@ server <- function(input, output,session){
                             Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
-                          `Desproporcionalidade de gallagher`) %>% 
+                          `Desproporcionalidade`) %>% 
             unique() %>% 
             spread(`Ano da eleição`,
-                   `Desproporcionalidade de gallagher`)
+                   `Desproporcionalidade`)
           
           
         }
@@ -1025,7 +1021,7 @@ server <- function(input, output,session){
   ag_dpgest <- reactive({
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Desproporcionalidade de gallagher" & 
+    if(indicador == "Desproporcionalidade" & 
        agregacao == "UF"){
       return(input$agreg_dpgest)
     }
@@ -1038,7 +1034,6 @@ server <- function(input, output,session){
   bagreg_dpgest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
-      responsive = TRUE,
       autoWidth = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -1058,26 +1053,44 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+        class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',
-                     'Responsive',
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
-        if(indicador == "Desproporcionalidade de gallagher" & 
+        if(indicador == "Desproporcionalidade" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
             data = frag_part_est %>%
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+              select(`Ano da eleição`,
+                     UF,
+                     Cargo,
+                     Desproporcionalidade,
+                     `Fracionalização`,
+                     `Fracionalização máxima`,
+                     `Fragmentação`,
+                     `Número efetivo de partidos eleitoral`,
+                     `Número efetivo de partidos legislativo`) %>% 
             unique()
           } else{
             data = frag_part_est %>% 
-            unique() %>% 
             dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2)
+                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            select(`Ano da eleição`,
+                   UF,
+                   Cargo,
+                   Desproporcionalidade,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`) %>% 
+              unique()
         }
         }
       })
@@ -1109,7 +1122,6 @@ server <- function(input, output,session){
   bfracio_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1122,9 +1134,9 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'fracio_fed',
                   bom = TRUE))), 
-              class = "display",
+                class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',
-                             'Responsive', 
                              'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -1165,7 +1177,6 @@ server <- function(input, output,session){
   bagreg_fracfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
-                responsive = TRUE,
                 autoWidth = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
@@ -1185,9 +1196,9 @@ server <- function(input, output,session){
                   list(                     
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
-              class = "display",
+                class = "display",
+              rownames = FALSE,
               extensions = c('Buttons', 
-                             'Responsive', 
                              'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -1195,6 +1206,14 @@ server <- function(input, output,session){
          agregacao == "Brasil"){
         data = frag_part_fed %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          select(`Ano da eleição`,
+                 Cargo,
+                 Desproporcionalidade,
+                 `Fracionalização`,
+                 `Fracionalização máxima`,
+                 `Fragmentação`,
+                 `Número efetivo de partidos eleitoral`,
+                 `Número efetivo de partidos legislativo`) %>% 
           unique() 
       }
     })
@@ -1221,7 +1240,6 @@ server <- function(input, output,session){
   bfracio_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1234,9 +1252,9 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'fracio_est',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',
-                     'Responsive',
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -1291,7 +1309,6 @@ server <- function(input, output,session){
   bagreg_fracest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
-      responsive = TRUE,
       select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
@@ -1311,9 +1328,9 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons', 
-                     'Responsive',
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -1324,13 +1341,31 @@ server <- function(input, output,session){
             return()
           } else if(uf == "Todas UFs"){
           data = frag_part_est %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+            select(`Ano da eleição`,
+                   UF,
+                   Cargo,
+                   Desproporcionalidade,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`) %>% 
             unique() 
           } else{
           data = frag_part_est %>% 
-            unique() %>% 
             dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2)
+                          Cargo == input$DESCRICAO_CARGO2) %>% 
+          select(`Ano da eleição`,
+                 UF,
+                 Cargo,
+                 Desproporcionalidade,
+                 `Fracionalização`,
+                 `Fracionalização máxima`,
+                 `Fragmentação`,
+                 `Número efetivo de partidos eleitoral`,
+                 `Número efetivo de partidos legislativo`) %>% 
+            unique()
         }
            }
       })
@@ -1358,7 +1393,6 @@ server <- function(input, output,session){
   bfraciomax_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1371,9 +1405,9 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'fracio_max_fed',
                   bom = TRUE))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons', 
-                             'Responsive',
                              'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -1412,7 +1446,6 @@ server <- function(input, output,session){
   bagreg_fracmaxfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
@@ -1432,16 +1465,24 @@ server <- function(input, output,session){
                   list(                     
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons', 
-                             'Responsive',   
-                             'Select'),{
+                               'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização máxima" & 
          agregacao == "Brasil"){
         data = frag_part_fed %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          select(`Ano da eleição`,
+                 Cargo,
+                 Desproporcionalidade,
+                 `Fracionalização`,
+                 `Fracionalização máxima`,
+                 `Fragmentação`,
+                 `Número efetivo de partidos eleitoral`,
+                 `Número efetivo de partidos legislativo`) %>% 
           unique() 
       }
     })
@@ -1468,7 +1509,6 @@ server <- function(input, output,session){
   bfraciomax_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1481,9 +1521,9 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'fracio_max_est',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',
-                     'Responsive',  
                      'Select'),{
         indicador <- req(input$INDICADORES_FRAG)
         agregacao <- req(input$AGREGACAO_REGIONAL2)
@@ -1536,7 +1576,6 @@ server <- function(input, output,session){
   bagreg_fracmaxest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
-      responsive = TRUE,
       select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
@@ -1556,9 +1595,9 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',
-                     'Responsive', 
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -1569,13 +1608,31 @@ server <- function(input, output,session){
             return()
           }else if(uf == "Todas UFs"){
             data = frag_part_est %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+              select(`Ano da eleição`,
+                     UF,
+                     Cargo,
+                     Desproporcionalidade,
+                     `Fracionalização`,
+                     `Fracionalização máxima`,
+                     `Fragmentação`,
+                     `Número efetivo de partidos eleitoral`,
+                     `Número efetivo de partidos legislativo`) %>% 
             unique()
           } else{
             data = frag_part_est %>% 
-            unique() %>% 
             dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2)
+                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            select(`Ano da eleição`,
+                   UF,
+                   Cargo,
+                   Desproporcionalidade,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`) %>% 
+              unique()
         }
       }
       })
@@ -1604,7 +1661,6 @@ server <- function(input, output,session){
   bfrag_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1617,9 +1673,9 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'frag_fed',
                   bom = TRUE))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',
-                             'Responsive',
                              'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
@@ -1658,7 +1714,6 @@ server <- function(input, output,session){
   bagreg_fragfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
@@ -1678,16 +1733,24 @@ server <- function(input, output,session){
                   list(                     
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',
-                             'Responsive',   
-                             'Select'),{
+                               'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fragmentação" & 
          agregacao == "Brasil"){
         data = frag_part_fed %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          select(`Ano da eleição`,
+                 Cargo,
+                 Desproporcionalidade,
+                 `Fracionalização`,
+                 `Fracionalização máxima`,
+                 `Fragmentação`,
+                 `Número efetivo de partidos eleitoral`,
+                 `Número efetivo de partidos legislativo`) %>% 
           unique() 
       }
     })
@@ -1715,7 +1778,6 @@ server <- function(input, output,session){
   bfrag_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1728,9 +1790,9 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'frag_est',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons', 
-                     'Responsive',   
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -1786,7 +1848,6 @@ server <- function(input, output,session){
   bagreg_fragest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
-      responsive = TRUE,
       select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
@@ -1806,9 +1867,9 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons', 
-                     'Responsive', 
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -1820,12 +1881,30 @@ server <- function(input, output,session){
           }else if(uf == "Todas UFs"){
           data = frag_part_est %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            select(`Ano da eleição`,
+                   UF,
+                   Cargo,
+                   Desproporcionalidade,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`) %>% 
             unique()
           } else{
           data = frag_part_est %>% 
-            unique() %>% 
             dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2)
+                          Cargo == input$DESCRICAO_CARGO2) %>% 
+          select(`Ano da eleição`,
+                 UF,
+                 Cargo,
+                 Desproporcionalidade,
+                 `Fracionalização`,
+                 `Fracionalização máxima`,
+                 `Fragmentação`,
+                 `Número efetivo de partidos eleitoral`,
+                 `Número efetivo de partidos legislativo`) %>% 
+            unique()
         }
         }
       })
@@ -1840,7 +1919,7 @@ server <- function(input, output,session){
   depfedn <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Número efetivo de partidos por cadeiras" & 
+    if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "Brasil"){
       return(input$nepc_fed)
     }
@@ -1853,7 +1932,6 @@ server <- function(input, output,session){
   bnepc_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1866,21 +1944,21 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'nepc_fed',
                   bom = TRUE))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',  
-                             'Responsive',  
-                             'Select'),{
+                              'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
-      if(indicador == "Número efetivo de partidos por cadeiras" & 
+      if(indicador == "Número efetivo de partidos legislativo" & 
          agregacao == "Brasil"){
         frag_part_fed %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
-                        `Número efetivo de partidos por cadeiras`) %>% 
+                        `Número efetivo de partidos legislativo`) %>% 
           unique() %>% 
           spread(`Ano da eleição`,
-                 `Número efetivo de partidos por cadeiras`)
+                 `Número efetivo de partidos legislativo`)
         
       }
     })
@@ -1893,7 +1971,7 @@ server <- function(input, output,session){
   ag_nepfed <- reactive({
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Número efetivo de partidos por cadeiras" & 
+    if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "Brasil"){
       return(input$agreg_nepfed)
     }
@@ -1906,7 +1984,6 @@ server <- function(input, output,session){
   bagreg_nepfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
@@ -1926,16 +2003,24 @@ server <- function(input, output,session){
                   list(                     
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',   
-                             'Responsive',  
-                             'Select'),{
+                              'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
-      if(indicador == "Número efetivo de partidos por cadeiras" & 
+      if(indicador == "Número efetivo de partidos legislativo" & 
           agregacao == "Brasil"){
         data = frag_part_fed %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+          select(`Ano da eleição`,
+                 Cargo,
+                 Desproporcionalidade,
+                 `Fracionalização`,
+                 `Fracionalização máxima`,
+                 `Fragmentação`,
+                 `Número efetivo de partidos eleitoral`,
+                 `Número efetivo de partidos legislativo`) %>% 
           unique() 
       }
     })
@@ -1948,7 +2033,7 @@ server <- function(input, output,session){
   depest_nep <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Número efetivo de partidos por cadeiras" & 
+    if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "UF"){
       return(input$nepc_est)
     }
@@ -1961,7 +2046,6 @@ server <- function(input, output,session){
   bnepc_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1974,14 +2058,14 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'nepc_est',
                   bom = TRUE))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons', 
-                             'Responsive',
                              'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       uf <- req(input$UF2)
-      if(indicador == "Número efetivo de partidos por cadeiras" & 
+      if(indicador == "Número efetivo de partidos legislativo" & 
          agregacao == "UF"){
         if(uf == ""){
           return()
@@ -1990,10 +2074,10 @@ server <- function(input, output,session){
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
-                        `Número efetivo de partidos por cadeiras`) %>% 
+                        `Número efetivo de partidos legislativo`) %>% 
           unique() %>% 
           spread(`Ano da eleição`,
-                 `Número efetivo de partidos por cadeiras`)
+                 `Número efetivo de partidos legislativo`)
         
         } else{
           frag_part_est %>% 
@@ -2001,10 +2085,10 @@ server <- function(input, output,session){
                         Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
-                        `Número efetivo de partidos por cadeiras`) %>% 
+                        `Número efetivo de partidos legislativo`) %>% 
           unique() %>% 
           spread(`Ano da eleição`,
-                 `Número efetivo de partidos por cadeiras`)
+                 `Número efetivo de partidos legislativo`)
         }
       }
     })
@@ -2018,7 +2102,7 @@ server <- function(input, output,session){
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- req(input$UF2)
-    if(indicador == "Número efetivo de partidos por cadeiras" & 
+    if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "UF"){
       return(input$agreg_nepest)
     }
@@ -2031,7 +2115,6 @@ server <- function(input, output,session){
   bagreg_nepest <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 autoWidth = TRUE,
                 ordering = TRUE, 
@@ -2041,8 +2124,7 @@ server <- function(input, output,session){
                 columnDefs = list(list(
                   className = 'dt-right', targets = '_all')),
                 dom = 'Bfrtip',
-                buttons = list('copy', 'print',
-                               list(
+                buttons = list(list(
                   extend = 'csv',
                   exportOptions = list(
                     columns = ':visible'),
@@ -2051,25 +2133,43 @@ server <- function(input, output,session){
                   list(                     
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
       extensions = c('Buttons',      
-                     'Responsive',    
                      'Select'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       uf <- req(input$UF2)
-      if(indicador == "Número efetivo de partidos por cadeiras" & 
+      if(indicador == "Número efetivo de partidos legislativo" & 
          agregacao == "UF"){
         if(uf == ""){
           return()
         } else if(uf == "Todas UFs"){
           data = frag_part_est %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            select(`Ano da eleição`,
+                   UF,
+                   Cargo,
+                   Desproporcionalidade,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`) %>% 
           unique()
         } else{
           data = frag_part_est %>% 
           dplyr::filter(UF == input$UF2 &
-                        Cargo == input$DESCRICAO_CARGO2) %>%   
+                        Cargo == input$DESCRICAO_CARGO2) %>% 
+            select(`Ano da eleição`,
+                   UF,
+                   Cargo,
+                   Desproporcionalidade,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`) %>% 
           unique() 
       }
       }
@@ -2085,7 +2185,7 @@ server <- function(input, output,session){
   depfedvn <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Número efetivo de partidos por votos" & 
+    if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "Brasil"){
       return(input$nepv_fed)
     }
@@ -2098,7 +2198,6 @@ server <- function(input, output,session){
   bnepv_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2111,21 +2210,21 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'nepc_fed',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',   
-                     'Responsive',  
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        if(indicador == "Número efetivo de partidos por votos" & 
+        if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "Brasil"){
           frag_part_fed %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
-                          `Número efetivo de partidos por votos`) %>% 
+                          `Número efetivo de partidos eleitoral`) %>% 
             unique() %>% 
             spread(`Ano da eleição`,
-                   `Número efetivo de partidos por votos`)
+                   `Número efetivo de partidos eleitoral`)
           
         }
       })
@@ -2138,7 +2237,7 @@ server <- function(input, output,session){
   ag_nepvfed <- reactive({
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Número efetivo de partidos por votos" & 
+    if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "Brasil"){
       return(input$agreg_nepvfed)
     }
@@ -2151,7 +2250,6 @@ server <- function(input, output,session){
   bagreg_nepvfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
-      responsive = TRUE,
       select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
@@ -2171,16 +2269,24 @@ server <- function(input, output,session){
         list(                    
           extend = 'colvis',                   
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',  
-                     'Responsive',    
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
-        if(indicador == "Número efetivo de partidos por votos" & 
+        if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "Brasil"){
           data = frag_part_fed %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            select(`Ano da eleição`,
+                   Cargo,
+                   Desproporcionalidade,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`) %>% 
             unique() 
         }
       })
@@ -2193,7 +2299,7 @@ server <- function(input, output,session){
   depestvn <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Número efetivo de partidos por votos" & 
+    if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "UF"){
       return(input$nepv_est)
     }
@@ -2206,7 +2312,6 @@ server <- function(input, output,session){
   bnepv_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2219,14 +2324,14 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'nepc_est',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',   
-                     'Responsive',     
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
-        if(indicador == "Número efetivo de partidos por votos" & 
+        if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
@@ -2235,10 +2340,10 @@ server <- function(input, output,session){
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
-                          `Número efetivo de partidos por votos`) %>% 
+                          `Número efetivo de partidos eleitoral`) %>% 
             unique() %>% 
             spread(`Ano da eleição`,
-                  `Número efetivo de partidos por votos`)
+                  `Número efetivo de partidos eleitoral`)
           
           } else{
             frag_part_est %>% 
@@ -2246,10 +2351,10 @@ server <- function(input, output,session){
                           Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
-                          `Número efetivo de partidos por votos`) %>% 
+                          `Número efetivo de partidos eleitoral`) %>% 
             unique() %>% 
             spread(`Ano da eleição`,
-                   `Número efetivo de partidos por votos`)
+                   `Número efetivo de partidos eleitoral`)
         }
         }
       })
@@ -2262,7 +2367,7 @@ server <- function(input, output,session){
   ag_nepvest <- reactive({
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Número efetivo de partidos por votos" &
+    if(indicador == "Número efetivo de partidos eleitoral" &
        agregacao == "UF"){
       return(input$agreg_nepvest)
     }
@@ -2275,7 +2380,6 @@ server <- function(input, output,session){
   bagreg_nepvest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
-      responsive = TRUE,
       select = TRUE,
       autoWidth = TRUE,
       ordering = TRUE, 
@@ -2295,26 +2399,45 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons', 
-                     'Responsive', 
                      'Select'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
-        if(indicador == "Número efetivo de partidos por votos" & 
+        if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
             data = frag_part_est %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+              select(`Ano da eleição`,
+                     UF,
+                     Cargo,
+                     Desproporcionalidade,
+                     `Fracionalização`,
+                     `Fracionalização máxima`,
+                     `Fragmentação`,
+                     `Número efetivo de partidos eleitoral`,
+                     `Número efetivo de partidos legislativo`) %>% 
             unique()
           } else{
             data = frag_part_est %>% 
-            unique() %>% 
             dplyr::filter(UF == input$UF2 &
-                          Cargo == input$DESCRICAO_CARGO2)
+                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            select(`Ano da eleição`,
+                   UF,
+                   Cargo,
+                   Desproporcionalidade,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`) %>% 
+              unique()  
+            
         }
         }
       })
@@ -2340,26 +2463,26 @@ server <- function(input, output,session){
                    <p>
                    <h4><br /> Renovação bruta </h4>
                    <h5 align = 'justify'><br />
-                   Esta fórmula computa o número total de representantes novos em uma legislatura,
-                   comparado à composição da legislatura anterior.</h5>
+                   <p style='line-height:150%'>Esta fórmula computa o número total de representantes novos em uma legislatura,
+                   comparado à composição da legislatura anterior.</p></h5>
                    <p><
                    <strong>Fórmula: </strong>
                    <p>
                    RN = (DESIST + DERROT)/(TOT) * 100
                    <h4><br /> Renovação líquida </h4>
                    <h5 align = 'justify'><br />
-                   A 'renovação líquida' é composta pelo número de candidatos à reeleição que foram
-                   derrotados divido pelo total de recandidatos (derrotados e reeleitos).</h5>
+                   <p style='line-height:150%'>A 'renovação líquida' é composta pelo número de candidatos à reeleição que foram
+                   derrotados divido pelo total de recandidatos (derrotados e reeleitos).</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
                    RL = (DERROT)/(REELEIT + DERROT) * 100
                    <h4><br /> Volatilidade eleitoral </h4>
                    <h5 align = 'justify'><br />
-                  O indicador 'volatilidade eleitoral' é uma medida agregada que resulta do
+                  <p style='line-height:150%'>O indicador 'volatilidade eleitoral' é uma medida agregada que resulta do
                   somatório das perdas e ganhos dos partidos entre duas eleições, dividido por dois.
                   As perdas e ganhos dos partidos tanto podem ser expressas em proporções de
-                  votos ou cadeiras no parlamento.</h5>
+                  votos ou cadeiras no parlamento.</p></h5>
                   <p>
                   <strong>Fórmula: </strong>
                   <p>
@@ -2400,7 +2523,6 @@ server <- function(input, output,session){
   bconserv_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2413,9 +2535,9 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'renov_parl_fed',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',       
-                     'Responsive',     
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
@@ -2454,7 +2576,6 @@ server <- function(input, output,session){
   bagreg_conserv_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2473,9 +2594,9 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons', 
-                     'Responsive',   
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
@@ -2512,7 +2633,6 @@ server <- function(input, output,session){
   bconserv_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2525,9 +2645,8 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'renov_parl_est',
         bom = TRUE))), 
-      class = "display",
+       class = "display",rownames = FALSE,
       extensions = c('Buttons',
-                     'Responsive',    
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
@@ -2579,7 +2698,6 @@ server <- function(input, output,session){
   bagreg_conserv_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2598,9 +2716,9 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                    
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',
-                     'Responsive',    
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2647,7 +2765,6 @@ server <- function(input, output,session){
   brenov_br_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2660,9 +2777,9 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'renovbr_parl_fed',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons', 
-                     'Responsive',   
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
@@ -2704,7 +2821,6 @@ server <- function(input, output,session){
   bagreg_renov_br_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2723,9 +2839,9 @@ server <- function(input, output,session){
         list(                    
           extend = 'colvis',                   
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',
-                     'Responsive',    
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
@@ -2761,7 +2877,6 @@ server <- function(input, output,session){
   brenov_br_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2774,9 +2889,9 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'renovbr_parl_est',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',     
-                     'Responsive',   
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2829,7 +2944,6 @@ server <- function(input, output,session){
   bagreg_renov_br_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2848,9 +2962,9 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons', 
-                     'Responsive',    
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2897,7 +3011,6 @@ server <- function(input, output,session){
   brenov_liq_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2910,9 +3023,9 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'renovliq_parl_fed',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',  
-                     'Responsive',  
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
@@ -2952,7 +3065,6 @@ server <- function(input, output,session){
   bagreg_renov_liq_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2971,9 +3083,9 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons', 
-                     'Responsive',  
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
@@ -3009,7 +3121,6 @@ server <- function(input, output,session){
   brenov_liq_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3022,9 +3133,9 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'renovliq_parl_est',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',
-                     'Responsive',  
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -3078,7 +3189,6 @@ server <- function(input, output,session){
   bagreg_renov_liq_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3097,9 +3207,9 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons', 
-                     'Responsive',
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -3149,7 +3259,6 @@ server <- function(input, output,session){
   bvol_ele_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -3161,9 +3270,9 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'vol_ele_fed',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',
-                     'Responsive',   
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
@@ -3203,7 +3312,6 @@ server <- function(input, output,session){
   bagreg_vol_ele_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3222,9 +3330,9 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',        
-                     'Responsive',  
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
@@ -3262,7 +3370,6 @@ server <- function(input, output,session){
     datatable(options = list(
       autoWidth = TRUE,
       select = TRUE,
-      responsive = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -3274,9 +3381,9 @@ server <- function(input, output,session){
         extend = 'csv',
         title = 'vol_ele_est',
         bom = TRUE))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',              
-                     'Responsive',        
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -3329,7 +3436,6 @@ server <- function(input, output,session){
   bagreg_vol_ele_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
-      responsive = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3348,9 +3454,9 @@ server <- function(input, output,session){
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-      class = "display",
+       class = "display",
+      rownames = FALSE,
       extensions = c('Buttons',        
-                     'Responsive',
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -3386,9 +3492,9 @@ server <- function(input, output,session){
                    Definição dos indicadores de alienação</h3>
                    <h4><br />Alienação absoluta</h4>
                    <h5 align = 'justify'><br />
-                   Indicadores de alienação medem a participação nas eleições, por unidade eleitoral.
+                   <p style='line-height:150%'>Indicadores de alienação medem a participação nas eleições, por unidade eleitoral.
                    A 'alienação absoluta' é a soma da quantidade de abstenções, votos brancos e votos nulos
-                   de determinada eleição.</h5>
+                   de determinada eleição.</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
@@ -3396,8 +3502,8 @@ server <- function(input, output,session){
                    <p>
                    <h4><br />Alienação percentual</h4>
                    <h5 align = 'justify'><br />
-                   A 'alienação percentual' é o índice de 'alienação absoluta' dividido pelo total de eleitores 
-                   aptos da unidade eleitoral.</h5>
+                   <p style='line-height:150%'> A 'alienação percentual' é o índice de 'alienação absoluta' dividido pelo total de eleitores 
+                   aptos da unidade eleitoral.</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
@@ -3437,7 +3543,6 @@ server <- function(input, output,session){
   balien_feda_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -3450,9 +3555,9 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'alien_abs_fed_br',
                   bom = TRUE))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',  
-                             'Responsive',     
                              'Select'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
@@ -3492,7 +3597,6 @@ server <- function(input, output,session){
   bagreg_alifed_br <- eventReactive(input$BCALC4, {
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -3511,9 +3615,9 @@ server <- function(input, output,session){
                   list(                     
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',   
-                             'Responsive', 
                              'Select'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
@@ -3551,7 +3655,6 @@ server <- function(input, output,session){
     datatable(options = list(
                 autoWidth = TRUE,
                 select = TRUE,
-                responsive = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -3563,10 +3666,10 @@ server <- function(input, output,session){
                   extend = 'csv',
                   title = 'alien_abs_fed_uf',
                   bom = TRUE))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons', 
-                             'Responsive',   
-                             'Select'),{
+                              'Select'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
       agregacao <- input$AGREGACAO_REGIONAL4
@@ -3618,7 +3721,6 @@ server <- function(input, output,session){
   bagreg_alifeda_uf <- eventReactive(input$BCALC4, {
     datatable(options = list(
                 autoWidth = TRUE,
-                responsive = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -3637,10 +3739,10 @@ server <- function(input, output,session){
                   list(                     
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
-              class = "display",
+               class = "display",
+              rownames = FALSE,
               extensions = c('Buttons',  
-                             'Responsive',       
-                             'Select'),{
+                              'Select'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
       agregacao <- input$AGREGACAO_REGIONAL4
@@ -3682,7 +3784,6 @@ output$alien_fedp_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
 balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
   datatable(options = list(
               autoWidth = TRUE,
-              responsive = TRUE,
               select = TRUE,
               ordering = TRUE, 
               searching = TRUE,
@@ -3695,9 +3796,9 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
                 extend = 'csv',
                 title = 'alien_per_fed_br',
                 bom = TRUE))), 
-            class = "display",
+             class = "display",
+            rownames = FALSE,
             extensions = c('Buttons',   
-                           'Responsive',   
                            'Select'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
@@ -3737,7 +3838,6 @@ output$agreg_alifedp_br <- DT::renderDataTable(server = FALSE,{
 bagreg_alifedp_br <- eventReactive(input$BCALC4, {
   datatable(options = list(
               autoWidth = TRUE,
-              responsive = TRUE,
               select = TRUE,
               ordering = TRUE, 
               searching = TRUE,
@@ -3756,9 +3856,9 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
                 list(                     
                   extend = 'colvis',                     
                   text = 'Colunas'))), 
-            class = "display",
+             class = "display",
+            rownames = FALSE,
             extensions = c('Buttons',
-                           'Responsive',   
                            'Select'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
@@ -3800,7 +3900,6 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
   datatable(options = list(
               autoWidth = TRUE,
               select = TRUE,
-              responsive = TRUE,
               ordering = TRUE, 
               searching = TRUE,
               lengthChange = FALSE,
@@ -3812,9 +3911,9 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
                 extend = 'csv',
                 title = 'alien_per_fed_uf',
                 bom = TRUE))), 
-            class = "display",
+             class = "display",
+            rownames = FALSE,
             extensions = c('Buttons',                              
-                           'Responsive',                              
                            'Select'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
@@ -3870,7 +3969,6 @@ output$agreg_alifedp_uf <- DT::renderDataTable(server = FALSE,{
 bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
   datatable(options = list(
               autoWidth = TRUE,
-              responsive = TRUE,
               select = TRUE,
               ordering = TRUE, 
               searching = TRUE,
@@ -3889,9 +3987,9 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
                 list(                     
                   extend = 'colvis',                     
                   text = 'Colunas'))), 
-            class = "display",
+             class = "display",
+            rownames = FALSE,
             extensions = c('Buttons',
-                           'Responsive',
                            'Select'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4

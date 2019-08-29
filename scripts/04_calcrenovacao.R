@@ -24,8 +24,8 @@ conserv <- function(reel, derr) {
 
 ## Funcao para o calculo da renovacao bruta
 
-renov_br <- function(desi,derr){
-  (desi + derr)/(513)*100
+renov_br <- function(desi,derr, vag){
+  (desi + derr)/(vag)*100
 }
 
 ## Funcao para o calculo da renovacao liquida
@@ -106,6 +106,18 @@ df <- na.omit(df)
 ### Deputado Estadual
 
 de <- na.omit(de) 
+
+
+de2 <- de1
+
+de2 <- de2 %>% 
+  select(`Ano da eleição`,
+         UF,
+         Vagas)
+
+de2 <- unique(de2)
+
+de2 <- de2[-c(37:39),]
 
 ## Cria um banco com somente os candidatos eleitos em cada eleicao
 
@@ -219,7 +231,7 @@ for(ano in sort(unique(df$ANO_ELEICAO))){
   indicadores1$`Conservação` <- conserv(indicadores1$Reeleitos, 
                                         indicadores1$Derrotados)
   indicadores1$`Renovação bruta` <- renov_br(indicadores1$Desistência,
-                                             indicadores1$Derrotados)
+                                             indicadores1$Derrotados, 513)
   indicadores1$`Renovação líquida` <- renov_liq(indicadores1$Derrotados, 
                                           indicadores1$Reeleitos)
   }
@@ -344,6 +356,9 @@ for(ano in sort(unique(de$ANO_ELEICAO))){
                             by = c("Ano da eleição",
                                    "UF"))
   
+ indicadores1 <- left_join(indicadores1,de2, by = c("Ano da eleição",
+                                                    "UF"))
+  
 ## Calculo dos indicadores de renovacao parlamentar
   
   indicadores1$Derrotados <- indicadores1$Reapresentação - indicadores1$Reeleitos
@@ -352,7 +367,8 @@ for(ano in sort(unique(de$ANO_ELEICAO))){
   indicadores1$`Conservação` <- conserv(indicadores1$Reeleitos, 
                                         indicadores1$Derrotados)
   indicadores1$`Renovação bruta` <- renov_br(indicadores1$Desistência,
-                                             indicadores1$Derrotados)
+                                             indicadores1$Derrotados, 
+                                             indicadores1$Vagas)
   indicadores1$`Renovação líquida` <- renov_liq(indicadores1$Derrotados, 
                                                 indicadores1$Reeleitos)
   }
@@ -377,6 +393,7 @@ ind_eleicoes_est <- ind_eleicoes_est %>%
   select(`Ano da eleição`,
          UF,
          Cargo,
+         Vagas,
          Reapresentação,
          Desistência,
          Reeleitos,

@@ -246,10 +246,10 @@ for(ano in sort(unique(df1$`Ano da eleição`))){
   t$`Fracionalização máxima` <- fracio_max(513,t$`Número de partidos parlamentares`)
   t$`Fragmentação` <- frag(t$`Fracionalização`, 
                            t$`Fracionalização máxima`)
-  t$`Desproporcionalidade de gallagher` <- desp_gallag(t$`Percentual de votos conquistados`,
-                                                       t$`Percentual de cadeiras conquistadas`)
-  t$`Número efetivo de partidos por votos` <- nep(t$`Percentual de votos conquistados`)
-  t$`Número efetivo de partidos por cadeiras` <- nep(t$`Percentual de cadeiras conquistadas`)
+  t$`Desproporcionalidade` <- desp_gallag(t$`Percentual de votos conquistados`,
+                                          t$`Percentual de cadeiras conquistadas`)
+  t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
+  t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
   frag_part_fed <- bind_rows(frag_part_fed,t)
 }
 
@@ -273,11 +273,11 @@ for(ano in sort(unique(de1$`Ano da eleição`))){
     t$`Fracionalização máxima` <- fracio_max(t$Vagas,t$`Número de partidos parlamentares`)
     t$`Fragmentação` <- frag(t$Fracionalização,
                              t$`Fracionalização máxima`)
-    t$`Desproporcionalidade de gallagher` <- desp_gallag(t$`Percentual de votos conquistados`,
-                                                         t$`Percentual de cadeiras conquistadas`)
+    t$`Desproporcionalidade` <- desp_gallag(t$`Percentual de votos conquistados`,
+                                            t$`Percentual de cadeiras conquistadas`)
     NEPV <- NA
-    t$`Número efetivo de partidos por votos` <- nep(t$`Percentual de votos conquistados`)
-    t$`Número efetivo de partidos por cadeiras` <- nep(t$`Percentual de cadeiras conquistadas`)
+    t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
+    t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
     frag_part_est <- bind_rows(frag_part_est,t)
   }
 }
@@ -305,9 +305,9 @@ frag_part_fed <- frag_part_fed %>%
          Fracionalização,
          `Fracionalização máxima`,
          Fragmentação,
-         `Desproporcionalidade de gallagher`, 
-         `Número efetivo de partidos por votos`,
-         `Número efetivo de partidos por cadeiras`)
+         `Desproporcionalidade`, 
+         `Número efetivo de partidos eleitoral`,
+         `Número efetivo de partidos legislativo`)
 
 
 frag_part_fed$`Percentual de votos conquistados`<- 
@@ -335,18 +335,18 @@ frag_part_fed$Fragmentação <-
                digits = 2),
          nsmall = 2)
 
-frag_part_fed$`Desproporcionalidade de gallagher` <- 
-  format(round(frag_part_fed$`Desproporcionalidade de gallagher`, 
+frag_part_fed$`Desproporcionalidade` <- 
+  format(round(frag_part_fed$`Desproporcionalidade`, 
                digits = 2), 
          nsmall = 2)
 
-frag_part_fed$`Número efetivo de partidos por votos` <- 
-  format(round(frag_part_fed$`Número efetivo de partidos por votos`, 
+frag_part_fed$`Número efetivo de partidos eleitoral` <- 
+  format(round(frag_part_fed$`Número efetivo de partidos eleitoral`, 
                digits = 2), 
          nsmall = 2)
 
-frag_part_fed$`Número efetivo de partidos por cadeiras` <- 
-  format(round(frag_part_fed$`Número efetivo de partidos por cadeiras`, 
+frag_part_fed$`Número efetivo de partidos legislativo` <- 
+  format(round(frag_part_fed$`Número efetivo de partidos legislativo`, 
                digits = 2), 
          nsmall = 2)
 
@@ -371,9 +371,9 @@ frag_part_est<- frag_part_est %>%
          Fracionalização,
          `Fracionalização máxima`,
          Fragmentação,
-         `Desproporcionalidade de gallagher`, 
-         `Número efetivo de partidos por votos`,
-         `Número efetivo de partidos por cadeiras`)
+         `Desproporcionalidade`, 
+         `Número efetivo de partidos eleitoral`,
+         `Número efetivo de partidos legislativo`)
 
 
 frag_part_est$`Percentual de votos conquistados`<- 
@@ -401,18 +401,18 @@ frag_part_est$Fragmentação <-
                digits = 2),
          nsmall = 2)
 
-frag_part_est$`Desproporcionalidade de gallagher` <- 
-  format(round(frag_part_est$`Desproporcionalidade de gallagher`, 
+frag_part_est$`Desproporcionalidade` <- 
+  format(round(frag_part_est$`Desproporcionalidade`, 
                digits = 2), 
          nsmall = 2)
 
-frag_part_est$`Número efetivo de partidos por votos` <- 
-  format(round(frag_part_est$`Número efetivo de partidos por votos`, 
+frag_part_est$`Número efetivo de partidos eleitoral` <- 
+  format(round(frag_part_est$`Número efetivo de partidos eleitoral`, 
                digits = 2), 
          nsmall = 2)
 
-frag_part_est$`Número efetivo de partidos por cadeiras` <- 
-  format(round(frag_part_est$`Número efetivo de partidos por cadeiras`, 
+frag_part_est$`Número efetivo de partidos legislativo` <- 
+  format(round(frag_part_est$`Número efetivo de partidos legislativo`, 
                digits = 2), 
          nsmall = 2)
 

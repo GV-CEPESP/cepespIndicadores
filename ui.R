@@ -186,10 +186,10 @@ ui <- fluidPage(
                                      
                                      selectizeInput(inputId = "INDICADORES_FRAG",
                                                     label = NULL, 
-                                                    choices = c("","Desproporcionalidade de gallagher","Fracionalização", 
+                                                    choices = c("","Desproporcionalidade","Fracionalização", 
                                                                 "Fracionalização máxima", ## Indicadores disponiveis
-                                                                "Fragmentação", "Número efetivo de partidos por cadeiras",
-                                                                "Número efetivo de partidos por votos"),
+                                                                "Fragmentação", "Número efetivo de partidos eleitoral",
+                                                                "Número efetivo de partidos legislativo"),
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um indicador')),
                                      
@@ -590,7 +590,7 @@ ui <- fluidPage(
                          text-align: left;
                          z-index: 10;
                          height: 3em;
-                         margin-top: 71em;",
+                         margin-top: 76em;",
                          
                          tags$div(class = "rodape-container",
                                   
