@@ -126,9 +126,7 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills", 
                                                     tabPanel("Tabelas", br(),
-                                                             fixedPage(
-                                                               fixedRow(
-                                                                column(12,
+                                                                 column(12,
                                                                         absolutePanel(top = 0,
                                                                                       right = 0 , 
                                                                                       left = 15,
@@ -149,11 +147,9 @@ ui <- fluidPage(
                                                                         absolutePanel(top = 0, 
                                                                                    right = 0 ,  
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("quocp_est")))))),
+                                                                                   DT::dataTableOutput("quocp_est")))),
                                                    tabPanel("Resumo", br(),
-                                                            fixedPage(
-                                                              fixedRow(
-                                                                column(12,
+                                                             column(12,
                                                                    absolutePanel(top = 0, 
                                                                               right = 0 ,  
                                                                              left = 15,
@@ -172,7 +168,7 @@ ui <- fluidPage(
                                                                    absolutePanel(top = 0, 
                                                                               right = 0 ,  
                                                                              left = 15,
-                                                                              DT::dataTableOutput("agreg_quocpest")))))),
+                                                                              DT::dataTableOutput("agreg_quocpest")))),
                                                    tabPanel("Definição", htmlOutput("def_distc"))))))), ## Definicao dos indicadores  
              
              tabPanel("Fragmentação legislativa",  ## Definicao das ferramentas de selecao para a guia
@@ -216,9 +212,7 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
                                                     tabPanel("Tabelas", br(),
-                                                             fixedPage(
-                                                               fixedRow(
-                                                                 column(12,
+                                                                column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
                                                                               left = 15,
@@ -277,11 +271,9 @@ ui <- fluidPage(
                                                                         absolutePanel(top = 0, 
                                                                                    right = 0 ,  
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("nepv_est")))))),
+                                                                                   DT::dataTableOutput("nepv_est")))),
                                                    tabPanel("Resumo", br(),
-                                                            fixedPage(
-                                                              fixedRow(
-                                                                column(12,
+                                                            column(12,
                                                                    absolutePanel(top = 0, 
                                                                               right = 0 ,  
                                                                              left = 15,
@@ -340,7 +332,7 @@ ui <- fluidPage(
                                                                        absolutePanel(top = 0,
                                                                                   right = 0 , 
                                                                                  left = 15,
-                                                                                  DT::dataTableOutput("agreg_nepvest")))))),
+                                                                                  DT::dataTableOutput("agreg_nepvest")))),
                                                    tabPanel("Definição", htmlOutput("def_frag"))))))), ## Definicao dos indicadores
              
              tabPanel("Renovação parlamentar",  ## Definicao das ferramentas de selecao para a guia
@@ -384,9 +376,7 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
                                                     tabPanel("Tabelas", br(),
-                                                             fixedPage(
-                                                               fixedRow(
-                                                                 column(12,
+                                                             column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
                                                                               left = 15,
@@ -425,11 +415,9 @@ ui <- fluidPage(
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
                                                                               left = 15,
-                                                                               DT::dataTableOutput("vol_ele_est")))))), ## Tabelas que serao exibidas
+                                                                               DT::dataTableOutput("vol_ele_est")))), ## Tabelas que serao exibidas
                                                              tabPanel("Resumo", br(),
-                                                                      fixedPage(
-                                                                        fixedRow(
-                                                                          column(12,
+                                                                      column(12,
                                                                              absolutePanel(top = 0, 
                                                                                         right = 0 ,  
                                                                                        left = 15,
@@ -468,7 +456,7 @@ ui <- fluidPage(
                                                                              absolutePanel(top = 0, 
                                                                                         right = 0 ,  
                                                                                        left = 15,
-                                                                                        DT::dataTableOutput("agreg_vol_ele_est")))))),
+                                                                                        DT::dataTableOutput("agreg_vol_ele_est")))),
                                                     tabPanel("Definição", htmlOutput("def_renovp"))))))),
              
              tabPanel("Alienação",  ## Definicao das ferramentas de selecao para a guia
@@ -515,9 +503,7 @@ ui <- fluidPage(
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
                                                     tabPanel("Tabelas", br(),
-                                                             fixedPage(
-                                                               fixedRow(
-                                                                 column(12,
+                                                               column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
                                                                               left = 15,
@@ -536,11 +522,9 @@ ui <- fluidPage(
                                                                     absolutePanel(top = 0,
                                                                                right = 0 , 
                                                                               left = 15,
-                                                                               DT::dataTableOutput("alien_fedp_uf")))))),
+                                                                               DT::dataTableOutput("alien_fedp_uf")))),
                                                     tabPanel("Resumo", br(),
-                                                             fixedPage(
-                                                               fixedRow(
-                                                                 column(12,
+                                                             column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
                                                                               left = 15, 
@@ -559,7 +543,7 @@ ui <- fluidPage(
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 , 
                                                                               left = 15,
-                                                                               DT::dataTableOutput("agreg_alifedp_uf")))))),
+                                                                               DT::dataTableOutput("agreg_alifedp_uf")))),
                                                     tabPanel("Definição", htmlOutput("def_alien"))))))), ## Definicao dos indicadores
              
              
@@ -586,7 +570,7 @@ ui <- fluidPage(
               text-align: left;
               z-index: 10;
               height: 3em;
-              margin-top: 76em;",
+              margin-top: 80em;",
                          
                          tags$div(class = "rodape-container",
                                   

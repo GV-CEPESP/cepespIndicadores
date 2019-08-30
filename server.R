@@ -349,6 +349,7 @@ server <- function(input, output,session){
   bagreg_quocefed <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 autoWidth = TRUE,
+                scrollX = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -474,6 +475,7 @@ server <- function(input, output,session){
   bagreg_quoceest <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 autoWidth = TRUE,
+                scrollX = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -596,6 +598,7 @@ server <- function(input, output,session){
   bagreg_quocpfed <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 autoWidth = TRUE,
+                scrollX = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -714,6 +717,7 @@ server <- function(input, output,session){
   bagreg_quocpest <- eventReactive(input$BCALC1,{
     datatable(options = list(
                 autoWidth = TRUE,
+                scrollX = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -2575,6 +2579,7 @@ server <- function(input, output,session){
   
   bagreg_conserv_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
+      scrollX = TRUE,
       autoWidth = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -2697,6 +2702,7 @@ server <- function(input, output,session){
   
   bagreg_conserv_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
+      scrollX = TRUE,
       autoWidth = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -2821,6 +2827,7 @@ server <- function(input, output,session){
   bagreg_renov_br_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2944,6 +2951,7 @@ server <- function(input, output,session){
   bagreg_renov_br_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3065,6 +3073,7 @@ server <- function(input, output,session){
   bagreg_renov_liq_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3190,6 +3199,7 @@ server <- function(input, output,session){
     datatable(options = list(
       autoWidth = TRUE,
       select = TRUE,
+      scrollX = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -3312,6 +3322,7 @@ server <- function(input, output,session){
   bagreg_vol_ele_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3436,6 +3447,7 @@ server <- function(input, output,session){
   bagreg_vol_ele_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       autoWidth = TRUE,
+      scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3597,6 +3609,7 @@ server <- function(input, output,session){
   bagreg_alifed_br <- eventReactive(input$BCALC4, {
     datatable(options = list(
                 autoWidth = TRUE,
+                scrollX = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -3721,6 +3734,7 @@ server <- function(input, output,session){
   bagreg_alifeda_uf <- eventReactive(input$BCALC4, {
     datatable(options = list(
                 autoWidth = TRUE,
+                scrollX = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -3838,6 +3852,7 @@ output$agreg_alifedp_br <- DT::renderDataTable(server = FALSE,{
 bagreg_alifedp_br <- eventReactive(input$BCALC4, {
   datatable(options = list(
               autoWidth = TRUE,
+              scrollX = TRUE,
               select = TRUE,
               ordering = TRUE, 
               searching = TRUE,
@@ -3969,6 +3984,7 @@ output$agreg_alifedp_uf <- DT::renderDataTable(server = FALSE,{
 bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
   datatable(options = list(
               autoWidth = TRUE,
+              scrollX = TRUE,
               select = TRUE,
               ordering = TRUE, 
               searching = TRUE,
