@@ -83,94 +83,10 @@ ui <- fluidPage(
                              
                       )),
              
+             tabPanel("CEPESP Indicadores"),
+             
              
           
-             tabPanel("Distribuição de cadeiras", ## Definicao das ferramentas de selecao para a guia
-                                                  ## "Distribuicao de cadeiras"
-                      
-                      sidebarLayout(
-                        
-                        sidebarPanel(h4("Opções:"),width = 3,
-                                     
-                                     
-                                     selectizeInput(inputId = "INDICADORES_DISTR",
-                                                    label = NULL, 
-                                                    choices = c("","Quociente eleitoral", "Quociente partidário"), ## Indicadores 
-                                                    selected = NULL,                                               ## disponiveis
-                                                    options = list(placeholder = 'Escolha um indicador')),
-                                     
-                                     selectizeInput(inputId = "DESCRICAO_CARGO1",
-                                                    label = NULL,
-                                                    choices = c("","Deputado Federal", "Deputado Estadual"), ## Cargos 
-                                                    selected = NULL,                                         ## disponiveis
-                                                    options = list(placeholder = 'Escolha um cargo')),
-                                     
-                                     selectizeInput(inputId = "UF",
-                                                    label = NULL,
-                                                    choices = c("", "Todas UFs", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", 
-                                                                "GO", "MA", "MG","MS", "MT", "PA", "PB", "PE", "PI", "PR", 
-                                                                "RJ", "RN", "RO", "RR","RS", "SC", "SE", "SP", "TO"),
-                                                    selected =  NULL,
-                                                    options = list(placeholder = 'Escolha uma UF')),
-                                     
-                                     
-                                     actionButton(inputId = "BCALC1",
-                                                  label = strong("Calcular"), ## Botao de acao "Calcular"
-                                                  width = "95%")
-                                     
-                        ),
-                        
-                        
-                        mainPanel(
-                          
-                          absolutePanel(top = 0, right = 0, left = 100,
-                                        tabsetPanel(type = "pills", 
-                                                    tabPanel("Tabelas", br(),
-                                                                 column(12,
-                                                                        absolutePanel(top = 0,
-                                                                                      right = 0 , 
-                                                                                      left = 15,
-                                                                                      DT::dataTableOutput("quoce_fed")
-                                                                                      #plotlyOutput("x2")
-                                                                                      )), ## Tabelas que serao exibidas
-                                                                 column(12,
-                                                                        absolutePanel(top = 0, 
-                                                                                   right = 0 , 
-                                                                                  left = 15,
-                                                                                   DT::dataTableOutput("quoce_est"))),
-                                                                 column(12,
-                                                                        absolutePanel(top = 0, 
-                                                                                   right = 0 ,  
-                                                                                  left = 15,
-                                                                                   DT::dataTableOutput("quocp_fed"))),
-                                                                 column(12,
-                                                                        absolutePanel(top = 0, 
-                                                                                   right = 0 ,  
-                                                                                  left = 15,
-                                                                                   DT::dataTableOutput("quocp_est")))),
-                                                   tabPanel("Resumo", br(),
-                                                             column(12,
-                                                                   absolutePanel(top = 0, 
-                                                                              right = 0 ,  
-                                                                             left = 15,
-                                                                              DT::dataTableOutput("agreg_quocefed"))),
-                                                                column(12,
-                                                                   absolutePanel(top = 0, 
-                                                                              right = 0 ,  
-                                                                             left = 15,
-                                                                              DT::dataTableOutput("agreg_quoceest"))),
-                                                                column(12,
-                                                                   absolutePanel(top = 0, 
-                                                                              right = 0 ,  
-                                                                             left = 15,
-                                                                              DT::dataTableOutput("agreg_quocpfed"))),
-                                                                column(12,
-                                                                   absolutePanel(top = 0, 
-                                                                              right = 0 ,  
-                                                                             left = 15,
-                                                                              DT::dataTableOutput("agreg_quocpest")))),
-                                                   tabPanel("Definição", htmlOutput("def_distc"))))))), ## Definicao dos indicadores  
-             
              tabPanel("Fragmentação legislativa",  ## Definicao das ferramentas de selecao para a guia
                                                    ## "Fragmentacao legislativa"
                       
@@ -182,10 +98,11 @@ ui <- fluidPage(
                                      
                                      selectizeInput(inputId = "INDICADORES_FRAG",
                                                     label = NULL, 
-                                                    choices = c("","Desproporcionalidade","Fracionalização", 
-                                                                "Fracionalização máxima", ## Indicadores disponiveis
-                                                                "Fragmentação", "Número efetivo de partidos eleitoral",
-                                                                "Número efetivo de partidos legislativo"),
+                                                    choices = c("", "Número efetivo de partidos eleitoral",
+                                                                "Número efetivo de partidos legislativo","Fracionalização", 
+                                                                "Fracionalização máxima",              ## Indicadores disponiveis
+                                                                "Fragmentação", "Desproporcionalidade",
+                                                                "Quociente eleitoral", "Quociente partidário"),
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um indicador')),
                                      
@@ -196,6 +113,8 @@ ui <- fluidPage(
                                                     options = list(placeholder = 'Escolha um cargo')),
                                      
                                      uiOutput("AGREGACAO_REGIONAL2"),
+                                     
+                                     uiOutput("UF1"),
                                      
                                      uiOutput("UF2"),
                                      
@@ -211,17 +130,28 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabelas", br(),
-                                                                column(12,
-                                                                    absolutePanel(top = 0, 
-                                                                               right = 0 ,  
-                                                                              left = 15,
-                                                                               DT::dataTableOutput("dpg_fed"))),
+                                                    tabPanel("Definição", htmlOutput("def_frag")),
+                                                    tabPanel("Tabela", br(),
                                                                  column(12,
-                                                                        absolutePanel(top = 0, 
-                                                                                   right = 0 ,  
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 , 
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("dpg_est"))),
+                                                                                  DT::dataTableOutput("nepc_fed"))),
+                                                                 column(12,
+                                                                    absolutePanel(top = 0,
+                                                                                  right = 0 , 
+                                                                                  left = 15,
+                                                                                  DT::dataTableOutput("nepc_est"))),
+                                                                 column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
+                                                                                  left = 15,
+                                                                                  DT::dataTableOutput("nepv_fed"))),
+                                                                 column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
+                                                                                  left = 15,
+                                                                                  DT::dataTableOutput("nepv_est"))),
                                                                  column(12,
                                                                         absolutePanel(top = 0,
                                                                                    right = 0 , 
@@ -253,36 +183,58 @@ ui <- fluidPage(
                                                                                   left = 15,
                                                                                    DT::dataTableOutput("frag_est"))),
                                                                  column(12,
-                                                                        absolutePanel(top = 0, 
-                                                                                   right = 0 , 
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("nepc_fed"))),
+                                                                                  DT::dataTableOutput("dpg_fed"))),
                                                                  column(12,
-                                                                        absolutePanel(top = 0,
-                                                                                   right = 0 , 
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("nepc_est"))),
+                                                                                  DT::dataTableOutput("dpg_est"))),
                                                                  column(12,
-                                                                        absolutePanel(top = 0, 
-                                                                                   right = 0 ,  
-                                                                                  left = 15,
-                                                                                   DT::dataTableOutput("nepv_fed"))),
-                                                                 column(12,
-                                                                        absolutePanel(top = 0, 
-                                                                                   right = 0 ,  
-                                                                                  left = 15,
-                                                                                   DT::dataTableOutput("nepv_est")))),
-                                                   tabPanel("Resumo", br(),
-                                                            column(12,
-                                                                   absolutePanel(top = 0, 
-                                                                              right = 0 ,  
-                                                                             left = 15,
-                                                                              DT::dataTableOutput("agreg_dpgfed"))),
-                                                                column(12,
-                                                                       absolutePanel(top = 0, 
+                                                                    absolutePanel(top = 0,
                                                                                   right = 0 , 
+                                                                                  left = 15,
+                                                                                  DT::dataTableOutput("quoce_fed")
+                                                                                  #plotlyOutput("x2")
+                                                                    )), ## Tabelas que serao exibidas
+                                                                  column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 , 
+                                                                                  left = 15,
+                                                                                  DT::dataTableOutput("quoce_est"))),
+                                                                  column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
+                                                                                  left = 15,
+                                                                                  DT::dataTableOutput("quocp_fed"))),
+                                                                  column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
+                                                                                  left = 15,
+                                                                                  DT::dataTableOutput("quocp_est")))),
+                                                   tabPanel("Dados desagregados", br(),
+                                                                 column(12,
+                                                                    absolutePanel(top = 0,
+                                                                                 right = 0 , 
                                                                                  left = 15,
-                                                                                  DT::dataTableOutput("agreg_dpgest"))),
+                                                                                 DT::dataTableOutput("agreg_nepfed"))),
+                                                                 column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                 right = 0 ,  
+                                                                                 left = 15,
+                                                                                 DT::dataTableOutput("agreg_nepest"))),
+                                                                column(12,
+                                                                   absolutePanel(top = 0,
+                                                                                 right = 0 ,  
+                                                                                 left = 15,
+                                                                                 DT::dataTableOutput("agreg_nepvfed"))),
+                                                                column(12,
+                                                                   absolutePanel(top = 0,
+                                                                                 right = 0 , 
+                                                                                 left = 15,
+                                                                                 DT::dataTableOutput("agreg_nepvest"))),
                                                                 column(12,
                                                                        absolutePanel(top = 0,
                                                                                   right = 0 ,  
@@ -314,26 +266,35 @@ ui <- fluidPage(
                                                                                  left = 15,
                                                                                   DT::dataTableOutput("agreg_fragest"))),
                                                                 column(12,
-                                                                       absolutePanel(top = 0,
-                                                                                  right = 0 , 
+                                                                   absolutePanel(top = 0, 
+                                                                                 right = 0 ,  
                                                                                  left = 15,
-                                                                                  DT::dataTableOutput("agreg_nepfed"))),
+                                                                                 DT::dataTableOutput("agreg_dpgfed"))),
                                                                 column(12,
-                                                                       absolutePanel(top = 0, 
-                                                                                  right = 0 ,  
+                                                                   absolutePanel(top = 0, 
+                                                                                 right = 0 , 
                                                                                  left = 15,
-                                                                                  DT::dataTableOutput("agreg_nepest"))),
+                                                                                 DT::dataTableOutput("agreg_dpgest"))),
                                                                 column(12,
-                                                                       absolutePanel(top = 0,
-                                                                                  right = 0 ,  
+                                                                   absolutePanel(top = 0, 
+                                                                                 right = 0 ,  
                                                                                  left = 15,
-                                                                                  DT::dataTableOutput("agreg_nepvfed"))),
+                                                                                 DT::dataTableOutput("agreg_quocefed"))),
                                                                 column(12,
-                                                                       absolutePanel(top = 0,
-                                                                                  right = 0 , 
+                                                                   absolutePanel(top = 0, 
+                                                                                 right = 0 ,  
                                                                                  left = 15,
-                                                                                  DT::dataTableOutput("agreg_nepvest")))),
-                                                   tabPanel("Definição", htmlOutput("def_frag"))))))), ## Definicao dos indicadores
+                                                                                 DT::dataTableOutput("agreg_quoceest"))),
+                                                                column(12,
+                                                                   absolutePanel(top = 0, 
+                                                                                 right = 0 ,  
+                                                                                 left = 15,
+                                                                                 DT::dataTableOutput("agreg_quocpfed"))),
+                                                                column(12,
+                                                                   absolutePanel(top = 0, 
+                                                                                 right = 0 ,  
+                                                                                 left = 15,
+                                                                                 DT::dataTableOutput("agreg_quocpest"))))))))), ## Definicao dos indicadores
              
              tabPanel("Renovação parlamentar",  ## Definicao das ferramentas de selecao para a guia
                       ## "Renovação parlamentar"
@@ -375,7 +336,7 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabelas", br(),
+                                                    tabPanel("Tabela", br(),
                                                              column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
@@ -416,7 +377,7 @@ ui <- fluidPage(
                                                                                right = 0 ,  
                                                                               left = 15,
                                                                                DT::dataTableOutput("vol_ele_est")))), ## Tabelas que serao exibidas
-                                                             tabPanel("Resumo", br(),
+                                                             tabPanel("Dados desagregados", br(),
                                                                       column(12,
                                                                              absolutePanel(top = 0, 
                                                                                         right = 0 ,  
@@ -502,7 +463,7 @@ ui <- fluidPage(
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabelas", br(),
+                                                    tabPanel("Tabela", br(),
                                                                column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
@@ -523,7 +484,7 @@ ui <- fluidPage(
                                                                                right = 0 , 
                                                                               left = 15,
                                                                                DT::dataTableOutput("alien_fedp_uf")))),
-                                                    tabPanel("Resumo", br(),
+                                                    tabPanel("Dados desagregados", br(),
                                                              column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
@@ -570,7 +531,7 @@ ui <- fluidPage(
               text-align: left;
               z-index: 10;
               height: 3em;
-              margin-top: 80em;",
+              margin-top: 117em;",
                          
                          tags$div(class = "rodape-container",
                                   

@@ -9,14 +9,52 @@ library(tidyverse)
 
 # Objetivo
 #'        - Calcular os indicadores de fragmentacao legislativa:
-#'        - Numero de cadeiras,Fracionalizacao,Fragmentacao, Fragmentacao máxima,
-#'        - Desproporcionalidade de Gallagher, Numero efetivo 
-#'              de partidos por votos e por cadeiras;
+#'        - Numero efetivo de partidos eleitoral,Numero efetivo de partidos legislativo,
+#'        - Fracionalizacao, Fragmentacao máxima, Fragmentacao, 
+#'        - Desproporcionalidade, Quociente eleitoral e Quociente partidário
 #'        - Limpeza e padronizacao dos dados.             
         
 
+# 1. Formulas ------------------------------------------------------
 
-# 1. Numero de cadeiras ---------------------------------------------------------
+## Funcao para o calculo do numero efetivo de partidos 
+
+nep <- function(pe){
+  1/sum(pe*pe)
+}
+
+
+## Funcao para o calculo da fracionalizacao
+
+fracio <- function(x){
+  
+  1-(sum(x^2))
+}
+
+## Funcao para o calculo da fracionalizacao maxima
+
+fracio_max <- function(N, n){
+  
+  (N*(n-1))/(n*(N-1))
+  
+}
+
+## Funcao para o calculo da fragmentacao
+
+frag <- function(fracio, fracio_max){
+  
+  fracio/fracio_max
+}
+
+## Funcao para o calculo da desproporcionalidade de Gallagher
+
+desp_gallag <- function(V,C){
+  idx <- sqrt(sum((V*100 - C*100) ^ 2, na.rm = TRUE) / 2)
+}
+
+
+
+# 2. Numero de cadeiras ---------------------------------------------------------
 
 
 ## Filtra os candidatos que foram eleitos
@@ -87,6 +125,7 @@ df1 <- left_join(dfp,df1, by = c("ANO_ELEICAO",
                                  "SIGLA_PARTIDO"))
 
 df1 <- left_join(df1, dfc2, by = c("ANO_ELEICAO"))
+
 
 ### Deputado Estadual
 
@@ -192,42 +231,6 @@ de1 <- left_join(de1,dfr,
                  by = c("Ano da eleição", "UF"))
 
 
-# 2. Formulas ------------------------------------------------------
-
-## Funcao para o calculo da fracionalizacao
-
-fracio <- function(x){
-  
-  1-(sum(x^2))
-}
-
-## Funcao para o calculo da fracionalizacao maxima
-
-fracio_max <- function(N, n){
-  
-  (N*(n-1))/(n*(N-1))
-  
-}
-
-## Funcao para o calculo da fragmentacao
-
-frag <- function(fracio, fracio_max){
-  
-  fracio/fracio_max
-}
-
-## Funcao para o calculo da desproporcionalidade de Gallagher
-
-desp_gallag <- function(V,C){
-  idx <- sqrt(sum((V*100 - C*100) ^ 2, na.rm = TRUE) / 2)
-}
-
-## Funcao para o calculo do numero efetivo de partidos 
-
-nep <- function(pe){
-  1/sum(pe*pe)
-}
-
 
 # 3. Calculo dos indicadores ----------------------------------------------
 
@@ -242,14 +245,15 @@ for(ano in sort(unique(df1$`Ano da eleição`))){
   cat("Lendo",ano,"\n")
   t <- filter(df1,
               `Ano da eleição` == ano)
+  NEPV <- NA
+  t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
+  t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
   t$`Fracionalização` <- fracio(t$`Percentual de cadeiras conquistadas`)
   t$`Fracionalização máxima` <- fracio_max(513,t$`Número de partidos parlamentares`)
   t$`Fragmentação` <- frag(t$`Fracionalização`, 
                            t$`Fracionalização máxima`)
   t$`Desproporcionalidade` <- desp_gallag(t$`Percentual de votos conquistados`,
                                           t$`Percentual de cadeiras conquistadas`)
-  t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
-  t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
   frag_part_fed <- bind_rows(frag_part_fed,t)
 }
 
@@ -269,15 +273,15 @@ for(ano in sort(unique(de1$`Ano da eleição`))){
     t <- filter(de1,
                 `Ano da eleição` == ano & 
                   UF == uf)
+    NEPV <- NA
+    t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
+    t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
     t$`Fracionalização` <- fracio(t$`Percentual de cadeiras conquistadas`)
     t$`Fracionalização máxima` <- fracio_max(t$Vagas,t$`Número de partidos parlamentares`)
     t$`Fragmentação` <- frag(t$Fracionalização,
                              t$`Fracionalização máxima`)
     t$`Desproporcionalidade` <- desp_gallag(t$`Percentual de votos conquistados`,
                                             t$`Percentual de cadeiras conquistadas`)
-    NEPV <- NA
-    t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
-    t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
     frag_part_est <- bind_rows(frag_part_est,t)
   }
 }
@@ -302,13 +306,22 @@ frag_part_fed <- frag_part_fed %>%
          `Total de cadeiras conquistadas`,
          `Percentual de votos conquistados`,
          `Percentual de cadeiras conquistadas`,
+         `Número efetivo de partidos eleitoral`,
+         `Número efetivo de partidos legislativo`,
          Fracionalização,
          `Fracionalização máxima`,
          Fragmentação,
-         `Desproporcionalidade`, 
-         `Número efetivo de partidos eleitoral`,
-         `Número efetivo de partidos legislativo`)
+         `Desproporcionalidade`)
 
+frag_part_fed$`Número efetivo de partidos eleitoral` <- 
+  format(round(frag_part_fed$`Número efetivo de partidos eleitoral`, 
+               digits = 2), 
+         nsmall = 2)
+
+frag_part_fed$`Número efetivo de partidos legislativo` <- 
+  format(round(frag_part_fed$`Número efetivo de partidos legislativo`, 
+               digits = 2), 
+         nsmall = 2)
 
 frag_part_fed$`Percentual de votos conquistados`<- 
   format(round(frag_part_fed$`Percentual de votos conquistados`, 
@@ -340,17 +353,6 @@ frag_part_fed$`Desproporcionalidade` <-
                digits = 2), 
          nsmall = 2)
 
-frag_part_fed$`Número efetivo de partidos eleitoral` <- 
-  format(round(frag_part_fed$`Número efetivo de partidos eleitoral`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_part_fed$`Número efetivo de partidos legislativo` <- 
-  format(round(frag_part_fed$`Número efetivo de partidos legislativo`, 
-               digits = 2), 
-         nsmall = 2)
-
-
 frag_part_fed$`Votos válidos` <- gabi(frag_part_fed$`Votos válidos`)
 
 frag_part_fed$`Total de votos conquistados` <- gabi(frag_part_fed$`Total de votos conquistados`)
@@ -368,13 +370,22 @@ frag_part_est<- frag_part_est %>%
          `Total de cadeiras conquistadas`,
          `Percentual de votos conquistados`,
          `Percentual de cadeiras conquistadas`,
+         `Número efetivo de partidos eleitoral`,
+         `Número efetivo de partidos legislativo`,
          Fracionalização,
          `Fracionalização máxima`,
          Fragmentação,
-         `Desproporcionalidade`, 
-         `Número efetivo de partidos eleitoral`,
-         `Número efetivo de partidos legislativo`)
+         `Desproporcionalidade`)
 
+frag_part_est$`Número efetivo de partidos eleitoral` <- 
+  format(round(frag_part_est$`Número efetivo de partidos eleitoral`, 
+               digits = 2), 
+         nsmall = 2)
+
+frag_part_est$`Número efetivo de partidos legislativo` <- 
+  format(round(frag_part_est$`Número efetivo de partidos legislativo`, 
+               digits = 2), 
+         nsmall = 2)
 
 frag_part_est$`Percentual de votos conquistados`<- 
   format(round(frag_part_est$`Percentual de votos conquistados`, 
@@ -405,17 +416,6 @@ frag_part_est$`Desproporcionalidade` <-
   format(round(frag_part_est$`Desproporcionalidade`, 
                digits = 2), 
          nsmall = 2)
-
-frag_part_est$`Número efetivo de partidos eleitoral` <- 
-  format(round(frag_part_est$`Número efetivo de partidos eleitoral`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_part_est$`Número efetivo de partidos legislativo` <- 
-  format(round(frag_part_est$`Número efetivo de partidos legislativo`, 
-               digits = 2), 
-         nsmall = 2)
-
 
 frag_part_est$`Votos válidos` <- gabi(frag_part_est$`Votos válidos`)
 

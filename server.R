@@ -41,7 +41,9 @@ server <- function(input, output,session){
   
 ### Fragmentacao partidaria
   
+  
   carg <- reactive({
+    indicador <- input$INDICADORES_FRAG
     cargo <- input$DESCRICAO_CARGO2
     if(cargo == "Deputado Federal"){
       return(input$AGREGACAO_REGIONAL2)
@@ -50,41 +52,82 @@ server <- function(input, output,session){
   
   
   output$AGREGACAO_REGIONAL2 <- renderUI({
+    indicador <- input$INDICADORES_FRAG
     cargo <- input$DESCRICAO_CARGO2
-    if(cargo == "Deputado Federal"){
+    if(indicador != "Quociente eleitoral" &
+       indicador != "Quociente partidário" &
+       cargo == "Deputado Federal"){
       selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
                      choices = 
                        c("Brasil"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
-    }else if(cargo == "Deputado Estadual"){
+    }else if(indicador != "Quociente eleitoral" &
+             indicador != "Quociente partidário" &
+             cargo == "Deputado Estadual"){
       selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
                      choices = 
                        c("UF"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
+    } else if(indicador == "Quociente eleitoral" | 
+              indicador == "Quociente partidário"){
+      return()
       
     } else{
       return()
+    }
+    })
+  
+  
+  
+  agreg_q <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    if(indicador == "Quociente eleitoral" |
+       indicador == "Quociente partidário"){
+      return(input$UF1)
+    } 
+  })
+  
+  output$UF1 <- renderUI({
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    if(indicador == "Quociente eleitoral" |
+       indicador == "Quociente partidário"){
+      selectizeInput("UF1",
+                     label = NULL,
+                     choices = 
+                       c("","Todas UFs", "AC", "AL", "AM", "AP", "BA",
+                         "CE", "DF", "ES","GO", "MA", "MG",
+                         "MS", "MT", "PA", "PB", "PE", "PI",
+                         "PR", "RJ", "RN", "RO", "RR","RS", 
+                         "SC", "SE", "SP", "TO"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha uma UF'))
     }
   })
   
   
   
   agreg <- reactive({
+    indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
     if(agregacao == "UF"){
       return(input$UF2)
     } 
   })
- 
+  
   
   output$UF2 <- renderUI({
+    indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
     cargo <- input$DESCRICAO_CARGO2
-    if(cargo == "Deputado Estadual" & 
+    if(indicador != "Quociente eleitoral" &
+       indicador != "Quociente partidário" &
+      cargo == "Deputado Estadual" & 
        length(agregacao == "UF") > 0){
       selectizeInput("UF2",
                      label = NULL,
@@ -765,15 +808,29 @@ server <- function(input, output,session){
                    <h3 align = 'center'>
                    <font color = 'black'>
                    Definição dos indicadores de fragmentação partidária</h3>
-                   <h4><br />Desproporcionalidade de gallagher </h4>
+                   <h4><br />Número efetivo de partidos</h4>
                    <h5 align = 'justify'><br />
-                   O índice Gallagher consiste na diferença dos percentuais de votos e de cadeiras obtidas por cada partido.</h5>
+                   <p style='line-height:150%'>O conceito de número efetivo de partidos define o grau de fragmentação do sistema partidário, 
+                   através da ponderação da força relativa das legendas que compõem o parlamento. O valor calculado 
+                   aponta a quantidade de partidos com alguma relevância em um dado sistema político. O NEP é 
+                   calculado dividindo-se 1 pelo somatório do quadrado das proporções de <b>votos</b> ou de 
+                   <b>cadeiras</b> obtidos pelos partidos em uma dada eleição.</p>
+                   <p style='line-height:150%'>Quando calculado utilizando-se votos, o NEP exprime a fragmentação eleitoral do sistema partidário,
+                   isto é a quantidade de partidos que contam efetivamente para a competição em eleições. O NEP calculado a partir das cadeiras 
+                   exprime a fragmentação de uma casa legislativa em termos dos partidos com alguma força substantiva dentro da instituição. 
+                   O primeiro, o NEP eleitoral, é frequentemente utilizado para mensurar o grau de dispersão da competição política em um país, 
+                   isto é, para saber se a disputa por cargos envolve poucos ou muitos partidos. O segundo, o NEP legislativo, indica o grau de 
+                   dispersão do poder legislativo entre os partidos que compõem um órgão legislativo. Através dele pode-se saber quantos partidos 
+                   estão em condições de influenciar de forma efetiva o processo legislativo</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
-                   <p>
-                   DG = &radic;&sum;(vi - si)<sup>2</sup>/2,
-                   <p>onde vi = percentual de votos e si = percentual de cadeiras.</p>
-                   <p><br />      
+                   <p><i>Número efetivo de partidos eleitoral </i></p>
+                   NEP = 1/ &sum;(pv<sup>2</sup>),
+                   <p>onde pv = proporção de votos obtidos pelos partidos.</p>
+                   <p><i>Número efetivo de partidos legislativo </i></p>
+                   NEP = 1/ &sum;(pc<sup>2</sup>),
+                   <p>onde pc = proporção de cadeiras obtidas pelos partidos.</p>
+                   <p><br />
                    <h4>Fracionalização </h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>Este indicador tem por objetivo medir a dispersão partidária de um parlamento. 
@@ -782,13 +839,13 @@ server <- function(input, output,session){
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
-                   FC = 1 - &sum;(pe<sup>2</sup>), 
+                   F = 1 - &sum;(pe<sup>2</sup>), 
                    <p>onde pe = percentual de cadeiras ocupadas por partido.</p>
                    <p><br />                 
                    <h4>Fracionalização máxima</h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>A 'fracionalização máxima' não depende da votação dos partidos, mas da quantidade 
-                   de cadeiras e partidos com representação parlamentar<p>.</h5>
+                   de cadeiras e partidos com representação parlamentar.<p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
@@ -803,25 +860,43 @@ server <- function(input, output,session){
                    <strong>Fórmula: </strong>
                    <p>
                    FG = (Índice de fracionalização)/(Índice de fracionalização máxima)
-                   <p><br />                  
-                   <h4>Número efetivo de partidos</h4>
+                   <p>
+                   <h4><br />Desproporcionalidade</h4>
                    <h5 align = 'justify'><br />
-                   <p style='line-height:150%'>O conceito de número efetivo de partidos define o grau de fragmentação do sistema partidário, 
-                   através da ponderação da força relativa das legendas que compõem o parlamento. O valor calculado 
-                   aponta a quantidade de partidos com alguma relevância em um dado sistema político. O NEP é 
-                   calculado dividindo-se 1 pelo somatório do quadrado das proporções de <b>votos</b> ou de 
-                   <b>cadeiras</b> obtidos pelos partidos em uma dada eleição.</p></h5>
+                   O índice proposto por Gallagher consiste na diferença dos percentuais de votos e de cadeiras obtidas por cada partido.</h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
-                   NEP = 1/ &sum;(pe<sup>2</sup>),
-                   <p>onde pe = proporção de votos ou cadeiras obtidos pelos partidos.</p>
-                   <p><br />
+                   D = &radic;&sum;(vi - si)<sup>2</sup>/2,
+                   <p>onde vi = percentual de votos e si = percentual de cadeiras.</p>
+                   <p>
+                   <h4><br />Quociente Eleitoral</h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'>É o número mínimo de votos que um partido ou coligação deve atingir 
+                   em determinada UF e eleição para garantir uma vaga.</p></h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   QE = (Votos válidos)/(Número de vagas existentes)
+                   <p>
+                   <h4><br/ > Quociente Partidário</h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'>O indicador representa o número de vagas que o partido ou coligação obteve, 
+                   excluindo as vagas distribuídas por média.</p></h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   QP = Número de votos válidos do partido ou coligação/Quociente eleitoral
+                   <p>
                    <strong>Fonte:</strong> 
                    <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
                    países/ Organização de Wanderley Guilherme dos Santos, com a colaboração de Fabrícia Guimarães. -
                    Rio de Janeiro: Editora FGV, 2002); 
-                   <p>2. <a href='http://datapolitica.com.br/eleicao/metodologia.html'>Data Politica</a></p></font>")
+                   <p>2. <a href='http://datapolitica.com.br/eleicao/metodologia.html'>Data Politica</a></p>
+                   <p>3. <a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-eleitoral'>
+                   Quociente eleitoral - TSE </a></p>
+                   <p>4.<a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-partidario'>
+                   Quociente partidário - TSE </a></p></font>")
     HTML(note)
   }) 
   
