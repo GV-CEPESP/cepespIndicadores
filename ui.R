@@ -10,7 +10,9 @@
 
 ## Secao correspondente a interface que o usuario visualizara
 
-ui <- fluidPage(
+ui <- 
+  
+  fluidPage(
   
   tags$head(
     tags$style(HTML(".navbar .navbar-nav {float: left}
@@ -83,7 +85,8 @@ ui <- fluidPage(
                              
                       )),
              
-             tabPanel("CEPESP Indicadores"),
+             tabPanel("CEPESP Indicadores",
+                      div()),
              
              
           
@@ -126,12 +129,23 @@ ui <- fluidPage(
                                      
                         ),
                         
+                        
                         mainPanel(
                           
+                          
+                        
+                          
                           absolutePanel(top = 0, right = 0, left = 100,
+                                        
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Definição", htmlOutput("def_frag")),
-                                                    tabPanel("Tabela", br(),
+                                                    
+                                                       tabPanel("Resumo", br(),
+                                                                absolutePanel(top = 0, right = 0, left = 260,
+                                                                              actionBttn(inputId = "teste",
+                                                                                         color = "primary",
+                                                                                         icon = icon("cogs"), 
+                                                                                         style = "material-circle",
+                                                                                         size = "md")),
                                                                  column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 , 
@@ -215,6 +229,12 @@ ui <- fluidPage(
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("quocp_est")))),
                                                    tabPanel("Dados desagregados", br(),
+                                                            absolutePanel(top = 0, right = 0, left = 260,
+                                                                          actionBttn(inputId = "teste",
+                                                                                     color = "primary",
+                                                                                     icon = icon("cogs"), 
+                                                                                     style = "material-circle",
+                                                                                     size = "md")),
                                                                  column(12,
                                                                     absolutePanel(top = 0,
                                                                                  right = 0 , 
@@ -333,11 +353,18 @@ ui <- fluidPage(
                         ),
                         
                         mainPanel(
-                          
+                        
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabela", br(),
-                                                             column(12,
+                                                         tabPanel("Resumo", br(),
+                                                                  absolutePanel(top = 0, right = 0, left = 260,
+                                                                                actionBttn(inputId = "teste",
+                                                                                           color = "primary",
+                                                                                           icon = icon("cogs"), 
+                                                                                           style = "material-circle",
+                                                                                           size = "md")),
+                                                                  
+                                                                 column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
                                                                               left = 15,
@@ -378,6 +405,12 @@ ui <- fluidPage(
                                                                               left = 15,
                                                                                DT::dataTableOutput("vol_ele_est")))), ## Tabelas que serao exibidas
                                                              tabPanel("Dados desagregados", br(),
+                                                                      absolutePanel(top = 0, right = 0, left = 260,
+                                                                                    actionBttn(inputId = "teste",
+                                                                                               color = "primary",
+                                                                                               icon = icon("cogs"), 
+                                                                                               style = "material-circle",
+                                                                                               size = "md")),
                                                                       column(12,
                                                                              absolutePanel(top = 0, 
                                                                                         right = 0 ,  
@@ -417,8 +450,8 @@ ui <- fluidPage(
                                                                              absolutePanel(top = 0, 
                                                                                         right = 0 ,  
                                                                                        left = 15,
-                                                                                        DT::dataTableOutput("agreg_vol_ele_est")))),
-                                                    tabPanel("Definição", htmlOutput("def_renovp"))))))),
+                                                                                        DT::dataTableOutput("agreg_vol_ele_est"))))))
+                          ))),
              
              tabPanel("Alienação",  ## Definicao das ferramentas de selecao para a guia
                                     ## "Alienacao"
@@ -461,10 +494,18 @@ ui <- fluidPage(
                         
                         mainPanel(
                           
+                          
+                          
                           absolutePanel(top = 0, right = 0, left = 100,
                                         tabsetPanel(type = "pills",
-                                                    tabPanel("Tabela", br(),
-                                                               column(12,
+                                                       tabPanel("Resumo", br(),
+                                                                absolutePanel(top = 0, right = 0, left = 260,
+                                                                              actionBttn(inputId = "teste",
+                                                                                         color = "primary",
+                                                                                         icon = icon("cogs"), 
+                                                                                         style = "material-circle",
+                                                                                         size = "md")),
+                                                                   column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
                                                                               left = 15,
@@ -485,6 +526,12 @@ ui <- fluidPage(
                                                                               left = 15,
                                                                                DT::dataTableOutput("alien_fedp_uf")))),
                                                     tabPanel("Dados desagregados", br(),
+                                                             absolutePanel(top = 0, right = 0, left = 260,
+                                                                           actionBttn(inputId = "teste",
+                                                                                      color = "primary",
+                                                                                      icon = icon("cogs"), 
+                                                                                      style = "material-circle",
+                                                                                      size = "md")),
                                                              column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
@@ -504,8 +551,7 @@ ui <- fluidPage(
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 , 
                                                                               left = 15,
-                                                                               DT::dataTableOutput("agreg_alifedp_uf")))),
-                                                    tabPanel("Definição", htmlOutput("def_alien"))))))), ## Definicao dos indicadores
+                                                                               DT::dataTableOutput("agreg_alifedp_uf"))))))))), ## Definicao dos indicadores
              
              
              

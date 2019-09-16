@@ -236,579 +236,17 @@ server <- function(input, output,session){
   ## Definicao das atribuicoes das tabela dos indicadores e seus respectivos botoes de acao
   ## Definicao de cada indicador
   
-# 2.1. Distribuicao de cadeiras -------------------------------------------  
- 
-  ## Funcao para descricao dos indicadores de distribuicao de cadeiras
+# 2.1. Fragmentacao partidaria --------------------------------------------    
   
-  output$def_distc <- renderUI({
-    note <- paste0("<h3 align = 'center'>
-                   <font color = 'black'>
-                   Definição dos indicadores de distribuição de cadeiras </h3>
-                   <h4><br />Quociente Eleitoral</h4>
-                   <h5 align = 'justify'><br />
-                   <p style='line-height:150%'>É o número mínimo de votos que um partido ou coligação deve atingir 
-                   em determinada UF e eleição para garantir uma vaga.</p></h5>
-                   <p>
-                   <strong>Fórmula: </strong>
-                   <p>
-                   QE = (Votos válidos)/(Número de vagas existentes)
-                   <p>
-                   <strong>Fonte:</strong><a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-eleitoral'>
-                   Tribunal Superior Eleitoral - TSE </a></p>
-                   <p><br />
-                   <h4>Quociente Partidário</h4>
-                   <h5 align = 'justify'><br />
-                   <p style='line-height:150%'>O indicador representa o número de vagas que o partido ou coligação obteve, 
-                   excluindo as vagas distribuídas por média.</p></h5>
-                   <p>
-                   <strong>Fórmula: </strong>
-                   <p>
-                   QP = Número de votos válidos do partido ou coligação/Quociente eleitoral
-                   <p>
-                   <strong>Fonte:</strong><a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-partidario'>
-                   Tribunal Superior Eleitoral - TSE </a></p></font>")
-    HTML(note)
-  }) 
-  
- 
-# 2.1.1. Quociente eleitoral -----------------------------------------------
-  
-## Tabela para visualizacao
-
-
-### Deputado Federal
-  
-  depfed <- reactive({ ## Atributos da tabela
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
-    if(indicador == "Quociente eleitoral" & 
-       cargo == "Deputado Federal"){
-      return(input$quoce_fed)
-    }
-  })
-  
-  output$quoce_fed <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    bquoce_fed()
-  })
-  
-
-
-  bquoce_fed <- eventReactive(input$BCALC1, { ## Botao de acao
-    datatable(options = list(
-                autoWidth = TRUE,
-                select = TRUE,
-                ordering = TRUE, 
-                searching = TRUE,
-                lengthChange = FALSE,
-                lengthMenu = FALSE,
-                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
-                buttons = list(list(
-                  extend = 'csv',
-                  title = 'quoc_elei_dep_fed',
-                  bom = TRUE)
-                 #list(
-                  #extend = 'collection',
-                 #text = 'Plot',
-                #action =  DT::JS("function ( e, dt, node, config ) {
-                 #                           }
-                              
-                  #               ")) 
-              )),
-                class = "display",
-              #selection = list(mode = 'multiple',
-               #                target = 'row+column'), 
-              rownames = FALSE,
-              extensions = c('Buttons', 
-                             'Select'),{
-      indicador <- input$INDICADORES_DISTR
-      cargo <- input$DESCRICAO_CARGO1
-      uf <- input$UF
-      if(indicador == "Quociente eleitoral" & 
-         cargo == "Deputado Federal"){
-        if(input$UF == "Todas UFs"){
-          distcad_fed %>% 
-            select(`Ano da eleição`, 
-                   UF,
-                   `Quociente eleitoral`) %>% 
-            unique() %>% 
-            spread(`Ano da eleição`,
-                   `Quociente eleitoral`)
-        }else{
-          distcad_fed %>% 
-            dplyr::filter(UF == input$UF) %>% 
-            select(`Ano da eleição`, 
-                   UF,
-                   `Quociente eleitoral`) %>% 
-            unique() %>% 
-            spread(`Ano da eleição`,
-                   `Quociente eleitoral`)}
-        
-      }
-    })
-    
-  })
-  
-  
-  
-  output$x2 <-renderPlotly({
-  s = input$quoce_fed_rows_selected
-  if(length(s))
-  plot_ly(
-    data = distcad_fed2, 
-    x = ~`Ano da eleição`,
-    y = ~`Quociente eleitoral`,
-    size = ~`Quociente eleitoral`,
-    color = ~UF,
-    type = "scatter",
-    mode = "lines+markers") %>% 
-    layout(
-      title = "Quociente eleitoral: 1998-2018",
-      showlegend = TRUE) 
-    })
-  
- 
-  
-## Resumo
-  
-### Deputado Federal  
-  
-  ag_quocefed <- reactive({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
-    if(indicador == "Quociente eleitoral" &
-       cargo == "Deputado Federal"){
-      return(input$agreg_quocefed) 
-    }
-  })
-  
-  output$agreg_quocefed<- DT::renderDataTable(server = FALSE,{
-    bagreg_quocefed()
-  })
-  
-  bagreg_quocefed <- eventReactive(input$BCALC1, {
-    datatable(options = list(
-                autoWidth = TRUE,
-                scrollX = TRUE,
-                select = TRUE,
-                ordering = TRUE, 
-                searching = TRUE,
-                lengthChange = FALSE,
-                lengthMenu = FALSE,
-                columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
-                buttons = list(list(
-                  extend = 'csv',
-                  exportOptions = list(
-                    columns = ':visible'),
-                  title = 'quoc_elei_dep_fed_agreg',
-                  bom = TRUE),
-                  list(
-                    extend = 'colvis',
-                    text = 'Colunas')
-                  )), 
-                class = "display",
-              rownames = FALSE,
-              extensions = c('Buttons',
-                             'Select'),{
-      indicador <- input$INDICADORES_DISTR
-      cargo <- input$DESCRICAO_CARGO1
-      uf <- input$UF
-      if(indicador == "Quociente eleitoral" &
-         cargo == "Deputado Federal"){
-        if(input$UF == "Todas UFs"){
-          data = distcad_fed %>% 
-            unique() 
-        }
-        else{
-          data = distcad_fed %>% 
-            dplyr::filter(UF == input$UF) %>% 
-              unique()
-        }}
-    })
-  })  
-  
-
-## Tabela para visualizacao  
-    
-### Deputado Estadual
-  
-  depest <- reactive({ ## Atributos da tabela
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    if(indicador == "Quociente eleitoral" & 
-       cargo == "Deputado Estadual"){
-      return(input$quoce_est)
-    }
-  })
-  
-  output$quoce_est <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    bquoce_est()
-  })
-  
-  
-  bquoce_est <- eventReactive(input$BCALC1, { ## Botao de acao
-    datatable(options = list(
-                
-                autoWidth = TRUE,
-                select = TRUE,
-                ordering = TRUE, 
-                searching = TRUE,
-                lengthChange = FALSE,
-                lengthMenu = FALSE,
-                columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
-                buttons = list(list(
-                  extend = 'csv',
-                  title = 'quoc_elei_dep_est',
-                  bom = TRUE))), 
-                class = "display",
-              rownames = FALSE,
-              extensions = c('Buttons', 
-                             'Select'),{
-      indicador <- input$INDICADORES_DISTR
-      cargo <- input$DESCRICAO_CARGO1
-      uf <- input$UF
-      if(indicador == "Quociente eleitoral" & 
-         cargo == "Deputado Estadual"){
-        if(input$UF=="Todas UFs"){
-          expr = distcad_est %>% 
-            select(`Ano da eleição`, 
-                   UF,
-                   `Quociente eleitoral`) %>% 
-            unique %>% 
-            spread(`Ano da eleição`,
-                   `Quociente eleitoral`)
-          
-        }else{
-          expr = distcad_est %>% 
-            dplyr::filter(UF == input$UF) %>% 
-            select(`Ano da eleição`, 
-                   UF, 
-                   `Quociente eleitoral`) %>% 
-            unique %>% 
-            spread(`Ano da eleição`, 
-                   `Quociente eleitoral`)}
-      }
-    })
-  }) 
-  
-## Resumo
-  
-## Deputado Estadual  
-  
-  ag_est <- reactive({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    if(indicador == "Quociente eleitoral" & 
-       cargo == "Deputado Estadual"){
-      return(input$agreg_quoceest) 
-    }
-  })
-  
-  output$agreg_quoceest <- DT::renderDataTable(server = FALSE,{
-    bagreg_quoceest()
-  })
-  
-  bagreg_quoceest <- eventReactive(input$BCALC1, {
-    datatable(options = list(
-                autoWidth = TRUE,
-                scrollX = TRUE,
-                select = TRUE,
-                ordering = TRUE, 
-                searching = TRUE,
-                lengthChange = FALSE,
-                lengthMenu = FALSE,
-                columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
-                buttons = list(
-                               list(
-                  extend = 'csv',
-                  exportOptions = list(
-                    columns = ':visible'),
-                  title = 'quoc_elei_dep_est_agreg',
-                  bom = TRUE),
-                  list(                     
-                    extend = 'colvis',                     
-                    text = 'Colunas'))), 
-                class = "display",
-              rownames = FALSE,
-              extensions = c('Buttons',
-                             'Select'),{
-      indicador <- input$INDICADORES_DISTR
-      cargo <- input$DESCRICAO_CARGO1
-      uf <- input$UF
-      if(indicador == "Quociente eleitoral" & 
-         cargo == "Deputado Estadual"){
-        if(input$UF == "Todas UFs"){
-          expr = distcad_est %>% 
-           unique()
-        } else {
-          expr = distcad_est %>% 
-            dplyr::filter(UF == input$UF) %>% 
-            unique()
-          
-        }}
-    })
-  })  
-  
-# 2.1.2. Quociente partidario ---------------------------------------------
-
-## Tabela para visualizacao    
-  
-### Deputado Federal
-  
-  depfedp <- reactive({ ## Atributos da tabela
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    if(indicador == "Quociente partidário" & 
-       cargo == "Deputado Federal"){
-      return(input$quocp_fed)
-    }
-  })
-  
-  output$quocp_fed <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    bquocp_fed()
-  })
-  
-  bquocp_fed <- eventReactive(input$BCALC1, { ## Botao de acao
-    datatable(options = list(
-                autoWidth = TRUE,
-                ordering = TRUE,
-                select = TRUE,
-                searching = TRUE,
-                lengthChange = FALSE,
-                lengthMenu = FALSE,
-                columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
-                buttons = list(list(
-                  extend = 'csv',
-                  title = 'quoc_part_dep_fed',
-                  bom = TRUE))), 
-                class = "display",
-              rownames = FALSE,
-              extensions = c('Buttons',
-                             'Select'),{
-      indicador <- input$INDICADORES_DISTR
-      cargo <- input$DESCRICAO_CARGO1
-      uf <- input$UF
-      if(indicador == "Quociente partidário" & 
-         cargo == "Deputado Federal"){
-        if(input$UF=="Todas UFs"){
-          expr = distcad_fed %>% 
-            select(`Ano da eleição`, 
-                   UF, 
-                   `Sigla do partido`, 
-                   `Quociente partidário`)
-          
-        }else{
-          expr = distcad_fed %>% 
-            dplyr::filter(UF == input$UF) %>% 
-            select(`Ano da eleição`, 
-                   UF, 
-                   `Sigla do partido`, 
-                   `Quociente partidário`)
-        }
-        
-      }
-    })
-  })
-  
-## Resumo
-  
-# Deputado Federal
-  
-  ag_quocpfed <- reactive({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    if(indicador == "Quociente partidário" & 
-       cargo == "Deputado Federal"){
-      return(input$agreg_quocpfed)
-    }
-  })
-  
-  output$agreg_quocpfed <- DT::renderDataTable(server = FALSE,{
-    bagreg_quocpfed()
-  })
-  
-  bagreg_quocpfed <- eventReactive(input$BCALC1, {
-    datatable(options = list(
-                autoWidth = TRUE,
-                scrollX = TRUE,
-                select = TRUE,
-                ordering = TRUE, 
-                searching = TRUE,
-                lengthChange = FALSE,
-                lengthMenu = FALSE,
-                columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
-                buttons = list(
-                               list(
-                  extend = 'csv',
-                  exportOptions = list(
-                    columns = ':visible'),
-                  title = 'quoc_part_dep_fed_agreg',
-                  bom = TRUE),
-                  list(                     
-                    extend = 'colvis',                     
-                    text = 'Colunas'))), 
-                 class = "display",
-              rownames = FALSE,
-              extensions = c('Buttons',
-                             'Select'),{
-      indicador <- input$INDICADORES_DISTR
-      cargo <- input$DESCRICAO_CARGO1
-      uf <- input$UF
-      if(indicador == "Quociente partidário" & 
-         cargo == "Deputado Federal"){
-        if(input$UF == "Todas UFs"){
-          expr = distcad_fed %>% 
-            unique()
-          
-        }else{
-          expr = distcad_fed %>% 
-            dplyr::filter(UF == input$UF) %>% 
-            unique()}
-      }
-    })
-  })
-  
-## Tabela para visualizacao  
-  
-### Deputado estadual
-  
-  depestp <- reactive({ ## Atributos da tabela
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    if(indicador == "Quociente partidário" & 
-       cargo == "Deputado Estadual"){
-      return(input$quocp_est)
-    }
-  })
-  
-  output$quocp_est <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    bquocp_est()
-  })
-  
-  bquocp_est <- eventReactive(input$BCALC1, { ## Botao de acao
-    datatable(options = list(
-                autoWidth = TRUE,
-                select = TRUE,
-                ordering = TRUE, 
-                searching = TRUE,
-                lengthChange = FALSE,
-                lengthMenu = FALSE,
-                columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
-                buttons = list(list(
-                  extend = 'csv',
-                  title = 'quoc_part_dep_est',
-                  bom = TRUE))), 
-                class = "display",
-              rownames = FALSE,
-              extensions = c('Buttons', 
-                             'Select'),{
-      indicador <- input$INDICADORES_DISTR
-      cargo <- input$DESCRICAO_CARGO1
-      uf <- input$UF
-      if(indicador == "Quociente partidário" & 
-         cargo == "Deputado Estadual"){
-        if(input$UF=="Todas UFs"){
-          expr = distcad_est %>% 
-            select(`Ano da eleição`, 
-                   UF,
-                   `Sigla do partido`,
-                   `Quociente partidário`)
-          
-        }else{
-          expr = distcad_est %>% 
-            dplyr::filter(UF == input$UF) %>% 
-            select(`Ano da eleição`, 
-                   UF,
-                   `Sigla do partido`, 
-                   `Quociente partidário`)
-        }}
-    })
-  })
- 
-## Resumo
-  
-### Deputado Estadual  
-  
-  ag_qupcpest <- reactive({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    if(indicador == "Quociente partidário" & 
-       cargo == "Deputado Estadual"){
-      return(input$agreg_quocpest)
-    }
-  })
-  
-  output$agreg_quocpest <- DT::renderDataTable(server = FALSE,{
-    bagreg_quocpest()
-  })
-  
-  bagreg_quocpest <- eventReactive(input$BCALC1,{
-    datatable(options = list(
-                autoWidth = TRUE,
-                scrollX = TRUE,
-                select = TRUE,
-                ordering = TRUE, 
-                searching = TRUE,
-                lengthChange = FALSE,
-                lengthMenu = FALSE,
-                columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
-                buttons = list(
-                               list(
-                  extend = 'csv',
-                  exportOptions = list(
-                    columns = ':visible'),
-                  title = 'quoc_part_dep_est_agreg',
-                  bom = TRUE),
-                  list(                     
-                    extend = 'colvis',                     
-                    text = 'Colunas'))), 
-                class = "display",
-              rownames = FALSE,
-              extensions = c('Buttons',
-                             'Select'),{
-      indicador <- input$INDICADORES_DISTR
-      cargo <- input$DESCRICAO_CARGO1
-      uf <- input$UF
-      if(indicador == "Quociente partidário" & 
-         cargo == "Deputado Estadual"){
-        if(input$UF == "Todas UFs"){
-          expr = distcad_est %>% 
-            unique()
-        }else{          
-          expr = distcad_est %>% 
-            dplyr::filter(UF == input$UF) %>% 
-            unique()}
-      }
-    })
-  })
-
-# 2.2. Fragmentacao partidaria --------------------------------------------    
- 
+  toggleModal(session, 
+              "modal_fragp", 
+              toggle = "toggle")
   ## Funcao para descricao dos indicadores de fragmentacao partidaria
   
   output$def_frag <- renderUI({
     note <- paste0("
-                   <h3 align = 'center'>
                    <font color = 'black'>
-                   Definição dos indicadores de fragmentação partidária</h3>
-                   <h4><br />Número efetivo de partidos</h4>
+                   <h4>Número efetivo de partidos</h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>O conceito de número efetivo de partidos define o grau de fragmentação do sistema partidário, 
                    através da ponderação da força relativa das legendas que compõem o parlamento. O valor calculado 
@@ -900,7 +338,7 @@ server <- function(input, output,session){
     HTML(note)
   }) 
   
-# 2.2.1. Desproporcionalidade de gallagher --------------------------------  
+# 2.1.1. Desproporcionalidade de gallagher --------------------------------  
   
   ## Tabela para visualizacao    
   
@@ -1176,7 +614,7 @@ server <- function(input, output,session){
   })
   
   
-# 2.2.2. Fracionalizacao -------------------------------------------------- 
+# 2.1.2. Fracionalizacao -------------------------------------------------- 
 
 
 ## Tabela para visualizacao    
@@ -1450,7 +888,7 @@ server <- function(input, output,session){
       })
   })  
   
-# 2.2.3. Fracionalizacao maxima -------------------------------------------
+# 2.1.3. Fracionalizacao maxima -------------------------------------------
   
 ## Tabela para visualizacao  
   
@@ -1717,7 +1155,7 @@ server <- function(input, output,session){
       })
   })  
   
-# 2.2.4. Fragmentacao -----------------------------------------------------
+# 2.1.4. Fragmentacao -----------------------------------------------------
 
 ## Tabela para visualizacao  
     
@@ -1989,7 +1427,7 @@ server <- function(input, output,session){
       })
   })  
   
-# 2.2.5. Numero efetivo de partidos por cadeiras -----------------------------------------------------
+# 2.1.5. Numero efetivo de partidos por cadeiras -----------------------------------------------------
   
 ## Tabela para visualizacao  
   
@@ -2255,7 +1693,7 @@ server <- function(input, output,session){
     })
   })
   
-# 2.2.6. Numero efetivo de partidos por votos -----------------------------  
+# 2.1.6. Numero efetivo de partidos por votos -----------------------------  
   
   ## Tabela para visualizacao  
   
@@ -2522,17 +1960,548 @@ server <- function(input, output,session){
       })
   })  
   
+
+# 2.1.7. Quociente eleitoral -----------------------------------------------
   
-# 2.3. Renovacao parlamentar ----------------------------------------------  
+  ## Tabela para visualizacao
+  
+  
+  ### Deputado Federal
+  
+  depfed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente eleitoral" & 
+       cargo == "Deputado Federal"){
+      return(input$quoce_fed)
+    }
+  })
+  
+  output$quoce_fed <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bquoce_fed()
+  })
+  
+  
+  
+  bquoce_fed <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = TRUE,
+      select = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'quoc_elei_dep_fed',
+        bom = TRUE)
+        #list(
+        #extend = 'collection',
+        #text = 'Plot',
+        #action =  DT::JS("function ( e, dt, node, config ) {
+        #                           }
+        
+        #               ")) 
+      )),
+      class = "display",
+      #selection = list(mode = 'multiple',
+      #                target = 'row+column'), 
+      rownames = FALSE,
+      extensions = c('Buttons', 
+                     'Select'),{
+                       indicador <- input$INDICADORES_DISTR
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF
+                       if(indicador == "Quociente eleitoral" & 
+                          cargo == "Deputado Federal"){
+                         if(input$UF == "Todas UFs"){
+                           distcad_fed %>% 
+                             select(`Ano da eleição`, 
+                                    UF,
+                                    `Quociente eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Quociente eleitoral`)
+                         }else{
+                           distcad_fed %>% 
+                             dplyr::filter(UF == input$UF) %>% 
+                             select(`Ano da eleição`, 
+                                    UF,
+                                    `Quociente eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Quociente eleitoral`)}
+                         
+                       }
+                     })
+    
+  })
+  
+  
+  
+  output$x2 <-renderPlotly({
+    s = input$quoce_fed_rows_selected
+    if(length(s))
+      plot_ly(
+        data = distcad_fed2, 
+        x = ~`Ano da eleição`,
+        y = ~`Quociente eleitoral`,
+        size = ~`Quociente eleitoral`,
+        color = ~UF,
+        type = "scatter",
+        mode = "lines+markers") %>% 
+      layout(
+        title = "Quociente eleitoral: 1998-2018",
+        showlegend = TRUE) 
+  })
+  
+  
+  
+  ## Resumo
+  
+  ### Deputado Federal  
+  
+  ag_quocefed <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF
+    if(indicador == "Quociente eleitoral" &
+       cargo == "Deputado Federal"){
+      return(input$agreg_quocefed) 
+    }
+  })
+  
+  output$agreg_quocefed<- DT::renderDataTable(server = FALSE,{
+    bagreg_quocefed()
+  })
+  
+  bagreg_quocefed <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      autoWidth = TRUE,
+      scrollX = TRUE,
+      select = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'quoc_elei_dep_fed_agreg',
+        bom = TRUE),
+        list(
+          extend = 'colvis',
+          text = 'Colunas')
+      )), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'Select'),{
+                       indicador <- input$INDICADORES_DISTR
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF
+                       if(indicador == "Quociente eleitoral" &
+                          cargo == "Deputado Federal"){
+                         if(input$UF == "Todas UFs"){
+                           data = distcad_fed %>% 
+                             unique() 
+                         }
+                         else{
+                           data = distcad_fed %>% 
+                             dplyr::filter(UF == input$UF) %>% 
+                             unique()
+                         }}
+                     })
+  })  
+  
+  
+  ## Tabela para visualizacao  
+  
+  ### Deputado Estadual
+  
+  depest <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    if(indicador == "Quociente eleitoral" & 
+       cargo == "Deputado Estadual"){
+      return(input$quoce_est)
+    }
+  })
+  
+  output$quoce_est <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bquoce_est()
+  })
+  
+  
+  bquoce_est <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      
+      autoWidth = TRUE,
+      select = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'quoc_elei_dep_est',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons', 
+                     'Select'),{
+                       indicador <- input$INDICADORES_DISTR
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF
+                       if(indicador == "Quociente eleitoral" & 
+                          cargo == "Deputado Estadual"){
+                         if(input$UF=="Todas UFs"){
+                           expr = distcad_est %>% 
+                             select(`Ano da eleição`, 
+                                    UF,
+                                    `Quociente eleitoral`) %>% 
+                             unique %>% 
+                             spread(`Ano da eleição`,
+                                    `Quociente eleitoral`)
+                           
+                         }else{
+                           expr = distcad_est %>% 
+                             dplyr::filter(UF == input$UF) %>% 
+                             select(`Ano da eleição`, 
+                                    UF, 
+                                    `Quociente eleitoral`) %>% 
+                             unique %>% 
+                             spread(`Ano da eleição`, 
+                                    `Quociente eleitoral`)}
+                       }
+                     })
+  }) 
+  
+  ## Resumo
+  
+  ## Deputado Estadual  
+  
+  ag_est <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    if(indicador == "Quociente eleitoral" & 
+       cargo == "Deputado Estadual"){
+      return(input$agreg_quoceest) 
+    }
+  })
+  
+  output$agreg_quoceest <- DT::renderDataTable(server = FALSE,{
+    bagreg_quoceest()
+  })
+  
+  bagreg_quoceest <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      autoWidth = TRUE,
+      scrollX = TRUE,
+      select = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'quoc_elei_dep_est_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'Select'),{
+                       indicador <- input$INDICADORES_DISTR
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF
+                       if(indicador == "Quociente eleitoral" & 
+                          cargo == "Deputado Estadual"){
+                         if(input$UF == "Todas UFs"){
+                           expr = distcad_est %>% 
+                             unique()
+                         } else {
+                           expr = distcad_est %>% 
+                             dplyr::filter(UF == input$UF) %>% 
+                             unique()
+                           
+                         }}
+                     })
+  })  
+  
+# 2.1.8. Quociente partidario ---------------------------------------------
+  
+  ## Tabela para visualizacao    
+  
+  ### Deputado Federal
+  
+  depfedp <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    if(indicador == "Quociente partidário" & 
+       cargo == "Deputado Federal"){
+      return(input$quocp_fed)
+    }
+  })
+  
+  output$quocp_fed <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bquocp_fed()
+  })
+  
+  bquocp_fed <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = TRUE,
+      ordering = TRUE,
+      select = TRUE,
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'quoc_part_dep_fed',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'Select'),{
+                       indicador <- input$INDICADORES_DISTR
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF
+                       if(indicador == "Quociente partidário" & 
+                          cargo == "Deputado Federal"){
+                         if(input$UF=="Todas UFs"){
+                           expr = distcad_fed %>% 
+                             select(`Ano da eleição`, 
+                                    UF, 
+                                    `Sigla do partido`, 
+                                    `Quociente partidário`)
+                           
+                         }else{
+                           expr = distcad_fed %>% 
+                             dplyr::filter(UF == input$UF) %>% 
+                             select(`Ano da eleição`, 
+                                    UF, 
+                                    `Sigla do partido`, 
+                                    `Quociente partidário`)
+                         }
+                         
+                       }
+                     })
+  })
+  
+  ## Resumo
+  
+  # Deputado Federal
+  
+  ag_quocpfed <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    if(indicador == "Quociente partidário" & 
+       cargo == "Deputado Federal"){
+      return(input$agreg_quocpfed)
+    }
+  })
+  
+  output$agreg_quocpfed <- DT::renderDataTable(server = FALSE,{
+    bagreg_quocpfed()
+  })
+  
+  bagreg_quocpfed <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      autoWidth = TRUE,
+      scrollX = TRUE,
+      select = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'quoc_part_dep_fed_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'Select'),{
+                       indicador <- input$INDICADORES_DISTR
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF
+                       if(indicador == "Quociente partidário" & 
+                          cargo == "Deputado Federal"){
+                         if(input$UF == "Todas UFs"){
+                           expr = distcad_fed %>% 
+                             unique()
+                           
+                         }else{
+                           expr = distcad_fed %>% 
+                             dplyr::filter(UF == input$UF) %>% 
+                             unique()}
+                       }
+                     })
+  })
+  
+  ## Tabela para visualizacao  
+  
+  ### Deputado estadual
+  
+  depestp <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    if(indicador == "Quociente partidário" & 
+       cargo == "Deputado Estadual"){
+      return(input$quocp_est)
+    }
+  })
+  
+  output$quocp_est <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bquocp_est()
+  })
+  
+  bquocp_est <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = TRUE,
+      select = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'quoc_part_dep_est',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons', 
+                     'Select'),{
+                       indicador <- input$INDICADORES_DISTR
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF
+                       if(indicador == "Quociente partidário" & 
+                          cargo == "Deputado Estadual"){
+                         if(input$UF=="Todas UFs"){
+                           expr = distcad_est %>% 
+                             select(`Ano da eleição`, 
+                                    UF,
+                                    `Sigla do partido`,
+                                    `Quociente partidário`)
+                           
+                         }else{
+                           expr = distcad_est %>% 
+                             dplyr::filter(UF == input$UF) %>% 
+                             select(`Ano da eleição`, 
+                                    UF,
+                                    `Sigla do partido`, 
+                                    `Quociente partidário`)
+                         }}
+                     })
+  })
+  
+  ## Resumo
+  
+  ### Deputado Estadual  
+  
+  ag_qupcpest <- reactive({
+    indicador <- input$INDICADORES_DISTR
+    cargo <- input$DESCRICAO_CARGO1
+    if(indicador == "Quociente partidário" & 
+       cargo == "Deputado Estadual"){
+      return(input$agreg_quocpest)
+    }
+  })
+  
+  output$agreg_quocpest <- DT::renderDataTable(server = FALSE,{
+    bagreg_quocpest()
+  })
+  
+  bagreg_quocpest <- eventReactive(input$BCALC1,{
+    datatable(options = list(
+      autoWidth = TRUE,
+      scrollX = TRUE,
+      select = TRUE,
+      ordering = TRUE, 
+      searching = TRUE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-right', targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'quoc_part_dep_est_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'Select'),{
+                       indicador <- input$INDICADORES_DISTR
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF
+                       if(indicador == "Quociente partidário" & 
+                          cargo == "Deputado Estadual"){
+                         if(input$UF == "Todas UFs"){
+                           expr = distcad_est %>% 
+                             unique()
+                         }else{          
+                           expr = distcad_est %>% 
+                             dplyr::filter(UF == input$UF) %>% 
+                             unique()}
+                       }
+                     })
+  })
+  
+  
+# 2.2. Renovacao parlamentar ---------------------------------------------- 
+  
+  toggleModal(session, 
+              "modal_renovp", 
+              toggle = "toggle")
   
   ## Funcao para descricao dos indicadores de renovacao parlamentar
   
   output$def_renovp <- renderUI({
     note <- paste0("
-                   <h3 align = 'center'>
                    <font color = 'black'>
-                   Definição dos indicadores de renovação parlamentar</h3>
-                   <h4><br /> Conservação </h4>
+                   <h4> Conservação </h4>
                    <h5 align = 'justify'><br />
                    Exprime a percentagem dos reeleitos em relação ao total de recandidatos.</h5>
                    <p>
@@ -2544,7 +2513,7 @@ server <- function(input, output,session){
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>Esta fórmula computa o número total de representantes novos em uma legislatura,
                    comparado à composição da legislatura anterior.</p></h5>
-                   <p><
+                   <p>
                    <strong>Fórmula: </strong>
                    <p>
                    RN = (DESIST + DERROT)/(TOT) * 100
@@ -2579,7 +2548,7 @@ server <- function(input, output,session){
     HTML(note)
   }) 
   
-# 2.3.1. Conservacao ------------------------------------------------------
+# 2.2.1. Conservacao ------------------------------------------------------
   
   ## Tabela para visualizacao    
   
@@ -2822,7 +2791,7 @@ server <- function(input, output,session){
       })
   })
   
-# 2.3.2. Renovacao bruta --------------------------------------------------
+# 2.2.2. Renovacao bruta --------------------------------------------------
   
   ## Tabela para visualizacao    
   
@@ -3069,7 +3038,7 @@ server <- function(input, output,session){
   })
   
   
-# 2.3.3. Renovacao liquida ------------------------------------------------
+# 2.2.3. Renovacao liquida ------------------------------------------------
   
   ## Tabela para visualizacao    
   
@@ -3319,7 +3288,7 @@ server <- function(input, output,session){
   
   
   
-# 2.3.4. Volatilidade eleitoral -------------------------------------------
+# 2.2.4. Volatilidade eleitoral -------------------------------------------
   
   ## Tabela para visualizacao    
   
@@ -3568,16 +3537,25 @@ server <- function(input, output,session){
   
   
   
-# 2.4. Alienacao ----------------------------------------------------------  
+# 2.3. Alienacao ----------------------------------------------------------  
   
+  toggleModal(session, 
+              "modal_alien", 
+              toggle = "toggle")
+  
+  
+  observeEvent(input$teste,{
+  showModal(modalDialog(title = "Definição",
+              size = "l",
+              htmlOutput("def_alien"),
+              easyClose = TRUE))
+    })
   ## Funcao para descricao dos indicadores de alienacao
   
   output$def_alien <- renderUI({
     note <- paste0("
-                   <h3 align = 'center'>
                    <font color = 'black'>
-                   Definição dos indicadores de alienação</h3>
-                   <h4><br />Alienação absoluta</h4>
+                   <h4>Alienação absoluta</h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>Indicadores de alienação medem a participação nas eleições, por unidade eleitoral.
                    A 'alienação absoluta' é a soma da quantidade de abstenções, votos brancos e votos nulos
@@ -3605,7 +3583,7 @@ server <- function(input, output,session){
    
   
  
-# 2.4.1. Alienacao absoluta --------------------------------------------------------
+# 2.3.1. Alienacao absoluta --------------------------------------------------------
 
 
 ## Tabela para visualizacao    
@@ -3849,7 +3827,7 @@ server <- function(input, output,session){
     })
   })  
 
-# 2.4.2. Alienacao percentual ---------------------------------------------
+# 2.3.2. Alienacao percentual ---------------------------------------------
 
 ## Tabela para visualizacao
     
