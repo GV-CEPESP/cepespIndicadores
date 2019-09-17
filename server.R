@@ -9,7 +9,8 @@
 
 
 server <- function(input, output,session){
- 
+  
+
 # 1.1. Sobre --------------------------------------------------------------
 
   
@@ -236,11 +237,82 @@ server <- function(input, output,session){
   ## Definicao das atribuicoes das tabela dos indicadores e seus respectivos botoes de acao
   ## Definicao de cada indicador
   
-# 2.1. Fragmentacao partidaria --------------------------------------------    
+# 2.1. Fragmentacao legislativa --------------------------------------------    
   
-  toggleModal(session, 
-              "modal_fragp", 
-              toggle = "toggle")
+## Modal inicial
+    
+ m_frag <- 
+    observeEvent(input$CepespIndicadores, ignoreInit = TRUE, once = TRUE, {
+    if(input$CepespIndicadores == "Fragmentação legislativa") {
+       showModal(modalDialog(
+        title = "Definição",
+        footer = modalButton("Fechar"), 
+        size = "m",
+        htmlOutput("def_frag"),
+        easyClose = TRUE,
+        style = "
+        overflow: hidden;
+        overflow-y: scroll;
+        flex: 1 1 auto;
+        padding: 1rem;
+        max-width: 850px;
+        margin: 1.75rem auto;
+        max-height: 500px;
+        display: flex;
+        width: auto;
+        "
+        ))
+    }else{
+      return()
+    }
+    })
+  
+    
+  ## Modal para ajuda
+  
+  ### Resumo
+  
+  observeEvent(input$modal_frag,{
+    showModal(modalDialog(title = "Definição",
+                          footer = modalButton("Fechar"), 
+                          size = "m",
+                          htmlOutput("def_frag"),
+                          easyClose = TRUE,
+                          style = "
+                          overflow: hidden;
+                          overflow-y: scroll;
+                          flex: 1 1 auto;
+                          padding: 1rem;
+                          max-width: 850px;
+                          margin: 1.75rem auto;
+                          max-height: 500px;
+                          display: flex;
+                          width: auto;
+                          "))
+  })
+  
+  ### Dados agregados
+  
+  observeEvent(input$modal_frag_ag,{
+    showModal(modalDialog(title = "Definição",
+                          footer = modalButton("Fechar"), 
+                          size = "m",
+                          htmlOutput("def_frag"),
+                          easyClose = TRUE,
+                          style = "
+                          overflow: hidden;
+                          overflow-y: scroll;
+                          flex: 1 1 auto;
+                          padding: 1rem;
+                          max-width: 850px;
+                          margin: 1.75rem auto;
+                          max-height: 500px;
+                          display: flex;
+                          width: auto;
+                          "
+                          ))
+  })
+  
   ## Funcao para descricao dos indicadores de fragmentacao partidaria
   
   output$def_frag <- renderUI({
@@ -2492,9 +2564,77 @@ server <- function(input, output,session){
   
 # 2.2. Renovacao parlamentar ---------------------------------------------- 
   
-  toggleModal(session, 
-              "modal_renovp", 
-              toggle = "toggle")
+  ## Modal inicial
+  
+  m_renov <- observeEvent(input$CepespIndicadores, ignoreInit = TRUE, once = TRUE, {
+    if(input$CepespIndicadores == "Renovação parlamentar")  {
+      showModal(modalDialog(
+        title = "Definição",
+        footer = modalButton("Fechar"), 
+        size = "m",
+        htmlOutput("def_renovp"),
+        easyClose = TRUE,
+        style = "
+        overflow: hidden;
+        overflow-y: scroll;
+        flex: 1 1 auto;
+        padding: 1rem;
+        max-width: 850px;
+        margin: 1.75rem auto;
+        max-height: 500px;
+        display: flex;
+        width: auto;
+        "
+      ))
+    }else{
+      return()
+    }
+  })
+  
+  ## Modal para ajuda
+  
+  ### Resumo
+  
+  observeEvent(input$modal_renovp,{
+    showModal(modalDialog(title = "Definição",
+                          footer = modalButton("Fechar"), 
+                          size = "m",
+                          htmlOutput("def_renovp"),
+                          easyClose = TRUE,
+                          style = "
+                          overflow: hidden;
+                          overflow-y: scroll;
+                          flex: 1 1 auto;
+                          padding: 1rem;
+                          max-width: 850px;
+                          margin: 1.75rem auto;
+                          max-height: 500px;
+                          display: flex;
+                          width: auto;
+                          "))
+  })
+  
+  ### Dados agregados
+  
+  observeEvent(input$modal_renovp_ag,{
+    showModal(modalDialog(title = "Definição",
+                          footer = modalButton("Fechar"), 
+                          size = "m",
+                          htmlOutput("def_renovp"),
+                          easyClose = TRUE,
+                          style = "
+                          overflow: hidden;
+                          overflow-y: scroll;
+                          flex: 1 1 auto;
+                          padding: 1rem;
+                          max-width: 850px;
+                          margin: 1.75rem auto;
+                          max-height: 500px;
+                          display: flex;
+                          width: auto;
+                          "
+    ))
+  })
   
   ## Funcao para descricao dos indicadores de renovacao parlamentar
   
@@ -3539,17 +3679,78 @@ server <- function(input, output,session){
   
 # 2.3. Alienacao ----------------------------------------------------------  
   
-  toggleModal(session, 
-              "modal_alien", 
-              toggle = "toggle")
+  ## Modal inicial
   
+  m_alien <- observeEvent(input$CepespIndicadores, ignoreInit = TRUE, once = TRUE, {
+    if(input$CepespIndicadores == "Alienação")  {
+        showModal(modalDialog(
+        title = "Definição",
+        footer = modalButton("Fechar"), 
+        size = "m",
+        htmlOutput("def_alien"),
+        easyClose = TRUE,
+        style = "
+        overflow: hidden;
+        overflow-y: scroll;
+        flex: 1 1 auto;
+        padding: 1rem;
+        max-width: 850px;
+        margin: 1.75rem auto;
+        max-height: 500px;
+        display: flex;
+        width: auto;
+        "
+      ))
+    }else{
+      return()
+    }
+  })
   
-  observeEvent(input$teste,{
-  showModal(modalDialog(title = "Definição",
-              size = "l",
-              htmlOutput("def_alien"),
-              easyClose = TRUE))
-    })
+  ## Modal para ajuda
+  
+  ### Resumo
+  
+  observeEvent(input$modal_alien,{
+    showModal(modalDialog(title = "Definição",
+                          footer = modalButton("Fechar"), 
+                          size = "m",
+                          htmlOutput("def_alien"),
+                          easyClose = TRUE,
+                          style = "
+                          overflow: hidden;
+                          overflow-y: scroll;
+                          flex: 1 1 auto;
+                          padding: 1rem;
+                          max-width: 850px;
+                          margin: 1.75rem auto;
+                          max-height: 500px;
+                          display: flex;
+                          width: auto;
+                          "))
+  })
+  
+  ### Dados agregados
+  
+  observeEvent(input$modal_alien_ag,{
+    showModal(modalDialog(title = "Definição",
+                          footer = modalButton("Fechar"), 
+                          size = "m",
+                          htmlOutput("def_alien"),
+                          easyClose = TRUE,
+                          style = "
+                          overflow: hidden;
+                          overflow-y: scroll;
+                          flex: 1 1 auto;
+                          padding: 1rem;
+                          max-width: 850px;
+                          margin: 1.75rem auto;
+                          max-height: 500px;
+                          display: flex;
+                          width: auto;
+                          "
+                          ))
+  })
+  
   ## Funcao para descricao dos indicadores de alienacao
   
   output$def_alien <- renderUI({

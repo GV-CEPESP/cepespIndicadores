@@ -20,6 +20,8 @@ library(DT)
 library(shinyjs)
 library(crosstalk)
 
+
+
 # Objetivo
 #'        - Carregar os arquivos usados no app;
 #'        - Rodar o app.
