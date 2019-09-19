@@ -65,7 +65,7 @@ de <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018",
 
 ## Outros cargos BR
 
-pr_br <- get_elections(year = "1998,2002,2006,2010,2014,2018", 
+pr_br <- get_elections(year = "2002,2006,2010,2014,2018", 
                         position = "Presidente",
                         regional_aggregation = "Brasil", 
                         political_aggregation = "Consolidado")
@@ -83,7 +83,7 @@ sen_br <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018",
 
 ## Outros Cargos UF
 
-pr_uf <- get_elections(year = "1998,2002,2006,2010,2014,2018", 
+pr_uf <- get_elections(year = "2002,2006,2010,2014,2018", 
                     position = "Presidente",
                     regional_aggregation = "Estado", 
                     political_aggregation = "Consolidado")
@@ -195,6 +195,8 @@ vags_est <- left_join(vags_est,
                       by = c("ANO_ELEICAO", "UF"))
 
 est <- vags_est
+
+fed <- vags_fed
 
 
 ## Junta os bancos sobre o consolidado em um unico

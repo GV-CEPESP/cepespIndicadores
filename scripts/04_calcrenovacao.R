@@ -157,9 +157,9 @@ cand_de <- de %>%
 
 ## For loop que calcula os indicadores de renovacao parlamentar
 
-### Deputado Federal
+### Deputado Federal (Brasil)
 
-ind_eleicoes_fed <- list()
+ind_eleicoes_fed_br <- list()
 
 
 for(ano in sort(unique(df$ANO_ELEICAO))){
@@ -207,9 +207,9 @@ for(ano in sort(unique(df$ANO_ELEICAO))){
 ## Filtra nos bancos referentes as estatiscas gerais das
 ## eleicoes, somente os anos que estao sendo 
 ## utilizados no momento  
-  estatisticas_ano1 <- filter(df1,
+  estatisticas_ano1 <- filter(df1_br,
                             `Ano da eleição` == ano)
-  estatisticas_ano2 <- filter(df1,
+  estatisticas_ano2 <- filter(df1_br,
                             `Ano da eleição` == ano + 4)
   
 ## Acrescenta as colunas `Ano de eleição` bancos gerados
@@ -239,19 +239,138 @@ for(ano in sort(unique(df$ANO_ELEICAO))){
                                                       estatisticas_ano2$`Percentual de votos conquistados`)
   ## Empilha todas as eleicoes 
   
-  ind_eleicoes_fed <- bind_rows(ind_eleicoes_fed,indicadores1)
-  }
+  ind_eleicoes_fed_br <- bind_rows(ind_eleicoes_fed_br,indicadores1)
+}
 
 ## Remove as linhas desnecessarias
 
-ind_eleicoes_fed <- ind_eleicoes_fed[-c(6),]
+ind_eleicoes_fed_br <- ind_eleicoes_fed_br[-c(6),]
 
-ind_eleicoes_fed$Cargo <- "Deputado Federal"
+ind_eleicoes_fed_br$Cargo <- "Deputado Federal"
 
 ## Reorganiza a tabela
 
-ind_eleicoes_fed <- ind_eleicoes_fed %>% 
+ind_eleicoes_fed_br <- ind_eleicoes_fed_br %>% 
   select(`Ano da eleição`,
+         Cargo,
+         Reapresentação,
+         Desistência,
+         Reeleitos,
+         Derrotados,
+         Conservação,
+         `Renovação bruta`,
+         `Renovação líquida`,
+         `Volatilidade eleitoral`)
+
+### Deputado Federal (UF)
+
+
+ind_eleicoes_fed_uf <- list()
+
+
+for(ano in sort(unique(df$ANO_ELEICAO))){
+  for(uf in sort(unique(df$UF))){
+  cat("Lendo",ano,uf,"\n")
+  
+  ## Banco com os candidatos da proxima eleicao
+  
+  candidatos_ano2 <- filter(df,
+                            ANO_ELEICAO == ano + 4,
+                            UF == uf)
+  ## Bancos com os candidatos eleitos na primeira e
+  ## segunda eleicao de referencia
+  
+  eleitos_ano1 <- filter(cand_df,
+                         ANO_ELEICAO == ano,
+                         UF == uf)
+  eleitos_ano2 <- filter(df,
+                         ANO_ELEICAO == ano+4,
+                         UF == uf)
+  ## Filtra os candidatos que se reapresentaram na eleicao
+  ## seguinte e os que foram reeleitos
+  
+  eleitos_ano2 <- filter(eleitos_ano2, NUM_TITULO_ELEITORAL_CANDIDATO %in% 
+                           eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO)
+  indicadores1 <- filter(candidatos_ano2,
+                         NUM_TITULO_ELEITORAL_CANDIDATO %in%
+                           eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO) %>% 
+    summarise(
+      `Reapresentação` = n()
+    )
+  
+  ## Dos candidatos que se reapresentaram na eleicao seguinte a
+  ## eleicao de referencia, filtra-se somente os eleitos
+  
+  indicadores1$`Ano da eleição` <- ano + 4
+  indicadores1$UF <- uf
+  indicadores2 <- eleitos_ano2 %>% 
+    filter(DESC_SIT_TOT_TURNO == "ELEITO"|
+             DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA"|
+             DESC_SIT_TOT_TURNO == "ELEITO POR QP") %>% 
+    summarise(
+      Reeleitos = n()
+    )
+  
+  ## Remove os bancos que nao serao mais utilizados
+  
+  rm(eleitos_ano1,eleitos_ano2)
+  
+  ## Filtra nos bancos referentes as estatiscas gerais das
+  ## eleicoes, somente os anos que estao sendo 
+  ## utilizados no momento  
+  estatisticas_ano1 <- filter(df1_uf,
+                              `Ano da eleição` == ano,
+                              UF == uf)
+  estatisticas_ano2 <- filter(df1_uf,
+                              `Ano da eleição` == ano + 4,
+                              UF == uf)
+  
+  ## Acrescenta as colunas `Ano de eleição` bancos gerados
+  
+  indicadores1$`Ano da eleição` <- ano + 4
+  indicadores1$UF <- uf
+  indicadores2$`Ano da eleição` <- ano + 4
+  indicadores2$UF <- uf
+  
+  ## Junta os bancos em um unico  
+  
+  indicadores1 <- left_join(indicadores1,
+                            indicadores2, 
+                            by = c("Ano da eleição",
+                                   "UF"))
+  
+  ## Calculo dos indicadores de renovacao parlamentar  
+  
+  indicadores1$Derrotados <- indicadores1$Reapresentação - indicadores1$Reeleitos
+  indicadores1$Desistência <- unique(estatisticas_ano1$Vagas) - indicadores1$Reapresentação
+  if(indicadores1$Reapresentação > 0){
+    indicadores1$`Conservação` <- conserv(indicadores1$Reeleitos, 
+                                          indicadores1$Derrotados)
+    indicadores1$`Renovação bruta` <- renov_br(indicadores1$Desistência,
+                                               indicadores1$Derrotados, 
+                                               unique(estatisticas_ano1$Vagas))
+    indicadores1$`Renovação líquida` <- renov_liq(indicadores1$Derrotados, 
+                                                  indicadores1$Reeleitos)
+  }
+  indicadores1$`Volatilidade eleitoral` <- volat_elet(estatisticas_ano1$`Percentual de votos conquistados`,
+                                                      estatisticas_ano2$`Percentual de votos conquistados`)
+  ## Empilha todas as eleicoes 
+  
+  ind_eleicoes_fed_uf <- bind_rows(ind_eleicoes_fed_uf,indicadores1)
+  }
+}
+
+## Remove as linhas desnecessarias
+
+ind_eleicoes_fed_uf <- ind_eleicoes_fed_uf[-c(136:162),]
+
+ind_eleicoes_fed_uf$Cargo <- "Deputado Federal"
+
+## Reorganiza a tabela
+
+ind_eleicoes_fed_uf <- ind_eleicoes_fed_uf %>% 
+  select(`Ano da eleição`,
+         UF,
          Cargo,
          Reapresentação,
          Desistência,
@@ -408,25 +527,47 @@ ind_eleicoes_est <- ind_eleicoes_est %>%
 
 ## Padroniza o formato dos indices numericos
 
-### Deputado Federal
+### Deputado Federal (Brasil)
 
-ind_eleicoes_fed$Conservação <- 
-  format(round(ind_eleicoes_fed$Conservação, 
+ind_eleicoes_fed_br$Conservação <- 
+  format(round(ind_eleicoes_fed_br$Conservação, 
                digits = 2),  
          nsmall = 2)
 
-ind_eleicoes_fed$`Renovação bruta` <- 
-  format(round(ind_eleicoes_fed$`Renovação bruta`, 
+ind_eleicoes_fed_br$`Renovação bruta` <- 
+  format(round(ind_eleicoes_fed_br$`Renovação bruta`, 
                digits = 2),  
          nsmall = 2)
 
-ind_eleicoes_fed$`Renovação líquida` <- 
-  format(round(ind_eleicoes_fed$`Renovação líquida`, 
+ind_eleicoes_fed_br$`Renovação líquida` <- 
+  format(round(ind_eleicoes_fed_br$`Renovação líquida`, 
                digits = 2),  
          nsmall = 2)
 
-ind_eleicoes_fed$`Volatilidade eleitoral` <- 
-  format(round(ind_eleicoes_fed$`Volatilidade eleitoral`, 
+ind_eleicoes_fed_br$`Volatilidade eleitoral` <- 
+  format(round(ind_eleicoes_fed_br$`Volatilidade eleitoral`, 
+               digits = 2),  
+         nsmall = 2)
+
+### Deputado Federal (UF)
+
+ind_eleicoes_fed_uf$Conservação <- 
+  format(round(ind_eleicoes_fed_uf$Conservação, 
+               digits = 2),  
+         nsmall = 2)
+
+ind_eleicoes_fed_uf$`Renovação bruta` <- 
+  format(round(ind_eleicoes_fed_uf$`Renovação bruta`, 
+               digits = 2),  
+         nsmall = 2)
+
+ind_eleicoes_fed_uf$`Renovação líquida` <- 
+  format(round(ind_eleicoes_fed_uf$`Renovação líquida`, 
+               digits = 2),  
+         nsmall = 2)
+
+ind_eleicoes_fed_uf$`Volatilidade eleitoral` <- 
+  format(round(ind_eleicoes_fed_uf$`Volatilidade eleitoral`, 
                digits = 2),  
          nsmall = 2)
 
@@ -465,9 +606,13 @@ ind_eleicoes_est[is.na(ind_eleicoes_est)] <- 0
 
 ## Salva o arquivo referente aos indicadores de renovacao parlamentar em .csv
 
-### Deputado Federal
+### Deputado Federal (Brasil)
 
-write.csv(ind_eleicoes_fed, "data/output/renov_parl_fed.csv")
+write.csv(ind_eleicoes_fed_br, "data/output/renov_parl_fed_br.csv")
+
+### Deputado Federal (UF)
+
+write.csv(ind_eleicoes_fed_uf, "data/output/renov_parl_fed_uf.csv")
 
 ### Deputado Estadual
 
@@ -475,5 +620,5 @@ write.csv(ind_eleicoes_est, "data/output/renov_parl_est.csv")
 
 ## Remove os arquivos que nao serao mais utilizados
 
-rm(estatisticas_ano1,estatisticas_ano2,cand_de,cand_df,de,de1,df,df1,eleicao_94,ind_eleicoes_est,
-   ind_eleicoes_fed,indicadores1,indicadores2,candidatos_ano2,candidatos)
+rm(estatisticas_ano1,estatisticas_ano2,cand_de,cand_df,de,de1,df,df1_br,df1_uf,eleicao_94,ind_eleicoes_est,
+   ind_eleicoes_fed_br, ind_eleicoes_fed_uf,indicadores1,indicadores2,candidatos_ano2,candidatos)
