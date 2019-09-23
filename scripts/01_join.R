@@ -93,10 +93,37 @@ gov_uf <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018",
                      regional_aggregation = "Estado", 
                      political_aggregation = "Consolidado")
 
-sen_uf <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
+sen_uf1 <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
                      position = "Senador",
                      regional_aggregation = "Estado", 
                      political_aggregation = "Consolidado")
+
+sen_uf <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
+                        position = "Senador",
+                        regional_aggregation = "Brasil", 
+                        political_aggregation = "Candidato")
+
+
+sen_uft <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
+                         position = "Senador",
+                         regional_aggregation = "Estado", 
+                         political_aggregation = "Partido")
+
+
+x <- as.data.frame(table(sen_uf$ANO_ELEICAO, sen_uf$DESC_SIT_TOT_TURNO))
+
+x <- x[-c(1:12, 19:42),]
+
+x <- x %>% 
+  dplyr::select(Var1, Freq) %>% 
+  rename("ANO_ELEICAO" = "Var1",
+         "Vagas" = "Freq")
+
+x$ANO_ELEICAO <- as.character(x$ANO_ELEICAO)
+
+sen_uf$ANO_ELEICAO <- as.character(sen_uf$ANO_ELEICAO)
+
+sen_uf <- left_join(sen_uf, x, by = "ANO_ELEICAO")
 
 
 
@@ -207,12 +234,12 @@ cons_br <- rbind(pr_br, gov_br, sen_br, dfcb, decb)
 
 ## Consolidado UF
 
-cons_uf <- rbind(pr_uf, gov_uf,sen_uf, dfc, dec)
+cons_uf <- rbind(pr_uf, gov_uf,sen_uf1, dfc, dec)
 
 
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
 rm(dec,dec1,dfc,dfc1,decb,dfcb,pr_br, pr_uf,
-   gov_br,gov_uf, sen_br, sen_uf,dep)
+   gov_br,gov_uf, sen_br, dep)
 
 
