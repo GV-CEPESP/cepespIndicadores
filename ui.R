@@ -87,12 +87,10 @@ ui <-
              
              tabPanel("CEPESP Indicadores",
                       div()),
+           
              
-             
-          
-             tabPanel("Fragmentação legislativa",  ## Definicao das ferramentas de selecao para a guia
+             tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
                                                    ## "Fragmentacao legislativa"
-                      
                       
                       sidebarLayout(
                         
@@ -315,6 +313,7 @@ ui <-
                                                                                  right = 0 ,  
                                                                                  left = 15,
                                                                                  DT::dataTableOutput("agreg_quocpest"))))))))), ## Definicao dos indicadores
+          
              
              tabPanel("Renovação parlamentar",  ## Definicao das ferramentas de selecao para a guia
                       ## "Renovação parlamentar"
@@ -450,8 +449,9 @@ ui <-
                                                                              absolutePanel(top = 0, 
                                                                                         right = 0 ,  
                                                                                        left = 15,
-                                                                                        DT::dataTableOutput("agreg_vol_ele_est"))))))
-                          ))),
+                                                                                        DT::dataTableOutput("agreg_vol_ele_est"))))))))),
+             
+            
              
              tabPanel("Alienação",  ## Definicao das ferramentas de selecao para a guia
                                     ## "Alienacao"

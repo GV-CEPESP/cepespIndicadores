@@ -87,11 +87,6 @@ det <- de %>%
 sen_br <- sen_uf %>% 
   filter(DESC_SIT_TOT_TURNO == "ELEITO")
 
-### Senador (UF)
-
-sen_uf <- sen_uf %>% 
-  filter(DESC_SIT_TOT_TURNO == "ELEITO")
-
 
 ## Soma as cadeiras conquistadas pelos partidos em cada UF
 
@@ -127,29 +122,6 @@ det <- det %>%
   rename("CARGO" = "DESCRICAO_CARGO")
 
 
-### Senador (Brasil)
-
-
-sen_br <- sen_br %>% 
-  dplyr::group_by(ANO_ELEICAO,
-                  SIGLA_UE,
-                  DESCRICAO_CARGO,
-                  Vagas,
-                  SIGLA_PARTIDO) %>% 
-  dplyr::summarise("Cadeiras conquistadas por UF" = n())
-
-
-### Senador (UF)
-
-sen_uf <- sen_uf %>% 
-  dplyr::group_by(ANO_ELEICAO,
-                  SIGLA_UE,
-                  DESCRICAO_CARGO,
-                  Vagas,
-                  SIGLA_PARTIDO) %>% 
-  dplyr::summarise("Total de cadeiras conquistadas" = n())
-
-
 ## Soma o total de cadeiras conquistadas pelos partidos em cada eleicao
 
 ### Deputado Federal (Brasil)
@@ -171,8 +143,7 @@ sen_br <- sen_br %>%
                   Vagas,
                   SIGLA_PARTIDO) %>% 
   dplyr::summarise(
-    "Total de cadeiras conquistadas" = 
-      sum(`Cadeiras conquistadas por UF`))
+    "Total de cadeiras conquistadas" = n())
 
 ## Junta os bancos de cadeiras conquistadas por UF com o total de cadeiras conquistadas
 
@@ -236,37 +207,13 @@ sen_uf2 <- sen_uf1 %>%
 
 sen_uft1$ANO_ELEICAO <- as.character(sen_uft1$ANO_ELEICAO)
 
-sen_br <- left_join(sen_uft1,sen_br, by = c("ANO_ELEICAO", 
+sen_uf2$ANO_ELEICAO <- as.character(sen_uf2$ANO_ELEICAO)
+
+sen_br <- left_join(sen_br, sen_uft1, by = c("ANO_ELEICAO", 
                                           "SIGLA_PARTIDO"))
 
-sen_uf1$ANO_ELEICAO <- as.character(sen_uf1$ANO_ELEICAO)
+sen_br <- left_join(sen_br, sen_uf2, by = c("ANO_ELEICAO"))
 
-sen_br <- left_join(sen_br, sen_uf1, by = c("ANO_ELEICAO"))
-
-
-### Senador (UF)
-
-sen_uft2 <- sen_uft %>% 
-  dplyr::group_by(ANO_ELEICAO, UF,SIGLA_PARTIDO) %>% 
-  summarise(
-    "Total de votos conquistados" = sum(QTDE_VOTOS)
-  )
-
-
-sen_uf1 <- sen_uf1 %>% 
-  group_by(ANO_ELEICAO,UF) %>% 
-  summarise(
-    "Votos válidos" = sum(QT_VOTOS_NOMINAIS)
-  )
-
-sen_uft2$ANO_ELEICAO <- as.character(sen_uft2$ANO_ELEICAO)
-
-sen_uf1$ANO_ELEICAO <- as.character(sen_uf1$ANO_ELEICAO)
-
-sen_uf <- left_join(sen_uft2,sen_uf1, by = c("ANO_ELEICAO",
-                                             "UF"))
-
-sen_uf <- left_join(sen_uf, sen_uf1, by = c("ANO_ELEICAO"))
 
 ## Calcula o percentual de votos conquistados por cada partido
 
@@ -285,7 +232,8 @@ de1$`Percentual de votos conquistados` <- de1$VOT_PART_UF/de1$VOTOS_VALIDOS_UF
 
 ### Senador (Brasil)
 
-sen_uf2$`Percentual de votos conquistados` <- sen_uf2$`Total de votos conquistados`/sen_uf2$`Votos válidos`
+sen_br$`Percentual de votos conquistados` <- sen_br$`Total de votos conquistados`/sen_br$`Votos válidos`
+
 
 ## Percentual de cadeiras conquistas pelos partidos
 
@@ -301,10 +249,9 @@ df1_uf$`Percentual de cadeiras conquistadas` <- df1_uf$`Total de cadeiras conqui
 
 de1$`Percentual de cadeiras conquistadas` <- de1$`Cadeiras conquistadas por UF`/de1$VAGAS
 
-
 ### Senador (Brasil)
 
-sen_uf2$`Percentual de cadeiras conquistadas` <- sen_uf2$`Total de cadeiras conquistadas`/sen_uf2$Vagas
+sen_br$`Percentual de cadeiras conquistadas` <- sen_br$`Total de cadeiras conquistadas`/sen_br$Vagas
 
 ## Elimina colunas desnecessarias, renomeia as colunas restantes e padroniza-as
 
@@ -380,7 +327,7 @@ de1 <- na.omit(de1)
 
 ### Senador (Brasil)
 
-sen_uf2 <- sen_uf2 %>% 
+sen_br <- sen_br %>% 
   dplyr::select(ANO_ELEICAO,
                 DESCRICAO_CARGO,
                 Vagas,
@@ -394,9 +341,7 @@ sen_uf2 <- sen_uf2 %>%
                 "Cargo" = "DESCRICAO_CARGO",
                 "Sigla do partido" = "SIGLA_PARTIDO")
 
-sen_uf2$Cargo <- str_to_title(sen_uf2$Cargo)
-
-sen_uf2 <- na.omit(sen_uf2)
+sen_br$Cargo <- str_to_title(sen_br$Cargo)
 
 
 ## Calcula o numero de partidos parlamentares para cada eleicao
@@ -440,14 +385,18 @@ de1 <- left_join(de1,dfr,
 
 ### Senador (Brasil)
 
-senr <- sen_uf2 %>% 
+senr <- sen_br %>% 
   group_by(`Ano da eleição`) %>% 
   summarise(
     `Número de partidos parlamentares` = n()
   )
 
-sen_uf2 <- left_join(sen_uf2,senr, 
+sen_br <- left_join(sen_br,senr, 
                  by = "Ano da eleição")
+
+
+rm(sen_uf1,sen_uf2,sen_uft,sen_uft1,senr)
+
 
 # 3. Calculo dos indicadores ----------------------------------------------
 
@@ -533,9 +482,9 @@ for(ano in sort(unique(de1$`Ano da eleição`))){
 frag_part_sen_br <- list()
 
 
-for(ano in sort(unique(sen_uf2$`Ano da eleição`))){
+for(ano in sort(unique(sen_br$`Ano da eleição`))){
   cat("Lendo",ano,"\n")
-  t <- filter(sen_uf2,
+  t <- filter(sen_br,
               `Ano da eleição` == ano)
   NEPV <- NA
   t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
@@ -548,7 +497,6 @@ for(ano in sort(unique(sen_uf2$`Ano da eleição`))){
                                           t$`Percentual de cadeiras conquistadas`)
   frag_part_sen_br <- bind_rows(frag_part_sen_br,t)
 }
-
 
 
 # 4. Padronizacao dos dados -----------------------------------------------
@@ -835,12 +783,9 @@ write.csv(frag_part_est, "data/output/frag_part_est.csv")
 write.csv(frag_part_sen_br, "data/output/frag_part_sen_br.csv")
 
 
-### Senador (UF)
-
-
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
-rm(frag_part_fed_br,frag_part_fed_uf,frag_part_est,dft_br,
-   dft_uf,det,dfc2,dfp_br,dfp_uf,dfr_br,dfr_uf,t,est,fed)
+rm(frag_part_fed_br,frag_part_fed_uf,frag_part_est,frag_part_sen_br,dft_br,
+   dft_uf,det,dfc2,dfp_br,dfp_uf,dfr_br,dfr_uf,t,est,fed, sen_br, sen_uf)
 
 

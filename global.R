@@ -20,6 +20,8 @@ library(DT)
 library(shinyjs)
 library(crosstalk)
 
+library(shinydashboardPlus)
+
 
 
 # Objetivo
@@ -41,6 +43,4 @@ for(i in files){
 }
 
 rm(df)
-
-
 

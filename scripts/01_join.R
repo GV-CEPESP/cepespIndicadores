@@ -110,23 +110,6 @@ sen_uft <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018",
                          political_aggregation = "Partido")
 
 
-x <- as.data.frame(table(sen_uf$ANO_ELEICAO, sen_uf$DESC_SIT_TOT_TURNO))
-
-x <- x[-c(1:12, 19:42),]
-
-x <- x %>% 
-  dplyr::select(Var1, Freq) %>% 
-  rename("ANO_ELEICAO" = "Var1",
-         "Vagas" = "Freq")
-
-x$ANO_ELEICAO <- as.character(x$ANO_ELEICAO)
-
-sen_uf$ANO_ELEICAO <- as.character(sen_uf$ANO_ELEICAO)
-
-sen_uf <- left_join(sen_uf, x, by = "ANO_ELEICAO")
-
-
-
 ## Carrega os arquivos de vagas
 
 ### Deputado Federal
@@ -192,6 +175,29 @@ dec1 <- dec %>%
     VOTOS_VALIDOS_UF = sum(QT_VOTOS_NOMINAIS,
                            QT_VOTOS_LEGENDA)
   )
+
+## Calculo das vagas para senador em cada eleicao
+
+### Senador (Brasil)
+
+
+x <- as.data.frame(table(sen_uf$ANO_ELEICAO, sen_uf$DESC_SIT_TOT_TURNO))
+
+x <- x[-c(1:12, 19:42),]
+
+x <- x %>% 
+  dplyr::select(Var1, Freq) %>% 
+  rename("ANO_ELEICAO" = "Var1",
+         "Vagas" = "Freq")
+
+x$ANO_ELEICAO <- as.character(x$ANO_ELEICAO)
+
+sen_uf$ANO_ELEICAO <- as.character(sen_uf$ANO_ELEICAO)
+
+sen_uf <- left_join(sen_uf, x, by = "ANO_ELEICAO")
+
+rm(x)
+
 
 
 # 3. Join ---------------------------------------------------------
