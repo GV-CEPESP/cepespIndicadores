@@ -125,27 +125,27 @@ cons_uf$`Alienação percentual` <- round(100*(cons_uf$`Quantidade de abstençõ
 
 ### Brasil
 
-cons_br$`Quantidade de abstenções` <- gabi(cons_br$`Quantidade de abstenções`)
+cons_br$`Quantidade de abstenções` <- pont_virg(cons_br$`Quantidade de abstenções`)
 
-cons_br$`Quantidade de votos brancos` <- gabi(cons_br$`Quantidade de votos brancos`)
+cons_br$`Quantidade de votos brancos` <- pont_virg(cons_br$`Quantidade de votos brancos`)
 
-cons_br$`Quantidade de votos nulos` <- gabi(cons_br$`Quantidade de votos nulos`)
+cons_br$`Quantidade de votos nulos` <- pont_virg(cons_br$`Quantidade de votos nulos`)
 
-cons_br$`Quantidade de eleitores aptos` <- gabi(cons_br$`Quantidade de eleitores aptos`)
+cons_br$`Quantidade de eleitores aptos` <- pont_virg(cons_br$`Quantidade de eleitores aptos`)
 
-cons_br$`Alienação absoluta` <- gabi(cons_br$`Alienação absoluta`)
+cons_br$`Alienação absoluta` <- pont_virg(cons_br$`Alienação absoluta`)
 
 ### UF
 
-cons_uf$`Quantidade de abstenções` <- gabi(cons_uf$`Quantidade de abstenções`)
+cons_uf$`Quantidade de abstenções` <- pont_virg(cons_uf$`Quantidade de abstenções`)
 
-cons_uf$`Quantidade de votos brancos` <- gabi(cons_uf$`Quantidade de votos brancos`)
+cons_uf$`Quantidade de votos brancos` <- pont_virg(cons_uf$`Quantidade de votos brancos`)
 
-cons_uf$`Quantidade de votos nulos` <- gabi(cons_uf$`Quantidade de votos nulos`)
+cons_uf$`Quantidade de votos nulos` <- pont_virg(cons_uf$`Quantidade de votos nulos`)
 
-cons_uf$`Quantidade de eleitores aptos` <- gabi(cons_uf$`Quantidade de eleitores aptos`)
+cons_uf$`Quantidade de eleitores aptos` <- pont_virg(cons_uf$`Quantidade de eleitores aptos`)
 
-cons_uf$`Alienação absoluta` <- gabi(cons_uf$`Alienação absoluta`)
+cons_uf$`Alienação absoluta` <- pont_virg(cons_uf$`Alienação absoluta`)
 
 
 

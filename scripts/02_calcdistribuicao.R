@@ -22,14 +22,16 @@ library(tidyverse)
 ### Deputado Federal
 
 
-vags_fed$QUOCIENTE_ELEITORAL <- as.numeric(vags_fed$VOTOS_VALIDOS_UF)/as.numeric(vags_fed$VAGAS)
+vags_fed$QUOCIENTE_ELEITORAL <- as.numeric(vags_fed$VOTOS_VALIDOS_UF)/
+                                as.numeric(vags_fed$VAGAS)
 
 
 
 ### Deputado Estadual
 
 
-vags_est$QUOCIENTE_ELEITORAL <- as.numeric(vags_est$VOTOS_VALIDOS_UF)/as.numeric(vags_est$VAGAS)
+vags_est$QUOCIENTE_ELEITORAL <- as.numeric(vags_est$VOTOS_VALIDOS_UF)/
+                                as.numeric(vags_est$VAGAS)
 
 
 
@@ -39,56 +41,46 @@ vags_est$QUOCIENTE_ELEITORAL <- as.numeric(vags_est$VOTOS_VALIDOS_UF)/as.numeric
 
 ### Deputado Federal
 
-vags_fed$QUOCIENTE_PARTIDARIO <- as.numeric(vags_fed$VOT_PART_UF)/as.numeric(vags_fed$QUOCIENTE_ELEITORAL)
+vags_fed$QUOCIENTE_PARTIDARIO <- as.numeric(vags_fed$VOT_PART_UF)/
+                                 as.numeric(vags_fed$QUOCIENTE_ELEITORAL)
 
 ### Deputado Estadual
 
-vags_est$QUOCIENTE_PARTIDARIO <- as.numeric(vags_est$VOT_PART_UF)/as.numeric(vags_est$QUOCIENTE_ELEITORAL)
+vags_est$QUOCIENTE_PARTIDARIO <- as.numeric(vags_est$VOT_PART_UF)/
+                                 as.numeric(vags_est$QUOCIENTE_ELEITORAL)
 
 
 
 # 3. Padronizacao dos dados -----------------------------------------------
 
-## Funcao para padronizacao do formato numerico dos dados
-
-gabi <- function(string){
-  ifelse(string > 1000000, 
-         (paste0(floor(string/1000000),".",floor(string/1000)-floor(string/1000000)*1000,
-                 ".", substr(floor(string), start = nchar(floor(string))- 2, stop = nchar(floor(string))),
-                 ifelse(round(string,2)==floor(string),"",
-                        paste0(",",substr(1 + round(string,2)-round(string,0),start = 3, stop = 4))))),
-         (paste0(floor(string/1000),".", substr(floor(string), start = nchar(floor(string))- 2, stop = 
-                                                  nchar(floor(string))),
-                 ifelse(round(string,2)==round(string,0),"",
-                        paste0(",",substr(1 + round(string,2)-floor(string),start = 3, stop = 4))))))
-}
-
-
-## Aplicacao da funcao 'gabi' e arredondamento dos valores dos indicadores calculados
+## Aplicacao da funcao 'pont_virg' e arredondamento dos valores dos indicadores calculados
 
 ### Deputado federal
+
+options(OutDec= ",")
+
 
 vags_fed$QUOCIENTE_ELEITORAL<- round(vags_fed$QUOCIENTE_ELEITORAL, digits = 0)
 
 vags_fed$QUOCIENTE_PARTIDARIO <- round(vags_fed$QUOCIENTE_PARTIDARIO, digits = 2)
 
-vags_fed$QUOCIENTE_ELEITORAL <- gabi(vags_fed$QUOCIENTE_ELEITORAL)
+vags_fed$QUOCIENTE_ELEITORAL <- pont_virg(vags_fed$QUOCIENTE_ELEITORAL)
 
-vags_fed$VOTOS_VALIDOS_UF <- gabi(vags_fed$VOTOS_VALIDOS_UF)
+vags_fed$VOTOS_VALIDOS_UF <- pont_virg(vags_fed$VOTOS_VALIDOS_UF)
 
-vags_fed$VOT_PART_UF <- gabi(vags_fed$VOT_PART_UF)
+vags_fed$VOT_PART_UF <- pont_virg(vags_fed$VOT_PART_UF)
 
 
 ### Deputado estadual
 
-vags_est$QUOCIENTE_ELEITORAL <-gabi(vags_est$QUOCIENTE_ELEITORAL)
-
 vags_est$QUOCIENTE_PARTIDARIO <- round(vags_est$QUOCIENTE_PARTIDARIO, digits = 2)
 
+vags_est$QUOCIENTE_ELEITORAL <-pont_virg(vags_est$QUOCIENTE_ELEITORAL)
 
-vags_est$VOTOS_VALIDOS_UF <- gabi(vags_est$VOTOS_VALIDOS_UF)
 
-vags_est$VOT_PART_UF <- gabi(vags_est$VOT_PART_UF)
+vags_est$VOTOS_VALIDOS_UF <- pont_virg(vags_est$VOTOS_VALIDOS_UF)
+
+vags_est$VOT_PART_UF <- pont_virg(vags_est$VOT_PART_UF)
 
 
 

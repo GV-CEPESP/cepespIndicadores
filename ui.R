@@ -87,8 +87,8 @@ ui <-
              
              tabPanel("CEPESP Indicadores",
                       div()),
-           
              
+            
              tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
                                                    ## "Fragmentacao legislativa"
                       
@@ -109,7 +109,7 @@ ui <-
                                      
                                      selectizeInput(inputId = "DESCRICAO_CARGO2",
                                                     label = NULL,
-                                                    choices = c("","Deputado Federal", "Deputado Estadual"), ## Cargos disponiveis
+                                                    choices = c("","Senador","Deputado Federal", "Deputado Estadual"), ## Cargos disponiveis
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um cargo')),
                                      
@@ -559,6 +559,11 @@ ui <-
              tabPanel("Sobre", htmlOutput("sobre")) ## Guia correspondente ao "Sobre"
              
             ),
+  
+  tags$style(type="text/css",
+             ".shiny-output-error { visibility: hidden; }",
+             ".shiny-output-error:before { visibility: hidden; }"
+  ),
   
   tags$footer(class = "rodape",
               

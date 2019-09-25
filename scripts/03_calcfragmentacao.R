@@ -502,14 +502,16 @@ for(ano in sort(unique(sen_br$`Ano da eleição`))){
 # 4. Padronizacao dos dados -----------------------------------------------
 
 
-## Arredonda em duas casas decimas os indices calculados
+## Remove as colunas desnecessarias e arredonda em duas casas decimais os indices calculados
 
 
 ### Deputado Federal (Brasil)
 
+options(OutDec= ",")
+
 frag_part_fed_br <- frag_part_fed_br %>% 
   select(`Ano da eleição`, 
-         Cargo, 
+         Cargo,
          `Votos válidos`,
          `Sigla do partido`,
          `Total de votos conquistados`,
@@ -522,6 +524,8 @@ frag_part_fed_br <- frag_part_fed_br %>%
          `Fracionalização máxima`,
          Fragmentação,
          `Desproporcionalidade`)
+
+frag_part_fed_br$`Ano da eleição` <- as.character(frag_part_fed_br$`Ano da eleição`)
 
 frag_part_fed_br$`Número efetivo de partidos eleitoral` <- 
   format(round(frag_part_fed_br$`Número efetivo de partidos eleitoral`, 
@@ -563,13 +567,13 @@ frag_part_fed_br$`Desproporcionalidade` <-
                digits = 2), 
          nsmall = 2)
 
-frag_part_fed_br$`Votos válidos` <- gabi(frag_part_fed_br$`Votos válidos`)
+frag_part_fed_br$`Votos válidos` <- pont_virg(frag_part_fed_br$`Votos válidos`)
 
-frag_part_fed_br$`Total de votos conquistados` <- gabi(frag_part_fed_br$`Total de votos conquistados`)
+frag_part_fed_br$`Total de votos conquistados` <- pont_virg(frag_part_fed_br$`Total de votos conquistados`)
 
 ### Deputado Federal (UF)
 
-frag_part_fed_uf <- frag_part_uf %>% 
+frag_part_fed_uf <- frag_part_fed_uf %>% 
   select(`Ano da eleição`,
          UF,
          Cargo, 
@@ -627,9 +631,9 @@ frag_part_fed_uf$`Desproporcionalidade` <-
                digits = 2), 
          nsmall = 2)
 
-frag_part_fed_uf$`Votos válidos` <- gabi(frag_part_fed_uf$`Votos válidos`)
+frag_part_fed_uf$`Votos válidos` <- pont_virg(frag_part_fed_uf$`Votos válidos`)
 
-frag_part_fed_uf$`Total de votos conquistados` <- gabi(frag_part_fed_uf$`Total de votos conquistados`)
+frag_part_fed_uf$`Total de votos conquistados` <- pont_virg(frag_part_fed_uf$`Total de votos conquistados`)
 
 ### Deputado Estadual
 
@@ -691,9 +695,9 @@ frag_part_est$`Desproporcionalidade` <-
                digits = 2), 
          nsmall = 2)
 
-frag_part_est$`Votos válidos` <- gabi(frag_part_est$`Votos válidos`)
+frag_part_est$`Votos válidos` <- pont_virg(frag_part_est$`Votos válidos`)
 
-frag_part_est$`Total de votos conquistados` <- gabi(frag_part_est$`Total de votos conquistados`)
+frag_part_est$`Total de votos conquistados` <- pont_virg(frag_part_est$`Total de votos conquistados`)
 
 
 ### Senador (Brasil)
@@ -702,7 +706,6 @@ frag_part_est$`Total de votos conquistados` <- gabi(frag_part_est$`Total de voto
 frag_part_sen_br<- frag_part_sen_br %>% 
   select(`Ano da eleição`,
          Cargo,
-         Vagas,
          `Votos válidos`,
          `Sigla do partido`,
          `Total de votos conquistados`,
@@ -756,9 +759,16 @@ frag_part_sen_br$`Desproporcionalidade` <-
                digits = 2), 
          nsmall = 2)
 
-frag_part_sen_br$`Votos válidos` <- gabi(frag_part_sen_br$`Votos válidos`)
+frag_part_sen_br$`Votos válidos` <- pont_virg(frag_part_sen_br$`Votos válidos`)
 
-frag_part_sen_br$`Total de votos conquistados` <- gabi(frag_part_sen_br$`Total de votos conquistados`)
+frag_part_sen_br$`Total de votos conquistados` <- pont_virg(frag_part_sen_br$`Total de votos conquistados`)
+
+
+frag_part_br <- bind_rows(frag_part_fed_br, frag_part_sen_br)
+
+
+frag_part_uf <- bind_rows(frag_part_fed_uf, frag_part_est)
+
 
 # 5. Salva o arquivo ------------------------------------------------------
 

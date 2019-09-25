@@ -17,6 +17,7 @@ library(stringi)
 
 ## Bancos de Indicadores
 
+source("scripts/funcoes.R", encoding = "UTF-8")
 source("scripts/01_join.R", encoding = "UTF-8")
 source("scripts/02_calcdistribuicao.R", encoding = "UTF-8")
 source("scripts/03_calcfragmentacao.R", encoding = "UTF-8")

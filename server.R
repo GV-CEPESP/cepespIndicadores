@@ -46,7 +46,8 @@ server <- function(input, output,session){
   carg <- reactive({
     indicador <- input$INDICADORES_FRAG
     cargo <- input$DESCRICAO_CARGO2
-    if(cargo == "Deputado Federal"){
+    if(indicador != "Quociente eleitoral" &
+       indicador != "Quociente partidário"){
       return(input$AGREGACAO_REGIONAL2)
     } 
   })
@@ -61,7 +62,7 @@ server <- function(input, output,session){
       selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
                      choices = 
-                       c("Brasil"),
+                       c("Brasil", "UF"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
     }else if(indicador != "Quociente eleitoral" &
@@ -76,6 +77,16 @@ server <- function(input, output,session){
     } else if(indicador == "Quociente eleitoral" | 
               indicador == "Quociente partidário"){
       return()
+      
+    } else if(indicador != "Quociente eleitoral" &
+              indicador != "Quociente partidário" &
+              cargo == "Senador"){
+      selectizeInput("AGREGACAO_REGIONAL2",
+                     label = NULL,
+                     choices = 
+                       c("Brasil"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha uma agregação regional'))
       
     } else{
       return()
@@ -116,8 +127,12 @@ server <- function(input, output,session){
   agreg <- reactive({
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(agregacao == "UF"){
+    if(length(agregacao == "UF") > 0 &
+       indicador != "Quociente eleitoral" &
+       indicador != "Quociente partidário"){
       return(input$UF2)
+    } else{
+      return()
     } 
   })
   
@@ -126,10 +141,8 @@ server <- function(input, output,session){
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL2
     cargo <- input$DESCRICAO_CARGO2
-    if(indicador != "Quociente eleitoral" &
-       indicador != "Quociente partidário" &
-      cargo == "Deputado Estadual" & 
-       length(agregacao == "UF") > 0){
+    if(cargo == "Deputado Estadual" &
+      length(agregacao == "UF") > 0){
       selectizeInput("UF2",
                      label = NULL,
                      choices = 
@@ -140,6 +153,21 @@ server <- function(input, output,session){
                          "SC", "SE", "SP", "TO"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma UF'))
+    } else if(cargo == "Deputado Federal" &
+              agregacao == "UF"){
+      selectizeInput("UF2",
+                     label = NULL,
+                     choices = 
+                       c("","Todas UFs", "AC", "AL", "AM", "AP", "BA",
+                         "CE", "DF", "ES","GO", "MA", "MG",
+                         "MS", "MT", "PA", "PB", "PE", "PI",
+                         "PR", "RJ", "RN", "RO", "RR","RS", 
+                         "SC", "SE", "SP", "TO"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha uma UF'))
+    } else{
+      return()
+    
     }
   })
   
@@ -414,7 +442,7 @@ server <- function(input, output,session){
   
   ## Tabela para visualizacao    
   
-  ### Deputado Federal
+  ### Deputado Federal (Brasil)
   
   
   depfedg <- reactive({ ## Atributos da tabela
@@ -453,7 +481,7 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Desproporcionalidade" & 
             agregacao == "Brasil"){
-          frag_part_fed %>% 
+          frag_part_fed_br %>% 
             ungroup() %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
@@ -514,7 +542,7 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Desproporcionalidade" & 
            agregacao == "Brasil"){
-          data = frag_part_fed %>% 
+          data = frag_part_fed_br %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             select(`Ano da eleição`,
                    Cargo,
@@ -732,7 +760,7 @@ server <- function(input, output,session){
       uf <- input$UF2
       if(indicador == "Fracionalização" & 
          agregacao == "Brasil"){
-        frag_part_fed %>% 
+        frag_part_fed_br %>% 
           ungroup() %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
@@ -793,7 +821,7 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização" & 
          agregacao == "Brasil"){
-        data = frag_part_fed %>% 
+        data = frag_part_fed_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           select(`Ano da eleição`,
                  Cargo,
@@ -1002,7 +1030,7 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização máxima" & 
          agregacao == "Brasil"){
-        frag_part_fed %>% 
+        frag_part_fed_br %>% 
           ungroup() %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
@@ -1062,7 +1090,7 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização máxima" & 
          agregacao == "Brasil"){
-        data = frag_part_fed %>% 
+        data = frag_part_fed_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           select(`Ano da eleição`,
                  Cargo,
@@ -1270,7 +1298,7 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fragmentação" &
          agregacao == "Brasil"){
-        frag_part_fed %>% 
+        frag_part_fed_br %>% 
           ungroup() %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
@@ -1330,7 +1358,7 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fragmentação" & 
          agregacao == "Brasil"){
-        data = frag_part_fed %>% 
+        data = frag_part_fed_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           select(`Ano da eleição`,
                  Cargo,
@@ -1541,7 +1569,7 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Número efetivo de partidos legislativo" & 
          agregacao == "Brasil"){
-        frag_part_fed %>% 
+        frag_part_fed_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
                         `Número efetivo de partidos legislativo`) %>% 
@@ -1600,7 +1628,7 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Número efetivo de partidos legislativo" & 
           agregacao == "Brasil"){
-        data = frag_part_fed %>% 
+        data = frag_part_fed_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
           select(`Ano da eleição`,
                  Cargo,
@@ -1807,7 +1835,7 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "Brasil"){
-          frag_part_fed %>% 
+          frag_part_fed_br %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           `Número efetivo de partidos eleitoral`) %>% 
@@ -1866,7 +1894,7 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "Brasil"){
-          data = frag_part_fed %>% 
+          data = frag_part_fed_br %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             select(`Ano da eleição`,
                    Cargo,
