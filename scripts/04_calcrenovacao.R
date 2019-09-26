@@ -512,7 +512,6 @@ ind_eleicoes_est <- ind_eleicoes_est %>%
   select(`Ano da eleição`,
          UF,
          Cargo,
-         Vagas,
          Reapresentação,
          Desistência,
          Reeleitos,
@@ -579,6 +578,7 @@ ind_eleicoes_est$Conservação <-
                digits = 2),  
          nsmall = 2)
 
+
 ind_eleicoes_est$`Renovação bruta` <- 
   format(round(ind_eleicoes_est$`Renovação bruta`, 
                digits = 2),  
@@ -594,31 +594,27 @@ ind_eleicoes_est$`Volatilidade eleitoral` <-
                digits = 2),  
          nsmall = 2)
 
-ind_eleicoes_est$Conservação <- as.numeric(ind_eleicoes_est$Conservação)
+## Junta os bancos de acordo com seu nivel de agregacao regional
 
-ind_eleicoes_est$`Renovação bruta` <- as.numeric(ind_eleicoes_est$`Renovação bruta`)
+### Renovacao parlamentar (UF)
 
-ind_eleicoes_est$`Renovação líquida` <- as.numeric(ind_eleicoes_est$`Renovação líquida`)
-
-ind_eleicoes_est[is.na(ind_eleicoes_est)] <- 0
+ind_eleicoes_uf <- bind_rows(ind_eleicoes_fed_uf, ind_eleicoes_est)
 
 # 4. Salvando os arquivos -------------------------------------------------
 
 ## Salva o arquivo referente aos indicadores de renovacao parlamentar em .csv
 
-### Deputado Federal (Brasil)
+### Renovacao parlamentar (Brasil)
 
-write.csv(ind_eleicoes_fed_br, "data/output/renov_parl_fed_br.csv")
+write.csv(ind_eleicoes_fed_br, "data/output/renov_parl_br.csv")
 
-### Deputado Federal (UF)
+### Renovacao parlamentar (UF)
 
-write.csv(ind_eleicoes_fed_uf, "data/output/renov_parl_fed_uf.csv")
+write.csv(ind_eleicoes_uf, "data/output/renov_parl_uf.csv")
 
-### Deputado Estadual
-
-write.csv(ind_eleicoes_est, "data/output/renov_parl_est.csv")
 
 ## Remove os arquivos que nao serao mais utilizados
 
-rm(estatisticas_ano1,estatisticas_ano2,cand_de,cand_df,de,de1,df,df1_br,df1_uf,eleicao_94,ind_eleicoes_est,
-   ind_eleicoes_fed_br, ind_eleicoes_fed_uf,indicadores1,indicadores2,candidatos_ano2,candidatos)
+rm(estatisticas_ano1,estatisticas_ano2,cand_de,cand_df,de,de1,df,df1_br,
+   df1_uf,eleicao_94,ind_eleicoes_est,ind_eleicoes_fed_br, ind_eleicoes_fed_uf, 
+   ind_eleicoes_uf,indicadores1,indicadores2,candidatos_ano2,candidatos)
