@@ -28,9 +28,9 @@ Divisão dos *scripts*
 
 -   `02_calcdistribuicao.R`: calcula os indicadores de distribuição de cadeiras.
 
--   `03_calcfragmentacao.R`: calcula os indicadores de fragmentação partidária.
+-   `03_calcfragmentacao.R`: calcula os indicadores de fragmentação legislativa.
 
--   `04_calcrenovacao.R`: calcula os indicadores de renovação das bancadas.
+-   `04_calcrenovacao.R`: calcula os indicadores de renovação parlamentar.
 
 -   `05_calcalienacao.R`: calcula os indicadores de alienação.
 
