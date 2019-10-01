@@ -120,6 +120,7 @@ cons_uf$`Alienação percentual` <- round(100*(cons_uf$`Quantidade de abstençõ
 
 # 3. Limpeza e padronizacao dos dados -------------------------------------
 
+options(OutDec= ",")
 
 ## Padroniza o formato numerico das colunas
 
@@ -135,6 +136,8 @@ cons_br$`Quantidade de eleitores aptos` <- pont_virg(cons_br$`Quantidade de elei
 
 cons_br$`Alienação absoluta` <- pont_virg(cons_br$`Alienação absoluta`)
 
+cons_br$`Alienação percentual` <- as.character(cons_br$`Alienação percentual`)
+
 ### UF
 
 cons_uf$`Quantidade de abstenções` <- pont_virg(cons_uf$`Quantidade de abstenções`)
@@ -147,7 +150,7 @@ cons_uf$`Quantidade de eleitores aptos` <- pont_virg(cons_uf$`Quantidade de elei
 
 cons_uf$`Alienação absoluta` <- pont_virg(cons_uf$`Alienação absoluta`)
 
-
+cons_uf$`Alienação percentual` <- as.character(cons_uf$`Alienação percentual`)
 
 # 4. Salva os arquivos ----------------------------------------------------
 

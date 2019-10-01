@@ -85,10 +85,11 @@ ui <-
                              
                       )),
              
+            
              tabPanel("CEPESP Indicadores",
                       div()),
              
-            
+             
              tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
                                                    ## "Fragmentacao legislativa"
                       
@@ -107,15 +108,9 @@ ui <-
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um indicador')),
                                      
-                                     selectizeInput(inputId = "DESCRICAO_CARGO2",
-                                                    label = NULL,
-                                                    choices = c("","Senador","Deputado Federal", "Deputado Estadual"), ## Cargos disponiveis
-                                                    selected = NULL,
-                                                    options = list(placeholder = 'Escolha um cargo')),
+                                     uiOutput("DESCRICAO_CARGO2"),
                                      
                                      uiOutput("AGREGACAO_REGIONAL2"),
-                                     
-                                     uiOutput("UF1"),
                                      
                                      uiOutput("UF2"),
                                      
@@ -560,12 +555,7 @@ ui <-
              
             ),
   
-  tags$style(type="text/css",
-             ".shiny-output-error { visibility: hidden; }",
-             ".shiny-output-error:before { visibility: hidden; }"
-  ),
-  
-  tags$footer(class = "rodape",
+    tags$footer(class = "rodape",
               
               style =
                 
@@ -582,7 +572,7 @@ ui <-
               text-align: left;
               z-index: 10;
               height: 3em;
-              margin-top: 117em;",
+              margin-top: 90em;",
                          
                          tags$div(class = "rodape-container",
                                   

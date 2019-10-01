@@ -769,8 +769,14 @@ frag_leg_sen_br$`Total de votos conquistados` <- pont_virg(frag_leg_sen_br$`Tota
 
 frag_leg_br <- bind_rows(frag_leg_fed_br, frag_leg_sen_br)
 
+frag_leg_br$`Número efetivo de partidos legislativo` <- as.character(frag_leg_br$`Número efetivo de partidos legislativo`)
+frag_leg_br$Desproporcionalidade <- as.character(frag_leg_br$Desproporcionalidade)
+
 
 frag_leg_uf <- bind_rows(frag_leg_fed_uf, frag_leg_est)
+
+frag_leg_uf$`Número efetivo de partidos legislativo` <- as.character(frag_leg_uf$`Número efetivo de partidos legislativo`)
+frag_leg_uf$Desproporcionalidade <- as.character(frag_leg_uf$Desproporcionalidade)
 
 
 # 5. Salva o arquivo ------------------------------------------------------

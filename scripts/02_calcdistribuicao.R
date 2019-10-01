@@ -110,6 +110,7 @@ vags_fed <-  vags_fed %>%
 vags_fed$Cargo <- str_to_title(vags_fed$Cargo) ## Transforma a primeira letra de cada palavra
                                                ## em maiuscula
 
+vags_fed$`Quociente partidário` <- as.character(vags_fed$`Quociente partidário`) 
 
 
 ### Deputado Estadual
@@ -136,7 +137,7 @@ vags_est <-  vags_est %>%
 vags_est$Cargo <- str_to_title(vags_est$Cargo) ## Transforma a primeira letra de cada palavra
                                                ## em maiuscula
 
-
+vags_est$`Quociente partidário` <- as.character(vags_est$`Quociente partidário`)
 
 # 4. Salva os arquivos ----------------------------------------------------
 

@@ -36,51 +36,84 @@ server <- function(input, output,session){
     HTML(note)
   })
   
-# 1.2. Agregacao regional -------------------------------------------------  
+# 1.2. Cargo e agregacao regional -------------------------------------------------  
+  
+## Funcao que retorna os cargos disponiveis para o indicador selecionado  
+  
+### Fragmentacao legislativa
+  
+  
+  cargos <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    if(length(indicador) > 0){
+      return(input$DESCRICAO_CARGO2)
+    } 
+  })
+  
+  
+  output$DESCRICAO_CARGO2 <- renderUI({
+    indicador <- input$INDICADORES_FRAG
+    if(length(indicador) > 0 &
+       indicador != "Quociente eleitoral" &
+       indicador != "Quociente partidário"){
+      selectizeInput(inputId = "DESCRICAO_CARGO2",
+                     label = NULL,
+                     choices = c("","Senador",
+                                 "Deputado Federal", 
+                                 "Deputado Estadual"), ## Cargos disponiveis
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha um cargo'))
+    } else if(indicador == "Quociente eleitoral"|
+              indicador == "Quociente partidário"){
+      selectizeInput(inputId = "DESCRICAO_CARGO2",
+                     label = NULL,
+                     choices = c("","Deputado Federal", "Deputado Estadual"), ## Cargos disponiveis
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha um cargo'))
+    } else{
+    return()
+    }
+  })
+  
   
 ## Funcao que retorna uma nova caixa de selecao quando o usuario seleciona "UF" na agregacao regional    
   
-### Fragmentacao partidaria
+### Fragmentacao legislativa
   
   
-  carg <- reactive({
+  agregacao <- reactive({
     indicador <- input$INDICADORES_FRAG
     cargo <- input$DESCRICAO_CARGO2
-    if(indicador != "Quociente eleitoral" &
-       indicador != "Quociente partidário"){
+    if(length(indicador) > 0){
       return(input$AGREGACAO_REGIONAL2)
     } 
   })
   
   
   output$AGREGACAO_REGIONAL2 <- renderUI({
-    indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
-    if(indicador != "Quociente eleitoral" &
-       indicador != "Quociente partidário" &
-       cargo == "Deputado Federal"){
+    indicador <- req(input$INDICADORES_FRAG)
+    cargo <- req(input$DESCRICAO_CARGO2)
+    if(indicador == "Quociente eleitoral" |
+       indicador == "Quociente partidário"){
+    selectizeInput("AGREGACAO_REGIONAL2",
+                   label = NULL,
+                   choices = "UF",
+                   selected = "UF")  
+    }else if(cargo == "Deputado Federal"){
       selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
                      choices = 
                        c("Brasil", "UF"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
-    }else if(indicador != "Quociente eleitoral" &
-             indicador != "Quociente partidário" &
-             cargo == "Deputado Estadual"){
+    }else if(cargo == "Deputado Estadual"){
       selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
                      choices = 
                        c("UF"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
-    } else if(indicador == "Quociente eleitoral" | 
-              indicador == "Quociente partidário"){
-      return()
-      
-    } else if(indicador != "Quociente eleitoral" &
-              indicador != "Quociente partidário" &
-              cargo == "Senador"){
+    } else if(cargo == "Senador"){
       selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
                      choices = 
@@ -88,60 +121,32 @@ server <- function(input, output,session){
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
       
-    } else{
+    } else if(is.null(indicador) | is.na(indicador) &
+              is.null(cargo) | is.na(cargo)){
       return()
     }
     })
   
   
   
-  agreg_q <- reactive({
-    indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
-    if(indicador == "Quociente eleitoral" |
-       indicador == "Quociente partidário"){
-      return(input$UF1)
-    } 
-  })
-  
-  output$UF1 <- renderUI({
-    indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
-    if(indicador == "Quociente eleitoral" |
-       indicador == "Quociente partidário"){
-      selectizeInput("UF1",
-                     label = NULL,
-                     choices = 
-                       c("","Todas UFs", "AC", "AL", "AM", "AP", "BA",
-                         "CE", "DF", "ES","GO", "MA", "MG",
-                         "MS", "MT", "PA", "PB", "PE", "PI",
-                         "PR", "RJ", "RN", "RO", "RR","RS", 
-                         "SC", "SE", "SP", "TO"),
-                     selected = NULL,
-                     options = list(placeholder = 'Escolha uma UF'))
-    }
-  })
-  
-  
-  
-  agreg <- reactive({
-    indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
-    if(length(agregacao == "UF") > 0 &
-       indicador != "Quociente eleitoral" &
-       indicador != "Quociente partidário"){
+    uf <- reactive({
+    indicador <- req(input$INDICADORES_FRAG)
+    cargo <- req(input$DESCRICAO_CARGO2)
+    agregacao <- req(input$AGREGACAO_REGIONAL2)
+    if(length(agregacao == "UF") > 0){
       return(input$UF2)
-    } else{
-      return()
     } 
   })
   
   
   output$UF2 <- renderUI({
-    indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
-    cargo <- input$DESCRICAO_CARGO2
-    if(cargo == "Deputado Estadual" &
+    indicador <- req(input$INDICADORES_FRAG)
+    cargo <- req(input$DESCRICAO_CARGO2)
+    agregacao <- req(input$AGREGACAO_REGIONAL2)
+    if(cargo == "Deputado Federal" & 
+       agregacao == "Brasil"){
+      return()
+    }else if(cargo != "Senador" &
       length(agregacao == "UF") > 0){
       selectizeInput("UF2",
                      label = NULL,
@@ -153,21 +158,8 @@ server <- function(input, output,session){
                          "SC", "SE", "SP", "TO"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma UF'))
-    } else if(cargo == "Deputado Federal" &
-              agregacao == "UF"){
-      selectizeInput("UF2",
-                     label = NULL,
-                     choices = 
-                       c("","Todas UFs", "AC", "AL", "AM", "AP", "BA",
-                         "CE", "DF", "ES","GO", "MA", "MG",
-                         "MS", "MT", "PA", "PB", "PE", "PI",
-                         "PR", "RJ", "RN", "RO", "RR","RS", 
-                         "SC", "SE", "SP", "TO"),
-                     selected = NULL,
-                     options = list(placeholder = 'Escolha uma UF'))
-    } else{
+     } else{
       return()
-    
     }
   })
   
@@ -196,9 +188,8 @@ server <- function(input, output,session){
       selectizeInput("AGREGACAO_REGIONAL3",
                      label = NULL,
                      choices = 
-                       c("", "UF"),
-                     selected = NULL,
-                     options = list(placeholder = 'Escolha uma agregação regional'))
+                       c("UF"),
+                     selected = "UF")
       
     }
   })
@@ -269,8 +260,12 @@ server <- function(input, output,session){
   
 ## Modal inicial
     
- m_frag <- 
-    observeEvent(input$CepespIndicadores, ignoreInit = TRUE, once = TRUE, {
+  shinyalert(title = "Definição",
+             htmlOutput("def_frag")
+             )
+  
+ 
+    observeEvent(req(input$CepespIndicadores), {
     if(input$CepespIndicadores == "Fragmentação legislativa") {
        showModal(modalDialog(
         title = "Definição",
@@ -290,12 +285,12 @@ server <- function(input, output,session){
         width: auto;
         "
         ))
-    }else{
-      return()
     }
-    })
+      }, ignoreInit = TRUE)
   
-    
+  
+  
+   
   ## Modal para ajuda
   
   ### Resumo
@@ -319,7 +314,7 @@ server <- function(input, output,session){
                           "))
   })
   
-  ### Dados agregados
+  ### Dados desagregados
   
   observeEvent(input$modal_frag_ag,{
     showModal(modalDialog(title = "Definição",
@@ -440,9 +435,9 @@ server <- function(input, output,session){
   
 # 2.1.1. Desproporcionalidade de gallagher --------------------------------  
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Federal (Brasil)
+  ### Fragmentacao legislativa (Brasil)
   
   
   depfedg <- reactive({ ## Atributos da tabela
@@ -467,13 +462,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_fed',
         bom = TRUE))), 
         class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
@@ -481,7 +477,7 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Desproporcionalidade" & 
             agregacao == "Brasil"){
-          frag_part_fed_br %>% 
+          frag_leg_br %>% 
             ungroup() %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
@@ -495,9 +491,9 @@ server <- function(input, output,session){
       })
   })  
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Federal  
+  ### Fragmentacao legislativa (Brasil)
   
   ag_dpgfed <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -522,8 +518,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -535,6 +531,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
         class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
@@ -542,25 +539,25 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Desproporcionalidade" & 
            agregacao == "Brasil"){
-          data = frag_part_fed_br %>% 
+          data = frag_leg_br %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             select(`Ano da eleição`,
                    Cargo,
-                   Desproporcionalidade,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`,
                    `Fracionalização`,
                    `Fracionalização máxima`,
                    `Fragmentação`,
-                   `Número efetivo de partidos eleitoral`,
-                   `Número efetivo de partidos legislativo`) %>% 
+                   Desproporcionalidade) %>% 
             unique()
         }
       })
   })
   
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Estadual
+  ### Fragmentacao legislativa (UF)
   
   
   depestg <- reactive({ ## Atributos da tabela
@@ -586,13 +583,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_est',
         bom = TRUE))), 
         class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
@@ -604,7 +602,7 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            frag_part_est %>% 
+            frag_leg_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
@@ -615,7 +613,7 @@ server <- function(input, output,session){
           
           
           } else{
-            frag_part_est %>% 
+            frag_leg_uf %>% 
             dplyr::filter(UF == input$UF2 & 
                             Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
@@ -631,9 +629,9 @@ server <- function(input, output,session){
       })
   })  
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Estadual  
+  ### Fragmentacao legislativa (UF)  
   
   ag_dpgest <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -658,8 +656,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -671,6 +669,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
         class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
@@ -682,31 +681,31 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            data = frag_part_est %>%
+            data = frag_leg_uf %>%
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
               select(`Ano da eleição`,
                      UF,
                      Cargo,
-                     Desproporcionalidade,
+                     `Número efetivo de partidos eleitoral`,
+                     `Número efetivo de partidos legislativo`,
                      `Fracionalização`,
                      `Fracionalização máxima`,
                      `Fragmentação`,
-                     `Número efetivo de partidos eleitoral`,
-                     `Número efetivo de partidos legislativo`) %>% 
+                     Desproporcionalidade) %>% 
             unique()
           } else{
-            data = frag_part_est %>% 
+            data = frag_leg_uf %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2) %>% 
-            select(`Ano da eleição`,
-                   UF,
-                   Cargo,
-                   Desproporcionalidade,
-                   `Fracionalização`,
-                   `Fracionalização máxima`,
-                   `Fragmentação`,
-                   `Número efetivo de partidos eleitoral`,
-                   `Número efetivo de partidos legislativo`) %>% 
+              select(`Ano da eleição`,
+                     UF,
+                     Cargo,
+                     `Número efetivo de partidos eleitoral`,
+                     `Número efetivo de partidos legislativo`,
+                     `Fracionalização`,
+                     `Fracionalização máxima`,
+                     `Fragmentação`,
+                     Desproporcionalidade) %>% 
               unique()
         }
         }
@@ -717,9 +716,9 @@ server <- function(input, output,session){
 # 2.1.2. Fracionalizacao -------------------------------------------------- 
 
 
-## Tabela para visualizacao    
+## Resumo
   
-### Deputado Federal
+### Fragmentacao legislativa (Brasil)
   
   
   depfedf <- reactive({ ## Atributos da tabela
@@ -745,13 +744,14 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'fracio_fed',
                   bom = TRUE))), 
                 class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',
                              'Select'),{
@@ -760,7 +760,7 @@ server <- function(input, output,session){
       uf <- input$UF2
       if(indicador == "Fracionalização" & 
          agregacao == "Brasil"){
-        frag_part_fed_br %>% 
+        frag_leg_br %>% 
           ungroup() %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
@@ -774,9 +774,9 @@ server <- function(input, output,session){
     })
   })  
   
-## Resumo
+## Dados desagregados
   
-### Deputado Federal  
+### Fragmentacao legislativa (Brasil)
   
   ag_fracfed <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -801,8 +801,8 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -814,6 +814,7 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                 class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons', 
                              'Select'),{
@@ -821,24 +822,24 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização" & 
          agregacao == "Brasil"){
-        data = frag_part_fed_br %>% 
+        data = frag_leg_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           select(`Ano da eleição`,
                  Cargo,
-                 Desproporcionalidade,
+                 `Número efetivo de partidos eleitoral`,
+                 `Número efetivo de partidos legislativo`,
                  `Fracionalização`,
                  `Fracionalização máxima`,
                  `Fragmentação`,
-                 `Número efetivo de partidos eleitoral`,
-                 `Número efetivo de partidos legislativo`) %>% 
+                 Desproporcionalidade) %>% 
           unique() 
       }
     })
   })
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Estadual
+  ### Fragmentacao legislativa (UF)
   
   
   depestf <- reactive({ ## Atributos da tabela
@@ -863,13 +864,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_est',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
@@ -881,7 +883,7 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            frag_part_est %>% 
+            frag_leg_uf %>% 
             ungroup() %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
@@ -891,7 +893,7 @@ server <- function(input, output,session){
             spread(`Ano da eleição`,
                    `Fracionalização`)
           } else{
-            frag_part_est %>% 
+            frag_leg_uf %>% 
             ungroup() %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2) %>% 
@@ -906,9 +908,9 @@ server <- function(input, output,session){
       })
   })  
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Estadual  
+  ### Fragmentacao legislativa (UF)  
   
   ag_fracest <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -933,8 +935,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -946,6 +948,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
@@ -957,31 +960,31 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-          data = frag_part_est %>% 
+          data = frag_leg_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
             select(`Ano da eleição`,
                    UF,
                    Cargo,
-                   Desproporcionalidade,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`,
                    `Fracionalização`,
                    `Fracionalização máxima`,
                    `Fragmentação`,
-                   `Número efetivo de partidos eleitoral`,
-                   `Número efetivo de partidos legislativo`) %>% 
+                   Desproporcionalidade) %>% 
             unique() 
           } else{
-          data = frag_part_est %>% 
+          data = frag_leg_uf %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2) %>% 
-          select(`Ano da eleição`,
-                 UF,
-                 Cargo,
-                 Desproporcionalidade,
-                 `Fracionalização`,
-                 `Fracionalização máxima`,
-                 `Fragmentação`,
-                 `Número efetivo de partidos eleitoral`,
-                 `Número efetivo de partidos legislativo`) %>% 
+            select(`Ano da eleição`,
+                   UF,
+                   Cargo,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   Desproporcionalidade) %>% 
             unique()
         }
            }
@@ -992,7 +995,7 @@ server <- function(input, output,session){
   
 ## Tabela para visualizacao  
   
-### Deputado Federal
+### Fragmentacao legislativa (Brasil
   
   depfedfm <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
@@ -1016,13 +1019,14 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'fracio_max_fed',
                   bom = TRUE))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons', 
                              'Select'),{
@@ -1030,7 +1034,7 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização máxima" & 
          agregacao == "Brasil"){
-        frag_part_fed_br %>% 
+        frag_leg_br %>% 
           ungroup() %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
@@ -1043,9 +1047,9 @@ server <- function(input, output,session){
     })
   })
   
-## Resumo
+## Dados desagregados
   
-### Deputado Federal  
+### Fragmentacao legislativa (Brasil)
   
   ag_fracmaxfed <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -1070,8 +1074,8 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -1083,6 +1087,7 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons', 
                                'Select'),{
@@ -1090,16 +1095,16 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização máxima" & 
          agregacao == "Brasil"){
-        data = frag_part_fed_br %>% 
+        data = frag_leg_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           select(`Ano da eleição`,
                  Cargo,
-                 Desproporcionalidade,
+                 `Número efetivo de partidos eleitoral`,
+                 `Número efetivo de partidos legislativo`,
                  `Fracionalização`,
                  `Fracionalização máxima`,
                  `Fragmentação`,
-                 `Número efetivo de partidos eleitoral`,
-                 `Número efetivo de partidos legislativo`) %>% 
+                 Desproporcionalidade) %>% 
           unique() 
       }
     })
@@ -1107,7 +1112,7 @@ server <- function(input, output,session){
   
   ## Tabela para visualizacao  
   
-  ### Deputado Estadual
+  ### Fragmentacao legislativa (UF)
   
   depestfm <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
@@ -1132,13 +1137,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_max_est',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
@@ -1150,7 +1156,7 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            data = frag_part_est %>% 
+            data = frag_leg_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
@@ -1159,7 +1165,7 @@ server <- function(input, output,session){
             spread(`Ano da eleição`,
                   `Fracionalização máxima`)
           } else{
-            data = frag_part_est %>% 
+            data = frag_leg_uf %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
@@ -1173,9 +1179,9 @@ server <- function(input, output,session){
       })
   })
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Estadual 
+  ### Fragmentacao legislativa (UF) 
   
   ag_fracmaxest <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -1200,8 +1206,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -1213,6 +1219,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
@@ -1224,31 +1231,31 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           }else if(uf == "Todas UFs"){
-            data = frag_part_est %>% 
+            data = frag_leg_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
               select(`Ano da eleição`,
                      UF,
                      Cargo,
-                     Desproporcionalidade,
+                     `Número efetivo de partidos eleitoral`,
+                     `Número efetivo de partidos legislativo`,
                      `Fracionalização`,
                      `Fracionalização máxima`,
                      `Fragmentação`,
-                     `Número efetivo de partidos eleitoral`,
-                     `Número efetivo de partidos legislativo`) %>% 
+                     Desproporcionalidade) %>% 
             unique()
           } else{
-            data = frag_part_est %>% 
+            data = frag_leg_uf %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2) %>% 
-            select(`Ano da eleição`,
-                   UF,
-                   Cargo,
-                   Desproporcionalidade,
-                   `Fracionalização`,
-                   `Fracionalização máxima`,
-                   `Fragmentação`,
-                   `Número efetivo de partidos eleitoral`,
-                   `Número efetivo de partidos legislativo`) %>% 
+              select(`Ano da eleição`,
+                     UF,
+                     Cargo,
+                     `Número efetivo de partidos eleitoral`,
+                     `Número efetivo de partidos legislativo`,
+                     `Fracionalização`,
+                     `Fracionalização máxima`,
+                     `Fragmentação`,
+                     Desproporcionalidade) %>% 
               unique()
         }
       }
@@ -1259,7 +1266,7 @@ server <- function(input, output,session){
 
 ## Tabela para visualizacao  
     
-### Deputado Federal
+### Fragmentacao legislativa (Brasil
   
   depfed_frag <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
@@ -1284,13 +1291,14 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'frag_fed',
                   bom = TRUE))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',
                              'Select'),{
@@ -1298,7 +1306,7 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fragmentação" &
          agregacao == "Brasil"){
-        frag_part_fed_br %>% 
+        frag_leg_br %>% 
           ungroup() %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
@@ -1311,9 +1319,9 @@ server <- function(input, output,session){
     })
   })
   
-## Resumo
+## Dados desagregados
   
-### Deputado Federal  
+### Fragmentacao legislativa (Brasil  
   
   ag_fragfed <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -1338,8 +1346,8 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -1351,6 +1359,7 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',
                                'Select'),{
@@ -1358,25 +1367,25 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fragmentação" & 
          agregacao == "Brasil"){
-        data = frag_part_fed_br %>% 
+        data = frag_leg_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           select(`Ano da eleição`,
                  Cargo,
-                 Desproporcionalidade,
+                 `Número efetivo de partidos eleitoral`,
+                 `Número efetivo de partidos legislativo`,
                  `Fracionalização`,
                  `Fracionalização máxima`,
                  `Fragmentação`,
-                 `Número efetivo de partidos eleitoral`,
-                 `Número efetivo de partidos legislativo`) %>% 
+                 Desproporcionalidade) %>% 
           unique() 
       }
     })
   })  
   
   
-  ## Tabela para visualizacao  
+  ## Resumo 
   
-  ### Deputado Estadual
+  ### Fragmentacao legislativa (UF)
   
   depest_frag <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
@@ -1401,13 +1410,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'frag_est',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
@@ -1419,7 +1429,7 @@ server <- function(input, output,session){
            if(uf == ""){
              return()
            } else if(uf == "Todas UFs"){
-            frag_part_est %>% 
+            frag_leg_uf %>% 
             ungroup() %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
@@ -1430,7 +1440,7 @@ server <- function(input, output,session){
                    `Fragmentação`)
           
           } else{
-            frag_part_est %>% 
+            frag_leg_uf %>% 
             ungroup() %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2) %>% 
@@ -1445,9 +1455,9 @@ server <- function(input, output,session){
       })
   })
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Estadual 
+  ### Fragmentacao legislativa (UF) 
   
   ag_fragest <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -1472,8 +1482,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -1485,6 +1495,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
@@ -1496,31 +1507,31 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           }else if(uf == "Todas UFs"){
-          data = frag_part_est %>% 
+          data = frag_leg_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             select(`Ano da eleição`,
                    UF,
                    Cargo,
-                   Desproporcionalidade,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`,
                    `Fracionalização`,
                    `Fracionalização máxima`,
                    `Fragmentação`,
-                   `Número efetivo de partidos eleitoral`,
-                   `Número efetivo de partidos legislativo`) %>% 
+                   Desproporcionalidade) %>% 
             unique()
           } else{
-          data = frag_part_est %>% 
+          data = frag_leg_uf %>% 
             dplyr::filter(UF == input$UF2 & 
                           Cargo == input$DESCRICAO_CARGO2) %>% 
-          select(`Ano da eleição`,
-                 UF,
-                 Cargo,
-                 Desproporcionalidade,
-                 `Fracionalização`,
-                 `Fracionalização máxima`,
-                 `Fragmentação`,
-                 `Número efetivo de partidos eleitoral`,
-                 `Número efetivo de partidos legislativo`) %>% 
+            select(`Ano da eleição`,
+                   UF,
+                   Cargo,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`,
+                   `Fracionalização`,
+                   `Fracionalização máxima`,
+                   `Fragmentação`,
+                   Desproporcionalidade) %>% 
             unique()
         }
         }
@@ -1531,7 +1542,7 @@ server <- function(input, output,session){
   
 ## Tabela para visualizacao  
   
-### Deputado Federal
+### Fragmentacao legislativa (Brasil
   
   depfedn <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
@@ -1555,13 +1566,14 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'nepc_fed',
                   bom = TRUE))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',  
                               'Select'),{
@@ -1569,7 +1581,7 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Número efetivo de partidos legislativo" & 
          agregacao == "Brasil"){
-        frag_part_fed_br %>% 
+        frag_leg_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
                         `Número efetivo de partidos legislativo`) %>% 
@@ -1581,9 +1593,9 @@ server <- function(input, output,session){
     })
   })
   
-## Resumo
+## Dados desagregados
   
-### Deputado Federal  
+### Fragmentacao legislativa (Brasil  
   
   ag_nepfed <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -1608,8 +1620,8 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -1621,6 +1633,7 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',   
                               'Select'),{
@@ -1628,24 +1641,24 @@ server <- function(input, output,session){
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Número efetivo de partidos legislativo" & 
           agregacao == "Brasil"){
-        data = frag_part_fed_br %>% 
+        data = frag_leg_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
           select(`Ano da eleição`,
                  Cargo,
-                 Desproporcionalidade,
+                 `Número efetivo de partidos eleitoral`,
+                 `Número efetivo de partidos legislativo`,
                  `Fracionalização`,
                  `Fracionalização máxima`,
                  `Fragmentação`,
-                 `Número efetivo de partidos eleitoral`,
-                 `Número efetivo de partidos legislativo`) %>% 
+                 Desproporcionalidade) %>% 
           unique() 
       }
     })
   })  
   
-## Tabela para visualizacao  
+## Resumo
   
-### Deputado Estadual
+### Fragmentacao legislativa (UF)
   
   depest_nep <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
@@ -1669,13 +1682,14 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'nepc_est',
                   bom = TRUE))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons', 
                              'Select'),{
@@ -1687,7 +1701,7 @@ server <- function(input, output,session){
         if(uf == ""){
           return()
         } else if(uf == "Todas UFs"){
-          frag_part_est %>% 
+          frag_leg_uf %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
@@ -1697,7 +1711,7 @@ server <- function(input, output,session){
                  `Número efetivo de partidos legislativo`)
         
         } else{
-          frag_part_est %>% 
+          frag_leg_uf %>% 
           dplyr::filter(UF == input$UF2 & 
                         Cargo == input$DESCRICAO_CARGO2) %>% 
           dplyr::select(`Ano da eleição`,
@@ -1711,9 +1725,9 @@ server <- function(input, output,session){
     })
   })  
  
-## Resumo
+## Dados desagregados
   
-### Deputado Estadual 
+### Fragmentacao legislativa (UF) 
   
   ag_nepest <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -1739,8 +1753,8 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   exportOptions = list(
@@ -1751,6 +1765,7 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
       extensions = c('Buttons',      
                      'Select'),{
@@ -1762,31 +1777,31 @@ server <- function(input, output,session){
         if(uf == ""){
           return()
         } else if(uf == "Todas UFs"){
-          data = frag_part_est %>% 
+          data = frag_leg_uf %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             select(`Ano da eleição`,
                    UF,
                    Cargo,
-                   Desproporcionalidade,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`,
                    `Fracionalização`,
                    `Fracionalização máxima`,
                    `Fragmentação`,
-                   `Número efetivo de partidos eleitoral`,
-                   `Número efetivo de partidos legislativo`) %>% 
+                   Desproporcionalidade) %>% 
           unique()
         } else{
-          data = frag_part_est %>% 
+          data = frag_leg_uf %>% 
           dplyr::filter(UF == input$UF2 &
                         Cargo == input$DESCRICAO_CARGO2) %>% 
             select(`Ano da eleição`,
                    UF,
                    Cargo,
-                   Desproporcionalidade,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`,
                    `Fracionalização`,
                    `Fracionalização máxima`,
                    `Fragmentação`,
-                   `Número efetivo de partidos eleitoral`,
-                   `Número efetivo de partidos legislativo`) %>% 
+                   Desproporcionalidade) %>% 
           unique() 
       }
       }
@@ -1797,7 +1812,7 @@ server <- function(input, output,session){
   
   ## Tabela para visualizacao  
   
-  ### Deputado Federal
+  ### Fragmentacao legislativa (Brasil
   
   depfedvn <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
@@ -1821,13 +1836,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'nepc_fed',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',   
                      'Select'),{
@@ -1835,7 +1851,7 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "Brasil"){
-          frag_part_fed_br %>% 
+          frag_leg_br %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           `Número efetivo de partidos eleitoral`) %>% 
@@ -1847,9 +1863,9 @@ server <- function(input, output,session){
       })
   })
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Federal  
+  ### Fragmentacao legislativa (Brasil  
   
   ag_nepvfed <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -1874,8 +1890,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -1887,6 +1903,7 @@ server <- function(input, output,session){
           extend = 'colvis',                   
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',  
                      'Select'),{
@@ -1894,16 +1911,16 @@ server <- function(input, output,session){
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "Brasil"){
-          data = frag_part_fed_br %>% 
+          data = frag_leg_br %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             select(`Ano da eleição`,
                    Cargo,
-                   Desproporcionalidade,
+                   `Número efetivo de partidos eleitoral`,
+                   `Número efetivo de partidos legislativo`,
                    `Fracionalização`,
                    `Fracionalização máxima`,
                    `Fragmentação`,
-                   `Número efetivo de partidos eleitoral`,
-                   `Número efetivo de partidos legislativo`) %>% 
+                   Desproporcionalidade) %>% 
             unique() 
         }
       })
@@ -1911,7 +1928,7 @@ server <- function(input, output,session){
   
   ## Tabela para visualizacao  
   
-  ### Deputado Estadual
+  ### Fragmentacao legislativa (UF)
   
   depestvn <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
@@ -1935,13 +1952,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'nepc_est',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',   
                      'Select'),{
@@ -1953,7 +1971,7 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if( uf == "Todas UFs"){
-            frag_part_est %>% 
+            frag_leg_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
@@ -1963,7 +1981,7 @@ server <- function(input, output,session){
                   `Número efetivo de partidos eleitoral`)
           
           } else{
-            frag_part_est %>% 
+            frag_leg_uf %>% 
             dplyr::filter(UF == input$UF2 &
                           Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
@@ -1977,9 +1995,9 @@ server <- function(input, output,session){
       })
   })
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Estadual  
+  ### Fragmentacao legislativa (UF)  
   
   ag_nepvest <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -2004,8 +2022,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -2017,6 +2035,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
@@ -2028,31 +2047,31 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            data = frag_part_est %>% 
+            data = frag_leg_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
               select(`Ano da eleição`,
                      UF,
                      Cargo,
-                     Desproporcionalidade,
+                     `Número efetivo de partidos eleitoral`,
+                     `Número efetivo de partidos legislativo`,
                      `Fracionalização`,
                      `Fracionalização máxima`,
                      `Fragmentação`,
-                     `Número efetivo de partidos eleitoral`,
-                     `Número efetivo de partidos legislativo`) %>% 
+                     Desproporcionalidade) %>% 
             unique()
           } else{
-            data = frag_part_est %>% 
+            data = frag_leg_uf %>% 
             dplyr::filter(UF == input$UF2 &
                           Cargo == input$DESCRICAO_CARGO2) %>% 
-            select(`Ano da eleição`,
-                   UF,
-                   Cargo,
-                   Desproporcionalidade,
-                   `Fracionalização`,
-                   `Fracionalização máxima`,
-                   `Fragmentação`,
-                   `Número efetivo de partidos eleitoral`,
-                   `Número efetivo de partidos legislativo`) %>% 
+              select(`Ano da eleição`,
+                     UF,
+                     Cargo,
+                     `Número efetivo de partidos eleitoral`,
+                     `Número efetivo de partidos legislativo`,
+                     `Fracionalização`,
+                     `Fracionalização máxima`,
+                     `Fragmentação`,
+                     Desproporcionalidade) %>% 
               unique()  
             
         }
@@ -2063,15 +2082,14 @@ server <- function(input, output,session){
 
 # 2.1.7. Quociente eleitoral -----------------------------------------------
   
-  ## Tabela para visualizacao
-  
+  ## Resumo
   
   ### Deputado Federal
   
   depfed <- reactive({ ## Atributos da tabela
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    uf <- input$UF2
     if(indicador == "Quociente eleitoral" & 
        cargo == "Deputado Federal"){
       return(input$quoce_fed)
@@ -2084,7 +2102,7 @@ server <- function(input, output,session){
   
   
   
-  bquoce_fed <- eventReactive(input$BCALC1, { ## Botao de acao
+  bquoce_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
       select = TRUE,
@@ -2093,8 +2111,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_elei_dep_fed',
@@ -2110,15 +2128,16 @@ server <- function(input, output,session){
       class = "display",
       #selection = list(mode = 'multiple',
       #                target = 'row+column'), 
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
-                       indicador <- input$INDICADORES_DISTR
-                       cargo <- input$DESCRICAO_CARGO1
-                       uf <- input$UF
+                       indicador <- input$INDICADORES_FRAG
+                       cargo <- input$DESCRICAO_CARGO2
+                       uf <- input$UF2
                        if(indicador == "Quociente eleitoral" & 
                           cargo == "Deputado Federal"){
-                         if(input$UF == "Todas UFs"){
+                         if(input$UF2 == "Todas UFs"){
                            distcad_fed %>% 
                              select(`Ano da eleição`, 
                                     UF,
@@ -2128,7 +2147,7 @@ server <- function(input, output,session){
                                     `Quociente eleitoral`)
                          }else{
                            distcad_fed %>% 
-                             dplyr::filter(UF == input$UF) %>% 
+                             dplyr::filter(UF == input$UF2) %>% 
                              select(`Ano da eleição`, 
                                     UF,
                                     `Quociente eleitoral`) %>% 
@@ -2161,14 +2180,14 @@ server <- function(input, output,session){
   
   
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Federal  
+  ### Deputado Federal
   
   ag_quocefed <- reactive({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
-    uf <- input$UF
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
+    uf <- input$UF2
     if(indicador == "Quociente eleitoral" &
        cargo == "Deputado Federal"){
       return(input$agreg_quocefed) 
@@ -2179,7 +2198,7 @@ server <- function(input, output,session){
     bagreg_quocefed()
   })
   
-  bagreg_quocefed <- eventReactive(input$BCALC1, {
+  bagreg_quocefed <- eventReactive(input$BCALC2, {
     datatable(options = list(
       autoWidth = TRUE,
       scrollX = TRUE,
@@ -2189,8 +2208,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         exportOptions = list(
@@ -2202,34 +2221,35 @@ server <- function(input, output,session){
           text = 'Colunas')
       )), 
       class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
-                       indicador <- input$INDICADORES_DISTR
-                       cargo <- input$DESCRICAO_CARGO1
-                       uf <- input$UF
+                       indicador <- input$INDICADORES_FRAG
+                       cargo <- input$DESCRICAO_CARGO2
+                       uf <- input$UF2
                        if(indicador == "Quociente eleitoral" &
                           cargo == "Deputado Federal"){
-                         if(input$UF == "Todas UFs"){
+                         if(input$UF2 == "Todas UFs"){
                            data = distcad_fed %>% 
                              unique() 
                          }
                          else{
                            data = distcad_fed %>% 
-                             dplyr::filter(UF == input$UF) %>% 
+                             dplyr::filter(UF == input$UF2) %>% 
                              unique()
                          }}
                      })
   })  
   
   
-  ## Tabela para visualizacao  
+  ## Resumo
   
   ### Deputado Estadual
   
   depest <- reactive({ ## Atributos da tabela
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
     if(indicador == "Quociente eleitoral" & 
        cargo == "Deputado Estadual"){
       return(input$quoce_est)
@@ -2241,7 +2261,7 @@ server <- function(input, output,session){
   })
   
   
-  bquoce_est <- eventReactive(input$BCALC1, { ## Botao de acao
+  bquoce_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       
       autoWidth = TRUE,
@@ -2251,22 +2271,23 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_elei_dep_est',
         bom = TRUE))), 
       class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
-                       indicador <- input$INDICADORES_DISTR
-                       cargo <- input$DESCRICAO_CARGO1
-                       uf <- input$UF
+                       indicador <- input$INDICADORES_FRAG
+                       cargo <- input$DESCRICAO_CARGO2
+                       uf <- input$UF2
                        if(indicador == "Quociente eleitoral" & 
                           cargo == "Deputado Estadual"){
-                         if(input$UF=="Todas UFs"){
+                         if(input$UF2=="Todas UFs"){
                            expr = distcad_est %>% 
                              select(`Ano da eleição`, 
                                     UF,
@@ -2277,7 +2298,7 @@ server <- function(input, output,session){
                            
                          }else{
                            expr = distcad_est %>% 
-                             dplyr::filter(UF == input$UF) %>% 
+                             dplyr::filter(UF == input$UF2) %>% 
                              select(`Ano da eleição`, 
                                     UF, 
                                     `Quociente eleitoral`) %>% 
@@ -2288,13 +2309,13 @@ server <- function(input, output,session){
                      })
   }) 
   
-  ## Resumo
+  ## Dados desagregados
   
   ## Deputado Estadual  
   
   ag_est <- reactive({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
     if(indicador == "Quociente eleitoral" & 
        cargo == "Deputado Estadual"){
       return(input$agreg_quoceest) 
@@ -2305,7 +2326,7 @@ server <- function(input, output,session){
     bagreg_quoceest()
   })
   
-  bagreg_quoceest <- eventReactive(input$BCALC1, {
+  bagreg_quoceest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       autoWidth = TRUE,
       scrollX = TRUE,
@@ -2315,8 +2336,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
         list(
           extend = 'csv',
@@ -2328,20 +2349,21 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
       class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
-                       indicador <- input$INDICADORES_DISTR
-                       cargo <- input$DESCRICAO_CARGO1
-                       uf <- input$UF
+                       indicador <- input$INDICADORES_FRAG
+                       cargo <- input$DESCRICAO_CARGO2
+                       uf <- input$UF2
                        if(indicador == "Quociente eleitoral" & 
                           cargo == "Deputado Estadual"){
-                         if(input$UF == "Todas UFs"){
+                         if(input$UF2 == "Todas UFs"){
                            expr = distcad_est %>% 
                              unique()
                          } else {
                            expr = distcad_est %>% 
-                             dplyr::filter(UF == input$UF) %>% 
+                             dplyr::filter(UF == input$UF2) %>% 
                              unique()
                            
                          }}
@@ -2350,13 +2372,13 @@ server <- function(input, output,session){
   
 # 2.1.8. Quociente partidario ---------------------------------------------
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
   ### Deputado Federal
   
   depfedp <- reactive({ ## Atributos da tabela
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Federal"){
       return(input$quocp_fed)
@@ -2367,7 +2389,7 @@ server <- function(input, output,session){
     bquocp_fed()
   })
   
-  bquocp_fed <- eventReactive(input$BCALC1, { ## Botao de acao
+  bquocp_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
       ordering = TRUE,
@@ -2376,22 +2398,23 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_part_dep_fed',
         bom = TRUE))), 
       class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
-                       indicador <- input$INDICADORES_DISTR
-                       cargo <- input$DESCRICAO_CARGO1
-                       uf <- input$UF
+                       indicador <- input$INDICADORES_FRAG
+                       cargo <- input$DESCRICAO_CARGO2
+                       uf <- input$UF2
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Federal"){
-                         if(input$UF=="Todas UFs"){
+                         if(input$UF2=="Todas UFs"){
                            expr = distcad_fed %>% 
                              select(`Ano da eleição`, 
                                     UF, 
@@ -2400,7 +2423,7 @@ server <- function(input, output,session){
                            
                          }else{
                            expr = distcad_fed %>% 
-                             dplyr::filter(UF == input$UF) %>% 
+                             dplyr::filter(UF == input$UF2) %>% 
                              select(`Ano da eleição`, 
                                     UF, 
                                     `Sigla do partido`, 
@@ -2411,13 +2434,13 @@ server <- function(input, output,session){
                      })
   })
   
-  ## Resumo
+  ## Dados desagregados
   
   # Deputado Federal
   
   ag_quocpfed <- reactive({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Federal"){
       return(input$agreg_quocpfed)
@@ -2428,7 +2451,7 @@ server <- function(input, output,session){
     bagreg_quocpfed()
   })
   
-  bagreg_quocpfed <- eventReactive(input$BCALC1, {
+  bagreg_quocpfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
       autoWidth = TRUE,
       scrollX = TRUE,
@@ -2438,8 +2461,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
         list(
           extend = 'csv',
@@ -2451,33 +2474,34 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
       class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
-                       indicador <- input$INDICADORES_DISTR
-                       cargo <- input$DESCRICAO_CARGO1
-                       uf <- input$UF
+                       indicador <- input$INDICADORES_FRAG
+                       cargo <- input$DESCRICAO_CARGO2
+                       uf <- input$UF2
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Federal"){
-                         if(input$UF == "Todas UFs"){
+                         if(input$UF2 == "Todas UFs"){
                            expr = distcad_fed %>% 
                              unique()
                            
                          }else{
                            expr = distcad_fed %>% 
-                             dplyr::filter(UF == input$UF) %>% 
+                             dplyr::filter(UF == input$UF2) %>% 
                              unique()}
                        }
                      })
   })
   
-  ## Tabela para visualizacao  
+  ## Resumo
   
   ### Deputado estadual
   
   depestp <- reactive({ ## Atributos da tabela
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Estadual"){
       return(input$quocp_est)
@@ -2488,7 +2512,7 @@ server <- function(input, output,session){
     bquocp_est()
   })
   
-  bquocp_est <- eventReactive(input$BCALC1, { ## Botao de acao
+  bquocp_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = TRUE,
       select = TRUE,
@@ -2497,22 +2521,23 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_part_dep_est',
         bom = TRUE))), 
       class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
-                       indicador <- input$INDICADORES_DISTR
-                       cargo <- input$DESCRICAO_CARGO1
-                       uf <- input$UF
+                       indicador <- input$INDICADORES_FRAG
+                       cargo <- input$DESCRICAO_CARGO2
+                       uf <- input$UF2
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Estadual"){
-                         if(input$UF=="Todas UFs"){
+                         if(input$UF2=="Todas UFs"){
                            expr = distcad_est %>% 
                              select(`Ano da eleição`, 
                                     UF,
@@ -2521,7 +2546,7 @@ server <- function(input, output,session){
                            
                          }else{
                            expr = distcad_est %>% 
-                             dplyr::filter(UF == input$UF) %>% 
+                             dplyr::filter(UF == input$UF2) %>% 
                              select(`Ano da eleição`, 
                                     UF,
                                     `Sigla do partido`, 
@@ -2530,13 +2555,13 @@ server <- function(input, output,session){
                      })
   })
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Estadual  
+  ### Deputado Estadual
   
   ag_qupcpest <- reactive({
-    indicador <- input$INDICADORES_DISTR
-    cargo <- input$DESCRICAO_CARGO1
+    indicador <- input$INDICADORES_FRAG
+    cargo <- input$DESCRICAO_CARGO2
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Estadual"){
       return(input$agreg_quocpest)
@@ -2547,7 +2572,7 @@ server <- function(input, output,session){
     bagreg_quocpest()
   })
   
-  bagreg_quocpest <- eventReactive(input$BCALC1,{
+  bagreg_quocpest <- eventReactive(input$BCALC2,{
     datatable(options = list(
       autoWidth = TRUE,
       scrollX = TRUE,
@@ -2557,8 +2582,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
         list(
           extend = 'csv',
@@ -2570,20 +2595,21 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
       class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
-                       indicador <- input$INDICADORES_DISTR
-                       cargo <- input$DESCRICAO_CARGO1
-                       uf <- input$UF
+                       indicador <- input$INDICADORES_FRAG
+                       cargo <- input$DESCRICAO_CARGO2
+                       uf <- input$UF2
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Estadual"){
-                         if(input$UF == "Todas UFs"){
+                         if(input$UF2 == "Todas UFs"){
                            expr = distcad_est %>% 
                              unique()
                          }else{          
                            expr = distcad_est %>% 
-                             dplyr::filter(UF == input$UF) %>% 
+                             dplyr::filter(UF == input$UF2) %>% 
                              unique()}
                        }
                      })
@@ -2621,7 +2647,7 @@ server <- function(input, output,session){
   
   ## Modal para ajuda
   
-  ### Resumo
+  ### Dados Resumo
   
   observeEvent(input$modal_renovp,{
     showModal(modalDialog(title = "Definição",
@@ -2642,7 +2668,7 @@ server <- function(input, output,session){
                           "))
   })
   
-  ### Dados agregados
+  ### Dados desagregados
   
   observeEvent(input$modal_renovp_ag,{
     showModal(modalDialog(title = "Definição",
@@ -2718,9 +2744,9 @@ server <- function(input, output,session){
   
 # 2.2.1. Conservacao ------------------------------------------------------
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Federal 
+  ### Renovacao parlamentar (Brasil) 
   
   depfedc <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
@@ -2745,13 +2771,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renov_parl_fed',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',       
                      'Select'),{
@@ -2761,7 +2788,7 @@ server <- function(input, output,session){
         if(indicador == "Conservação" &
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
-          renov_parl_fed %>% 
+          renov_parl_br %>% 
             dplyr::filter(Cargo ==input$DESCRICAO_CARGO3) %>% 
             dplyr::select(`Ano da eleição`,
                           `Conservação`) %>% 
@@ -2772,9 +2799,9 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Federal 
+  ### Renovacao parlamentar (Brasil) 
   
   ag_alifedc<- reactive({
     indicador <- input$INDICADORES_RENOV
@@ -2799,8 +2826,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -2812,6 +2839,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
@@ -2822,16 +2850,16 @@ server <- function(input, output,session){
         if(indicador == "Conservação" &
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
-          data = renov_parl_fed %>%
+          data = renov_parl_br %>%
             dplyr::filter(Cargo==input$DESCRICAO_CARGO3) 
           
         }
       })
   })
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Estadual 
+  ### Renovacao parlamentar (UF)  
   
   depestc <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
@@ -2856,13 +2884,15 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renov_parl_est',
         bom = TRUE))), 
-       class = "display",rownames = FALSE,
+       class = "display",
+      filter = "top",
+      rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
@@ -2874,7 +2904,7 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            renov_parl_est %>% 
+            renov_parl_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
@@ -2883,7 +2913,7 @@ server <- function(input, output,session){
                   `Conservação`)
           
           } else{
-            renov_parl_est %>% 
+            renov_parl_uf %>% 
               dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
                             UF == input$UF3) %>% 
               dplyr::select(`Ano da eleição`,
@@ -2895,9 +2925,9 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Estadual 
+  ### Renovacao parlamentar (UF)
   
   ag_aliestc<- reactive({
     indicador <- input$INDICADORES_RENOV
@@ -2922,8 +2952,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -2935,6 +2965,7 @@ server <- function(input, output,session){
           extend = 'colvis',                    
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
@@ -2946,11 +2977,11 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            data = renov_parl_est %>% 
+            data = renov_parl_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
             unique()
           } else{
-            data = renov_parl_est %>% 
+            data = renov_parl_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
                      UF == input$UF3) %>% 
             unique()
@@ -2961,9 +2992,9 @@ server <- function(input, output,session){
   
 # 2.2.2. Renovacao bruta --------------------------------------------------
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Federal 
+  ### Renovacao parlamentar (Brasil)  
   
   depfedrb <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
@@ -2989,13 +3020,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovbr_parl_fed',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
@@ -3005,7 +3037,7 @@ server <- function(input, output,session){
         if(indicador == "Renovação bruta" & 
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
-          renov_parl_fed %>% 
+          renov_parl_br %>% 
             dplyr::filter(Cargo ==input$DESCRICAO_CARGO3) %>% 
             dplyr::select(`Ano da eleição`,
                           `Renovação bruta`) %>% 
@@ -3017,9 +3049,9 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Federal 
+  ### Renovacao parlamentar (Brasil)  
   
   ag_alifedrb <- reactive({
     indicador <- input$INDICADORES_RENOV
@@ -3046,8 +3078,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3059,6 +3091,7 @@ server <- function(input, output,session){
           extend = 'colvis',                   
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
@@ -3069,15 +3102,15 @@ server <- function(input, output,session){
         if(indicador == "Renovação bruta" & 
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
-            data = renov_parl_fed %>%
+            data = renov_parl_br %>%
             dplyr::filter(Cargo==input$DESCRICAO_CARGO3)
         }
       })
   })
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Estadual 
+  ### Renovacao parlamentar (UF) 
   
   depestrb <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
@@ -3102,13 +3135,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovbr_parl_est',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',     
                      'Select'),{
@@ -3120,7 +3154,7 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            renov_parl_est %>% 
+            renov_parl_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
@@ -3129,7 +3163,7 @@ server <- function(input, output,session){
                    `Renovação bruta`) %>% 
             unique()
           } else{
-            renov_parl_est %>% 
+            renov_parl_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
                           UF == input$UF3) %>% 
             dplyr::select(`Ano da eleição`,
@@ -3143,9 +3177,9 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Estadual 
+  ### Renovacao parlamentar (UF) 
   
   ag_aliestrb <- reactive({
     indicador <- input$INDICADORES_RENOV
@@ -3170,8 +3204,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3183,6 +3217,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
@@ -3194,10 +3229,10 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            data = renov_parl_est %>%
+            data = renov_parl_uf %>%
             dplyr::filter(Cargo==input$DESCRICAO_CARGO3)
           } else{
-            data = renov_parl_est %>%
+            data = renov_parl_uf %>%
             dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
                             UF == input$UF3)
           }
@@ -3208,9 +3243,9 @@ server <- function(input, output,session){
   
 # 2.2.3. Renovacao liquida ------------------------------------------------
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Federal 
+  ### Renovacao parlamentar (Brasil)  
   
   depfedrl <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
@@ -3237,13 +3272,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovliq_parl_fed',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',  
                      'Select'),{
@@ -3253,7 +3289,7 @@ server <- function(input, output,session){
         if(indicador == "Renovação líquida" &
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
-          renov_parl_fed %>% 
+          renov_parl_br %>% 
             dplyr::select(`Ano da eleição`,
                           `Renovação líquida`) %>% 
             spread(`Ano da eleição`,
@@ -3263,9 +3299,9 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Federal 
+  ### Renovacao parlamentar (Brasil)  
   
   ag_alifedrl <- reactive({
     indicador <- input$INDICADORES_RENOV
@@ -3292,8 +3328,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3305,6 +3341,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
@@ -3315,15 +3352,15 @@ server <- function(input, output,session){
         if(indicador == "Renovação líquida" & 
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
-          data = renov_parl_fed  
+          data = renov_parl_br  
           
         }
       })
   })
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Estadual 
+  ### Renovacao parlamentar (UF) 
   
   depestrl <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
@@ -3348,13 +3385,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovliq_parl_est',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
@@ -3366,7 +3404,7 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if (uf == "Todas UFs"){
-            renov_parl_est %>% 
+            renov_parl_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>%
             dplyr::select(`Ano da eleição`,
                           UF,
@@ -3376,7 +3414,7 @@ server <- function(input, output,session){
             unique()
           
           } else{
-            renov_parl_est %>% 
+            renov_parl_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
                           UF == input$UF3) %>%
             dplyr::select(`Ano da eleição`,
@@ -3390,9 +3428,9 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Estadual 
+  ### Renovacao parlamentar (UF) 
   
   ag_aliestrl <- reactive({
     indicador <- input$INDICADORES_RENOV
@@ -3417,8 +3455,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3430,6 +3468,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
                      'Select'),{
@@ -3441,11 +3480,11 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            data = renov_parl_est %>% 
+            data = renov_parl_uf %>% 
             filter(Cargo == input$DESCRICAO_CARGO3) %>% 
             unique()
           } else{
-            data = renov_parl_est %>% 
+            data = renov_parl_uf %>% 
             filter(Cargo == input$DESCRICAO_CARGO3 &
                    UF == input$UF3) %>% 
             unique()
@@ -3458,9 +3497,9 @@ server <- function(input, output,session){
   
 # 2.2.4. Volatilidade eleitoral -------------------------------------------
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Federal 
+  ### Renovacao parlamentar (Brasil)  
   
   depfedve <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
@@ -3486,13 +3525,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'vol_ele_fed',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
                      'Select'),{
@@ -3502,7 +3542,7 @@ server <- function(input, output,session){
         if(indicador == "Volatilidade eleitoral" &
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
-          renov_parl_fed %>% 
+          renov_parl_br %>% 
             dplyr::select(`Ano da eleição`,
                           `Volatilidade eleitoral`) %>% 
             spread(`Ano da eleição`,
@@ -3512,9 +3552,9 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Federal 
+  ### Renovacao parlamentar (Brasil)  
   
   ag_alifedve <- reactive({
     indicador <- input$INDICADORES_RENOV
@@ -3541,8 +3581,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3554,6 +3594,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',        
                      'Select'),{
@@ -3564,16 +3605,16 @@ server <- function(input, output,session){
         if(indicador == "Volatilidade eleitoral" & 
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
-          data = renov_parl_fed 
+          data = renov_parl_br 
           
         }
       })
   })
   
   
-  ## Tabela para visualizacao    
+  ## Resumo
   
-  ### Deputado Estadual
+  ### Renovacao parlamentar (UF) 
   
   depestve <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
@@ -3598,13 +3639,14 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'vol_ele_est',
         bom = TRUE))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',              
                      'Select'),{
@@ -3616,7 +3658,7 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            renov_parl_est %>% 
+            renov_parl_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>%
             dplyr::select(`Ano da eleição`,
                           UF,
@@ -3625,7 +3667,7 @@ server <- function(input, output,session){
                    `Volatilidade eleitoral`) %>% 
               unique()
           } else{
-            renov_parl_est %>% 
+            renov_parl_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
                           UF == input$UF3) %>%
             dplyr::select(`Ano da eleição`,
@@ -3639,9 +3681,9 @@ server <- function(input, output,session){
       })
   }) 
   
-  ## Resumo
+  ## Dados desagregados
   
-  ### Deputado Estadual
+  ### Renovacao parlamentar (UF) 
   
   ag_aliestve <- reactive({
     indicador <- input$INDICADORES_RENOV
@@ -3666,8 +3708,8 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
-        className = 'dt-right', targets = '_all')),
-      dom = 'Bfrtip',
+        className = 'dt-center', targets = '_all')),
+      dom = '<"top">Bflrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3679,6 +3721,7 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
+      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',        
                      'Select'),{
@@ -3690,11 +3733,11 @@ server <- function(input, output,session){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
-            data = renov_parl_est %>% 
+            data = renov_parl_uf %>% 
             filter(Cargo == input$DESCRICAO_CARGO3) %>% 
             unique()
           } else{
-            data = renov_parl_est %>% 
+            data = renov_parl_uf %>% 
             filter(Cargo == input$DESCRICAO_CARGO3 &
                    UF == input$UF3) %>% 
             unique()
@@ -3736,7 +3779,7 @@ server <- function(input, output,session){
   
   ## Modal para ajuda
   
-  ### Resumo
+  ### Dados desagregados
   
   observeEvent(input$modal_alien,{
     showModal(modalDialog(title = "Definição",
@@ -3815,7 +3858,7 @@ server <- function(input, output,session){
 # 2.3.1. Alienacao absoluta --------------------------------------------------------
 
 
-## Tabela para visualizacao    
+## Resumo
   
 ### Deputado Federal BR
   
@@ -3843,13 +3886,14 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'alien_abs_fed_br',
                   bom = TRUE))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',  
                              'Select'),{
@@ -3870,7 +3914,7 @@ server <- function(input, output,session){
     })
   }) 
   
-## Resumo
+## Dados desagregados
   
 ### Deputado Federal BR  
   
@@ -3898,8 +3942,8 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -3911,6 +3955,7 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',   
                              'Select'),{
@@ -3955,13 +4000,14 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'alien_abs_fed_uf',
                   bom = TRUE))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons', 
                               'Select'),{
@@ -3994,7 +4040,7 @@ server <- function(input, output,session){
     })
   })  
   
-## Resumo
+## Dados desagregados
   
 ### Deputado Federal UF  
   
@@ -4023,8 +4069,8 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
-                  className = 'dt-right', targets = '_all')),
-                dom = 'Bfrtip',
+                  className = 'dt-center', targets = '_all')),
+                dom = '<"top">Bflrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -4036,6 +4082,7 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
+              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',  
                               'Select'),{
@@ -4086,13 +4133,14 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
               lengthChange = FALSE,
               lengthMenu = FALSE,
               columnDefs = list(list(
-                className = 'dt-right', targets = '_all')),
-              dom = 'Bfrtip',
+                className = 'dt-center', targets = '_all')),
+              dom = '<"top">Bflrt<"bottom">ip',
               buttons = list(list(
                 extend = 'csv',
                 title = 'alien_per_fed_br',
                 bom = TRUE))), 
              class = "display",
+            filter = "top",
             rownames = FALSE,
             extensions = c('Buttons',   
                            'Select'),{
@@ -4113,7 +4161,7 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
   })
 }) 
 
-## Resumo
+## Dados desagregados
 
 ### Deputado Federal BR
 
@@ -4141,8 +4189,8 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
               lengthChange = FALSE,
               lengthMenu = FALSE,
               columnDefs = list(list(
-                className = 'dt-right', targets = '_all')),
-              dom = 'Bfrtip',
+                className = 'dt-center', targets = '_all')),
+              dom = '<"top">Bflrt<"bottom">ip',
               buttons = list(
                              list(
                 extend = 'csv',
@@ -4154,6 +4202,7 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
                   extend = 'colvis',                     
                   text = 'Colunas'))), 
              class = "display",
+            filter = "top",
             rownames = FALSE,
             extensions = c('Buttons',
                            'Select'),{
@@ -4202,13 +4251,14 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
               lengthChange = FALSE,
               lengthMenu = FALSE,
               columnDefs = list(list(
-                className = 'dt-right', targets = '_all')),
-              dom = 'Bfrtip',
+                className = 'dt-center', targets = '_all')),
+              dom = '<"top">Bflrt<"bottom">ip',
               buttons = list(list(
                 extend = 'csv',
                 title = 'alien_per_fed_uf',
                 bom = TRUE))), 
              class = "display",
+            filter = "top",
             rownames = FALSE,
             extensions = c('Buttons',                              
                            'Select'),{
@@ -4244,7 +4294,7 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
   })
 })
 
-## Resumo
+## Dados desagregados
 
 ### Deputado Federal UF
 
@@ -4273,8 +4323,8 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
               lengthChange = FALSE,
               lengthMenu = FALSE,
               columnDefs = list(list(
-                className = 'dt-right', targets = '_all')),
-              dom = 'Bfrtip',
+                className = 'dt-center', targets = '_all')),
+              dom = '<"top">Bflrt<"bottom">ip',
               buttons = list(
                              list(
                 extend = 'csv',
@@ -4286,6 +4336,7 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
                   extend = 'colvis',                     
                   text = 'Colunas'))), 
              class = "display",
+            filter = "top",
             rownames = FALSE,
             extensions = c('Buttons',
                            'Select'),{

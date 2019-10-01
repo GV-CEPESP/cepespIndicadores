@@ -19,7 +19,6 @@ library(plotly)
 library(DT)
 library(shinyjs)
 library(crosstalk)
-
 library(shinydashboardPlus)
 
 
@@ -33,10 +32,11 @@ library(shinydashboardPlus)
 
 ## Carrega os arquivos com os indicadores pré-calculados
 
+
 files <- list.files(file.path(getwd(),"/data/output"))
 
 for(i in files){
-  df <- read_csv(file.path(getwd(),"/data/output",i))
+  df <- read_csv(file.path(getwd(),"/data/output",i), col_types = cols(.default = 'c'))
   df <- df[,2:length(df)]
   assign(paste(substr(i,1,nchar(i)-4)), df)
   

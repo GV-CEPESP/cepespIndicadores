@@ -526,6 +526,8 @@ ind_eleicoes_est <- ind_eleicoes_est %>%
 
 ## Padroniza o formato dos indices numericos
 
+options(OutDec= ",")
+
 ### Deputado Federal (Brasil)
 
 ind_eleicoes_fed_br$Conservação <- 
