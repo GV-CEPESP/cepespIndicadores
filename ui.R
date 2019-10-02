@@ -108,7 +108,11 @@ ui <-
                       )),
              
              
-            
+             
+             tabPanel("CEPESP Indicadores"
+                     
+                     ),
+             
              
              tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
                                                    ## "Fragmentacao legislativa"

@@ -168,20 +168,20 @@ server <- function(input, output,session){
   
   
   carg <- reactive({
-    cargo <- input$DESCRICAO_CARGO3
-    if(cargo == "Deputado Federal"){
+    indicador <- input$INDICADORES_RENOV
+    if(length(indicador) > 0){
       return(input$AGREGACAO_REGIONAL2)
     } 
   })
   
   
   output$AGREGACAO_REGIONAL3 <- renderUI({
-    cargo <- input$DESCRICAO_CARGO3
+    cargo <- req(input$DESCRICAO_CARGO3)
     if(cargo == "Deputado Federal"){
       selectizeInput("AGREGACAO_REGIONAL3",
                      label = NULL,
                      choices = 
-                       c("", "Brasil"),
+                       c("", "Brasil", "UF"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
     } else if(cargo == "Deputado Estadual"){
@@ -197,17 +197,21 @@ server <- function(input, output,session){
   
   
    agreg <- reactive({
-    agregacao <- input$AGREGACAO_REGIONAL3
-    if(agregacao == "UF"){
+    agregacao <- req(input$AGREGACAO_REGIONAL3)
+    if(length(agregacao == "UF") > 0){
       return(input$UF3)
     } 
   })
   
   
   output$UF3 <- renderUI({
-    agregacao <- input$AGREGACAO_REGIONAL3
-    cargo <- input$DESCRICAO_CARGO3
-    if(cargo == "Deputado Estadual" &
+    agregacao <- req(input$AGREGACAO_REGIONAL3)
+    cargo <- req(input$DESCRICAO_CARGO3)
+    if(cargo == "Deputado Federal" & 
+       agregacao == "Brasil"){
+      return()
+    }else if(cargo == "Deputado Estadual" | 
+       cargo == "Deputado Federal" &
       length(agregacao == "UF") > 0){
       selectizeInput("UF3",
                      label = NULL,
@@ -219,6 +223,8 @@ server <- function(input, output,session){
                          "RR","RS", "SC", "SE", "SP", "TO"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma UF'))
+    } else{
+      return()
     }
   })
   
@@ -258,120 +264,7 @@ server <- function(input, output,session){
   
 # 2.1. Fragmentacao legislativa --------------------------------------------    
   
-  output$teste <- renderUI({
-    
-      note <- paste0(
-       '<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal1">
-         Player 1
-       </button>
-         
-         <!-- Modal -->
-         <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-         <div class="modal-dialog">
-         <div class="modal-content">
-         <div class="modal-header">
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-         <h4 class="modal-title" id="myModalLabel">Modal title 1</h4>
-         </div>
-         <div class="modal-body">
-         ...
-       </div>
-         <div class="modal-footer">
-         <button type="button" class="btn btn-default btn-prev">Prev</button>
-         <button type="button" class="btn btn-default btn-next">Next</button>
-         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-         </div>
-         </div>
-         </div>
-         </div>
-         
-         <!-- Button trigger modal -->
-         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal2">
-         Player 2
-       </button>
-         
-         <!-- Modal -->
-         <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-         <div class="modal-dialog">
-         <div class="modal-content">
-         <div class="modal-header">
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-         <h4 class="modal-title" id="myModalLabel">Modal title 2</h4>
-         </div>
-         <div class="modal-body">
-         ...
-       </div>
-         <div class="modal-footer">
-         <button type="button" class="btn btn-default btn-prev">Prev</button>
-         <button type="button" class="btn btn-default btn-next">Next</button>
-         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-         </div>
-         </div>
-         </div>
-         </div>
-         
-         
-         <!-- Button trigger modal -->
-         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal3">
-         Player 3
-       </button>
-         
-         <!-- Modal -->
-         <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-         <div class="modal-dialog">
-         <div class="modal-content">
-         <div class="modal-header">
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-         <h4 class="modal-title" id="myModalLabel">Modal title 3</h4>
-         </div>
-         <div class="modal-body">
-         ...
-       </div>
-         <div class="modal-footer">
-         <button type="button" class="btn btn-default btn-prev">Prev</button>
-         <button type="button" class="btn btn-default btn-next">Next</button>
-         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-         </div>
-         </div>
-         </div>
-         </div>
-         
-         
-         <!-- Button trigger modal -->
-         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal4">
-         Player 4
-       </button>
-         
-         <!-- Modal -->
-         <div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-         <div class="modal-dialog">
-         <div class="modal-content">
-         <div class="modal-header">
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-         <h4 class="modal-title" id="myModalLabel">Modal title 4</h4>
-         </div>
-         <div class="modal-body">
-         ...
-       </div>
-         <div class="modal-footer">
-         <button type="button" class="btn btn-default btn-prev">Prev</button>
-         <button type="button" class="btn btn-default btn-next">Next</button>
-         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-         </div>
-         </div>
-         </div>
-         </div>')
-  HTML(note)
-  })
-  
- 
-  
-## Modal inicial
-  
-  
-    
-  
- 
+
   ## Modal para ajuda
   
   ### Resumo
@@ -533,7 +426,7 @@ server <- function(input, output,session){
     HTML(note)
   }) 
   
-# 2.1.1. Desproporcionalidade de gallagher --------------------------------  
+# 2.1.1. Desproporcionalidade --------------------------------  
   
   ## Resumo
   
@@ -563,16 +456,16 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_fed',
         bom = TRUE))), 
         class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Desproporcionalidade" & 
@@ -617,9 +510,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 2
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -631,10 +527,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
         class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Desproporcionalidade" & 
@@ -679,21 +575,24 @@ server <- function(input, output,session){
       autoWidth = TRUE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
-        className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_est',
         bom = TRUE))), 
         class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -755,9 +654,13 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
       columnDefs = list(list(
-        className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -769,10 +672,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
         class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -845,16 +748,16 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'fracio_fed',
                   bom = TRUE))), 
                 class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',
-                             'Select'),{
+                             'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       uf <- input$UF2
@@ -900,9 +803,12 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                fixedColumns = list(
+                  leftColumns = 2
+                ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -914,10 +820,12 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                 class = "display",
-              filter = "top",
+             
+              
               rownames = FALSE,
               extensions = c('Buttons', 
-                             'Select'),{
+                             'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização" & 
@@ -963,18 +871,21 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_est',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1034,9 +945,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -1048,10 +962,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1093,7 +1007,7 @@ server <- function(input, output,session){
   
 # 2.1.3. Fracionalizacao maxima -------------------------------------------
   
-## Tabela para visualizacao  
+## Resumo
   
 ### Fragmentacao legislativa (Brasil
   
@@ -1120,16 +1034,16 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'fracio_max_fed',
                   bom = TRUE))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons', 
-                             'Select'),{
+                             'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização máxima" & 
@@ -1173,9 +1087,12 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                fixedColumns = list(
+                  leftColumns = 2
+                ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -1187,10 +1104,10 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons', 
-                               'Select'),{
+                             'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fracionalização máxima" & 
@@ -1210,7 +1127,7 @@ server <- function(input, output,session){
     })
   })
   
-  ## Tabela para visualizacao  
+  ## Resumo
   
   ### Fragmentacao legislativa (UF)
   
@@ -1236,18 +1153,21 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_max_est',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- req(input$INDICADORES_FRAG)
         agregacao <- req(input$AGREGACAO_REGIONAL2)
         uf <- req(input$UF2)
@@ -1305,9 +1225,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -1319,10 +1242,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1364,7 +1287,7 @@ server <- function(input, output,session){
   
 # 2.1.4. Fragmentacao -----------------------------------------------------
 
-## Tabela para visualizacao  
+## Resumo 
     
 ### Fragmentacao legislativa (Brasil
   
@@ -1392,16 +1315,16 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'frag_fed',
                   bom = TRUE))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',
-                             'Select'),{
+                             'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fragmentação" &
@@ -1445,9 +1368,12 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                fixedColumns = list(
+                  leftColumns = 2
+                ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -1459,10 +1385,10 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',
-                               'Select'),{
+                             'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Fragmentação" & 
@@ -1509,18 +1435,21 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'frag_est',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1581,9 +1510,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -1595,10 +1527,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -1640,7 +1572,7 @@ server <- function(input, output,session){
   
 # 2.1.5. Numero efetivo de partidos por cadeiras -----------------------------------------------------
   
-## Tabela para visualizacao  
+## Resumo 
   
 ### Fragmentacao legislativa (Brasil
   
@@ -1667,16 +1599,16 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'nepc_fed',
                   bom = TRUE))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',  
-                              'Select'),{
+                              'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Número efetivo de partidos legislativo" & 
@@ -1719,9 +1651,12 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                fixedColumns = list(
+                  leftColumns = 2
+                ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -1733,10 +1668,10 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',   
-                              'Select'),{
+                              'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       if(indicador == "Número efetivo de partidos legislativo" & 
@@ -1781,18 +1716,21 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                fixedColumns = list(
+                  leftColumns = 1
+                ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'nepc_est',
                   bom = TRUE))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons', 
-                             'Select'),{
+                             'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       uf <- req(input$UF2)
@@ -1852,9 +1790,12 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                fixedColumns = list(
+                  leftColumns = 3
+                ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(list(
                   extend = 'csv',
                   exportOptions = list(
@@ -1865,10 +1806,10 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
       extensions = c('Buttons',      
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL2
       uf <- req(input$UF2)
@@ -1935,18 +1876,18 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
-      columnDefs = list(list(
+       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'nepc_fed',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',   
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Número efetivo de partidos eleitoral" & 
@@ -1989,9 +1930,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 2
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -2003,10 +1947,10 @@ server <- function(input, output,session){
           extend = 'colvis',                   
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',  
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Número efetivo de partidos eleitoral" & 
@@ -2051,18 +1995,21 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'nepc_est',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',   
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -2121,9 +2068,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -2135,10 +2085,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
@@ -2210,9 +2160,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_elei_dep_fed',
@@ -2227,11 +2180,11 @@ server <- function(input, output,session){
       )),
       class = "display",
       #selection = list(mode = 'multiple',
-      #                target = 'row+column'), 
-      filter = "top",
+      #                target = 'row+column'),
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO2
                        uf <- input$UF2
@@ -2307,9 +2260,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         exportOptions = list(
@@ -2321,10 +2277,10 @@ server <- function(input, output,session){
           text = 'Colunas')
       )), 
       class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO2
                        uf <- input$UF2
@@ -2363,25 +2319,27 @@ server <- function(input, output,session){
   
   bquoce_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      
       autoWidth = TRUE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_elei_dep_est',
         bom = TRUE))), 
       class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO2
                        uf <- input$UF2
@@ -2435,9 +2393,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
         list(
           extend = 'csv',
@@ -2449,10 +2410,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
       class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO2
                        uf <- input$UF2
@@ -2497,18 +2458,21 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_part_dep_fed',
         bom = TRUE))), 
       class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO2
                        uf <- input$UF2
@@ -2560,9 +2524,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
         list(
           extend = 'csv',
@@ -2574,10 +2541,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
       class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO2
                        uf <- input$UF2
@@ -2620,18 +2587,21 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_part_dep_est',
         bom = TRUE))), 
       class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO2
                        uf <- input$UF2
@@ -2681,9 +2651,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
         list(
           extend = 'csv',
@@ -2695,10 +2668,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
       class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO2
                        uf <- input$UF2
@@ -2849,13 +2822,12 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'renov_parl_fed',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',       
                      'Select'),{
@@ -2902,9 +2874,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -2916,10 +2891,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -2960,23 +2935,27 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'renov_parl_est',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         uf <- req(input$UF3)
         agregacao <- input$AGREGACAO_REGIONAL3
-        if(indicador == "Conservação" &
+        if(indicador == "Conservação" & 
+           cargo == "Deputado Federal" |
            cargo == "Deputado Estadual")
           if(uf == ""){
             return()
@@ -3028,9 +3007,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3042,10 +3024,12 @@ server <- function(input, output,session){
           extend = 'colvis',                    
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
+     
+      
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -3098,16 +3082,16 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovbr_parl_fed',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -3154,11 +3138,13 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
-      buttons = list(
-                     list(
+      dom = 'Bflrtip',
+      buttons = list(list(
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
@@ -3168,10 +3154,10 @@ server <- function(input, output,session){
           extend = 'colvis',                   
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -3211,18 +3197,21 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovbr_parl_est',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',     
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -3280,9 +3269,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3294,10 +3286,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -3350,16 +3342,16 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovliq_parl_fed',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',  
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -3404,9 +3396,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3418,10 +3413,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -3461,18 +3456,21 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovliq_parl_est',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -3531,9 +3529,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3545,10 +3546,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -3603,16 +3604,16 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'vol_ele_fed',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -3657,9 +3658,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3671,10 +3675,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',        
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO3
         agregacao <- input$AGREGACAO_REGIONAL3
@@ -3715,18 +3719,21 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
         title = 'vol_ele_est',
         bom = TRUE))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',              
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -3784,9 +3791,12 @@ server <- function(input, output,session){
       searching = TRUE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Blrt<"bottom">ip',
+      dom = 'Bflrtip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3798,10 +3808,10 @@ server <- function(input, output,session){
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
-      filter = "top",
       rownames = FALSE,
       extensions = c('Buttons',        
-                     'Select'),{
+                     'Select',
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL3
         uf <- req(input$UF3)
@@ -3940,18 +3950,21 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                fixedColumns = list(
+                  leftColumns = 1
+                ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'alien_abs_fed_br',
                   bom = TRUE))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',  
-                             'Select'),{
+                             'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
       agregacao <- input$AGREGACAO_REGIONAL4
@@ -3996,9 +4009,12 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                fixedColumns = list(
+                  leftColumns = 3
+                ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -4010,10 +4026,10 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',   
-                             'Select'),{
+                             'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
       agregacao <- input$AGREGACAO_REGIONAL4
@@ -4054,18 +4070,21 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                fixedColumns = list(
+                  leftColumns = 2
+                ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'alien_abs_fed_uf',
                   bom = TRUE))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons', 
-                              'Select'),{
+                              'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
       agregacao <- input$AGREGACAO_REGIONAL4
@@ -4123,9 +4142,12 @@ server <- function(input, output,session){
                 searching = TRUE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
+                fixedColumns = list(
+                  leftColumns = 4
+                ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Blrt<"bottom">ip',
+                dom = 'Bflrtip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -4137,10 +4159,10 @@ server <- function(input, output,session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                class = "display",
-              filter = "top",
               rownames = FALSE,
               extensions = c('Buttons',  
-                              'Select'),{
+                              'Select',
+                             'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO4
       agregacao <- input$AGREGACAO_REGIONAL4
@@ -4187,18 +4209,21 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
               searching = TRUE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
+              fixedColumns = list(
+                leftColumns = 1
+              ),
               columnDefs = list(list(
                 className = 'dt-center', targets = '_all')),
-              dom = '<"top">Blrt<"bottom">ip',
+              dom = 'Bflrtip',
               buttons = list(list(
                 extend = 'csv',
                 title = 'alien_per_fed_br',
                 bom = TRUE))), 
              class = "display",
-            filter = "top",
             rownames = FALSE,
             extensions = c('Buttons',   
-                           'Select'),{
+                           'Select',
+                           'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
     agregacao <- input$AGREGACAO_REGIONAL4
@@ -4243,9 +4268,12 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
               searching = TRUE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
+              fixedColumns = list(
+                leftColumns = 3
+              ),
               columnDefs = list(list(
                 className = 'dt-center', targets = '_all')),
-              dom = '<"top">Blrt<"bottom">ip',
+              dom = 'Bflrtip',
               buttons = list(
                              list(
                 extend = 'csv',
@@ -4257,10 +4285,10 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
                   extend = 'colvis',                     
                   text = 'Colunas'))), 
              class = "display",
-            filter = "top",
             rownames = FALSE,
             extensions = c('Buttons',
-                           'Select'),{
+                           'Select',
+                           'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
     agregacao <- input$AGREGACAO_REGIONAL4
@@ -4305,18 +4333,21 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
               searching = TRUE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
+              fixedColumns = list(
+                leftColumns = 2
+              ),
               columnDefs = list(list(
                 className = 'dt-center', targets = '_all')),
-              dom = '<"top">Blrt<"bottom">ip',
+              dom = 'Bflrtip',
               buttons = list(list(
                 extend = 'csv',
                 title = 'alien_per_fed_uf',
                 bom = TRUE))), 
              class = "display",
-            filter = "top",
             rownames = FALSE,
             extensions = c('Buttons',                              
-                           'Select'),{
+                           'Select',
+                           'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
     agregacao <- input$AGREGACAO_REGIONAL4
@@ -4377,9 +4408,12 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
               searching = TRUE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
+              fixedColumns = list(
+                leftColumns = 4
+              ),
               columnDefs = list(list(
                 className = 'dt-center', targets = '_all')),
-              dom = '<"top">Blrt<"bottom">ip',
+              dom = 'Bflrtip',
               buttons = list(
                              list(
                 extend = 'csv',
@@ -4391,10 +4425,10 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
                   extend = 'colvis',                     
                   text = 'Colunas'))), 
              class = "display",
-            filter = "top",
             rownames = FALSE,
             extensions = c('Buttons',
-                           'Select'),{
+                           'Select',
+                           'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO4
     agregacao <- input$AGREGACAO_REGIONAL4

@@ -425,6 +425,12 @@ for(ano in sort(unique(df1_br$`Ano da eleição`))){
 
 ### Deputado Federal (UF)
 
+teste <- df1_uf %>% 
+  filter(`Ano da eleição` == 2018, UF == "AC")
+
+
+teste$NEPE <- nep(teste$`Total de cadeiras conquistadas`)
+
 frag_leg_fed_uf <- list()
 
 

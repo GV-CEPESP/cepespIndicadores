@@ -21,6 +21,7 @@ library(shinyjs)
 library(crosstalk)
 library(shinydashboardPlus)
 library(V8)
+library(rintrojs)
 
 
 
