@@ -20,6 +20,7 @@ library(DT)
 library(shinyjs)
 library(crosstalk)
 library(shinydashboardPlus)
+library(V8)
 
 
 

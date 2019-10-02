@@ -5,7 +5,7 @@
 #'        - Criar uma interface em shiny para exibir os indicadores calculados.
 
 
-jsCode <- "shinyjs.teste = function(){
+jsCode <- "shinyjs.init = function(){
                  
                  $('div[id^='myModal']').each(function(){
   
@@ -23,7 +23,7 @@ jsCode <- "shinyjs.teste = function(){
                  currentModal.closest('div[id^='myModal']').prevAll('div[id^='myModal']').first().modal('show'); 
                  });
                  
-                  })};"
+                  });}"
 
 
 # 1. User interface -------------------------------------------------------
@@ -108,11 +108,7 @@ ui <-
                       )),
              
              
-             
-             tabPanel("CEPESP Indicadores"
-                      
-                     ),
-             
+            
              
              tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
                                                    ## "Fragmentacao legislativa"

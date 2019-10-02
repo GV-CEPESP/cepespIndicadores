@@ -364,51 +364,12 @@ server <- function(input, output,session){
   HTML(note)
   })
   
- observeEvent(input$teste,{
-   js$teste(input$teste)
-   
- })
+ 
   
 ## Modal inicial
   
   
-    observeEvent(req(input$CepespIndicadores), {
-    if(input$CepespIndicadores == "CEPESP Indicadores") {
-       showModal(modalDialog(
-        title = tags$h4(align = 'center',
-                        "Tutorial"),
-        footer = 
-          list(actionButton(inputId = "ant",
-                            label = NULL,
-                            icon = icon("arrow-circle-left")),
-               modalButton("Fechar"),
-               actionButton(inputId = "prox",
-                            label = NULL,
-                            icon = icon("arrow-circle-right"))), 
-        size = "m",
-         tags$h4(align = 'center', 
-          tags$b(       
-           "Bem-vindo ao CEPESP Indicadores"),
-        br(),
-        br(),
-        br(),
-        htmlOutput("def_frag")),
-        easyClose = TRUE,
-        style = "
-        overflow: hidden;
-        overflow-y: scroll;
-        flex: 1 1 auto;
-        padding: 1rem;
-        max-width: 850px;
-        margin: 1.75rem auto;
-        max-height: 500px;
-        display: flex;
-        width: auto;
-        "
-        ))
-    }
-      },ignoreInit = FALSE, once = TRUE)
-  
+    
   
  
   ## Modal para ajuda
@@ -2757,9 +2718,6 @@ server <- function(input, output,session){
   
 # 2.2. Renovacao parlamentar ---------------------------------------------- 
   
-  ## Modal inicial
-  
-     
   ## Modal para ajuda
   
   ### Dados Resumo
@@ -3869,33 +3827,7 @@ server <- function(input, output,session){
   
 # 2.3. Alienacao ----------------------------------------------------------  
   
-  ## Modal inicial
-  
-  m_alien <- observeEvent(input$CepespIndicadores,ignoreInit = TRUE, once = TRUE, {
-    if(input$CepespIndicadores == "Alienação")  {
-        showModal(modalDialog(
-        title = "Definição",
-        footer = modalButton("Fechar"), 
-        size = "m",
-        htmlOutput("def_alien"),
-        easyClose = TRUE,
-        style = "
-        overflow: hidden;
-        overflow-y: scroll;
-        flex: 1 1 auto;
-        padding: 1rem;
-        max-width: 850px;
-        margin: 1.75rem auto;
-        max-height: 500px;
-        display: flex;
-        width: auto;
-        "
-      ))
-    }else{
-      return()
-    }
-  })
-  
+ 
   ## Modal para ajuda
   
   ### Dados desagregados
