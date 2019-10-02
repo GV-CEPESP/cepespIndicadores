@@ -5,6 +5,26 @@
 #'        - Criar uma interface em shiny para exibir os indicadores calculados.
 
 
+jsCode <- "shinyjs.teste = function(){
+                 
+                 $('div[id^='myModal']').each(function(){
+  
+                 var currentModal = $(this);
+                 
+                 //click next
+                 currentModal.find('.btn-next').click(function(){
+                 currentModal.modal('hide');
+                 currentModal.closest('div[id^='myModal']').nextAll('div[id^='myModal']').first().modal('show'); 
+                 });
+                 
+                 //click prev
+                 currentModal.find('.btn-prev').click(function(){
+                 currentModal.modal('hide');
+                 currentModal.closest('div[id^='myModal']').prevAll('div[id^='myModal']').first().modal('show'); 
+                 });
+                 
+                  })};"
+
 
 # 1. User interface -------------------------------------------------------
 
@@ -12,7 +32,9 @@
 
 ui <- 
   
+  
   fluidPage(
+    useShinyjs(),
   
   tags$head(
     tags$style(HTML(".navbar .navbar-nav {float: left}
@@ -85,9 +107,11 @@ ui <-
                              
                       )),
              
-            
-             tabPanel("CEPESP Indicadores",
-                      div()),
+             
+             
+             tabPanel("CEPESP Indicadores"
+                      
+                     ),
              
              
              tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
@@ -130,9 +154,11 @@ ui <-
                           
                           absolutePanel(top = 0, right = 0, left = 100,
                                         
+                                       
+                                        
                                         tabsetPanel(type = "pills",
                                                     
-                                                       tabPanel("Resumo", br(),
+                                                    tabPanel("Resumo", br(),
                                                                 absolutePanel(top = 0, right = 0, left = 260,
                                                                               actionBttn(inputId = "modal_frag",
                                                                                          color = "default",

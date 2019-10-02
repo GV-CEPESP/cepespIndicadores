@@ -258,20 +258,141 @@ server <- function(input, output,session){
   
 # 2.1. Fragmentacao legislativa --------------------------------------------    
   
-## Modal inicial
+  output$teste <- renderUI({
     
-  shinyalert(title = "Definição",
-             htmlOutput("def_frag")
-             )
+      note <- paste0(
+       '<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal1">
+         Player 1
+       </button>
+         
+         <!-- Modal -->
+         <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+         <div class="modal-content">
+         <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         <h4 class="modal-title" id="myModalLabel">Modal title 1</h4>
+         </div>
+         <div class="modal-body">
+         ...
+       </div>
+         <div class="modal-footer">
+         <button type="button" class="btn btn-default btn-prev">Prev</button>
+         <button type="button" class="btn btn-default btn-next">Next</button>
+         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         </div>
+         </div>
+         </div>
+         </div>
+         
+         <!-- Button trigger modal -->
+         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal2">
+         Player 2
+       </button>
+         
+         <!-- Modal -->
+         <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+         <div class="modal-content">
+         <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         <h4 class="modal-title" id="myModalLabel">Modal title 2</h4>
+         </div>
+         <div class="modal-body">
+         ...
+       </div>
+         <div class="modal-footer">
+         <button type="button" class="btn btn-default btn-prev">Prev</button>
+         <button type="button" class="btn btn-default btn-next">Next</button>
+         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         </div>
+         </div>
+         </div>
+         </div>
+         
+         
+         <!-- Button trigger modal -->
+         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal3">
+         Player 3
+       </button>
+         
+         <!-- Modal -->
+         <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+         <div class="modal-content">
+         <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         <h4 class="modal-title" id="myModalLabel">Modal title 3</h4>
+         </div>
+         <div class="modal-body">
+         ...
+       </div>
+         <div class="modal-footer">
+         <button type="button" class="btn btn-default btn-prev">Prev</button>
+         <button type="button" class="btn btn-default btn-next">Next</button>
+         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         </div>
+         </div>
+         </div>
+         </div>
+         
+         
+         <!-- Button trigger modal -->
+         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal4">
+         Player 4
+       </button>
+         
+         <!-- Modal -->
+         <div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+         <div class="modal-content">
+         <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         <h4 class="modal-title" id="myModalLabel">Modal title 4</h4>
+         </div>
+         <div class="modal-body">
+         ...
+       </div>
+         <div class="modal-footer">
+         <button type="button" class="btn btn-default btn-prev">Prev</button>
+         <button type="button" class="btn btn-default btn-next">Next</button>
+         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         </div>
+         </div>
+         </div>
+         </div>')
+  HTML(note)
+  })
   
- 
+ observeEvent(input$teste,{
+   js$teste(input$teste)
+   
+ })
+  
+## Modal inicial
+  
+  
     observeEvent(req(input$CepespIndicadores), {
-    if(input$CepespIndicadores == "Fragmentação legislativa") {
+    if(input$CepespIndicadores == "CEPESP Indicadores") {
        showModal(modalDialog(
-        title = "Definição",
-        footer = modalButton("Fechar"), 
+        title = tags$h4(align = 'center',
+                        "Tutorial"),
+        footer = 
+          list(actionButton(inputId = "ant",
+                            label = NULL,
+                            icon = icon("arrow-circle-left")),
+               modalButton("Fechar"),
+               actionButton(inputId = "prox",
+                            label = NULL,
+                            icon = icon("arrow-circle-right"))), 
         size = "m",
-        htmlOutput("def_frag"),
+         tags$h4(align = 'center', 
+          tags$b(       
+           "Bem-vindo ao CEPESP Indicadores"),
+        br(),
+        br(),
+        br(),
+        htmlOutput("def_frag")),
         easyClose = TRUE,
         style = "
         overflow: hidden;
@@ -286,17 +407,18 @@ server <- function(input, output,session){
         "
         ))
     }
-      }, ignoreInit = TRUE)
+      },ignoreInit = FALSE, once = TRUE)
   
   
-  
-   
+ 
   ## Modal para ajuda
   
   ### Resumo
   
   observeEvent(input$modal_frag,{
-    showModal(modalDialog(title = "Definição",
+    showModal(modalDialog(
+                          title = tags$h4(align = "center",
+                                          "Ajuda"),
                           footer = modalButton("Fechar"), 
                           size = "m",
                           htmlOutput("def_frag"),
@@ -317,7 +439,9 @@ server <- function(input, output,session){
   ### Dados desagregados
   
   observeEvent(input$modal_frag_ag,{
-    showModal(modalDialog(title = "Definição",
+    showModal(modalDialog(
+                          title = tags$h4(align = 'center',
+                                          "Ajuda"),
                           footer = modalButton("Fechar"), 
                           size = "m",
                           htmlOutput("def_frag"),
@@ -355,73 +479,88 @@ server <- function(input, output,session){
                    isto é, para saber se a disputa por cargos envolve poucos ou muitos partidos. O segundo, o NEP legislativo, indica o grau de 
                    dispersão do poder legislativo entre os partidos que compõem um órgão legislativo. Através dele pode-se saber quantos partidos 
                    estão em condições de influenciar de forma efetiva o processo legislativo</p></h5>
-                   <p>
+                   <p><h5 align = 'justify'>
                    <strong>Fórmula: </strong>
+                   <p>
                    <p><i>Número efetivo de partidos eleitoral </i></p>
                    NEP = 1/ &sum;(pv<sup>2</sup>),
                    <p>onde pv = proporção de votos obtidos pelos partidos.</p>
                    <p><i>Número efetivo de partidos legislativo </i></p>
                    NEP = 1/ &sum;(pc<sup>2</sup>),
                    <p>onde pc = proporção de cadeiras obtidas pelos partidos.</p>
-                   <p><br />
+                   <p><br /></h5>
                    <h4>Fracionalização </h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>Este indicador tem por objetivo medir a dispersão partidária de um parlamento. 
                    Ele indica qual a probabilidade de dois parlamentares desse parlamento, 
                    tomados ao acaso, pertecerem a partidos diferentes.</p></h5>
                    <p>
+                   <p><h5 align = 'justify'>
                    <strong>Fórmula: </strong>
                    <p>
+                   <p>
                    F = 1 - &sum;(pe<sup>2</sup>), 
-                   <p>onde pe = percentual de cadeiras ocupadas por partido.</p>
+                   <p>onde pe = percentual de cadeiras ocupadas por partido.</p></h5>
                    <p><br />                 
                    <h4>Fracionalização máxima</h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>A 'fracionalização máxima' não depende da votação dos partidos, mas da quantidade 
                    de cadeiras e partidos com representação parlamentar.<p></h5>
                    <p>
+                   <p><h5 align = 'justify'>
                    <strong>Fórmula: </strong>
                    <p>
+                   <p>
                    FM = N*(n-1)/n*(N-1), 
-                   <p> onde N = número de cadeiras e n = número de partidos com representação parlamentar.</p>
+                   <p> onde N = número de cadeiras e n = número de partidos com representação parlamentar.</p></h5>
                    <p><br />      
                    <h4>Fragmentação</h4>
                    <h5 align = 'justify'><br />
                    A fragmentação mede quanto o índice de fracionalização se aproxima da fracionalização
                    máxima.</h5>
                    <p>
+                   <p><h5 align = 'justify'>
                    <strong>Fórmula: </strong>
                    <p>
-                   FG = (Índice de fracionalização)/(Índice de fracionalização máxima)
+                   <p>
+                   FG = (Índice de fracionalização)/(Índice de fracionalização máxima)</h5>
                    <p>
                    <h4><br />Desproporcionalidade</h4>
                    <h5 align = 'justify'><br />
                    O índice proposto por Gallagher consiste na diferença dos percentuais de votos e de cadeiras obtidas por cada partido.</h5>
                    <p>
+                   <h5 align = 'justify'><br />
                    <strong>Fórmula: </strong>
                    <p>
+                   <p>
                    D = &radic;&sum;(vi - si)<sup>2</sup>/2,
-                   <p>onde vi = percentual de votos e si = percentual de cadeiras.</p>
+                   <p>onde vi = percentual de votos e si = percentual de cadeiras.</p></h5>
                    <p>
                    <h4><br />Quociente Eleitoral</h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>É o número mínimo de votos que um partido ou coligação deve atingir 
                    em determinada UF e eleição para garantir uma vaga.</p></h5>
                    <p>
+                   <p><h5 align = 'justify'>
                    <strong>Fórmula: </strong>
                    <p>
-                   QE = (Votos válidos)/(Número de vagas existentes)
+                   <p>
+                   QE = (Votos válidos)/(Número de vagas existentes)</h5>
                    <p>
                    <h4><br/ > Quociente Partidário</h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>O indicador representa o número de vagas que o partido ou coligação obteve, 
                    excluindo as vagas distribuídas por média.</p></h5>
                    <p>
+                   <p><h5 align = 'justify'>
                    <strong>Fórmula: </strong>
                    <p>
-                   QP = Número de votos válidos do partido ou coligação/Quociente eleitoral
                    <p>
-                   <strong>Fonte:</strong> 
+                   QP = Número de votos válidos do partido ou coligação/Quociente eleitoral</h5>
+                   <p>
+                   <p>
+                   <p><h5 align = 'justify'><strong>Fonte:</strong>
+                   <p>
                    <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
                    países/ Organização de Wanderley Guilherme dos Santos, com a colaboração de Fabrícia Guimarães. -
                    Rio de Janeiro: Editora FGV, 2002); 
@@ -429,7 +568,7 @@ server <- function(input, output,session){
                    <p>3. <a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-eleitoral'>
                    Quociente eleitoral - TSE </a></p>
                    <p>4.<a href='http://www.tse.jus.br/eleitor/glossario/termos/quociente-partidario'>
-                   Quociente partidário - TSE </a></p></font>")
+                   Quociente partidário - TSE </h5></a></p></font>")
     HTML(note)
   }) 
   
@@ -463,7 +602,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_fed',
@@ -519,7 +658,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -584,7 +723,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_est',
@@ -657,7 +796,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -745,7 +884,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'fracio_fed',
@@ -802,7 +941,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -865,7 +1004,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_est',
@@ -936,7 +1075,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -1020,7 +1159,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'fracio_max_fed',
@@ -1075,7 +1214,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -1138,7 +1277,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'fracio_max_est',
@@ -1207,7 +1346,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -1292,7 +1431,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'frag_fed',
@@ -1347,7 +1486,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -1411,7 +1550,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'frag_est',
@@ -1483,7 +1622,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -1567,7 +1706,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'nepc_fed',
@@ -1621,7 +1760,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -1683,7 +1822,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'nepc_est',
@@ -1754,7 +1893,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   exportOptions = list(
@@ -1837,7 +1976,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'nepc_fed',
@@ -1891,7 +2030,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -1953,7 +2092,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'nepc_est',
@@ -2023,7 +2162,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -2112,7 +2251,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_elei_dep_fed',
@@ -2209,7 +2348,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         exportOptions = list(
@@ -2272,7 +2411,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_elei_dep_est',
@@ -2337,7 +2476,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
         list(
           extend = 'csv',
@@ -2399,7 +2538,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_part_dep_fed',
@@ -2462,7 +2601,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
         list(
           extend = 'csv',
@@ -2522,7 +2661,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'quoc_part_dep_est',
@@ -2583,7 +2722,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
         list(
           extend = 'csv',
@@ -2620,37 +2759,15 @@ server <- function(input, output,session){
   
   ## Modal inicial
   
-  m_renov <- observeEvent(input$CepespIndicadores, ignoreInit = TRUE, once = TRUE, {
-    if(input$CepespIndicadores == "Renovação parlamentar")  {
-      showModal(modalDialog(
-        title = "Definição",
-        footer = modalButton("Fechar"), 
-        size = "m",
-        htmlOutput("def_renovp"),
-        easyClose = TRUE,
-        style = "
-        overflow: hidden;
-        overflow-y: scroll;
-        flex: 1 1 auto;
-        padding: 1rem;
-        max-width: 850px;
-        margin: 1.75rem auto;
-        max-height: 500px;
-        display: flex;
-        width: auto;
-        "
-      ))
-    }else{
-      return()
-    }
-  })
-  
+     
   ## Modal para ajuda
   
   ### Dados Resumo
   
   observeEvent(input$modal_renovp,{
-    showModal(modalDialog(title = "Definição",
+    showModal(modalDialog(
+                          title = tags$h4(align = "center",
+                                          "Ajuda"),
                           footer = modalButton("Fechar"), 
                           size = "m",
                           htmlOutput("def_renovp"),
@@ -2671,7 +2788,9 @@ server <- function(input, output,session){
   ### Dados desagregados
   
   observeEvent(input$modal_renovp_ag,{
-    showModal(modalDialog(title = "Definição",
+    showModal(modalDialog(
+                          title = tags$h4(align = "center",
+                                          "Ajuda"),
                           footer = modalButton("Fechar"), 
                           size = "m",
                           htmlOutput("def_renovp"),
@@ -2772,7 +2891,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renov_parl_fed',
@@ -2827,7 +2946,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -2885,7 +3004,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renov_parl_est',
@@ -2953,7 +3072,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3021,7 +3140,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovbr_parl_fed',
@@ -3079,7 +3198,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3136,7 +3255,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovbr_parl_est',
@@ -3205,7 +3324,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3273,7 +3392,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovliq_parl_fed',
@@ -3329,7 +3448,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3386,7 +3505,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'renovliq_parl_est',
@@ -3456,7 +3575,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3526,7 +3645,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'vol_ele_fed',
@@ -3582,7 +3701,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3640,7 +3759,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(list(
         extend = 'csv',
         title = 'vol_ele_est',
@@ -3709,7 +3828,7 @@ server <- function(input, output,session){
       lengthMenu = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
-      dom = '<"top">Bflrt<"bottom">ip',
+      dom = '<"top">Blrt<"bottom">ip',
       buttons = list(
                      list(
         extend = 'csv',
@@ -3752,7 +3871,7 @@ server <- function(input, output,session){
   
   ## Modal inicial
   
-  m_alien <- observeEvent(input$CepespIndicadores, ignoreInit = TRUE, once = TRUE, {
+  m_alien <- observeEvent(input$CepespIndicadores,ignoreInit = TRUE, once = TRUE, {
     if(input$CepespIndicadores == "Alienação")  {
         showModal(modalDialog(
         title = "Definição",
@@ -3782,7 +3901,9 @@ server <- function(input, output,session){
   ### Dados desagregados
   
   observeEvent(input$modal_alien,{
-    showModal(modalDialog(title = "Definição",
+    showModal(modalDialog(
+                         title = tags$h4(align = "center",
+                                        "Ajuda"),
                           footer = modalButton("Fechar"), 
                           size = "m",
                           htmlOutput("def_alien"),
@@ -3803,7 +3924,9 @@ server <- function(input, output,session){
   ### Dados agregados
   
   observeEvent(input$modal_alien_ag,{
-    showModal(modalDialog(title = "Definição",
+    showModal(modalDialog(
+                          title = tags$h4(align = "center",
+                                         "Ajuda"),
                           footer = modalButton("Fechar"), 
                           size = "m",
                           htmlOutput("def_alien"),
@@ -3887,7 +4010,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'alien_abs_fed_br',
@@ -3943,7 +4066,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -4001,7 +4124,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(list(
                   extend = 'csv',
                   title = 'alien_abs_fed_uf',
@@ -4070,7 +4193,7 @@ server <- function(input, output,session){
                 lengthMenu = FALSE,
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
-                dom = '<"top">Bflrt<"bottom">ip',
+                dom = '<"top">Blrt<"bottom">ip',
                 buttons = list(
                                list(
                   extend = 'csv',
@@ -4134,7 +4257,7 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
               lengthMenu = FALSE,
               columnDefs = list(list(
                 className = 'dt-center', targets = '_all')),
-              dom = '<"top">Bflrt<"bottom">ip',
+              dom = '<"top">Blrt<"bottom">ip',
               buttons = list(list(
                 extend = 'csv',
                 title = 'alien_per_fed_br',
@@ -4190,7 +4313,7 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
               lengthMenu = FALSE,
               columnDefs = list(list(
                 className = 'dt-center', targets = '_all')),
-              dom = '<"top">Bflrt<"bottom">ip',
+              dom = '<"top">Blrt<"bottom">ip',
               buttons = list(
                              list(
                 extend = 'csv',
@@ -4252,7 +4375,7 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
               lengthMenu = FALSE,
               columnDefs = list(list(
                 className = 'dt-center', targets = '_all')),
-              dom = '<"top">Bflrt<"bottom">ip',
+              dom = '<"top">Blrt<"bottom">ip',
               buttons = list(list(
                 extend = 'csv',
                 title = 'alien_per_fed_uf',
@@ -4324,7 +4447,7 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
               lengthMenu = FALSE,
               columnDefs = list(list(
                 className = 'dt-center', targets = '_all')),
-              dom = '<"top">Bflrt<"bottom">ip',
+              dom = '<"top">Blrt<"bottom">ip',
               buttons = list(
                              list(
                 extend = 'csv',
