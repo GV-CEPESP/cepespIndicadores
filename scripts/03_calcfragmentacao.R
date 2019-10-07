@@ -173,12 +173,19 @@ df1_uf <- left_join(dfp_uf,dft_uf, by = c("ANO_ELEICAO",
                                           "UF",
                                           "SIGLA_PARTIDO"))
 
-df1_uf <- rename(df1_uf, "CARGO" = "DESCRICAO_CARGO")
+df1_uf <- rename(df1_uf, 
+                 "CARGO" = "DESCRICAO_CARGO")
+
+df1_uf$CARGO <- "DEPUTADO FEDERAL"
+
+fed <- rename(fed, 
+                 "Total de votos conquistados" = "VOT_PART_UF")
 
 df1_uf <- left_join(df1_uf, fed, by = c("ANO_ELEICAO", 
                                         "CARGO",
                                         "UF",
-                                        "SIGLA_PARTIDO"))
+                                        "SIGLA_PARTIDO",
+                                        "Total de votos conquistados"))
 
 
 ### Deputado Estadual
@@ -273,7 +280,7 @@ df1_br <- df1_br %>%
 
 df1_br$Cargo <- str_to_title(df1_br$Cargo)
 
-df1_br <- na.omit(df1_br)
+df1_br[is.na(df1_br)] <- 0
 
 ### Deputado Federal (UF)
 
@@ -296,7 +303,7 @@ df1_uf <- df1_uf %>%
 
 df1_uf$Cargo <- str_to_title(df1_uf$Cargo)
 
-df1_uf <- na.omit(df1_uf)
+df1_uf[is.na(df1_uf)] <- 0
 
 
 ### Deputado Estadual
@@ -322,7 +329,7 @@ de1 <- de1 %>%
 
 de1$Cargo <- str_to_title(de1$Cargo)
 
-de1 <- na.omit(de1)
+de1[is.na(de1)] <- 0
 
 
 ### Senador (Brasil)

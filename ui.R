@@ -5,27 +5,6 @@
 #'        - Criar uma interface em shiny para exibir os indicadores calculados.
 
 
-jsCode <- "shinyjs.init = function(){
-                 
-                 $('div[id^='myModal']').each(function(){
-  
-                 var currentModal = $(this);
-                 
-                 //click next
-                 currentModal.find('.btn-next').click(function(){
-                 currentModal.modal('hide');
-                 currentModal.closest('div[id^='myModal']').nextAll('div[id^='myModal']').first().modal('show'); 
-                 });
-                 
-                 //click prev
-                 currentModal.find('.btn-prev').click(function(){
-                 currentModal.modal('hide');
-                 currentModal.closest('div[id^='myModal']').prevAll('div[id^='myModal']').first().modal('show'); 
-                 });
-                 
-                  });}"
-
-
 # 1. User interface -------------------------------------------------------
 
 ## Secao correspondente a interface que o usuario visualizara
@@ -34,13 +13,16 @@ ui <-
   
   
   fluidPage(
+    shiny::div(
+      width = "100px",
     useShinyjs(),
+   
   
   tags$head(
     tags$style(HTML(".navbar .navbar-nav {float: left}
                     .navbar .navbar-header {float: right}"))),
   
-  
+ 
   title = "CEPESP Indicadores", ## Titulo da pagina do aplicativo em versao web
   
   navbarPage(id = "CepespIndicadores",theme = shinytheme("flatly"),
@@ -119,10 +101,9 @@ ui <-
                       
                       sidebarLayout(
                         
-                        sidebarPanel(h4("Opções:"),width = 3,
-                                     
-                                     
-                                     selectizeInput(inputId = "INDICADORES_FRAG",
+                        div(id ="Sidebar1",sidebarPanel(h4("Opções:"),width = 3,
+                                                       
+                                    selectizeInput(inputId = "INDICADORES_FRAG",
                                                     label = NULL, 
                                                     choices = c("", "Número efetivo de partidos eleitoral",
                                                                 "Número efetivo de partidos legislativo","Fracionalização", 
@@ -144,17 +125,21 @@ ui <-
                                                   width = "95%")
                                      
                                      
-                        ),
+                        )),
                         
                         
                         mainPanel(
                           
+                          actionBttn("toggleSidebar1",
+                                     icon = icon("bars"),
+                                                 style = "material-circle",
+                                                 size = "md"),
+                          
                           
                         
                           
-                          absolutePanel(top = 0, right = 0, left = 100,
+                          absolutePanel(top = 0, right = 0, left = 65,
                                         
-                                       
                                         
                                         tabsetPanel(type = "pills",
                                                     
@@ -165,88 +150,88 @@ ui <-
                                                                                          icon = icon("question"), 
                                                                                          style = "material-circle",
                                                                                          size = "md")),
-                                                                 column(12,
+                                                                 column(12, 
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 , 
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("nepc_fed"))),
+                                                                                  DT::dataTableOutput("nepc_fed", width = "100%"))),
                                                                  column(12,
                                                                     absolutePanel(top = 0,
                                                                                   right = 0 , 
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("nepc_est"))),
+                                                                                  DT::dataTableOutput("nepc_est", width = "100%"))),
                                                                  column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("nepv_fed"))),
+                                                                                  DT::dataTableOutput("nepv_fed", width = "100%"))),
                                                                  column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("nepv_est"))),
+                                                                                  DT::dataTableOutput("nepv_est", width = "100%"))),
                                                                  column(12,
                                                                         absolutePanel(top = 0,
                                                                                    right = 0 , 
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("fracio_fed"))),
+                                                                                   DT::dataTableOutput("fracio_fed", width = "100%"))),
                                                                  column(12,
                                                                         absolutePanel(top = 0,
                                                                                    right = 0 , 
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("fracio_est"))),## Tabelas que serao exibidas
+                                                                                   DT::dataTableOutput("fracio_est", width = "100%"))),## Tabelas que serao exibidas
                                                                  column(12,
                                                                         absolutePanel(top = 0,
                                                                                    right = 0 , 
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("fraciomax_fed"))),
+                                                                                   DT::dataTableOutput("fraciomax_fed", width = "100%"))),
                                                                  column(12,
                                                                         absolutePanel(top = 0, 
                                                                                    right = 0 , 
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("fraciomax_est"))),
+                                                                                   DT::dataTableOutput("fraciomax_est", width = "100%"))),
                                                                  column(12,
                                                                         absolutePanel(top = 0,
                                                                                    right = 0 , 
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("frag_fed"))),
+                                                                                   DT::dataTableOutput("frag_fed", width = "100%"))),
                                                                  column(12,
                                                                         absolutePanel(top = 0,
                                                                                    right = 0 , 
                                                                                   left = 15,
-                                                                                   DT::dataTableOutput("frag_est"))),
+                                                                                   DT::dataTableOutput("frag_est", width = "100%"))),
                                                                  column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("dpg_fed"))),
+                                                                                  DT::dataTableOutput("dpg_fed", width = "100%"))),
                                                                  column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("dpg_est"))),
+                                                                                  DT::dataTableOutput("dpg_est", width = "100%"))),
                                                                  column(12,
                                                                     absolutePanel(top = 0,
                                                                                   right = 0 , 
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("quoce_fed")
+                                                                                  DT::dataTableOutput("quoce_fed", width = "100%")
                                                                                   #plotlyOutput("x2")
                                                                     )), ## Tabelas que serao exibidas
                                                                   column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 , 
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("quoce_est"))),
+                                                                                  DT::dataTableOutput("quoce_est", width = "100%"))),
                                                                   column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("quocp_fed"))),
+                                                                                  DT::dataTableOutput("quocp_fed", width = "100%"))),
                                                                   column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("quocp_est")))),
+                                                                                  DT::dataTableOutput("quocp_est", width = "100%")))),
                                                    tabPanel("Dados desagregados", br(),
                                                             absolutePanel(top = 0, right = 0, left = 260,
                                                                           actionBttn(inputId = "modal_frag_ag",
@@ -342,7 +327,7 @@ ui <-
                       
                       sidebarLayout(
                         
-                        sidebarPanel(h4("Opções"),width = 3,
+                        div(id ="Sidebar2",sidebarPanel(h4("Opções:"),width = 3,
                                      
                                      
                                      selectizeInput(inputId = "INDICADORES_RENOV",
@@ -370,11 +355,16 @@ ui <-
                                                   width = "95%")
                                      
                                      
-                        ),
+                        )),
                         
                         mainPanel(
+                          
+                          actionBttn("toggleSidebar2",
+                                     icon = icon("bars"),
+                                     style = "material-circle",
+                                     size = "md"),
                         
-                          absolutePanel(top = 0, right = 0, left = 100,
+                          absolutePanel(top = 0, right = 0, left = 65,
                                         tabsetPanel(type = "pills",
                                                          tabPanel("Resumo", br(),
                                                                   absolutePanel(top = 0, right = 0, left = 260,
@@ -480,7 +470,7 @@ ui <-
                       
                       sidebarLayout(
                         
-                        sidebarPanel(h4("Opções"),width = 3,
+                        div(id ="Sidebar3",sidebarPanel(h4("Opções:"),width = 3,
                                      
                                      
                                      selectizeInput(inputId = "INDICADORES_ALIE",
@@ -511,13 +501,17 @@ ui <-
                                                   width = "95%")
                                      
                                      
-                        ),
+                        )),
                         
                         mainPanel(
                           
                           
+                          actionBttn("toggleSidebar3",
+                                     icon = icon("bars"),
+                                     style = "material-circle",
+                                     size = "md"),
                           
-                          absolutePanel(top = 0, right = 0, left = 100,
+                          absolutePanel(top = 0, right = 0, left = 65,
                                         tabsetPanel(type = "pills",
                                                        tabPanel("Resumo", br(),
                                                                 absolutePanel(top = 0, right = 0, left = 260,
@@ -628,7 +622,7 @@ ui <-
                                            box-sizing: border-box;
                                            margin: 0;
                                            padding: 0;")))
-  )
+  ))
 
 
 

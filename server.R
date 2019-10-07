@@ -10,7 +10,8 @@
 
 server <- function(input, output,session){
   
-
+  
+  
 # 1.1. Sobre --------------------------------------------------------------
 
   
@@ -164,6 +165,13 @@ server <- function(input, output,session){
   })
   
   
+  ## Funcao que permite que o menu seja ocultado
+  
+  observeEvent(input$toggleSidebar1, {
+    shinyjs::toggle(id = "Sidebar1")
+  })
+  
+  
 ### Renovacao parlamentar
   
   
@@ -228,6 +236,12 @@ server <- function(input, output,session){
     }
   })
   
+  ## Funcao que permite que o menu seja ocultado
+  
+  observeEvent(input$toggleSidebar2, {
+    shinyjs::toggle(id = "Sidebar2")
+  })
+  
   
   ## Alienacao
   
@@ -255,6 +269,12 @@ server <- function(input, output,session){
     }
   })
   
+  
+  ## Funcao que permite que o menu seja ocultado
+  
+  observeEvent(input$toggleSidebar3, {
+    shinyjs::toggle("Sidebar3")
+  })
   
   
 # 2. Indicadores ------------------------------------------------------------
@@ -448,7 +468,7 @@ server <- function(input, output,session){
   
   bdpg_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -505,7 +525,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -572,7 +592,7 @@ server <- function(input, output,session){
   
   bdpg_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       lengthChange = FALSE,
@@ -648,7 +668,7 @@ server <- function(input, output,session){
   bagreg_dpgest <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -740,7 +760,7 @@ server <- function(input, output,session){
   
   bfracio_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -797,7 +817,7 @@ server <- function(input, output,session){
   bagreg_fracfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
                 scrollX = TRUE,
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -865,7 +885,7 @@ server <- function(input, output,session){
   
   bfracio_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -940,7 +960,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -1026,7 +1046,7 @@ server <- function(input, output,session){
   
   bfraciomax_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1082,7 +1102,7 @@ server <- function(input, output,session){
     datatable(options = list(
                 scrollX = TRUE,
                 select = TRUE,
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -1147,7 +1167,7 @@ server <- function(input, output,session){
   
   bfraciomax_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1220,7 +1240,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -1307,7 +1327,7 @@ server <- function(input, output,session){
   
   bfrag_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1363,7 +1383,7 @@ server <- function(input, output,session){
     datatable(options = list(
                 scrollX = TRUE,
                 select = TRUE,
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -1429,7 +1449,7 @@ server <- function(input, output,session){
   
   bfrag_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1505,7 +1525,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -1591,7 +1611,7 @@ server <- function(input, output,session){
   
   bnepc_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1646,7 +1666,7 @@ server <- function(input, output,session){
     datatable(options = list(
                 scrollX = TRUE,
                 select = TRUE,
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -1710,7 +1730,7 @@ server <- function(input, output,session){
   
   bnepc_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -1785,7 +1805,7 @@ server <- function(input, output,session){
     datatable(options = list(
                 scrollX = TRUE,
                 select = TRUE,
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = TRUE,
                 lengthChange = FALSE,
@@ -1870,7 +1890,7 @@ server <- function(input, output,session){
   
   bnepv_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -1925,7 +1945,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -1989,7 +2009,7 @@ server <- function(input, output,session){
   
   bnepv_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2063,7 +2083,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -2154,7 +2174,7 @@ server <- function(input, output,session){
   
   bquoce_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2253,7 +2273,7 @@ server <- function(input, output,session){
   
   bagreg_quocefed <- eventReactive(input$BCALC2, {
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -2319,7 +2339,7 @@ server <- function(input, output,session){
   
   bquoce_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2386,7 +2406,7 @@ server <- function(input, output,session){
   
   bagreg_quoceest <- eventReactive(input$BCALC2, {
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -2452,7 +2472,7 @@ server <- function(input, output,session){
   
   bquocp_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       ordering = TRUE,
       select = TRUE,
       searching = TRUE,
@@ -2517,7 +2537,7 @@ server <- function(input, output,session){
   
   bagreg_quocpfed <- eventReactive(input$BCALC2, {
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -2581,7 +2601,7 @@ server <- function(input, output,session){
   
   bquocp_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2644,7 +2664,7 @@ server <- function(input, output,session){
   
   bagreg_quocpest <- eventReactive(input$BCALC2,{
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -2814,7 +2834,7 @@ server <- function(input, output,session){
   
   bconserv_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2868,7 +2888,7 @@ server <- function(input, output,session){
   bagreg_conserv_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
       scrollX = TRUE,
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -2929,7 +2949,7 @@ server <- function(input, output,session){
   
   bconserv_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3001,7 +3021,7 @@ server <- function(input, output,session){
   bagreg_conserv_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
       scrollX = TRUE,
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3074,7 +3094,7 @@ server <- function(input, output,session){
   
   brenov_br_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3131,7 +3151,7 @@ server <- function(input, output,session){
   
   bagreg_renov_br_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -3191,7 +3211,7 @@ server <- function(input, output,session){
   
   brenov_br_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3262,7 +3282,7 @@ server <- function(input, output,session){
   
   bagreg_renov_br_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -3334,7 +3354,7 @@ server <- function(input, output,session){
   
   brenov_liq_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3389,7 +3409,7 @@ server <- function(input, output,session){
   
   bagreg_renov_liq_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -3450,7 +3470,7 @@ server <- function(input, output,session){
   
   brenov_liq_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3522,7 +3542,7 @@ server <- function(input, output,session){
   
   bagreg_renov_liq_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       scrollX = TRUE,
       ordering = TRUE, 
@@ -3597,7 +3617,7 @@ server <- function(input, output,session){
   
   bvol_ele_fed <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       ordering = TRUE, 
       searching = TRUE,
       lengthChange = FALSE,
@@ -3651,7 +3671,7 @@ server <- function(input, output,session){
   
   bagreg_vol_ele_fed <- eventReactive(input$BCALC3, {
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -3713,7 +3733,7 @@ server <- function(input, output,session){
   
   bvol_ele_est <- eventReactive(input$BCALC3, { ## Botao de acao
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
       searching = TRUE,
@@ -3784,7 +3804,7 @@ server <- function(input, output,session){
   
   bagreg_vol_ele_est <- eventReactive(input$BCALC3, {
     datatable(options = list(
-      autoWidth = TRUE,
+     autoWidth = FALSE,
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
@@ -3944,7 +3964,7 @@ server <- function(input, output,session){
   
   balien_feda_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -4002,7 +4022,7 @@ server <- function(input, output,session){
   
   bagreg_alifed_br <- eventReactive(input$BCALC4, {
     datatable(options = list(
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 scrollX = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
@@ -4064,7 +4084,7 @@ server <- function(input, output,session){
   
   balien_feda_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
                 searching = TRUE,
@@ -4135,7 +4155,7 @@ server <- function(input, output,session){
   
   bagreg_alifeda_uf <- eventReactive(input$BCALC4, {
     datatable(options = list(
-                autoWidth = TRUE,
+               autoWidth = FALSE,
                 scrollX = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
@@ -4203,7 +4223,7 @@ output$alien_fedp_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
 
 balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
   datatable(options = list(
-              autoWidth = TRUE,
+             autoWidth = FALSE,
               select = TRUE,
               ordering = TRUE, 
               searching = TRUE,
@@ -4261,7 +4281,7 @@ output$agreg_alifedp_br <- DT::renderDataTable(server = FALSE,{
 
 bagreg_alifedp_br <- eventReactive(input$BCALC4, {
   datatable(options = list(
-              autoWidth = TRUE,
+             autoWidth = FALSE,
               scrollX = TRUE,
               select = TRUE,
               ordering = TRUE, 
@@ -4327,7 +4347,7 @@ output$alien_fedp_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
 
 balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
   datatable(options = list(
-              autoWidth = TRUE,
+             autoWidth = FALSE,
               select = TRUE,
               ordering = TRUE, 
               searching = TRUE,
@@ -4401,7 +4421,7 @@ output$agreg_alifedp_uf <- DT::renderDataTable(server = FALSE,{
 
 bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
   datatable(options = list(
-              autoWidth = TRUE,
+             autoWidth = FALSE,
               scrollX = TRUE,
               select = TRUE,
               ordering = TRUE, 
