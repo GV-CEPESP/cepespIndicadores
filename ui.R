@@ -13,8 +13,8 @@ ui <-
   
   
   fluidPage(
-    shiny::div(
-      width = "100px",
+    
+      
     useShinyjs(),
    
   
@@ -91,7 +91,13 @@ ui <-
              
              
              
-             tabPanel("CEPESP Indicadores"
+             tabPanel("CEPESP Indicadores",
+                      
+                      h5(align = "center",
+                      
+                      tags$img(src= "p1.jpg"))
+                      
+                     
                      
                      ),
              
@@ -99,9 +105,10 @@ ui <-
              tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
                                                    ## "Fragmentacao legislativa"
                       
-                      sidebarLayout(
+                      sidebarLayout( 
                         
-                        div(id ="Sidebar1",sidebarPanel(h4("Opções:"),width = 3,
+                        div(id ="Sidebar1",sidebarPanel(h5(align = "center","Faça sua consulta:"),width = 3,
+                                                        
                                                        
                                     selectizeInput(inputId = "INDICADORES_FRAG",
                                                     label = NULL, 
@@ -119,21 +126,22 @@ ui <-
                                      
                                      uiOutput("UF2"),
                                      
-                                     
+                                     h5(align = "center",
                                      actionButton(inputId = "BCALC2",
                                                   label = strong("Calcular"), ## Botao de acao calcular
-                                                  width = "95%")
+                                                  width = "50%"))
                                      
                                      
                         )),
                         
                         
-                        mainPanel(
+                        mainPanel(id = "Main1",
                           
-                          actionBttn("toggleSidebar1",
-                                     icon = icon("bars"),
-                                                 style = "material-circle",
-                                                 size = "md"),
+                                bsButton("showpanel1", 
+                                         label = NULL, 
+                                         icon = icon("bars"),
+                                         type = "toggle", 
+                                         value = TRUE),
                           
                           
                         
@@ -150,7 +158,7 @@ ui <-
                                                                                          icon = icon("question"), 
                                                                                          style = "material-circle",
                                                                                          size = "md")),
-                                                                 column(12, 
+                                                                 column(12,  
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 , 
                                                                                   left = 15,
@@ -327,7 +335,7 @@ ui <-
                       
                       sidebarLayout(
                         
-                        div(id ="Sidebar2",sidebarPanel(h4("Opções:"),width = 3,
+                        div(id ="Sidebar2",sidebarPanel(h5(align = "center","Faça sua consulta:"),width = 3,
                                      
                                      
                                      selectizeInput(inputId = "INDICADORES_RENOV",
@@ -349,21 +357,23 @@ ui <-
                                      
                                      uiOutput("UF3"),
                                      
-                                     
+                                     h5(align = "center",
                                      actionButton(inputId = "BCALC3",
                                                   label = strong("Calcular"), ## Botao de acao "Calcular"
-                                                  width = "95%")
+                                                  width = "50%"))
                                      
                                      
                         )),
                         
-                        mainPanel(
+                        mainPanel(id = "Main2",
+                                  
+                                  bsButton("showpanel2", 
+                                           label = NULL, 
+                                           icon = icon("bars"),
+                                           type = "toggle", 
+                                           value = TRUE),
                           
-                          actionBttn("toggleSidebar2",
-                                     icon = icon("bars"),
-                                     style = "material-circle",
-                                     size = "md"),
-                        
+                         
                           absolutePanel(top = 0, right = 0, left = 65,
                                         tabsetPanel(type = "pills",
                                                          tabPanel("Resumo", br(),
@@ -470,7 +480,7 @@ ui <-
                       
                       sidebarLayout(
                         
-                        div(id ="Sidebar3",sidebarPanel(h4("Opções:"),width = 3,
+                        div(id ="Sidebar3",sidebarPanel(h5(align = "center","Faça sua consulta:"),width = 3,
                                      
                                      
                                      selectizeInput(inputId = "INDICADORES_ALIE",
@@ -495,21 +505,23 @@ ui <-
                                      
                                      uiOutput("UF4"),
                                      
-                                     
+                                     h5(align = "center",
                                      actionButton(inputId = "BCALC4",
                                                   label = strong("Calcular"), ## Botao de acao "Calcular"
-                                                  width = "95%")
+                                                  width = "50%"))
                                      
                                      
                         )),
                         
-                        mainPanel(
+                        mainPanel(id = "Main3",
+                                  
+                                  bsButton("showpanel3", 
+                                           label = NULL, 
+                                           icon = icon("bars"),
+                                           type = "toggle", 
+                                           value = TRUE),
                           
                           
-                          actionBttn("toggleSidebar3",
-                                     icon = icon("bars"),
-                                     style = "material-circle",
-                                     size = "md"),
                           
                           absolutePanel(top = 0, right = 0, left = 65,
                                         tabsetPanel(type = "pills",
@@ -622,7 +634,7 @@ ui <-
                                            box-sizing: border-box;
                                            margin: 0;
                                            padding: 0;")))
-  ))
+  )
 
 
 

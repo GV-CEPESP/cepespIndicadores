@@ -10,7 +10,7 @@
 
 server <- function(input, output,session){
   
-  
+ 
   
 # 1.1. Sobre --------------------------------------------------------------
 
@@ -167,8 +167,18 @@ server <- function(input, output,session){
   
   ## Funcao que permite que o menu seja ocultado
   
-  observeEvent(input$toggleSidebar1, {
-    shinyjs::toggle(id = "Sidebar1")
+  observeEvent(input$showpanel1, {
+    if(input$showpanel1 == TRUE) {
+      removeCssClass("Main1", "col-sm-12")
+      addCssClass("Main1", "col-sm-8")
+      shinyjs::show(id = "Sidebar1")
+      shinyjs::enable(id = "Sidebar1")
+    }
+    else {
+      removeCssClass("Main1", "col-sm-8")
+      addCssClass("Main1", "col-sm-12")
+      shinyjs::hide(id = "Sidebar1")
+    }
   })
   
   
@@ -238,8 +248,18 @@ server <- function(input, output,session){
   
   ## Funcao que permite que o menu seja ocultado
   
-  observeEvent(input$toggleSidebar2, {
-    shinyjs::toggle(id = "Sidebar2")
+  observeEvent(input$showpanel2, {
+    if(input$showpanel2 == TRUE) {
+      removeCssClass("Main2", "col-sm-12")
+      addCssClass("Main2", "col-sm-8")
+      shinyjs::show(id = "Sidebar2")
+      shinyjs::enable(id = "Sidebar2")
+    }
+    else {
+      removeCssClass("Main2", "col-sm-8")
+      addCssClass("Main2", "col-sm-12")
+      shinyjs::hide(id = "Sidebar2")
+    }
   })
   
   
@@ -272,8 +292,18 @@ server <- function(input, output,session){
   
   ## Funcao que permite que o menu seja ocultado
   
-  observeEvent(input$toggleSidebar3, {
-    shinyjs::toggle("Sidebar3")
+  observeEvent(input$showpanel3, {
+    if(input$showpanel3 == TRUE) {
+      removeCssClass("Main3", "col-sm-12")
+      addCssClass("Main3", "col-sm-8")
+      shinyjs::show(id = "Sidebar3")
+      shinyjs::enable(id = "Sidebar3")
+    }
+    else {
+      removeCssClass("Main3", "col-sm-8")
+      addCssClass("Main3", "col-sm-12")
+      shinyjs::hide(id = "Sidebar3")
+    }
   })
   
   
@@ -471,7 +501,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
@@ -527,7 +557,7 @@ server <- function(input, output,session){
       select = TRUE,
      autoWidth = FALSE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -671,7 +701,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(list(
@@ -763,7 +793,7 @@ server <- function(input, output,session){
                autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
@@ -820,7 +850,7 @@ server <- function(input, output,session){
                autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
@@ -888,7 +918,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -962,7 +992,7 @@ server <- function(input, output,session){
       select = TRUE,
      autoWidth = FALSE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -1049,7 +1079,7 @@ server <- function(input, output,session){
                autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
@@ -1104,7 +1134,7 @@ server <- function(input, output,session){
                 select = TRUE,
                autoWidth = FALSE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
@@ -1170,7 +1200,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -1242,7 +1272,7 @@ server <- function(input, output,session){
       select = TRUE,
      autoWidth = FALSE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -1330,7 +1360,7 @@ server <- function(input, output,session){
                autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
@@ -1385,7 +1415,7 @@ server <- function(input, output,session){
                 select = TRUE,
                autoWidth = FALSE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
@@ -1452,7 +1482,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -1527,7 +1557,7 @@ server <- function(input, output,session){
       select = TRUE,
      autoWidth = FALSE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -1614,7 +1644,7 @@ server <- function(input, output,session){
                autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 columnDefs = list(list(
@@ -1668,7 +1698,7 @@ server <- function(input, output,session){
                 select = TRUE,
                autoWidth = FALSE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
@@ -1733,7 +1763,7 @@ server <- function(input, output,session){
                autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
@@ -1807,7 +1837,7 @@ server <- function(input, output,session){
                 select = TRUE,
                autoWidth = FALSE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
@@ -1893,7 +1923,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
        columnDefs = list(list(
@@ -1947,7 +1977,7 @@ server <- function(input, output,session){
       select = TRUE,
      autoWidth = FALSE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2012,7 +2042,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2085,7 +2115,7 @@ server <- function(input, output,session){
       select = TRUE,
      autoWidth = FALSE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2177,7 +2207,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2277,7 +2307,7 @@ server <- function(input, output,session){
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2342,7 +2372,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2410,7 +2440,7 @@ server <- function(input, output,session){
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2475,7 +2505,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       ordering = TRUE,
       select = TRUE,
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2541,7 +2571,7 @@ server <- function(input, output,session){
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2604,7 +2634,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2668,7 +2698,7 @@ server <- function(input, output,session){
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2837,7 +2867,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
@@ -2891,7 +2921,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -2952,7 +2982,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3024,7 +3054,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3097,7 +3127,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
@@ -3155,7 +3185,7 @@ server <- function(input, output,session){
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3214,7 +3244,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3286,7 +3316,7 @@ server <- function(input, output,session){
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3357,7 +3387,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
@@ -3413,7 +3443,7 @@ server <- function(input, output,session){
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3473,7 +3503,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3546,7 +3576,7 @@ server <- function(input, output,session){
       select = TRUE,
       scrollX = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3619,7 +3649,7 @@ server <- function(input, output,session){
     datatable(options = list(
      autoWidth = FALSE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       columnDefs = list(list(
@@ -3675,7 +3705,7 @@ server <- function(input, output,session){
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3736,7 +3766,7 @@ server <- function(input, output,session){
      autoWidth = FALSE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3808,7 +3838,7 @@ server <- function(input, output,session){
       scrollX = TRUE,
       select = TRUE,
       ordering = TRUE, 
-      searching = TRUE,
+      searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
@@ -3967,7 +3997,7 @@ server <- function(input, output,session){
                autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
@@ -4026,7 +4056,7 @@ server <- function(input, output,session){
                 scrollX = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
@@ -4087,7 +4117,7 @@ server <- function(input, output,session){
                autoWidth = FALSE,
                 select = TRUE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
@@ -4159,7 +4189,7 @@ server <- function(input, output,session){
                 scrollX = TRUE,
                 select = TRUE,
                 ordering = TRUE, 
-                searching = TRUE,
+                searching = FALSE,
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
@@ -4226,7 +4256,7 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
              autoWidth = FALSE,
               select = TRUE,
               ordering = TRUE, 
-              searching = TRUE,
+              searching = FALSE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
               fixedColumns = list(
@@ -4285,7 +4315,7 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
               scrollX = TRUE,
               select = TRUE,
               ordering = TRUE, 
-              searching = TRUE,
+              searching = FALSE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
               fixedColumns = list(
@@ -4350,7 +4380,7 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
              autoWidth = FALSE,
               select = TRUE,
               ordering = TRUE, 
-              searching = TRUE,
+              searching = FALSE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
               fixedColumns = list(
@@ -4425,7 +4455,7 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
               scrollX = TRUE,
               select = TRUE,
               ordering = TRUE, 
-              searching = TRUE,
+              searching = FALSE,
               lengthChange = FALSE,
               lengthMenu = FALSE,
               fixedColumns = list(
