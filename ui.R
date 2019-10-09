@@ -11,13 +11,21 @@
 
 ui <- 
   
-  
   fluidPage(
+    
+   
+    #includeCSS("introjs.min.css"),
+    
+     # Include IntroJS library
+    #includeScript("intro.min.js"),
+    
+    # Include javascript code to make shiny communicate with introJS
+    #includeScript("app.js"),
     
       
     useShinyjs(),
    
-  
+    
   tags$head(
     tags$style(HTML(".navbar .navbar-nav {float: left}
                     .navbar .navbar-header {float: right}"))),
@@ -25,14 +33,15 @@ ui <-
  
   title = "CEPESP Indicadores", ## Titulo da pagina do aplicativo em versao web
   
-  navbarPage(id = "CepespIndicadores",theme = shinytheme("flatly"),
+  navbarPage(collapsible=F,id = "CepespIndicadores", 
+             theme = shinytheme("flatly"),
              
              
             
              tags$div(class = "header", checked = NA, 
                       
                       
-                      
+                     
                       tags$a(href = "http://www.cepesp.io/cepesp-data/", class = 
                                "ir-cepesp-data w-hidden-medium w-hidden-small w-hidden-tiny" ,
                              "CEPESP Data", ## Link que redireciona para
@@ -77,38 +86,23 @@ ui <-
                              margin-bottom: 0;
                              font-family: Gotham,Open Sans,sans-serif!important;
                              box-sizing: border-box;
-                             transition-property: color, border-color, box-shadow;
-                             transition-duration: 0.15s, 0.15s, 0.15s, 0.15s;
-                             -timing-function: ease-in-out, ease-in-out, ease-in-out, ease-in-out;
-                             transition-delay: 0s, 0s, 0s, 0s;
-                             webkit-tap-highlight-color: rgba(0,0,0,0);
-                             list-style: none;
-                             list-style-type: none;
-                             list-style-position: initial;
-                             list-style-image: initial"
+                             transition-property: color, border-color, box-shadow;"
                              
                       )),
              
              
              
-             tabPanel("CEPESP Indicadores",
-                      
-                      h5(align = "center",
-                      
-                      tags$img(src= "p1.jpg"))
-                      
-                     
-                     
-                     ),
+           
              
-             
-             tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
-                                                   ## "Fragmentacao legislativa"
+            tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
+                                         ## "Fragmentacao legislativa"
                       
-                      sidebarLayout( 
+                     sidebarLayout( 
                         
+                       div(id ="step1",
                         div(id ="Sidebar1",sidebarPanel(h5(align = "center","Faça sua consulta:"),width = 3,
                                                         
+                                                       
                                                        
                                     selectizeInput(inputId = "INDICADORES_FRAG",
                                                     label = NULL, 
@@ -132,32 +126,31 @@ ui <-
                                                   width = "50%"))
                                      
                                      
-                        )),
+                        ))),
                         
                         
                         mainPanel(id = "Main1",
                           
-                                bsButton("showpanel1", 
+                                  div(id ="step2",bsButton("showpanel1", 
                                          label = NULL, 
                                          icon = icon("bars"),
                                          type = "toggle", 
-                                         value = TRUE),
-                          
-                          
-                        
-                          
+                                         value = TRUE)),
+                                
+                                
                           absolutePanel(top = 0, right = 0, left = 65,
                                         
                                         
                                         tabsetPanel(type = "pills",
                                                     
-                                                    tabPanel("Resumo", br(),
+                                                    tabPanel(div(id ="step3","Resumo"), br(),
                                                                 absolutePanel(top = 0, right = 0, left = 260,
+                                                                              div(id ="step5",
                                                                               actionBttn(inputId = "modal_frag",
                                                                                          color = "default",
                                                                                          icon = icon("question"), 
                                                                                          style = "material-circle",
-                                                                                         size = "md")),
+                                                                                         size = "md"))),
                                                                  column(12,  
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 , 
@@ -240,7 +233,7 @@ ui <-
                                                                                   right = 0 ,  
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("quocp_est", width = "100%")))),
-                                                   tabPanel("Dados desagregados", br(),
+                                                   tabPanel(div(id ="step4","Dados desagregados"), br(),
                                                             absolutePanel(top = 0, right = 0, left = 260,
                                                                           actionBttn(inputId = "modal_frag_ag",
                                                                                      color = "default",

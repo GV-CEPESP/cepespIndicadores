@@ -10,6 +10,37 @@
 
 server <- function(input, output,session){
   
+  
+  #session$sendCustomMessage(type = 'setHelpContent', message = list(steps = toJSON(steps) ))
+  
+  # listen to the action button
+  #observeEvent(input$startHelp,{
+    
+    # on click, send custom message to start help
+    #session$sendCustomMessage(type = 'startHelp', message = list(""))
+    
+  #})
+  
+  
+  #observeEvent(input$CepespIndicadores, ignoreInit = FALSE, once = TRUE, {
+    #showModal(modalDialog(
+    #  title = h3(align = "center", "Olá,"),
+     # h4(align = "center", "Bem-vindo ao CepespIndicadores!"),
+      
+    #  easyClose = TRUE,
+     # footer = tagList(
+    #  modalButton("Fechar"), 
+     # actionButton(inputId="startHelp", 
+      #             label="Iniciar", 
+       #            class="btn-success"))                    
+  #  ))
+#  })
+
+  
+ # observeEvent(input$startHelp,{
+    
+  #  removeModal()
+  #})
  
   
 # 1.1. Sobre --------------------------------------------------------------
