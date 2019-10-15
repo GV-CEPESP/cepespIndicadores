@@ -14,17 +14,19 @@ ui <-
   fluidPage(
     
    
-    #includeCSS("introjs.min.css"),
+    includeCSS("introjs.min.css"),
     
-     # Include IntroJS library
-    #includeScript("intro.min.js"),
+     includeScript("intro.min.js"),
     
-    # Include javascript code to make shiny communicate with introJS
-    #includeScript("app.js"),
+    includeScript("app.js"),
     
-      
+    includeScript("jquery.cookie.js"),
+    
+    includeScript("cookies.js"),
+    
+    
     useShinyjs(),
-   
+ 
     
   tags$head(
     tags$style(HTML(".navbar .navbar-nav {float: left}
@@ -114,14 +116,14 @@ ui <-
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um indicador')),
                                      
-                                     uiOutput("DESCRICAO_CARGO2"),
+                                     uiOutput("DESCRICAO_CARGO1"),
                                      
-                                     uiOutput("AGREGACAO_REGIONAL2"),
+                                     uiOutput("AGREGACAO_REGIONAL1"),
                                      
-                                     uiOutput("UF2"),
+                                     uiOutput("UF1"),
                                      
                                      h5(align = "center",
-                                     actionButton(inputId = "BCALC2",
+                                     actionButton(inputId = "BCALC1",
                                                   label = strong("Calcular"), ## Botao de acao calcular
                                                   width = "50%"))
                                      
@@ -338,20 +340,20 @@ ui <-
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um indicador')),
                                      
-                                     selectizeInput(inputId = "DESCRICAO_CARGO3",
+                                     selectizeInput(inputId = "DESCRICAO_CARGO2",
                                                     label = NULL,
                                                     choices = c("","Deputado Federal", ## Cargos disponiveis
                                                                 "Deputado Estadual"),
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um cargo')),
                                      
-                                     uiOutput("AGREGACAO_REGIONAL3"),
+                                     uiOutput("AGREGACAO_REGIONAL2"),
                                      
                                      
-                                     uiOutput("UF3"),
+                                     uiOutput("UF2"),
                                      
                                      h5(align = "center",
-                                     actionButton(inputId = "BCALC3",
+                                     actionButton(inputId = "BCALC2",
                                                   label = strong("Calcular"), ## Botao de acao "Calcular"
                                                   width = "50%"))
                                      
@@ -406,17 +408,7 @@ ui <-
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
                                                                               left = 15,
-                                                                               DT::dataTableOutput("renov_liq_est"))),
-                                                                 column(12,
-                                                                    absolutePanel(top = 0,
-                                                                               right = 0 , 
-                                                                              left = 15,
-                                                                               DT::dataTableOutput("vol_ele_fed"))),
-                                                                 column(12,
-                                                                    absolutePanel(top = 0, 
-                                                                               right = 0 ,  
-                                                                              left = 15,
-                                                                               DT::dataTableOutput("vol_ele_est")))), ## Tabelas que serao exibidas
+                                                                               DT::dataTableOutput("renov_liq_est")))), ## Tabelas que serao exibidas
                                                              tabPanel("Dados desagregados", br(),
                                                                       absolutePanel(top = 0, right = 0, left = 260,
                                                                                     actionBttn(inputId = "modal_renovp_ag",
@@ -453,17 +445,7 @@ ui <-
                                                                              absolutePanel(top = 0, 
                                                                                         right = 0 ,  
                                                                                        left = 15,
-                                                                                        DT::dataTableOutput("agreg_renov_liq_est"))),
-                                                                          column(12,
-                                                                             absolutePanel(top = 0, 
-                                                                                        right = 0 ,  
-                                                                                       left = 15,
-                                                                                        DT::dataTableOutput("agreg_vol_ele_fed"))),
-                                                                          column(12,
-                                                                             absolutePanel(top = 0, 
-                                                                                        right = 0 ,  
-                                                                                       left = 15,
-                                                                                        DT::dataTableOutput("agreg_vol_ele_est"))))))))),
+                                                                                        DT::dataTableOutput("agreg_renov_liq_est"))))))))),
              
             
              
@@ -483,24 +465,24 @@ ui <-
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um indicador')),
                                      
-                                     selectizeInput(inputId = "DESCRICAO_CARGO4",
+                                     selectizeInput(inputId = "DESCRICAO_CARGO3",
                                                     label = NULL,
                                                     choices = c("","Presidente", "Governador", "Senador", "Deputado Federal", ## Cargos disponiveis
                                                                 "Deputado Estadual"),
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha um cargo')),
                                      
-                                     selectizeInput(inputId = "AGREGACAO_REGIONAL4",
+                                     selectizeInput(inputId = "AGREGACAO_REGIONAL3",
                                                     label = NULL,
                                                     choices = c("","Brasil", "UF"),
                                                     selected = NULL,
                                                     options = list(placeholder = 'Escolha uma agregação regional')),
                                      
                                      
-                                     uiOutput("UF4"),
+                                     uiOutput("UF3"),
                                      
                                      h5(align = "center",
-                                     actionButton(inputId = "BCALC4",
+                                     actionButton(inputId = "BCALC3",
                                                   label = strong("Calcular"), ## Botao de acao "Calcular"
                                                   width = "50%"))
                                      
@@ -632,7 +614,111 @@ ui <-
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("agreg_alifedvn_uf"))))))))), ## Definicao dos indicadores
+                                                                                  DT::dataTableOutput("agreg_alifedvn_uf"))))))))), 
+            
+            tabPanel("Volatilidade",  ## Definicao das ferramentas de selecao para a guia
+                     ## "Renovação parlamentar"
+                     
+                     
+                     sidebarLayout(
+                       
+                       div(id ="Sidebar4",sidebarPanel(h5(align = "center","Faça sua consulta:"),width = 3,
+                                                       
+                                                       
+                                                       selectizeInput(inputId = "INDICADORES_VOL",
+                                                                      label = NULL, 
+                                                                      choices = c("","Volatilidade eleitoral",
+                                                                                  "Volatilidade parlamentar"), ## Indicadores disponiveis
+                                                                      selected = NULL,
+                                                                      options = list(placeholder = 'Escolha um indicador')),
+                                                       
+                                                       selectizeInput(inputId = "DESCRICAO_CARGO4",
+                                                                      label = NULL,
+                                                                      choices = c("","Deputado Federal", ## Cargos disponiveis
+                                                                                  "Deputado Estadual"),
+                                                                      selected = NULL,
+                                                                      options = list(placeholder = 'Escolha um cargo')),
+                                                       
+                                                       uiOutput("AGREGACAO_REGIONAL4"),
+                                                       
+                                                       
+                                                       uiOutput("UF4"),
+                                                       
+                                                       h5(align = "center",
+                                                          actionButton(inputId = "BCALC4",
+                                                                       label = strong("Calcular"), ## Botao de acao "Calcular"
+                                                                       width = "50%"))
+                                                       
+                                                       
+                       )),
+                       
+                       mainPanel(id = "Main4",
+                                 
+                                 bsButton("showpanel4", 
+                                          label = NULL, 
+                                          icon = icon("bars"),
+                                          type = "toggle", 
+                                          value = TRUE),
+                                 
+                                 
+                                 absolutePanel(top = 0, right = 0, left = 65,
+                                               tabsetPanel(type = "pills",
+                                                           tabPanel("Resumo", br(),
+                                                                    absolutePanel(top = 0, right = 0, left = 260,
+                                                                                  actionBttn(inputId = "modal_vol",
+                                                                                             color = "default",
+                                                                                             icon = icon("question"), 
+                                                                                             style = "material-circle",
+                                                                                             size = "md")),
+                                                           column(12,
+                                                                  absolutePanel(top = 0, 
+                                                                                right = 0 ,  
+                                                                                left = 15, 
+                                                                                DT::dataTableOutput("vol_ele_fed"))),
+                                                           column(12,
+                                                                  absolutePanel(top = 0, 
+                                                                                right = 0 ,  
+                                                                                left = 15, 
+                                                                                DT::dataTableOutput("vol_ele_uf"))),
+                                                           column(12,
+                                                                  absolutePanel(top = 0, 
+                                                                                right = 0 ,  
+                                                                                left = 15, 
+                                                                                DT::dataTableOutput("vol_par_fed"))),
+                                                           column(12,
+                                                                  absolutePanel(top = 0, 
+                                                                                right = 0 ,  
+                                                                                left = 15, 
+                                                                                DT::dataTableOutput("vol_par_uf")))),
+                                                                     ## Tabelas que serao exibidas
+                                                           tabPanel("Dados desagregados", br(),
+                                                                    absolutePanel(top = 0, right = 0, left = 260,
+                                                                                  actionBttn(inputId = "modal_vol_ag",
+                                                                                             color = "default",
+                                                                                             icon = icon("question"), 
+                                                                                             style = "material-circle",
+                                                                                             size = "md")),
+                                                                    column(12,
+                                                                           absolutePanel(top = 0, 
+                                                                                         right = 0 ,  
+                                                                                         left = 15, 
+                                                                                         DT::dataTableOutput("agreg_vol_ele_fed"))),
+                                                                    column(12,
+                                                                           absolutePanel(top = 0, 
+                                                                                         right = 0 ,  
+                                                                                         left = 15, 
+                                                                                         DT::dataTableOutput("agreg_vol_ele_uf"))),
+                                                                    column(12,
+                                                                           absolutePanel(top = 0, 
+                                                                                         right = 0 ,  
+                                                                                         left = 15, 
+                                                                                         DT::dataTableOutput("agreg_vol_par_fed"))),
+                                                                    column(12,
+                                                                           absolutePanel(top = 0, 
+                                                                                         right = 0 ,  
+                                                                                         left = 15, 
+                                                                                         DT::dataTableOutput("agreg_vol_par_uf")))
+                                                                   )))))),
              
              
              

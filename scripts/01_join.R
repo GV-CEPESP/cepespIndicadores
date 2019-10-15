@@ -120,10 +120,6 @@ vags_fed <- read_csv("data/input/vags_fed.csv")
 
 vags_est <- read_csv("data/input/vags_est.csv") 
 
-## Carrega o arquivo da eleicao de 1994
-
-eleicao_94 <- read.csv("data/input/eleicoes_94.csv")
-
 
 # 2. Calculo da votacao dos partidos e dos votos validos ------------------
 

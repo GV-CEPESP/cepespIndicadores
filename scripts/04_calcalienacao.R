@@ -166,6 +166,6 @@ write.csv(cons_uf, "data/output/alien_uf.csv")
 
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
-rm(list = ls())
+rm(cons_br,cons_uf)
 
 

@@ -53,8 +53,135 @@ desp_gallag <- function(V,C){
 }
 
 
+# 2. Calculo dos indicadores de distribuicao de cadeiras ------------------
 
-# 2. Numero de cadeiras ---------------------------------------------------------
+
+# 2.1. Quociente eleitoral --------------------------------------------------
+
+## Calculo do quociente eleitoral
+
+### Deputado Federal
+
+
+vags_fed$QUOCIENTE_ELEITORAL <- as.numeric(vags_fed$VOTOS_VALIDOS_UF)/
+  as.numeric(vags_fed$VAGAS)
+
+
+
+### Deputado Estadual
+
+
+vags_est$QUOCIENTE_ELEITORAL <- as.numeric(vags_est$VOTOS_VALIDOS_UF)/
+  as.numeric(vags_est$VAGAS)
+
+
+
+# 2.2. Quociente partidario -------------------------------------------------
+
+## Calculo do quociente partidario
+
+### Deputado Federal
+
+vags_fed$QUOCIENTE_PARTIDARIO <- as.numeric(vags_fed$VOT_PART_UF)/
+  as.numeric(vags_fed$QUOCIENTE_ELEITORAL)
+
+### Deputado Estadual
+
+vags_est$QUOCIENTE_PARTIDARIO <- as.numeric(vags_est$VOT_PART_UF)/
+  as.numeric(vags_est$QUOCIENTE_ELEITORAL)
+
+
+
+# 2.3. Padronizacao dos dados -----------------------------------------------
+
+## Aplicacao da funcao 'pont_virg' e arredondamento dos valores dos indicadores calculados
+
+### Deputado federal
+
+options(OutDec= ",")
+
+
+vags_fed$QUOCIENTE_ELEITORAL<- round(vags_fed$QUOCIENTE_ELEITORAL, digits = 0)
+
+vags_fed$QUOCIENTE_PARTIDARIO <- round(vags_fed$QUOCIENTE_PARTIDARIO, digits = 2)
+
+vags_fed$QUOCIENTE_ELEITORAL <- pont_virg(vags_fed$QUOCIENTE_ELEITORAL)
+
+vags_fed$VOTOS_VALIDOS_UF <- pont_virg(vags_fed$VOTOS_VALIDOS_UF)
+
+vags_fed$VOT_PART_UF <- pont_virg(vags_fed$VOT_PART_UF)
+
+
+### Deputado estadual
+
+vags_est$QUOCIENTE_PARTIDARIO <- round(vags_est$QUOCIENTE_PARTIDARIO, digits = 2)
+
+vags_est$QUOCIENTE_ELEITORAL <-pont_virg(vags_est$QUOCIENTE_ELEITORAL)
+
+
+vags_est$VOTOS_VALIDOS_UF <- pont_virg(vags_est$VOTOS_VALIDOS_UF)
+
+vags_est$VOT_PART_UF <- pont_virg(vags_est$VOT_PART_UF)
+
+
+
+## Descarta as colunas desnecessarias, padroniza e renomeia as restantes
+
+### Deputado Federal 
+
+vags_fed <-  vags_fed %>% 
+  dplyr::select(ANO_ELEICAO, 
+                UF,
+                CARGO, 
+                VAGAS,
+                VOTOS_VALIDOS_UF,
+                SIGLA_PARTIDO,
+                VOT_PART_UF,
+                QUOCIENTE_ELEITORAL,
+                QUOCIENTE_PARTIDARIO) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO",
+                "Cargo" = "CARGO",
+                "Cadeiras oferecidas" = "VAGAS",
+                "Votos válidos" = "VOTOS_VALIDOS_UF",
+                "Sigla do partido" = "SIGLA_PARTIDO",
+                "Votos do partido" = "VOT_PART_UF",
+                "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
+                "Quociente partidário" = "QUOCIENTE_PARTIDARIO")
+
+vags_fed$Cargo <- str_to_title(vags_fed$Cargo) ## Transforma a primeira letra de cada palavra
+## em maiuscula
+
+vags_fed$`Quociente partidário` <- as.character(vags_fed$`Quociente partidário`) 
+
+
+### Deputado Estadual
+
+vags_est <-  vags_est %>% 
+  dplyr::select(ANO_ELEICAO, 
+                UF,
+                CARGO, 
+                VAGAS,
+                VOTOS_VALIDOS_UF,
+                SIGLA_PARTIDO,
+                VOT_PART_UF,
+                QUOCIENTE_ELEITORAL,
+                QUOCIENTE_PARTIDARIO) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO",
+                "Cargo" = "CARGO",
+                "Cadeiras oferecidas" = "VAGAS",
+                "Votos válidos" = "VOTOS_VALIDOS_UF",
+                "Sigla do partido" = "SIGLA_PARTIDO",
+                "Votos do partido" = "VOT_PART_UF",
+                "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
+                "Quociente partidário" = "QUOCIENTE_PARTIDARIO")
+
+vags_est$Cargo <- str_to_title(vags_est$Cargo) ## Transforma a primeira letra de cada palavra
+## em maiuscula
+
+vags_est$`Quociente partidário` <- as.character(vags_est$`Quociente partidário`)
+
+
+# 3. Numero de cadeiras ---------------------------------------------------------
 
 
 ## Filtra os candidatos que foram eleitos
@@ -405,7 +532,7 @@ sen_br <- left_join(sen_br,senr,
 rm(sen_uf1,sen_uf2,sen_uft,sen_uft1,senr)
 
 
-# 3. Calculo dos indicadores ----------------------------------------------
+# 4. Calculo dos indicadores ----------------------------------------------
 
 ## Calculo dos indicadores de framentacao partidaria
 
@@ -432,12 +559,6 @@ for(ano in sort(unique(df1_br$`Ano da eleição`))){
 
 ### Deputado Federal (UF)
 
-teste <- df1_uf %>% 
-  filter(`Ano da eleição` == 2018, UF == "AC")
-
-
-teste$NEPE <- nep(teste$`Total de cadeiras conquistadas`)
-
 frag_leg_fed_uf <- list()
 
 
@@ -462,16 +583,13 @@ for(ano in sort(unique(df1_uf$`Ano da eleição`))){
 
 ### Deputado Estadual
 
-estados <- c("AC", "AL", "AM", "AP", "BA", "CE", "ES", 
-             "GO", "MA", "MG","MS", "MT", "PA", "PB", 
-             "PE", "PI", "PR","RJ", "RN", "RO", "RR",
-             "RS", "SC", "SE", "SP", "TO")
+
 
 
 frag_leg_est <- list()
 
 for(ano in sort(unique(de1$`Ano da eleição`))){
-  for(uf in estados){
+  for(uf in sort(unique(de1$UF))){
     cat(ano,uf, "\n")
     t <- filter(de1,
                 `Ano da eleição` == ano & 
@@ -512,7 +630,7 @@ for(ano in sort(unique(sen_br$`Ano da eleição`))){
 }
 
 
-# 4. Padronizacao dos dados -----------------------------------------------
+# 5. Padronizacao dos dados -----------------------------------------------
 
 
 ## Remove as colunas desnecessarias e arredonda em duas casas decimais os indices calculados
@@ -792,7 +910,7 @@ frag_leg_uf$`Número efetivo de partidos legislativo` <- as.character(frag_leg_u
 frag_leg_uf$Desproporcionalidade <- as.character(frag_leg_uf$Desproporcionalidade)
 
 
-# 5. Salva o arquivo ------------------------------------------------------
+# 6. Salva os arquivos ------------------------------------------------------
 
 ## Salva os arquivos referentes aos indicadores de fragmentacao
 ## legislativa em .csv
@@ -805,12 +923,20 @@ write.csv(frag_leg_br, "data/output/frag_leg_br.csv")
 
 write.csv(frag_leg_uf, "data/output/frag_leg_uf.csv")
 
-### Deputado Estadual
+
+###  Distribuicao de cadeiras (Deputado Federal)
+
+write.csv(vags_fed, "data/output/distcad_fed.csv")
+
+### Distribuicao de cadeiras (Deputado Estadual)
+
+write.csv(vags_est, "data/output/distcad_est.csv")
 
 
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
-rm(frag_leg_fed_br,frag_leg_fed_uf,frag_leg_est,frag_leg_sen_br,frag_leg_br, frag_leg_uf,
-   dft_br,dft_uf,det,dfc2,dfp_br,dfp_uf,dfr_br,dfr_uf,t,est,fed, sen_br, sen_uf)
+rm(frag_leg_fed_br,frag_leg_fed_uf,frag_leg_est,frag_leg_sen_br,
+   frag_leg_br, frag_leg_uf,dft_br,dft_uf,det,dfc2,dfp_br,dfp_uf,
+   dfr_br,dfr_uf,t,est,fed, sen_br, sen_uf,vags_est,vags_fed)
 
 

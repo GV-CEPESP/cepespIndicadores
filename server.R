@@ -11,36 +11,51 @@
 server <- function(input, output,session){
   
   
-  #session$sendCustomMessage(type = 'setHelpContent', message = list(steps = toJSON(steps) ))
+  session$sendCustomMessage(type = 'setHelpContent', message = list(steps = toJSON(steps) ))
   
   # listen to the action button
-  #observeEvent(input$startHelp,{
+  observeEvent(input$startHelp,{
     
     # on click, send custom message to start help
-    #session$sendCustomMessage(type = 'startHelp', message = list(""))
+    session$sendCustomMessage(type = 'startHelp', message = list(""))
     
-  #})
+  })
   
   
-  #observeEvent(input$CepespIndicadores, ignoreInit = FALSE, once = TRUE, {
-    #showModal(modalDialog(
-    #  title = h3(align = "center", "Olá,"),
-     # h4(align = "center", "Bem-vindo ao CepespIndicadores!"),
-      
-    #  easyClose = TRUE,
-     # footer = tagList(
-    #  modalButton("Fechar"), 
-     # actionButton(inputId="startHelp", 
-      #             label="Iniciar", 
-       #            class="btn-success"))                    
-  #  ))
-#  })
+   
+  
+  
+  observeEvent(input$CepespIndicadores, ignoreInit = FALSE, once = TRUE, {
+    showModal(
+     modalDialog(
+      title = h3(align = "center", "Olá,"),
+     h4(align = "center", "Bem-vindo ao CEPESP Indicadores!", br()),
+     br(),
+     h5(align = "justify", style='line-height:150%', "Para visualizar o tutorial do aplicativo clique em 'Iniciar'.
+        Para pular o tutorial clique em 'Fechar' ou em qualquer lugar fora dessa caixa.",br()),
+     br(),
+     h4(align = "center", "Bons estudos!"),
+     
+    
+      easyClose = TRUE,
+     footer = tagList(
+      modalButton("Fechar"), 
+     actionButton(inputId="startHelp", 
+                 label="Iniciar", 
+                class="btn-success"),
+h5(align = "left",
+   HTML('<div class="d-flex flex-grow-1 justify-content-start custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="popupMaintenanceCheckbox" name="checkbox-maintenance"/>
+        <label class="custom-control-label checkbox-maintenance" for="popupMaintenanceCheckbox">Não mostre novamente</label>
+        </div>')))                    
+   ))
+ })
 
   
- # observeEvent(input$startHelp,{
+  observeEvent(input$startHelp,{
     
-  #  removeModal()
-  #})
+    removeModal()
+  })
  
   
 # 1.1. Sobre --------------------------------------------------------------
@@ -59,11 +74,15 @@ server <- function(input, output,session){
 
 
                    <h4 align = 'justify'><br />
-                   <p style='line-height:150%'>Os indicadores eleitorais são uma iniciativa de disseminar análise de dados eleitorais. 
+                   <p style='line-height:150%'>Os indicadores eleitorais são uma iniciativa 
+                   de disseminar análise de dados eleitorais. 
                    Os indicadores aqui calculados foram inspirados pelo livro 'Votos e Partidos - Almanaque 
-                   de Dados Eleitorais' de Wanderley Guilherme dos Santos e pelo antigo site de Jairo Nicolau. Todos os indicadores foram calculados 
-                   a partir dos dados do <a href='http://www.cepesp.io/cepesp-data/'> CepespData </a>. Desenvolvido 
-                   por Rebeca Carvalho e Gabriela Campos com orientação de George Avelino e apoio da <a href='http://cepespdata.io/sobre'> 
+                   de Dados Eleitorais' de Wanderley Guilherme dos Santos e pelo antigo site de Jairo Nicolau. 
+                   Todos os indicadores foram calculados 
+                   a partir dos dados do <a href='http://www.cepesp.io/cepesp-data/'> CepespData </a>. 
+                   Desenvolvido 
+                   por Rebeca Carvalho e Gabriela Campos com orientação de George Avelino e 
+                   apoio da <a href='http://cepespdata.io/sobre'> 
                    equipe CEPESP</a>. </p></h4></font>")
     HTML(note)
   })
@@ -78,17 +97,17 @@ server <- function(input, output,session){
   cargos <- reactive({
     indicador <- input$INDICADORES_FRAG
     if(length(indicador) > 0){
-      return(input$DESCRICAO_CARGO2)
+      return(input$DESCRICAO_CARGO1)
     } 
   })
   
   
-  output$DESCRICAO_CARGO2 <- renderUI({
+  output$DESCRICAO_CARGO1 <- renderUI({
     indicador <- input$INDICADORES_FRAG
     if(length(indicador) > 0 &
        indicador != "Quociente eleitoral" &
        indicador != "Quociente partidário"){
-      selectizeInput(inputId = "DESCRICAO_CARGO2",
+      selectizeInput(inputId = "DESCRICAO_CARGO1",
                      label = NULL,
                      choices = c("","Senador",
                                  "Deputado Federal", 
@@ -97,7 +116,7 @@ server <- function(input, output,session){
                      options = list(placeholder = 'Escolha um cargo'))
     } else if(indicador == "Quociente eleitoral"|
               indicador == "Quociente partidário"){
-      selectizeInput(inputId = "DESCRICAO_CARGO2",
+      selectizeInput(inputId = "DESCRICAO_CARGO1",
                      label = NULL,
                      choices = c("","Deputado Federal", "Deputado Estadual"), ## Cargos disponiveis
                      selected = NULL,
@@ -115,38 +134,38 @@ server <- function(input, output,session){
   
   agregacao <- reactive({
     indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
+    cargo <- input$DESCRICAO_CARGO1
     if(length(indicador) > 0){
-      return(input$AGREGACAO_REGIONAL2)
+      return(input$AGREGACAO_REGIONAL1)
     } 
   })
   
   
-  output$AGREGACAO_REGIONAL2 <- renderUI({
+  output$AGREGACAO_REGIONAL1 <- renderUI({
     indicador <- req(input$INDICADORES_FRAG)
-    cargo <- req(input$DESCRICAO_CARGO2)
+    cargo <- req(input$DESCRICAO_CARGO1)
     if(indicador == "Quociente eleitoral" |
        indicador == "Quociente partidário"){
-    selectizeInput("AGREGACAO_REGIONAL2",
+    selectizeInput("AGREGACAO_REGIONAL1",
                    label = NULL,
                    choices = "UF",
                    selected = "UF")  
     }else if(cargo == "Deputado Federal"){
-      selectizeInput("AGREGACAO_REGIONAL2",
+      selectizeInput("AGREGACAO_REGIONAL1",
                      label = NULL,
                      choices = 
                        c("Brasil", "UF"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
     }else if(cargo == "Deputado Estadual"){
-      selectizeInput("AGREGACAO_REGIONAL2",
+      selectizeInput("AGREGACAO_REGIONAL1",
                      label = NULL,
                      choices = 
                        c("UF"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
     } else if(cargo == "Senador"){
-      selectizeInput("AGREGACAO_REGIONAL2",
+      selectizeInput("AGREGACAO_REGIONAL1",
                      label = NULL,
                      choices = 
                        c("Brasil"),
@@ -163,24 +182,24 @@ server <- function(input, output,session){
   
     uf <- reactive({
     indicador <- req(input$INDICADORES_FRAG)
-    cargo <- req(input$DESCRICAO_CARGO2)
-    agregacao <- req(input$AGREGACAO_REGIONAL2)
+    cargo <- req(input$DESCRICAO_CARGO1)
+    agregacao <- req(input$AGREGACAO_REGIONAL1)
     if(length(agregacao == "UF") > 0){
-      return(input$UF2)
+      return(input$UF1)
     } 
   })
   
   
-  output$UF2 <- renderUI({
+  output$UF1 <- renderUI({
     indicador <- req(input$INDICADORES_FRAG)
-    cargo <- req(input$DESCRICAO_CARGO2)
-    agregacao <- req(input$AGREGACAO_REGIONAL2)
+    cargo <- req(input$DESCRICAO_CARGO1)
+    agregacao <- req(input$AGREGACAO_REGIONAL1)
     if(cargo == "Deputado Federal" & 
        agregacao == "Brasil"){
       return()
     }else if(cargo != "Senador" &
       length(agregacao == "UF") > 0){
-      selectizeInput("UF2",
+      selectizeInput("UF1",
                      label = NULL,
                      choices = 
                        c("","Todas UFs", "AC", "AL", "AM", "AP", "BA",
@@ -224,17 +243,17 @@ server <- function(input, output,session){
   })
   
   
-  output$AGREGACAO_REGIONAL3 <- renderUI({
-    cargo <- req(input$DESCRICAO_CARGO3)
+  output$AGREGACAO_REGIONAL2 <- renderUI({
+    cargo <- req(input$DESCRICAO_CARGO2)
     if(cargo == "Deputado Federal"){
-      selectizeInput("AGREGACAO_REGIONAL3",
+      selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
                      choices = 
                        c("", "Brasil", "UF"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
     } else if(cargo == "Deputado Estadual"){
-      selectizeInput("AGREGACAO_REGIONAL3",
+      selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
                      choices = 
                        c("UF"),
@@ -246,23 +265,23 @@ server <- function(input, output,session){
   
   
    agreg <- reactive({
-    agregacao <- req(input$AGREGACAO_REGIONAL3)
+    agregacao <- req(input$AGREGACAO_REGIONAL2)
     if(length(agregacao == "UF") > 0){
-      return(input$UF3)
+      return(input$UF2)
     } 
   })
   
   
-  output$UF3 <- renderUI({
-    agregacao <- req(input$AGREGACAO_REGIONAL3)
-    cargo <- req(input$DESCRICAO_CARGO3)
+  output$UF2 <- renderUI({
+    agregacao <- req(input$AGREGACAO_REGIONAL2)
+    cargo <- req(input$DESCRICAO_CARGO2)
     if(cargo == "Deputado Federal" & 
        agregacao == "Brasil"){
       return()
     }else if(cargo == "Deputado Estadual" | 
        cargo == "Deputado Federal" &
       length(agregacao == "UF") > 0){
-      selectizeInput("UF3",
+      selectizeInput("UF2",
                      label = NULL,
                      choices = 
                        c("","Todas UFs","AC", "AL", "AM", 
@@ -297,17 +316,17 @@ server <- function(input, output,session){
   ## Alienacao
   
   agreg <- reactive({
-    agregacao <- input$AGREGACAO_REGIONAL4
+    agregacao <- input$AGREGACAO_REGIONAL3
     if(agregacao == "UF"){
-      return(input$UF4)
+      return(input$UF3)
     } 
   })
   
   
-  output$UF4 <- renderUI({
-    agregacao <- input$AGREGACAO_REGIONAL4
+  output$UF3 <- renderUI({
+    agregacao <- input$AGREGACAO_REGIONAL3
     if(agregacao == "UF"){
-      selectizeInput("UF4",
+      selectizeInput("UF3",
                      label = NULL,
                      choices = 
                        c("","Todas UFs","AC", "AL", "AM", 
@@ -334,6 +353,87 @@ server <- function(input, output,session){
       removeCssClass("Main3", "col-sm-8")
       addCssClass("Main3", "col-sm-12")
       shinyjs::hide(id = "Sidebar3")
+    }
+  })
+  
+  
+  ## Volatilidade
+  
+  
+  carg <- reactive({
+    indicador <- input$INDICADORES_VOL
+    if(length(indicador) > 0){
+      return(input$AGREGACAO_REGIONAL4)
+    } 
+  })
+  
+  
+  output$AGREGACAO_REGIONAL4 <- renderUI({
+    cargo <- req(input$DESCRICAO_CARGO4)
+    if(cargo == "Deputado Federal"){
+      selectizeInput("AGREGACAO_REGIONAL4",
+                     label = NULL,
+                     choices = 
+                       c("", "Brasil", "UF"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha uma agregação regional'))
+    } else if(cargo == "Deputado Estadual"){
+      selectizeInput("AGREGACAO_REGIONAL4",
+                     label = NULL,
+                     choices = 
+                       c("UF"),
+                     selected = "UF")
+      
+    }
+  })
+  
+  
+  
+  agreg <- reactive({
+    agregacao <- req(input$AGREGACAO_REGIONAL4)
+    if(length(agregacao == "UF") > 0){
+      return(input$UF4)
+    } 
+  })
+  
+  
+  output$UF4 <- renderUI({
+    agregacao <- req(input$AGREGACAO_REGIONAL4)
+    cargo <- req(input$DESCRICAO_CARGO4)
+    if(cargo == "Deputado Federal" & 
+       agregacao == "Brasil"){
+      return()
+    }else if(cargo == "Deputado Estadual" | 
+             cargo == "Deputado Federal" &
+             length(agregacao == "UF") > 0){
+      selectizeInput("UF4",
+                     label = NULL,
+                     choices = 
+                       c("","Todas UFs","AC", "AL", "AM", 
+                         "AP", "BA", "CE", "DF", "ES","GO",
+                         "MA", "MG","MS", "MT", "PA", "PB", 
+                         "PE", "PI","PR", "RJ", "RN", "RO", 
+                         "RR","RS", "SC", "SE", "SP", "TO"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha uma UF'))
+    } else{
+      return()
+    }
+  })
+  
+  ## Funcao que permite que o menu seja ocultado
+  
+  observeEvent(input$showpanel4, {
+    if(input$showpanel4 == TRUE) {
+      removeCssClass("Main4", "col-sm-12")
+      addCssClass("Main4", "col-sm-8")
+      shinyjs::show(id = "Sidebar4")
+      shinyjs::enable(id = "Sidebar4")
+    }
+    else {
+      removeCssClass("Main4", "col-sm-8")
+      addCssClass("Main4", "col-sm-12")
+      shinyjs::hide(id = "Sidebar4")
     }
   })
   
@@ -516,7 +616,7 @@ server <- function(input, output,session){
   
   depfedg <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Desproporcionalidade" & 
       agregacao == "Brasil"){
       return(input$dpg_fed)
@@ -527,7 +627,7 @@ server <- function(input, output,session){
     bdpg_fed()
   })
   
-  bdpg_fed <- eventReactive(input$BCALC2, { ## Botao de acao
+  bdpg_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -548,12 +648,12 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
+        agregacao <- input$AGREGACAO_REGIONAL1
         if(indicador == "Desproporcionalidade" & 
             agregacao == "Brasil"){
           frag_leg_br %>% 
             ungroup() %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           `Desproporcionalidade`) %>% 
             unique() %>% 
@@ -571,7 +671,7 @@ server <- function(input, output,session){
   
   ag_dpgfed <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Desproporcionalidade" & 
        agregacao == "Brasil"){
       return(input$agreg_dpgfed)
@@ -582,7 +682,7 @@ server <- function(input, output,session){
     bagreg_dpgfed()
   })
   
-  bagreg_dpgfed <- eventReactive(input$BCALC2, {
+  bagreg_dpgfed <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
@@ -592,7 +692,7 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
-        leftColumns = 2
+        leftColumns = 1
       ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
@@ -613,11 +713,11 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
+        agregacao <- input$AGREGACAO_REGIONAL1
         if(indicador == "Desproporcionalidade" & 
            agregacao == "Brasil"){
           data = frag_leg_br %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             select(`Ano da eleição`,
                    Cargo,
                    `Número efetivo de partidos eleitoral`,
@@ -639,8 +739,8 @@ server <- function(input, output,session){
   
   depestg <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
-    uf <- input$UF2
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
     if(indicador == "Desproporcionalidade" & 
        agregacao == "UF"){
       return(input$dpg_est)
@@ -651,7 +751,7 @@ server <- function(input, output,session){
     bdpg_est()
   })
   
-  bdpg_est <- eventReactive(input$BCALC2, { ## Botao de acao
+  bdpg_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -675,15 +775,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
+        agregacao <- input$AGREGACAO_REGIONAL1
+        uf <- req(input$UF1)
         if(indicador == "Desproporcionalidade" & 
           agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
             frag_leg_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Desproporcionalidade`) %>% 
@@ -694,8 +794,8 @@ server <- function(input, output,session){
           
           } else{
             frag_leg_uf %>% 
-            dplyr::filter(UF == input$UF2 & 
-                            Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(UF == input$UF1 & 
+                            Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Desproporcionalidade`) %>% 
@@ -715,7 +815,7 @@ server <- function(input, output,session){
   
   ag_dpgest <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Desproporcionalidade" & 
        agregacao == "UF"){
       return(input$agreg_dpgest)
@@ -726,7 +826,7 @@ server <- function(input, output,session){
     bagreg_dpgest()
   })
   
-  bagreg_dpgest <- eventReactive(input$BCALC2, {
+  bagreg_dpgest <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
      autoWidth = FALSE,
@@ -758,15 +858,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
+        agregacao <- input$AGREGACAO_REGIONAL1
+        uf <- req(input$UF1)
         if(indicador == "Desproporcionalidade" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
             data = frag_leg_uf %>%
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
               select(`Ano da eleição`,
                      UF,
                      Cargo,
@@ -779,8 +879,8 @@ server <- function(input, output,session){
             unique()
           } else{
             data = frag_leg_uf %>% 
-            dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(UF == input$UF1 & 
+                          Cargo == input$DESCRICAO_CARGO1) %>% 
               select(`Ano da eleição`,
                      UF,
                      Cargo,
@@ -797,7 +897,7 @@ server <- function(input, output,session){
   })
   
   
-# 2.1.2. Fracionalizacao -------------------------------------------------- 
+# 1.1.1. Fracionalizacao -------------------------------------------------- 
 
 
 ## Resumo
@@ -807,7 +907,7 @@ server <- function(input, output,session){
   
   depfedf <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fracionalização" & 
        cargo == "Deputado Federal" & 
        agregacao == "Brasil"){
@@ -819,7 +919,7 @@ server <- function(input, output,session){
     bfracio_fed()
   })
   
-  bfracio_fed <- eventReactive(input$BCALC2, { ## Botao de acao
+  bfracio_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                autoWidth = FALSE,
                 select = TRUE,
@@ -840,13 +940,13 @@ server <- function(input, output,session){
                              'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
-      agregacao <- input$AGREGACAO_REGIONAL2
-      uf <- input$UF2
+      agregacao <- input$AGREGACAO_REGIONAL1
+      uf <- input$UF1
       if(indicador == "Fracionalização" & 
          agregacao == "Brasil"){
         frag_leg_br %>% 
           ungroup() %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
           dplyr::select(`Ano da eleição`,
                         `Fracionalização`) %>% 
           unique() %>% 
@@ -864,7 +964,7 @@ server <- function(input, output,session){
   
   ag_fracfed <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fracionalização" & 
        agregacao == "Brasil"){
       return(input$agreg_fracfed)
@@ -875,7 +975,7 @@ server <- function(input, output,session){
     bagreg_fracfed()
   })
   
-  bagreg_fracfed <- eventReactive(input$BCALC2, {
+  bagreg_fracfed <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
                autoWidth = FALSE,
@@ -885,7 +985,7 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
-                  leftColumns = 2
+                  leftColumns = 1
                 ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
@@ -908,11 +1008,11 @@ server <- function(input, output,session){
                              'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
-      agregacao <- input$AGREGACAO_REGIONAL2
+      agregacao <- input$AGREGACAO_REGIONAL1
       if(indicador == "Fracionalização" & 
          agregacao == "Brasil"){
         data = frag_leg_br %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
           select(`Ano da eleição`,
                  Cargo,
                  `Número efetivo de partidos eleitoral`,
@@ -933,7 +1033,7 @@ server <- function(input, output,session){
   
   depestf <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fracionalização" & 
        agregacao == "UF"){
       return(input$fracio_est)
@@ -944,7 +1044,7 @@ server <- function(input, output,session){
     bfracio_est()
   })
   
-  bfracio_est <- eventReactive(input$BCALC2, { ## Botao de acao
+  bfracio_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -968,8 +1068,8 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
+        agregacao <- input$AGREGACAO_REGIONAL1
+        uf <- req(input$UF1)
         if(indicador == "Fracionalização" & 
            agregacao == "UF"){
           if(uf == ""){
@@ -977,7 +1077,7 @@ server <- function(input, output,session){
           } else if(uf == "Todas UFs"){
             frag_leg_uf %>% 
             ungroup() %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Fracionalização`) %>% 
@@ -987,8 +1087,8 @@ server <- function(input, output,session){
           } else{
             frag_leg_uf %>% 
             ungroup() %>% 
-            dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(UF == input$UF1 & 
+                          Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           `Fracionalização`) %>% 
             unique() %>% 
@@ -1006,7 +1106,7 @@ server <- function(input, output,session){
   
   ag_fracest <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fracionalização" & 
        agregacao == "UF"){
       return(input$agreg_fracest)
@@ -1017,7 +1117,7 @@ server <- function(input, output,session){
     bagreg_fracest()
   })
   
-  bagreg_fracest <- eventReactive(input$BCALC2, {
+  bagreg_fracest <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
@@ -1048,15 +1148,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
+        agregacao <- input$AGREGACAO_REGIONAL1
+        uf <- req(input$UF1)
         if(indicador == "Fracionalização" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
           data = frag_leg_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>%
             select(`Ano da eleição`,
                    UF,
                    Cargo,
@@ -1069,8 +1169,8 @@ server <- function(input, output,session){
             unique() 
           } else{
           data = frag_leg_uf %>% 
-            dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(UF == input$UF1 & 
+                          Cargo == input$DESCRICAO_CARGO1) %>% 
             select(`Ano da eleição`,
                    UF,
                    Cargo,
@@ -1086,7 +1186,7 @@ server <- function(input, output,session){
       })
   })  
   
-# 2.1.3. Fracionalizacao maxima -------------------------------------------
+# 1.1.3. Fracionalizacao maxima -------------------------------------------
   
 ## Resumo
   
@@ -1094,7 +1194,7 @@ server <- function(input, output,session){
   
   depfedfm <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fracionalização máxima" 
        & agregacao == "Brasil"){
       return(input$fraciomax_fed)
@@ -1105,7 +1205,7 @@ server <- function(input, output,session){
     bfraciomax_fed()
   })
   
-  bfraciomax_fed <- eventReactive(input$BCALC2, { ## Botao de acao
+  bfraciomax_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                autoWidth = FALSE,
                 select = TRUE,
@@ -1126,12 +1226,12 @@ server <- function(input, output,session){
                              'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
-      agregacao <- input$AGREGACAO_REGIONAL2
+      agregacao <- input$AGREGACAO_REGIONAL1
       if(indicador == "Fracionalização máxima" & 
          agregacao == "Brasil"){
         frag_leg_br %>% 
           ungroup() %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
           dplyr::select(`Ano da eleição`,
                         `Fracionalização máxima`) %>% 
           unique() %>% 
@@ -1148,7 +1248,7 @@ server <- function(input, output,session){
   
   ag_fracmaxfed <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fracionalização máxima" & 
        agregacao == "Brasil"){
       return(input$agreg_fracmaxfed)
@@ -1159,7 +1259,7 @@ server <- function(input, output,session){
     bagreg_fracmaxfed()
   })
   
-  bagreg_fracmaxfed <- eventReactive(input$BCALC2, {
+  bagreg_fracmaxfed <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
                 select = TRUE,
@@ -1169,7 +1269,7 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
-                  leftColumns = 2
+                  leftColumns = 1
                 ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
@@ -1190,11 +1290,11 @@ server <- function(input, output,session){
                              'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
-      agregacao <- input$AGREGACAO_REGIONAL2
+      agregacao <- input$AGREGACAO_REGIONAL1
       if(indicador == "Fracionalização máxima" & 
          agregacao == "Brasil"){
         data = frag_leg_br %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
           select(`Ano da eleição`,
                  Cargo,
                  `Número efetivo de partidos eleitoral`,
@@ -1214,8 +1314,8 @@ server <- function(input, output,session){
   
   depestfm <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
-    uf <- input$UF2
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
     if(indicador == "Fracionalização máxima" 
        & agregacao == "UF"){
       return(input$fraciomax_est)
@@ -1226,7 +1326,7 @@ server <- function(input, output,session){
     bfraciomax_est()
   })
   
-  bfraciomax_est <- eventReactive(input$BCALC2, { ## Botao de acao
+  bfraciomax_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -1250,15 +1350,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- req(input$INDICADORES_FRAG)
-        agregacao <- req(input$AGREGACAO_REGIONAL2)
-        uf <- req(input$UF2)
+        agregacao <- req(input$AGREGACAO_REGIONAL1)
+        uf <- req(input$UF1)
         if(indicador == "Fracionalização máxima" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
             data = frag_leg_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Fracionalização máxima`) %>% 
@@ -1267,8 +1367,8 @@ server <- function(input, output,session){
                   `Fracionalização máxima`)
           } else{
             data = frag_leg_uf %>% 
-            dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(UF == input$UF1 & 
+                          Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Fracionalização máxima`) %>% 
@@ -1286,7 +1386,7 @@ server <- function(input, output,session){
   
   ag_fracmaxest <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fracionalização máxima" & 
        agregacao == "UF"){
       return(input$agreg_fracmaxest)
@@ -1297,7 +1397,7 @@ server <- function(input, output,session){
     bagreg_fracmaxest()
   })
   
-  bagreg_fracmaxest <- eventReactive(input$BCALC2, {
+  bagreg_fracmaxest <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
@@ -1328,15 +1428,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
+        agregacao <- input$AGREGACAO_REGIONAL1
+        uf <- req(input$UF1)
         if(indicador == "Fracionalização máxima" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           }else if(uf == "Todas UFs"){
             data = frag_leg_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>%
               select(`Ano da eleição`,
                      UF,
                      Cargo,
@@ -1349,8 +1449,8 @@ server <- function(input, output,session){
             unique()
           } else{
             data = frag_leg_uf %>% 
-            dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(UF == input$UF1 & 
+                          Cargo == input$DESCRICAO_CARGO1) %>% 
               select(`Ano da eleição`,
                      UF,
                      Cargo,
@@ -1366,7 +1466,7 @@ server <- function(input, output,session){
       })
   })  
   
-# 2.1.4. Fragmentacao -----------------------------------------------------
+# 1.1.4. Fragmentacao -----------------------------------------------------
 
 ## Resumo 
     
@@ -1374,7 +1474,7 @@ server <- function(input, output,session){
   
   depfed_frag <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fragmentação" & 
        agregacao == "Brasil"){
       return(input$frag_fed)
@@ -1386,7 +1486,7 @@ server <- function(input, output,session){
   })
   
   
-  bfrag_fed <- eventReactive(input$BCALC2, { ## Botao de acao
+  bfrag_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                autoWidth = FALSE,
                 select = TRUE,
@@ -1407,12 +1507,12 @@ server <- function(input, output,session){
                              'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
-      agregacao <- input$AGREGACAO_REGIONAL2
+      agregacao <- input$AGREGACAO_REGIONAL1
       if(indicador == "Fragmentação" &
          agregacao == "Brasil"){
         frag_leg_br %>% 
           ungroup() %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
           dplyr::select(`Ano da eleição`,
                         `Fragmentação`) %>% 
           unique() %>% 
@@ -1429,7 +1529,7 @@ server <- function(input, output,session){
   
   ag_fragfed <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fragmentação" & 
        agregacao == "Brasil"){
       return(input$agreg_fragfed)
@@ -1440,7 +1540,7 @@ server <- function(input, output,session){
     bagreg_fragfed()
   })
   
-  bagreg_fragfed <- eventReactive(input$BCALC2, {
+  bagreg_fragfed <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
                 select = TRUE,
@@ -1450,7 +1550,7 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
-                  leftColumns = 2
+                  leftColumns = 1
                 ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
@@ -1471,11 +1571,11 @@ server <- function(input, output,session){
                              'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
-      agregacao <- input$AGREGACAO_REGIONAL2
+      agregacao <- input$AGREGACAO_REGIONAL1
       if(indicador == "Fragmentação" & 
          agregacao == "Brasil"){
         data = frag_leg_br %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
           select(`Ano da eleição`,
                  Cargo,
                  `Número efetivo de partidos eleitoral`,
@@ -1496,7 +1596,7 @@ server <- function(input, output,session){
   
   depest_frag <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fragmentação" & 
        agregacao == "UF"){
       return(input$frag_est)
@@ -1508,7 +1608,7 @@ server <- function(input, output,session){
   })
   
   
-  bfrag_est <- eventReactive(input$BCALC2, { ## Botao de acao
+  bfrag_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -1532,8 +1632,8 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
+        agregacao <- input$AGREGACAO_REGIONAL1
+        uf <- req(input$UF1)
         if(indicador == "Fragmentação" & 
            agregacao == "UF"){
            if(uf == ""){
@@ -1541,7 +1641,7 @@ server <- function(input, output,session){
            } else if(uf == "Todas UFs"){
             frag_leg_uf %>% 
             ungroup() %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Fragmentação`) %>% 
@@ -1552,8 +1652,8 @@ server <- function(input, output,session){
           } else{
             frag_leg_uf %>% 
             ungroup() %>% 
-            dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(UF == input$UF1 & 
+                          Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Fragmentação`) %>% 
@@ -1571,7 +1671,7 @@ server <- function(input, output,session){
   
   ag_fragest <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Fragmentação" &
        agregacao == "UF"){
       return(input$agreg_fragest)
@@ -1582,7 +1682,7 @@ server <- function(input, output,session){
     bagreg_fragest()
   })
   
-  bagreg_fragest <- eventReactive(input$BCALC2, {
+  bagreg_fragest <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
@@ -1613,15 +1713,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
+        agregacao <- input$AGREGACAO_REGIONAL1
+        uf <- req(input$UF1)
         if(indicador == "Fragmentação" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           }else if(uf == "Todas UFs"){
           data = frag_leg_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             select(`Ano da eleição`,
                    UF,
                    Cargo,
@@ -1634,8 +1734,8 @@ server <- function(input, output,session){
             unique()
           } else{
           data = frag_leg_uf %>% 
-            dplyr::filter(UF == input$UF2 & 
-                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(UF == input$UF1 & 
+                          Cargo == input$DESCRICAO_CARGO1) %>% 
             select(`Ano da eleição`,
                    UF,
                    Cargo,
@@ -1651,7 +1751,7 @@ server <- function(input, output,session){
       })
   })  
   
-# 2.1.5. Numero efetivo de partidos por cadeiras -----------------------------------------------------
+# 1.1.5. Numero efetivo de partidos por cadeiras -----------------------------------------------------
   
 ## Resumo 
   
@@ -1659,7 +1759,7 @@ server <- function(input, output,session){
   
   depfedn <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "Brasil"){
       return(input$nepc_fed)
@@ -1670,7 +1770,7 @@ server <- function(input, output,session){
     bnepc_fed()
   })
   
-  bnepc_fed <- eventReactive(input$BCALC2, { ## Botao de acao
+  bnepc_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                autoWidth = FALSE,
                 select = TRUE,
@@ -1691,11 +1791,11 @@ server <- function(input, output,session){
                               'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
-      agregacao <- input$AGREGACAO_REGIONAL2
+      agregacao <- input$AGREGACAO_REGIONAL1
       if(indicador == "Número efetivo de partidos legislativo" & 
          agregacao == "Brasil"){
         frag_leg_br %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
           dplyr::select(`Ano da eleição`,
                         `Número efetivo de partidos legislativo`) %>% 
           unique() %>% 
@@ -1712,7 +1812,7 @@ server <- function(input, output,session){
   
   ag_nepfed <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "Brasil"){
       return(input$agreg_nepfed)
@@ -1723,7 +1823,7 @@ server <- function(input, output,session){
     bagreg_nepfed()
   })
   
-  bagreg_nepfed <- eventReactive(input$BCALC2, {
+  bagreg_nepfed <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
                 select = TRUE,
@@ -1733,7 +1833,7 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
-                  leftColumns = 2
+                  leftColumns = 1
                 ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
@@ -1754,11 +1854,11 @@ server <- function(input, output,session){
                               'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
-      agregacao <- input$AGREGACAO_REGIONAL2
+      agregacao <- input$AGREGACAO_REGIONAL1
       if(indicador == "Número efetivo de partidos legislativo" & 
           agregacao == "Brasil"){
         data = frag_leg_br %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>%
           select(`Ano da eleição`,
                  Cargo,
                  `Número efetivo de partidos eleitoral`,
@@ -1778,7 +1878,7 @@ server <- function(input, output,session){
   
   depest_nep <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "UF"){
       return(input$nepc_est)
@@ -1789,7 +1889,7 @@ server <- function(input, output,session){
     bnepc_est()
   })   
   
-  bnepc_est <- eventReactive(input$BCALC2, { ## Botao de acao
+  bnepc_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                autoWidth = FALSE,
                 select = TRUE,
@@ -1813,15 +1913,15 @@ server <- function(input, output,session){
                              'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
-      agregacao <- input$AGREGACAO_REGIONAL2
-      uf <- req(input$UF2)
+      agregacao <- input$AGREGACAO_REGIONAL1
+      uf <- req(input$UF1)
       if(indicador == "Número efetivo de partidos legislativo" & 
          agregacao == "UF"){
         if(uf == ""){
           return()
         } else if(uf == "Todas UFs"){
           frag_leg_uf %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
                         `Número efetivo de partidos legislativo`) %>% 
@@ -1831,8 +1931,8 @@ server <- function(input, output,session){
         
         } else{
           frag_leg_uf %>% 
-          dplyr::filter(UF == input$UF2 & 
-                        Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(UF == input$UF1 & 
+                        Cargo == input$DESCRICAO_CARGO1) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
                         `Número efetivo de partidos legislativo`) %>% 
@@ -1850,8 +1950,8 @@ server <- function(input, output,session){
   
   ag_nepest <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
-    uf <- req(input$UF2)
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- req(input$UF1)
     if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "UF"){
       return(input$agreg_nepest)
@@ -1862,7 +1962,7 @@ server <- function(input, output,session){
     bagreg_nepest()
   })
   
-  bagreg_nepest <- eventReactive(input$BCALC2, {
+  bagreg_nepest <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
                 select = TRUE,
@@ -1892,15 +1992,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
-      agregacao <- input$AGREGACAO_REGIONAL2
-      uf <- req(input$UF2)
+      agregacao <- input$AGREGACAO_REGIONAL1
+      uf <- req(input$UF1)
       if(indicador == "Número efetivo de partidos legislativo" & 
          agregacao == "UF"){
         if(uf == ""){
           return()
         } else if(uf == "Todas UFs"){
           data = frag_leg_uf %>% 
-          dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             select(`Ano da eleição`,
                    UF,
                    Cargo,
@@ -1913,8 +2013,8 @@ server <- function(input, output,session){
           unique()
         } else{
           data = frag_leg_uf %>% 
-          dplyr::filter(UF == input$UF2 &
-                        Cargo == input$DESCRICAO_CARGO2) %>% 
+          dplyr::filter(UF == input$UF1 &
+                        Cargo == input$DESCRICAO_CARGO1) %>% 
             select(`Ano da eleição`,
                    UF,
                    Cargo,
@@ -1930,7 +2030,7 @@ server <- function(input, output,session){
     })
   })
   
-# 2.1.6. Numero efetivo de partidos por votos -----------------------------  
+# 1.1.6. Numero efetivo de partidos por votos -----------------------------  
   
   ## Tabela para visualizacao  
   
@@ -1938,7 +2038,7 @@ server <- function(input, output,session){
   
   depfedvn <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "Brasil"){
       return(input$nepv_fed)
@@ -1949,7 +2049,7 @@ server <- function(input, output,session){
     bnepv_fed()
   })
   
-  bnepv_fed <- eventReactive(input$BCALC2, { ## Botao de acao
+  bnepv_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -1970,11 +2070,11 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
+        agregacao <- input$AGREGACAO_REGIONAL1
         if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "Brasil"){
           frag_leg_br %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           `Número efetivo de partidos eleitoral`) %>% 
             unique() %>% 
@@ -1991,7 +2091,7 @@ server <- function(input, output,session){
   
   ag_nepvfed <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "Brasil"){
       return(input$agreg_nepvfed)
@@ -2002,7 +2102,7 @@ server <- function(input, output,session){
     bagreg_nepvfed()
   })
   
-  bagreg_nepvfed <- eventReactive(input$BCALC2, {
+  bagreg_nepvfed <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
@@ -2012,7 +2112,7 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
-        leftColumns = 2
+        leftColumns = 1
       ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
@@ -2033,11 +2133,11 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
+        agregacao <- input$AGREGACAO_REGIONAL1
         if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "Brasil"){
           data = frag_leg_br %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             select(`Ano da eleição`,
                    Cargo,
                    `Número efetivo de partidos eleitoral`,
@@ -2057,7 +2157,7 @@ server <- function(input, output,session){
   
   depestvn <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "UF"){
       return(input$nepv_est)
@@ -2068,7 +2168,7 @@ server <- function(input, output,session){
     bnepv_est()
   })
   
-  bnepv_est <- eventReactive(input$BCALC2, { ## Botao de acao
+  bnepv_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -2092,15 +2192,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
+        agregacao <- input$AGREGACAO_REGIONAL1
+        uf <- req(input$UF1)
         if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if( uf == "Todas UFs"){
             frag_leg_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Número efetivo de partidos eleitoral`) %>% 
@@ -2110,8 +2210,8 @@ server <- function(input, output,session){
           
           } else{
             frag_leg_uf %>% 
-            dplyr::filter(UF == input$UF2 &
-                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(UF == input$UF1 &
+                          Cargo == input$DESCRICAO_CARGO1) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Número efetivo de partidos eleitoral`) %>% 
@@ -2129,7 +2229,7 @@ server <- function(input, output,session){
   
   ag_nepvest <- reactive({
     indicador <- input$INDICADORES_FRAG
-    agregacao <- input$AGREGACAO_REGIONAL2
+    agregacao <- input$AGREGACAO_REGIONAL1
     if(indicador == "Número efetivo de partidos eleitoral" &
        agregacao == "UF"){
       return(input$agreg_nepvest)
@@ -2140,7 +2240,7 @@ server <- function(input, output,session){
     bagreg_nepvest()
   })
   
-  bagreg_nepvest <- eventReactive(input$BCALC2, {
+  bagreg_nepvest <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
       select = TRUE,
@@ -2171,15 +2271,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
+        agregacao <- input$AGREGACAO_REGIONAL1
+        uf <- req(input$UF1)
         if(indicador == "Número efetivo de partidos eleitoral" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
             data = frag_leg_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
               select(`Ano da eleição`,
                      UF,
                      Cargo,
@@ -2192,8 +2292,8 @@ server <- function(input, output,session){
             unique()
           } else{
             data = frag_leg_uf %>% 
-            dplyr::filter(UF == input$UF2 &
-                          Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(UF == input$UF1 &
+                          Cargo == input$DESCRICAO_CARGO1) %>% 
               select(`Ano da eleição`,
                      UF,
                      Cargo,
@@ -2211,7 +2311,7 @@ server <- function(input, output,session){
   })  
   
 
-# 2.1.7. Quociente eleitoral -----------------------------------------------
+# 1.1.7. Quociente eleitoral -----------------------------------------------
   
   ## Resumo
   
@@ -2219,8 +2319,8 @@ server <- function(input, output,session){
   
   depfed <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
-    uf <- input$UF2
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF1
     if(indicador == "Quociente eleitoral" & 
        cargo == "Deputado Federal"){
       return(input$quoce_fed)
@@ -2233,7 +2333,7 @@ server <- function(input, output,session){
   
   
   
-  bquoce_fed <- eventReactive(input$BCALC2, { ## Botao de acao
+  bquoce_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -2267,11 +2367,11 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
-                       cargo <- input$DESCRICAO_CARGO2
-                       uf <- input$UF2
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF1
                        if(indicador == "Quociente eleitoral" & 
                           cargo == "Deputado Federal"){
-                         if(input$UF2 == "Todas UFs"){
+                         if(input$UF1 == "Todas UFs"){
                            distcad_fed %>% 
                              select(`Ano da eleição`, 
                                     UF,
@@ -2281,7 +2381,7 @@ server <- function(input, output,session){
                                     `Quociente eleitoral`)
                          }else{
                            distcad_fed %>% 
-                             dplyr::filter(UF == input$UF2) %>% 
+                             dplyr::filter(UF == input$UF1) %>% 
                              select(`Ano da eleição`, 
                                     UF,
                                     `Quociente eleitoral`) %>% 
@@ -2296,11 +2396,11 @@ server <- function(input, output,session){
   
   
   
-  output$x2 <-renderPlotly({
+  output$x1 <-renderPlotly({
     s = input$quoce_fed_rows_selected
     if(length(s))
       plot_ly(
-        data = distcad_fed2, 
+        data = distcad_fed1, 
         x = ~`Ano da eleição`,
         y = ~`Quociente eleitoral`,
         size = ~`Quociente eleitoral`,
@@ -2308,7 +2408,7 @@ server <- function(input, output,session){
         type = "scatter",
         mode = "lines+markers") %>% 
       layout(
-        title = "Quociente eleitoral: 1998-2018",
+        title = "Quociente eleitoral: 1998-1018",
         showlegend = TRUE) 
   })
   
@@ -2320,8 +2420,8 @@ server <- function(input, output,session){
   
   ag_quocefed <- reactive({
     indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
-    uf <- input$UF2
+    cargo <- input$DESCRICAO_CARGO1
+    uf <- input$UF1
     if(indicador == "Quociente eleitoral" &
        cargo == "Deputado Federal"){
       return(input$agreg_quocefed) 
@@ -2332,7 +2432,7 @@ server <- function(input, output,session){
     bagreg_quocefed()
   })
   
-  bagreg_quocefed <- eventReactive(input$BCALC2, {
+  bagreg_quocefed <- eventReactive(input$BCALC1, {
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
@@ -2363,17 +2463,17 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
-                       cargo <- input$DESCRICAO_CARGO2
-                       uf <- input$UF2
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF1
                        if(indicador == "Quociente eleitoral" &
                           cargo == "Deputado Federal"){
-                         if(input$UF2 == "Todas UFs"){
+                         if(input$UF1 == "Todas UFs"){
                            data = distcad_fed %>% 
                              unique() 
                          }
                          else{
                            data = distcad_fed %>% 
-                             dplyr::filter(UF == input$UF2) %>% 
+                             dplyr::filter(UF == input$UF1) %>% 
                              unique()
                          }}
                      })
@@ -2386,7 +2486,7 @@ server <- function(input, output,session){
   
   depest <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
+    cargo <- input$DESCRICAO_CARGO1
     if(indicador == "Quociente eleitoral" & 
        cargo == "Deputado Estadual"){
       return(input$quoce_est)
@@ -2398,7 +2498,7 @@ server <- function(input, output,session){
   })
   
   
-  bquoce_est <- eventReactive(input$BCALC2, { ## Botao de acao
+  bquoce_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -2422,11 +2522,11 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
-                       cargo <- input$DESCRICAO_CARGO2
-                       uf <- input$UF2
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF1
                        if(indicador == "Quociente eleitoral" & 
                           cargo == "Deputado Estadual"){
-                         if(input$UF2=="Todas UFs"){
+                         if(input$UF1=="Todas UFs"){
                            expr = distcad_est %>% 
                              select(`Ano da eleição`, 
                                     UF,
@@ -2437,7 +2537,7 @@ server <- function(input, output,session){
                            
                          }else{
                            expr = distcad_est %>% 
-                             dplyr::filter(UF == input$UF2) %>% 
+                             dplyr::filter(UF == input$UF1) %>% 
                              select(`Ano da eleição`, 
                                     UF, 
                                     `Quociente eleitoral`) %>% 
@@ -2454,7 +2554,7 @@ server <- function(input, output,session){
   
   ag_est <- reactive({
     indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
+    cargo <- input$DESCRICAO_CARGO1
     if(indicador == "Quociente eleitoral" & 
        cargo == "Deputado Estadual"){
       return(input$agreg_quoceest) 
@@ -2465,7 +2565,7 @@ server <- function(input, output,session){
     bagreg_quoceest()
   })
   
-  bagreg_quoceest <- eventReactive(input$BCALC2, {
+  bagreg_quoceest <- eventReactive(input$BCALC1, {
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
@@ -2496,23 +2596,23 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
-                       cargo <- input$DESCRICAO_CARGO2
-                       uf <- input$UF2
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF1
                        if(indicador == "Quociente eleitoral" & 
                           cargo == "Deputado Estadual"){
-                         if(input$UF2 == "Todas UFs"){
+                         if(input$UF1 == "Todas UFs"){
                            expr = distcad_est %>% 
                              unique()
                          } else {
                            expr = distcad_est %>% 
-                             dplyr::filter(UF == input$UF2) %>% 
+                             dplyr::filter(UF == input$UF1) %>% 
                              unique()
                            
                          }}
                      })
   })  
   
-# 2.1.8. Quociente partidario ---------------------------------------------
+# 1.1.8. Quociente partidario ---------------------------------------------
   
   ## Resumo
   
@@ -2520,7 +2620,7 @@ server <- function(input, output,session){
   
   depfedp <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
+    cargo <- input$DESCRICAO_CARGO1
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Federal"){
       return(input$quocp_fed)
@@ -2531,7 +2631,7 @@ server <- function(input, output,session){
     bquocp_fed()
   })
   
-  bquocp_fed <- eventReactive(input$BCALC2, { ## Botao de acao
+  bquocp_fed <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       ordering = TRUE,
@@ -2555,11 +2655,11 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
-                       cargo <- input$DESCRICAO_CARGO2
-                       uf <- input$UF2
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF1
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Federal"){
-                         if(input$UF2=="Todas UFs"){
+                         if(input$UF1=="Todas UFs"){
                            expr = distcad_fed %>% 
                              select(`Ano da eleição`, 
                                     UF, 
@@ -2568,7 +2668,7 @@ server <- function(input, output,session){
                            
                          }else{
                            expr = distcad_fed %>% 
-                             dplyr::filter(UF == input$UF2) %>% 
+                             dplyr::filter(UF == input$UF1) %>% 
                              select(`Ano da eleição`, 
                                     UF, 
                                     `Sigla do partido`, 
@@ -2585,7 +2685,7 @@ server <- function(input, output,session){
   
   ag_quocpfed <- reactive({
     indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
+    cargo <- input$DESCRICAO_CARGO1
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Federal"){
       return(input$agreg_quocpfed)
@@ -2596,7 +2696,7 @@ server <- function(input, output,session){
     bagreg_quocpfed()
   })
   
-  bagreg_quocpfed <- eventReactive(input$BCALC2, {
+  bagreg_quocpfed <- eventReactive(input$BCALC1, {
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
@@ -2627,17 +2727,17 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
-                       cargo <- input$DESCRICAO_CARGO2
-                       uf <- input$UF2
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF1
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Federal"){
-                         if(input$UF2 == "Todas UFs"){
+                         if(input$UF1 == "Todas UFs"){
                            expr = distcad_fed %>% 
                              unique()
                            
                          }else{
                            expr = distcad_fed %>% 
-                             dplyr::filter(UF == input$UF2) %>% 
+                             dplyr::filter(UF == input$UF1) %>% 
                              unique()}
                        }
                      })
@@ -2649,7 +2749,7 @@ server <- function(input, output,session){
   
   depestp <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
+    cargo <- input$DESCRICAO_CARGO1
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Estadual"){
       return(input$quocp_est)
@@ -2660,7 +2760,7 @@ server <- function(input, output,session){
     bquocp_est()
   })
   
-  bquocp_est <- eventReactive(input$BCALC2, { ## Botao de acao
+  bquocp_est <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -2684,11 +2784,11 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
-                       cargo <- input$DESCRICAO_CARGO2
-                       uf <- input$UF2
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF1
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Estadual"){
-                         if(input$UF2=="Todas UFs"){
+                         if(input$UF1=="Todas UFs"){
                            expr = distcad_est %>% 
                              select(`Ano da eleição`, 
                                     UF,
@@ -2697,7 +2797,7 @@ server <- function(input, output,session){
                            
                          }else{
                            expr = distcad_est %>% 
-                             dplyr::filter(UF == input$UF2) %>% 
+                             dplyr::filter(UF == input$UF1) %>% 
                              select(`Ano da eleição`, 
                                     UF,
                                     `Sigla do partido`, 
@@ -2712,7 +2812,7 @@ server <- function(input, output,session){
   
   ag_qupcpest <- reactive({
     indicador <- input$INDICADORES_FRAG
-    cargo <- input$DESCRICAO_CARGO2
+    cargo <- input$DESCRICAO_CARGO1
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Estadual"){
       return(input$agreg_quocpest)
@@ -2723,7 +2823,7 @@ server <- function(input, output,session){
     bagreg_quocpest()
   })
   
-  bagreg_quocpest <- eventReactive(input$BCALC2,{
+  bagreg_quocpest <- eventReactive(input$BCALC1,{
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
@@ -2754,16 +2854,16 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
-                       cargo <- input$DESCRICAO_CARGO2
-                       uf <- input$UF2
+                       cargo <- input$DESCRICAO_CARGO1
+                       uf <- input$UF1
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Estadual"){
-                         if(input$UF2 == "Todas UFs"){
+                         if(input$UF1 == "Todas UFs"){
                            expr = distcad_est %>% 
                              unique()
                          }else{          
                            expr = distcad_est %>% 
-                             dplyr::filter(UF == input$UF2) %>% 
+                             dplyr::filter(UF == input$UF1) %>% 
                              unique()}
                        }
                      })
@@ -2850,24 +2950,11 @@ server <- function(input, output,session){
                    <strong>Fórmula: </strong>
                    <p>
                    RL = (DERROT)/(REELEIT + DERROT) * 100
-                   <h4><br /> Volatilidade eleitoral </h4>
-                   <h5 align = 'justify'><br />
-                  <p style='line-height:150%'>O indicador 'volatilidade eleitoral' é uma medida agregada que resulta do
-                  somatório das perdas e ganhos dos partidos entre duas eleições, dividido por dois.
-                  As perdas e ganhos dos partidos tanto podem ser expressas em proporções de
-                  votos ou cadeiras no parlamento.</p></h5>
-                  <p>
-                  <strong>Fórmula: </strong>
-                  <p>
-                  VT = &sum;(Vti - Vti-1)/2
                   <p><br /> 
                   <strong>Fonte:</strong> 
                   <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
                   países/ Organização de Wanderley Guilherme dos Santos, com a colaboração de Fabrícia Guimarães. -
-                  Rio de Janeiro: Editora FGV, 2002);  
-                  <p>2. FIGUEIREDO, M. Volatilidade eleitoral em eleições parlamentares, 1950-1978.
-                  Opinião Pública, Campinas, vol. III, nº 3, Dezembro, 1995, p.186-196.
-                  <a href= 'https://www.cesop.unicamp.br/vw/1IEjOMDM_MDA_3e2e0_/v3n3a03.pdf'></a></font>
+                  Rio de Janeiro: Editora FGV, 2002).</p></a></font>
 
                    ")
     HTML(note)
@@ -2881,7 +2968,7 @@ server <- function(input, output,session){
   
   depfedc <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    agregacao <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO2
     if(indicador == "Conservação" &
        agregacao == "Brasil"){
       return(input$conserv_fed)
@@ -2893,7 +2980,7 @@ server <- function(input, output,session){
     bconserv_fed()
   })
   
-  bconserv_fed <- eventReactive(input$BCALC3, { ## Botao de acao
+  bconserv_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -2913,13 +3000,13 @@ server <- function(input, output,session){
       extensions = c('Buttons',       
                      'Select'),{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
-        agregacao <- input$AGREGACAO_REGIONAL3
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Conservação" &
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
           renov_parl_br %>% 
-            dplyr::filter(Cargo ==input$DESCRICAO_CARGO3) %>% 
+            dplyr::filter(Cargo ==input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           `Conservação`) %>% 
             spread(`Ano da eleição`,
@@ -2935,7 +3022,7 @@ server <- function(input, output,session){
   
   ag_alifedc<- reactive({
     indicador <- input$INDICADORES_RENOV
-    agregacao <- input$AGREGACAO_REGIONAL3
+    agregacao <- input$AGREGACAO_REGIONAL2
     if(indicador == "Conservação" & 
        agregacao == "Brasil"){
       return(input$agreg_conserv_fed)
@@ -2946,7 +3033,7 @@ server <- function(input, output,session){
     bagreg_conserv_fed()
   })
   
-  bagreg_conserv_fed <- eventReactive(input$BCALC3, {
+  bagreg_conserv_fed <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
      autoWidth = FALSE,
@@ -2956,7 +3043,7 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
-        leftColumns = 3
+        leftColumns = 2
       ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
@@ -2977,14 +3064,14 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- input$UF3
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- input$UF2
         if(indicador == "Conservação" &
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
           data = renov_parl_br %>%
-            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) 
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO2) 
           
         }
       })
@@ -2996,7 +3083,7 @@ server <- function(input, output,session){
   
   depestc <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    agregacao <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO2
     if(indicador == "Conservação" & 
        agregacao == "UF"){
       return(input$conserv_est)
@@ -3008,7 +3095,7 @@ server <- function(input, output,session){
     bconserv_est()
   })
   
-  bconserv_est <- eventReactive(input$BCALC3, { ## Botao de acao
+  bconserv_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -3032,9 +3119,9 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
-        uf <- req(input$UF3)
-        agregacao <- input$AGREGACAO_REGIONAL3
+        cargo <- input$DESCRICAO_CARGO2
+        uf <- req(input$UF2)
+        agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Conservação" & 
            cargo == "Deputado Federal" |
            cargo == "Deputado Estadual")
@@ -3042,7 +3129,7 @@ server <- function(input, output,session){
             return()
           } else if(uf == "Todas UFs"){
             renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Conservação`) %>% 
@@ -3051,8 +3138,8 @@ server <- function(input, output,session){
           
           } else{
             renov_parl_uf %>% 
-              dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
-                            UF == input$UF3) %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                            UF == input$UF2) %>% 
               dplyr::select(`Ano da eleição`,
                             UF,
                             `Conservação`) %>% 
@@ -3068,7 +3155,7 @@ server <- function(input, output,session){
   
   ag_aliestc<- reactive({
     indicador <- input$INDICADORES_RENOV
-    agregacao <- input$AGREGACAO_REGIONAL3
+    agregacao <- input$AGREGACAO_REGIONAL2
     if(indicador == "Conservação" &
        agregacao == "UF"){
       return(input$agreg_conserv_est)
@@ -3079,7 +3166,7 @@ server <- function(input, output,session){
     bagreg_conserv_est()
   })
   
-  bagreg_conserv_est <- eventReactive(input$BCALC3, {
+  bagreg_conserv_est <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
      autoWidth = FALSE,
@@ -3089,7 +3176,7 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
-        leftColumns = 3
+        leftColumns = 2
       ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
@@ -3112,20 +3199,20 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- req(input$UF3)
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
         if(indicador == "Conservação" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
             data = renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             unique()
           } else{
             data = renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
-                     UF == input$UF3) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                     UF == input$UF2) %>% 
             unique()
           }
         }
@@ -3140,7 +3227,7 @@ server <- function(input, output,session){
   
   depfedrb <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    agregacao <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO2
     if(indicador == "Renovação bruta" & 
        cargo == "Deputado Federal" &
        agregacao == "Brasil"){
@@ -3153,7 +3240,7 @@ server <- function(input, output,session){
     brenov_br_fed()
   })
   
-  brenov_br_fed <- eventReactive(input$BCALC3, { ## Botao de acao
+  brenov_br_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -3174,13 +3261,13 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
-        agregacao <- input$AGREGACAO_REGIONAL3
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Renovação bruta" & 
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
           renov_parl_br %>% 
-            dplyr::filter(Cargo ==input$DESCRICAO_CARGO3) %>% 
+            dplyr::filter(Cargo ==input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           `Renovação bruta`) %>% 
             spread(`Ano da eleição`,
@@ -3197,8 +3284,8 @@ server <- function(input, output,session){
   
   ag_alifedrb <- reactive({
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$AGREGACAO_REGIONAL3
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
     if(indicador == "Renovação bruta" & 
        cargo == "Deputado Federal" &
        agregacao == "Brasil"){
@@ -3210,7 +3297,7 @@ server <- function(input, output,session){
     bagreg_renov_br_fed()
   })
   
-  bagreg_renov_br_fed <- eventReactive(input$BCALC3, {
+  bagreg_renov_br_fed <- eventReactive(input$BCALC2, {
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
@@ -3220,7 +3307,7 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
-        leftColumns = 3
+        leftColumns = 2
       ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
@@ -3240,14 +3327,14 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- input$UF3
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- input$UF2
         if(indicador == "Renovação bruta" & 
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
             data = renov_parl_br %>%
-            dplyr::filter(Cargo==input$DESCRICAO_CARGO3)
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO2)
         }
       })
   })
@@ -3258,7 +3345,7 @@ server <- function(input, output,session){
   
   depestrb <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    agregacao <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO2
     if(indicador == "Renovação bruta" & 
        agregacao == "UF"){
       return(input$renov_br_est)
@@ -3270,7 +3357,7 @@ server <- function(input, output,session){
     brenov_br_est()
   })
   
-  brenov_br_est <- eventReactive(input$BCALC3, { ## Botao de acao
+  brenov_br_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -3294,15 +3381,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- req(input$UF3)
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
         if(indicador == "Renovação bruta" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
             renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Renovação bruta`) %>% 
@@ -3311,8 +3398,8 @@ server <- function(input, output,session){
             unique()
           } else{
             renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
-                          UF == input$UF3) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                          UF == input$UF2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Renovação bruta`) %>% 
@@ -3330,7 +3417,7 @@ server <- function(input, output,session){
   
   ag_aliestrb <- reactive({
     indicador <- input$INDICADORES_RENOV
-    agregacao <- input$AGREGACAO_REGIONAL3
+    agregacao <- input$AGREGACAO_REGIONAL2
     if(indicador == "Renovação bruta" & 
        agregacao == "UF"){
       return(input$agreg_renov_br_est)
@@ -3341,7 +3428,7 @@ server <- function(input, output,session){
     bagreg_renov_br_est()
   })
   
-  bagreg_renov_br_est <- eventReactive(input$BCALC3, {
+  bagreg_renov_br_est <- eventReactive(input$BCALC2, {
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
@@ -3351,7 +3438,7 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
-        leftColumns = 3
+        leftColumns = 2
       ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
@@ -3372,26 +3459,26 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- req(input$UF3)
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
         if(indicador == "Renovação bruta" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
             data = renov_parl_uf %>%
-            dplyr::filter(Cargo==input$DESCRICAO_CARGO3)
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO2)
           } else{
             data = renov_parl_uf %>%
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
-                            UF == input$UF3)
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                            UF == input$UF2)
           }
         }
       })
   })
   
   
-# 2.2.3. Renovacao liquida ------------------------------------------------
+# 2.2.2. Renovacao liquida ------------------------------------------------
   
   ## Resumo
   
@@ -3399,8 +3486,8 @@ server <- function(input, output,session){
   
   depfedrl <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$DESCRICAO_CARGO3
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$DESCRICAO_CARGO2
     if(indicador == "Renovação líquida" &
        cargo == "Deputado Federal" &
        agregacao == "Brasil"){
@@ -3413,7 +3500,7 @@ server <- function(input, output,session){
     brenov_liq_fed()
   })
   
-  brenov_liq_fed <- eventReactive(input$BCALC3, { ## Botao de acao
+  brenov_liq_fed <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -3434,8 +3521,8 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
-        agregacao <- input$AGREGACAO_REGIONAL3
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Renovação líquida" &
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
@@ -3455,8 +3542,8 @@ server <- function(input, output,session){
   
   ag_alifedrl <- reactive({
     indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$AGREGACAO_REGIONAL3
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
     if(indicador == "Renovação líquida" & 
        cargo == "Deputado Federal" &
        agregacao == "Brasil"){
@@ -3468,7 +3555,7 @@ server <- function(input, output,session){
     bagreg_renov_liq_fed()
   })
   
-  bagreg_renov_liq_fed <- eventReactive(input$BCALC3, {
+  bagreg_renov_liq_fed <- eventReactive(input$BCALC2, {
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
@@ -3478,7 +3565,7 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
-        leftColumns = 3
+        leftColumns = 2
       ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
@@ -3499,9 +3586,9 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- input$UF3
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- input$UF2
         if(indicador == "Renovação líquida" & 
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
@@ -3517,7 +3604,7 @@ server <- function(input, output,session){
   
   depestrl <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
-    agregacao <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO2
     if(indicador == "Renovação líquida" &
        agregacao == "UF"){
       return(input$renov_liq_est)
@@ -3529,7 +3616,7 @@ server <- function(input, output,session){
     brenov_liq_est()
   })
   
-  brenov_liq_est <- eventReactive(input$BCALC3, { ## Botao de acao
+  brenov_liq_est <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -3553,15 +3640,15 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- req(input$UF3)
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
         if(indicador == "Renovação líquida" &
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if (uf == "Todas UFs"){
             renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>%
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Renovação líquida`) %>% 
@@ -3571,8 +3658,8 @@ server <- function(input, output,session){
           
           } else{
             renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
-                          UF == input$UF3) %>%
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                          UF == input$UF2) %>%
             dplyr::select(`Ano da eleição`,
                           UF,
                           `Renovação líquida`) %>% 
@@ -3590,7 +3677,7 @@ server <- function(input, output,session){
   
   ag_aliestrl <- reactive({
     indicador <- input$INDICADORES_RENOV
-    agregacao <- input$AGREGACAO_REGIONAL3
+    agregacao <- input$AGREGACAO_REGIONAL2
     if(indicador == "Renovação líquida" & 
        agregacao == "UF"){
       return(input$agreg_renov_liq_est)
@@ -3601,7 +3688,7 @@ server <- function(input, output,session){
     bagreg_renov_liq_est()
   })
   
-  bagreg_renov_liq_est <- eventReactive(input$BCALC3, {
+  bagreg_renov_liq_est <- eventReactive(input$BCALC2, {
     datatable(options = list(
      autoWidth = FALSE,
       select = TRUE,
@@ -3611,7 +3698,7 @@ server <- function(input, output,session){
       lengthChange = FALSE,
       lengthMenu = FALSE,
       fixedColumns = list(
-        leftColumns = 3
+        leftColumns = 2
       ),
       columnDefs = list(list(
         className = 'dt-center', targets = '_all')),
@@ -3632,282 +3719,20 @@ server <- function(input, output,session){
                      'Select',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- req(input$UF3)
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
         if(indicador == "Renovação líquida" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
             data = renov_parl_uf %>% 
-            filter(Cargo == input$DESCRICAO_CARGO3) %>% 
+            filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             unique()
           } else{
             data = renov_parl_uf %>% 
-            filter(Cargo == input$DESCRICAO_CARGO3 &
-                   UF == input$UF3) %>% 
-            unique()
-          }
-        }
-      })
-  })
-  
-  
-  
-# 2.2.4. Volatilidade eleitoral -------------------------------------------
-  
-  ## Resumo
-  
-  ### Renovacao parlamentar (Brasil)  
-  
-  depfedve <- reactive({ ## Atributos das tabelas 
-    indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$DESCRICAO_CARGO3
-    if(indicador == "Volatilidade eleitoral" & 
-       cargo == "Deputado Federal" &
-       agregacao == "Brasil"){
-      return(input$vol_ele_fed)
-    }
-  })
-  
-  
-  output$vol_ele_fed <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    bvol_ele_fed()
-  })
-  
-  bvol_ele_fed <- eventReactive(input$BCALC3, { ## Botao de acao
-    datatable(options = list(
-     autoWidth = FALSE,
-      ordering = TRUE, 
-      searching = FALSE,
-      lengthChange = FALSE,
-      lengthMenu = FALSE,
-      columnDefs = list(list(
-        className = 'dt-center', targets = '_all')),
-      dom = 'Bflrtip',
-      buttons = list(list(
-        extend = 'csv',
-        title = 'vol_ele_fed',
-        bom = TRUE))), 
-       class = "display",
-      rownames = FALSE,
-      extensions = c('Buttons',
-                     'Select',
-                     'FixedColumns'),{
-        indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
-        agregacao <- input$AGREGACAO_REGIONAL3
-        if(indicador == "Volatilidade eleitoral" &
-           cargo == "Deputado Federal" &
-           agregacao == "Brasil"){
-          renov_parl_br %>% 
-            dplyr::select(`Ano da eleição`,
-                          `Volatilidade eleitoral`) %>% 
-            spread(`Ano da eleição`,
-                   `Volatilidade eleitoral`)
-          
-        }
-      })
-  }) 
-  
-  ## Dados desagregados
-  
-  ### Renovacao parlamentar (Brasil)  
-  
-  ag_alifedve <- reactive({
-    indicador <- input$INDICADORES_RENOV
-    cargo <- input$DESCRICAO_CARGO3
-    agregacao <- input$AGREGACAO_REGIONAL3
-    if(indicador == "Volatilidade eleitoral" &
-       cargo == "Deputado Federal" &
-       agregacao == "Brasil"){
-      return(input$agreg_vol_ele_fed)
-    }
-  })
-  
-  output$agreg_vol_ele_fed <- DT::renderDataTable(server = FALSE,{
-    bagreg_vol_ele_fed()
-  })
-  
-  bagreg_vol_ele_fed <- eventReactive(input$BCALC3, {
-    datatable(options = list(
-     autoWidth = FALSE,
-      scrollX = TRUE,
-      select = TRUE,
-      ordering = TRUE, 
-      searching = FALSE,
-      lengthChange = FALSE,
-      lengthMenu = FALSE,
-      fixedColumns = list(
-        leftColumns = 3
-      ),
-      columnDefs = list(list(
-        className = 'dt-center', targets = '_all')),
-      dom = 'Bflrtip',
-      buttons = list(
-                     list(
-        extend = 'csv',
-        exportOptions = list(
-          columns = ':visible'),
-        title = 'vol_ele_fed_agreg',
-        bom = TRUE),
-        list(                     
-          extend = 'colvis',                     
-          text = 'Colunas'))), 
-       class = "display",
-      rownames = FALSE,
-      extensions = c('Buttons',        
-                     'Select',
-                     'FixedColumns'),{
-        indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO3
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- input$UF3
-        if(indicador == "Volatilidade eleitoral" & 
-           cargo == "Deputado Federal" &
-           agregacao == "Brasil"){
-          data = renov_parl_br 
-          
-        }
-      })
-  })
-  
-  
-  ## Resumo
-  
-  ### Renovacao parlamentar (UF) 
-  
-  depestve <- reactive({ ## Atributos das tabelas 
-    indicador <- input$INDICADORES_RENOV
-    agregacao <- input$DESCRICAO_CARGO3
-    if(indicador == "Volatilidade eleitoral" & 
-       agregacao == "UF"){
-      return(input$vol_ele_est)
-    }
-  })
-  
-  
-  output$vol_ele_est <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    bvol_ele_est()
-  })
-  
-  bvol_ele_est <- eventReactive(input$BCALC3, { ## Botao de acao
-    datatable(options = list(
-     autoWidth = FALSE,
-      select = TRUE,
-      ordering = TRUE, 
-      searching = FALSE,
-      lengthChange = FALSE,
-      lengthMenu = FALSE,
-      fixedColumns = list(
-        leftColumns = 1
-      ),
-      columnDefs = list(list(
-        className = 'dt-center', targets = '_all')),
-      dom = 'Bflrtip',
-      buttons = list(list(
-        extend = 'csv',
-        title = 'vol_ele_est',
-        bom = TRUE))), 
-       class = "display",
-      rownames = FALSE,
-      extensions = c('Buttons',              
-                     'Select',
-                     'FixedColumns'),{
-        indicador <- input$INDICADORES_RENOV
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- req(input$UF3)
-        if(indicador == "Volatilidade eleitoral" &
-           agregacao == "UF"){
-          if(uf == ""){
-            return()
-          } else if(uf == "Todas UFs"){
-            renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>%
-            dplyr::select(`Ano da eleição`,
-                          UF,
-                          `Volatilidade eleitoral`) %>% 
-            spread(`Ano da eleição`,
-                   `Volatilidade eleitoral`) %>% 
-              unique()
-          } else{
-            renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO3 &
-                          UF == input$UF3) %>%
-            dplyr::select(`Ano da eleição`,
-                          UF,
-                          `Volatilidade eleitoral`) %>% 
-            spread(`Ano da eleição`,
-                   `Volatilidade eleitoral`) %>% 
-            unique()
-          }
-        }
-      })
-  }) 
-  
-  ## Dados desagregados
-  
-  ### Renovacao parlamentar (UF) 
-  
-  ag_aliestve <- reactive({
-    indicador <- input$INDICADORES_RENOV
-    agregacao <- input$AGREGACAO_REGIONAL3
-    if(indicador == "Volatilidade eleitoral" &
-       agregacao == "UF"){
-      return(input$agreg_vol_ele_est)
-    }
-  })
-  
-  output$agreg_vol_ele_est <- DT::renderDataTable(server = FALSE,{
-    bagreg_vol_ele_est()
-  })
-  
-  bagreg_vol_ele_est <- eventReactive(input$BCALC3, {
-    datatable(options = list(
-     autoWidth = FALSE,
-      scrollX = TRUE,
-      select = TRUE,
-      ordering = TRUE, 
-      searching = FALSE,
-      lengthChange = FALSE,
-      lengthMenu = FALSE,
-      fixedColumns = list(
-        leftColumns = 3
-      ),
-      columnDefs = list(list(
-        className = 'dt-center', targets = '_all')),
-      dom = 'Bflrtip',
-      buttons = list(
-                     list(
-        extend = 'csv',
-        exportOptions = list(
-          columns = ':visible'),
-        title = 'vol_ele_est_agreg',
-        bom = TRUE),
-        list(                     
-          extend = 'colvis',                     
-          text = 'Colunas'))), 
-       class = "display",
-      rownames = FALSE,
-      extensions = c('Buttons',        
-                     'Select',
-                     'FixedColumns'),{
-        indicador <- input$INDICADORES_RENOV
-        agregacao <- input$AGREGACAO_REGIONAL3
-        uf <- req(input$UF3)
-        if(indicador == "Volatilidade eleitoral" & 
-           agregacao == "UF"){
-          if(uf == ""){
-            return()
-          } else if(uf == "Todas UFs"){
-            data = renov_parl_uf %>% 
-            filter(Cargo == input$DESCRICAO_CARGO3) %>% 
-            unique()
-          } else{
-            data = renov_parl_uf %>% 
-            filter(Cargo == input$DESCRICAO_CARGO3 &
-                   UF == input$UF3) %>% 
+            filter(Cargo == input$DESCRICAO_CARGO2 &
+                   UF == input$UF2) %>% 
             unique()
           }
         }
@@ -4010,8 +3835,8 @@ server <- function(input, output,session){
   
   depfeda_br <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO4
-    agregacao <- input$DESCRICAO_CARGO4
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO3
     if(indicador == "Alienação absoluta" & 
        agregacao == "Brasil"){
       return(input$alien_feda_br)
@@ -4023,7 +3848,7 @@ server <- function(input, output,session){
     balien_feda_br()
   })
   
-  balien_feda_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao absoluta
+  balien_feda_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
                autoWidth = FALSE,
                 select = TRUE,
@@ -4047,12 +3872,12 @@ server <- function(input, output,session){
                              'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
-      cargo <- input$DESCRICAO_CARGO4
-      agregacao <- input$AGREGACAO_REGIONAL4
+      cargo <- input$DESCRICAO_CARGO3
+      agregacao <- input$AGREGACAO_REGIONAL3
       if(indicador == "Alienação absoluta" & 
          agregacao == "Brasil"){
         alien_br %>% 
-          dplyr::filter(Cargo ==input$DESCRICAO_CARGO4) %>% 
+          dplyr::filter(Cargo ==input$DESCRICAO_CARGO3) %>% 
           dplyr::select(`Ano da eleição`,
                         Turno,
                         `Alienação absoluta`) %>% 
@@ -4069,8 +3894,8 @@ server <- function(input, output,session){
   
   ag_alifeda_br <- reactive({
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO4
-    agregacao <- input$AGREGACAO_REGIONAL4
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
     if(indicador == "Alienação absoluta" & 
        agregacao == "Brasil"){
       return(input$agreg_alifeda_br)
@@ -4081,7 +3906,7 @@ server <- function(input, output,session){
     bagreg_alifed_br()
   })
   
-  bagreg_alifed_br <- eventReactive(input$BCALC4, {
+  bagreg_alifed_br <- eventReactive(input$BCALC3, {
     datatable(options = list(
                autoWidth = FALSE,
                 scrollX = TRUE,
@@ -4112,13 +3937,13 @@ server <- function(input, output,session){
                              'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
-      cargo <- input$DESCRICAO_CARGO4
-      agregacao <- input$AGREGACAO_REGIONAL4
-      uf <- input$UF4
+      cargo <- input$DESCRICAO_CARGO3
+      agregacao <- input$AGREGACAO_REGIONAL3
+      uf <- input$UF3
       if(indicador == "Alienação absoluta" & 
          agregacao == "Brasil"){
         data = alien_br %>%
-          dplyr::filter(Cargo==input$DESCRICAO_CARGO4) 
+          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) 
         
       }
     })
@@ -4130,9 +3955,9 @@ server <- function(input, output,session){
   
   depfeda_uf <- reactive({ ## Atributos das tabelas de alienacao absoluta 
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO4
-    agregacao <- input$DESCRICAO_CARGO4
-    uf <- input$UF4
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO3
+    uf <- input$UF3
     if(indicador == "Alienação absoluta" & 
        agregacao == "UF"){
       return(input$alien_feda_uf)
@@ -4143,7 +3968,7 @@ server <- function(input, output,session){
     balien_feda_uf()
   })
   
-  balien_feda_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao absoluta
+  balien_feda_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
                autoWidth = FALSE,
                 select = TRUE,
@@ -4167,13 +3992,13 @@ server <- function(input, output,session){
                               'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
-      cargo <- input$DESCRICAO_CARGO4
-      agregacao <- input$AGREGACAO_REGIONAL4
-      uf <- input$UF4
+      cargo <- input$DESCRICAO_CARGO3
+      agregacao <- input$AGREGACAO_REGIONAL3
+      uf <- input$UF3
       if(indicador == "Alienação absoluta" & agregacao == "UF"){
         if(uf=="Todas UFs"){
           alien_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO4) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           Turno, 
@@ -4182,8 +4007,8 @@ server <- function(input, output,session){
                   `Alienação absoluta`) 
         }else{
           alien_uf %>% 
-            dplyr::filter(UF == input$UF4 & 
-                          Cargo==input$DESCRICAO_CARGO4) %>% 
+            dplyr::filter(UF == input$UF3 & 
+                          Cargo==input$DESCRICAO_CARGO3) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
                           Turno,
@@ -4201,9 +4026,9 @@ server <- function(input, output,session){
   
   ag_alifeda_uf <- reactive({
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO4
-    agregacao <- input$AGREGACAO_REGIONAL4
-    uf <- input$UF4
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    uf <- input$UF3
     if(indicador == "Alienação absoluta" & 
        agregacao == "UF"){
       return(input$agreg_alifeda_uf)
@@ -4214,7 +4039,7 @@ server <- function(input, output,session){
     bagreg_alifeda_uf()
   })
   
-  bagreg_alifeda_uf <- eventReactive(input$BCALC4, {
+  bagreg_alifeda_uf <- eventReactive(input$BCALC3, {
     datatable(options = list(
                autoWidth = FALSE,
                 scrollX = TRUE,
@@ -4224,7 +4049,7 @@ server <- function(input, output,session){
                 lengthChange = FALSE,
                 lengthMenu = FALSE,
                 fixedColumns = list(
-                  leftColumns = 4
+                  leftColumns = 3
                 ),
                 columnDefs = list(list(
                   className = 'dt-center', targets = '_all')),
@@ -4245,18 +4070,18 @@ server <- function(input, output,session){
                               'Select',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
-      cargo <- input$DESCRICAO_CARGO4
-      agregacao <- input$AGREGACAO_REGIONAL4
-      uf <- input$UF4
+      cargo <- input$DESCRICAO_CARGO3
+      agregacao <- input$AGREGACAO_REGIONAL3
+      uf <- input$UF3
       if(indicador == "Alienação absoluta" & 
          agregacao == "UF"){
-        if(input$UF4 == "Todas UFs"){
+        if(input$UF3 == "Todas UFs"){
           data = alien_uf %>% 
-            dplyr::filter(Cargo==input$DESCRICAO_CARGO4)
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO3)
           } else{ 
               data = alien_uf %>% 
-                dplyr::filter(Cargo==input$DESCRICAO_CARGO4 & 
-                              UF == input$UF4) 
+                dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
+                              UF == input$UF3) 
             }}
     })
   })  
@@ -4269,8 +4094,8 @@ server <- function(input, output,session){
 
 depfedp_br <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$DESCRICAO_CARGO4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
   if(indicador == "Alienação percentual" & 
      agregacao == "Brasil"){
     return(input$alien_fedp_br)
@@ -4282,7 +4107,7 @@ output$alien_fedp_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
   balien_fedp_br()
 })
 
-balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
+balien_fedp_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
              autoWidth = FALSE,
               select = TRUE,
@@ -4306,12 +4131,12 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
                            'Select',
                            'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO4
-    agregacao <- input$AGREGACAO_REGIONAL4
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
     if(indicador == "Alienação percentual" & 
        agregacao == "Brasil"){
       alien_br %>% 
-        dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+        dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
         dplyr::select(`Ano da eleição`,
                       Turno, 
                       `Alienação percentual`) %>% 
@@ -4328,8 +4153,8 @@ balien_fedp_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
 
 ag_alifedp_br <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$AGREGACAO_REGIONAL4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
   if(indicador == "Alienação percentual" & 
      agregacao == "Brasil"){
     return(input$agreg_alifedp_br)
@@ -4340,7 +4165,7 @@ output$agreg_alifedp_br <- DT::renderDataTable(server = FALSE,{
   bagreg_alifedp_br()
 })
 
-bagreg_alifedp_br <- eventReactive(input$BCALC4, {
+bagreg_alifedp_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
              autoWidth = FALSE,
               scrollX = TRUE,
@@ -4371,13 +4196,13 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
                            'Select',
                            'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO4
-    agregacao <- input$AGREGACAO_REGIONAL4
-    uf <- input$UF4
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    uf <- input$UF3
     if(indicador == "Alienação percentual" & 
        agregacao == "Brasil"){
       alien_br %>%
-        dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+        dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
         unique()
       
       
@@ -4392,9 +4217,9 @@ bagreg_alifedp_br <- eventReactive(input$BCALC4, {
 
 depfedp_uf <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$DESCRICAO_CARGO4
-  uf <- input$UF4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
   if(indicador == "Alienação percentual" & 
      agregacao == "UF"){
     return(input$alien_fedp_uf)
@@ -4406,7 +4231,7 @@ output$alien_fedp_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
   balien_fedp_uf()
 })
 
-balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
+balien_fedp_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
              autoWidth = FALSE,
               select = TRUE,
@@ -4430,14 +4255,14 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
                            'Select',
                            'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO4
-    agregacao <- input$AGREGACAO_REGIONAL4
-    uf <- input$UF4
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    uf <- input$UF3
     if(indicador == "Alienação percentual" & 
        agregacao == "UF"){
       if(uf=="Todas UFs"){
         alien_uf %>% 
-          dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
                         Cargo,
@@ -4448,8 +4273,8 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
       }
       else{
         alien_uf %>% 
-          dplyr::filter(UF == input$UF4 & 
-                        Cargo==input$DESCRICAO_CARGO4) %>% 
+          dplyr::filter(UF == input$UF3 & 
+                        Cargo==input$DESCRICAO_CARGO3) %>% 
           dplyr::select(`Ano da eleição`,
                         UF,
                         Turno,
@@ -4467,9 +4292,9 @@ balien_fedp_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao pe
 
 ag_alifedp_uf <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$AGREGACAO_REGIONAL4
-  uf <- input$UF4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
   if(indicador == "Alienação percentual" & 
      agregacao == "UF"){
     return(input$agreg_alifedp_uf)
@@ -4480,7 +4305,7 @@ output$agreg_alifedp_uf <- DT::renderDataTable(server = FALSE,{
   bagreg_alifedp_uf()
 })
 
-bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
+bagreg_alifedp_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
              autoWidth = FALSE,
               scrollX = TRUE,
@@ -4490,7 +4315,7 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
               lengthChange = FALSE,
               lengthMenu = FALSE,
               fixedColumns = list(
-                leftColumns = 4
+                leftColumns = 3
               ),
               columnDefs = list(list(
                 className = 'dt-center', targets = '_all')),
@@ -4511,19 +4336,19 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
                            'Select',
                            'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
-    cargo <- input$DESCRICAO_CARGO4
-    agregacao <- input$AGREGACAO_REGIONAL4
-    uf <- input$UF4
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    uf <- input$UF3
     if(indicador == "Alienação percentual" & 
        agregacao == "UF"){
-      if(input$UF4 == "Todas UFs"){
+      if(input$UF3 == "Todas UFs"){
         data =alien_uf %>% 
-          dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
          unique()
       } else{ 
         data = alien_uf %>% 
-          dplyr::filter(UF == input$UF4 &
-                        Cargo==input$DESCRICAO_CARGO4) %>% 
+          dplyr::filter(UF == input$UF3 &
+                        Cargo==input$DESCRICAO_CARGO3) %>% 
           unique()
       }}
   })
@@ -4538,8 +4363,8 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC4, {
 
 depfedab_br <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$DESCRICAO_CARGO4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
   if(indicador == "Abstenções" & 
      agregacao == "Brasil"){
     return(input$alien_fedab_br)
@@ -4551,7 +4376,7 @@ output$alien_fedab_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alien
   balien_fedab_br()
 })
 
-balien_fedab_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
+balien_fedab_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
     select = TRUE,
@@ -4575,12 +4400,12 @@ balien_fedab_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
                      if(indicador == "Abstenções" & 
                         agregacao == "Brasil"){
                        alien_br %>% 
-                         dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                          dplyr::select(`Ano da eleição`,
                                        Turno, 
                                        `Quantidade de abstenções`) %>% 
@@ -4597,8 +4422,8 @@ balien_fedab_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
 
 ag_alifedab_br <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$AGREGACAO_REGIONAL4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
   if(indicador == "Abstenções" & 
      agregacao == "Brasil"){
     return(input$agreg_alifedab_br)
@@ -4609,7 +4434,7 @@ output$agreg_alifedab_br <- DT::renderDataTable(server = FALSE,{
   bagreg_alifedab_br()
 })
 
-bagreg_alifedab_br <- eventReactive(input$BCALC4, {
+bagreg_alifedab_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
@@ -4640,13 +4465,13 @@ bagreg_alifedab_br <- eventReactive(input$BCALC4, {
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
-                     uf <- input$UF4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
                      if(indicador == "Abstenções" & 
                         agregacao == "Brasil"){
                        alien_br %>%
-                         dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                          unique()
                        
                        
@@ -4661,9 +4486,9 @@ bagreg_alifedab_br <- eventReactive(input$BCALC4, {
 
 depfedab_uf <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$DESCRICAO_CARGO4
-  uf <- input$UF4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
   if(indicador == "Abstenções" & 
      agregacao == "UF"){
     return(input$alien_fedab_uf)
@@ -4675,7 +4500,7 @@ output$alien_fedab_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alien
   balien_fedab_uf()
 })
 
-balien_fedab_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
+balien_fedab_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
     select = TRUE,
@@ -4699,14 +4524,14 @@ balien_fedab_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
-                     uf <- input$UF4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
                      if(indicador == "Abstenções" & 
                         agregacao == "UF"){
                        if(uf=="Todas UFs"){
                          alien_uf %>% 
-                           dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                            dplyr::select(`Ano da eleição`,
                                          UF,
                                          Cargo,
@@ -4717,8 +4542,8 @@ balien_fedab_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
                        }
                        else{
                          alien_uf %>% 
-                           dplyr::filter(UF == input$UF4 & 
-                                           Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(UF == input$UF3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
                            dplyr::select(`Ano da eleição`,
                                          UF,
                                          Turno,
@@ -4736,9 +4561,9 @@ balien_fedab_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
 
 ag_alifedab_uf <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$AGREGACAO_REGIONAL4
-  uf <- input$UF4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
   if(indicador == "Abstenções" & 
      agregacao == "UF"){
     return(input$agreg_alifedab_uf)
@@ -4749,7 +4574,7 @@ output$agreg_alifedab_uf <- DT::renderDataTable(server = FALSE,{
   bagreg_alifedab_uf()
 })
 
-bagreg_alifedab_uf <- eventReactive(input$BCALC4, {
+bagreg_alifedab_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
@@ -4759,7 +4584,7 @@ bagreg_alifedab_uf <- eventReactive(input$BCALC4, {
     lengthChange = FALSE,
     lengthMenu = FALSE,
     fixedColumns = list(
-      leftColumns = 4
+      leftColumns = 3
     ),
     columnDefs = list(list(
       className = 'dt-center', targets = '_all')),
@@ -4780,19 +4605,19 @@ bagreg_alifedab_uf <- eventReactive(input$BCALC4, {
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
-                     uf <- input$UF4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
                      if(indicador == "Abstenções" & 
                         agregacao == "UF"){
-                       if(input$UF4 == "Todas UFs"){
+                       if(input$UF3 == "Todas UFs"){
                          data =alien_uf %>% 
-                           dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                           unique()
                        } else{ 
                          data = alien_uf %>% 
-                           dplyr::filter(UF == input$UF4 &
-                                           Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(UF == input$UF3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
                            unique()
                        }}
                    })
@@ -4800,7 +4625,7 @@ bagreg_alifedab_uf <- eventReactive(input$BCALC4, {
 
 
 
-# 2.3.4. Votos brancos ----------------------------------------------------
+# 2.3.3. Votos brancos ----------------------------------------------------
 
 ## Tabela para visualizacao
 
@@ -4808,8 +4633,8 @@ bagreg_alifedab_uf <- eventReactive(input$BCALC4, {
 
 depfedvb_br <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$DESCRICAO_CARGO4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
   if(indicador == "Votos brancos" & 
      agregacao == "Brasil"){
     return(input$alien_fedvb_br)
@@ -4821,7 +4646,7 @@ output$alien_fedvb_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alien
   balien_fedvb_br()
 })
 
-balien_fedvb_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
+balien_fedvb_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
     select = TRUE,
@@ -4845,12 +4670,12 @@ balien_fedvb_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
                      if(indicador == "Votos brancos" & 
                         agregacao == "Brasil"){
                        alien_br %>% 
-                         dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                          dplyr::select(`Ano da eleição`,
                                        Turno, 
                                        `Quantidade de votos brancos`) %>% 
@@ -4867,8 +4692,8 @@ balien_fedvb_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
 
 ag_alifedvb_br <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$AGREGACAO_REGIONAL4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
   if(indicador == "Votos brancos" & 
      agregacao == "Brasil"){
     return(input$agreg_alifedp_br)
@@ -4879,7 +4704,7 @@ output$agreg_alifedvb_br <- DT::renderDataTable(server = FALSE,{
   bagreg_alifedvb_br()
 })
 
-bagreg_alifedvb_br <- eventReactive(input$BCALC4, {
+bagreg_alifedvb_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
@@ -4910,13 +4735,13 @@ bagreg_alifedvb_br <- eventReactive(input$BCALC4, {
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
-                     uf <- input$UF4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
                      if(indicador == "Votos brancos" & 
                         agregacao == "Brasil"){
                        alien_br %>%
-                         dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                          unique()
                        
                        
@@ -4931,9 +4756,9 @@ bagreg_alifedvb_br <- eventReactive(input$BCALC4, {
 
 depfedvb_uf <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$DESCRICAO_CARGO4
-  uf <- input$UF4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
   if(indicador == "Votos brancos" & 
      agregacao == "UF"){
     return(input$alien_fedvb_uf)
@@ -4945,7 +4770,7 @@ output$alien_fedvb_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alien
   balien_fedvb_uf()
 })
 
-balien_fedvb_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
+balien_fedvb_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
     select = TRUE,
@@ -4969,14 +4794,14 @@ balien_fedvb_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
-                     uf <- input$UF4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
                      if(indicador == "Votos brancos" & 
                         agregacao == "UF"){
                        if(uf=="Todas UFs"){
                          alien_uf %>% 
-                           dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                            dplyr::select(`Ano da eleição`,
                                          UF,
                                          Cargo,
@@ -4987,8 +4812,8 @@ balien_fedvb_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
                        }
                        else{
                          alien_uf %>% 
-                           dplyr::filter(UF == input$UF4 & 
-                                           Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(UF == input$UF3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
                            dplyr::select(`Ano da eleição`,
                                          UF,
                                          Turno,
@@ -5006,9 +4831,9 @@ balien_fedvb_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
 
 ag_alifedvb_uf <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$AGREGACAO_REGIONAL4
-  uf <- input$UF4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
   if(indicador == "Votos brancos" & 
      agregacao == "UF"){
     return(input$agreg_alifedp_uf)
@@ -5019,7 +4844,7 @@ output$agreg_alifedvb_uf <- DT::renderDataTable(server = FALSE,{
   bagreg_alifedvb_uf()
 })
 
-bagreg_alifedvb_uf <- eventReactive(input$BCALC4, {
+bagreg_alifedvb_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
@@ -5029,7 +4854,7 @@ bagreg_alifedvb_uf <- eventReactive(input$BCALC4, {
     lengthChange = FALSE,
     lengthMenu = FALSE,
     fixedColumns = list(
-      leftColumns = 4
+      leftColumns = 3
     ),
     columnDefs = list(list(
       className = 'dt-center', targets = '_all')),
@@ -5050,19 +4875,19 @@ bagreg_alifedvb_uf <- eventReactive(input$BCALC4, {
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
-                     uf <- input$UF4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
                      if(indicador == "Votos brancos" & 
                         agregacao == "UF"){
-                       if(input$UF4 == "Todas UFs"){
+                       if(input$UF3 == "Todas UFs"){
                          data =alien_uf %>% 
-                           dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                           unique()
                        } else{ 
                          data = alien_uf %>% 
-                           dplyr::filter(UF == input$UF4 &
-                                           Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(UF == input$UF3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
                            unique()
                        }}
                    })
@@ -5078,8 +4903,8 @@ bagreg_alifedvb_uf <- eventReactive(input$BCALC4, {
 
 depfedvn_br <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$DESCRICAO_CARGO4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
   if(indicador == "Votos nulos" & 
      agregacao == "Brasil"){
     return(input$alien_fedvn_br)
@@ -5091,7 +4916,7 @@ output$alien_fedvn_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alien
   balien_fedvn_br()
 })
 
-balien_fedvn_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
+balien_fedvn_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
     select = TRUE,
@@ -5115,12 +4940,12 @@ balien_fedvn_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
                      if(indicador == "Votos nulos" & 
                         agregacao == "Brasil"){
                        alien_br %>% 
-                         dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                          dplyr::select(`Ano da eleição`,
                                        Turno, 
                                        `Quantidade de votos nulos`) %>% 
@@ -5137,8 +4962,8 @@ balien_fedvn_br <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
 
 ag_alifedvn_br <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$AGREGACAO_REGIONAL4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
   if(indicador == "Votos nulos" & 
      agregacao == "Brasil"){
     return(input$agreg_alifedvn_br)
@@ -5149,7 +4974,7 @@ output$agreg_alifedvn_br <- DT::renderDataTable(server = FALSE,{
   bagreg_alifedvn_br()
 })
 
-bagreg_alifedvn_br <- eventReactive(input$BCALC4, {
+bagreg_alifedvn_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
@@ -5180,13 +5005,13 @@ bagreg_alifedvn_br <- eventReactive(input$BCALC4, {
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
-                     uf <- input$UF4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
                      if(indicador == "Votos nulos" & 
                         agregacao == "Brasil"){
                        alien_br %>%
-                         dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                          unique()
                        
                        
@@ -5201,9 +5026,9 @@ bagreg_alifedvn_br <- eventReactive(input$BCALC4, {
 
 depfedvn_uf <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$DESCRICAO_CARGO4
-  uf <- input$UF4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
   if(indicador == "Votos nulos" & 
      agregacao == "UF"){
     return(input$alien_fedvn_uf)
@@ -5215,7 +5040,7 @@ output$alien_fedvn_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alien
   balien_fedvn_uf()
 })
 
-balien_fedvn_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao percentual
+balien_fedvn_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
     select = TRUE,
@@ -5239,14 +5064,14 @@ balien_fedvn_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
-                     uf <- input$UF4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
                      if(indicador == "Votos nulos" & 
                         agregacao == "UF"){
                        if(uf=="Todas UFs"){
                          alien_uf %>% 
-                           dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                            dplyr::select(`Ano da eleição`,
                                          UF,
                                          Cargo,
@@ -5257,8 +5082,8 @@ balien_fedvn_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
                        }
                        else{
                          alien_uf %>% 
-                           dplyr::filter(UF == input$UF4 & 
-                                           Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(UF == input$UF3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
                            dplyr::select(`Ano da eleição`,
                                          UF,
                                          Turno,
@@ -5276,9 +5101,9 @@ balien_fedvn_uf <- eventReactive(input$BCALC4, { ## Botao de acao da alienacao p
 
 ag_alifedvn_uf <- reactive({
   indicador <- input$INDICADORES_ALIE
-  cargo <- input$DESCRICAO_CARGO4
-  agregacao <- input$AGREGACAO_REGIONAL4
-  uf <- input$UF4
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
   if(indicador == "Votos nulos" & 
      agregacao == "UF"){
     return(input$agreg_alifedvn_uf)
@@ -5289,7 +5114,7 @@ output$agreg_alifedvn_uf <- DT::renderDataTable(server = FALSE,{
   bagreg_alifedvn_uf()
 })
 
-bagreg_alifedvn_uf <- eventReactive(input$BCALC4, {
+bagreg_alifedvn_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
@@ -5299,7 +5124,7 @@ bagreg_alifedvn_uf <- eventReactive(input$BCALC4, {
     lengthChange = FALSE,
     lengthMenu = FALSE,
     fixedColumns = list(
-      leftColumns = 4
+      leftColumns = 3
     ),
     columnDefs = list(list(
       className = 'dt-center', targets = '_all')),
@@ -5320,23 +5145,634 @@ bagreg_alifedvn_uf <- eventReactive(input$BCALC4, {
                    'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
-                     cargo <- input$DESCRICAO_CARGO4
-                     agregacao <- input$AGREGACAO_REGIONAL4
-                     uf <- input$UF4
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
                      if(indicador == "Votos nulos" & 
                         agregacao == "UF"){
-                       if(input$UF4 == "Todas UFs"){
+                       if(input$UF3 == "Todas UFs"){
                          alien_uf %>% 
-                           dplyr::filter(Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                           unique()
                        } else{ 
                          data = alien_uf %>% 
-                           dplyr::filter(UF == input$UF4 &
-                                           Cargo==input$DESCRICAO_CARGO4) %>% 
+                           dplyr::filter(UF == input$UF3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
                            unique()
                        }}
                    })
 })
+
+
+
+# 2.3. Volatilidade -------------------------------------------------------
+
+
+## Modal para ajuda
+
+### Resumo
+
+observeEvent(input$modal_vol,{
+  showModal(modalDialog(
+    title = tags$h4(align = "center",
+                    "Ajuda"),
+    footer = modalButton("Fechar"), 
+    size = "m",
+    htmlOutput("def_vol"),
+    easyClose = TRUE,
+    style = "
+    overflow: hidden;
+    overflow-y: scroll;
+    flex: 1 1 auto;
+    padding: 1rem;
+    max-width: 850px;
+    margin: 1.75rem auto;
+    max-height: 500px;
+    display: flex;
+    width: auto;
+    "))
+  })
+  
+  ### Dados desagregados
+  
+  observeEvent(input$modal_vol_ag,{
+    showModal(modalDialog(
+                          title = tags$h4(align = 'center',
+                                          "Ajuda"),
+                          footer = modalButton("Fechar"), 
+                          size = "m",
+                          htmlOutput("def_vol"),
+                          easyClose = TRUE,
+                          style = "
+                          overflow: hidden;
+                          overflow-y: scroll;
+                          flex: 1 1 auto;
+                          padding: 1rem;
+                          max-width: 850px;
+                          margin: 1.75rem auto;
+                          max-height: 500px;
+                          display: flex;
+                          width: auto;
+                          "
+                          ))
+  })
+
+  
+  output$def_vol <- renderUI({
+    note <- paste0("
+                   <font color = 'black'>
+                   <h4><br /> Volatilidade </h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'>A volatilidade é uma medida agregada que resulta do
+                   somatório das perdas e ganhos dos partidos entre duas eleições, dividido por dois.
+                   As perdas e ganhos dos partidos tanto podem ser expressas em proporções de
+                   votos ou cadeiras no parlamento.</p></h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   <p><i>Volatilidade eleitoral </i></p>
+                   V = &sum;(Vt1 - (Vt2-1))/2,
+                   <p>onde Vt1 = proporção de votos obtidos pelos partidos em uma eleição e 
+                   Vt2 = proporção de votos obtidos pelos partidos na eleição seguinte.</p>
+                   <p><i>Volatilidade parlamentar </i></p>
+                   V = &sum;(Ct1 - (Ct2-1))/2,
+                   <p>onde Ct1 = proporção de cadeiras obtidas pelos partidos em uma eleição e 
+                   Ct2 = proporção de cadeiras obtidas pelos partidos na eleição seguinte.</p>
+                   <p><br /></h5>
+                   <strong>Fonte:</strong> 
+                   <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
+                   países/ Organização de Wanderley Guilherme dos Santos, com a colaboração de Fabrícia Guimarães. -
+                   Rio de Janeiro: Editora FGV, 2002);  
+                   <p>2. FIGUEIREDO, M. Volatilidade eleitoral em eleições parlamentares, 1950-1978.
+                   Opinião Pública, Campinas, vol. III, nº 3, Dezembro, 1995, p.186-196.
+                   <a href= 'https://www.cesop.unicamp.br/vw/1IEjOMDM_MDA_3e2e0_/v3n3a03.pdf'></a></font>
+                   
+                   ")
+    HTML(note)
+  }) 
+
+# 2.4.1. Volatilidade eleitoral -------------------------------------------
+
+## Resumo
+
+### Volatilidade (Brasil)  
+
+depfedve <- reactive({ ## Atributos das tabelas 
+  indicador <- input$INDICADORES_VOL
+  cargo <- input$DESCRICAO_CARGO4
+  agregacao <- input$DESCRICAO_CARGO4
+  if(indicador == "Volatilidade eleitoral" & 
+     cargo == "Deputado Federal" &
+     agregacao == "Brasil"){
+    return(input$vol_ele_fed)
+  }
+})
+
+
+output$vol_ele_fed <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  bvol_ele_fed()
+})
+
+bvol_ele_fed <- eventReactive(input$BCALC4, { ## Botao de acao
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'vol_ele_fed',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_VOL
+                     cargo <- input$DESCRICAO_CARGO4
+                     agregacao <- input$AGREGACAO_REGIONAL4
+                     if(indicador == "Volatilidade eleitoral" &
+                        cargo == "Deputado Federal" &
+                        agregacao == "Brasil"){
+                      vol_br %>% 
+                         dplyr::select(`Ano da eleição`,
+                                       `Volatilidade eleitoral`) %>% 
+                         spread(`Ano da eleição`,
+                                `Volatilidade eleitoral`) %>% 
+                         unique()
+                       
+                     }
+                   })
+}) 
+
+## Dados desagregados
+
+### Volatilidade (Brasil)  
+
+ag_alifedve <- reactive({
+  indicador <- input$INDICADORES_VOL
+  cargo <- input$DESCRICAO_CARGO4
+  agregacao <- input$AGREGACAO_REGIONAL4
+  if(indicador == "Volatilidade eleitoral" &
+     cargo == "Deputado Federal" &
+     agregacao == "Brasil"){
+    return(input$agreg_vol_ele_fed)
+  }
+})
+
+output$agreg_vol_ele_fed <- DT::renderDataTable(server = FALSE,{
+  bagreg_vol_ele_fed()
+})
+
+bagreg_vol_ele_fed <- eventReactive(input$BCALC4, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'vol_ele_fed_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',        
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_VOL
+                     cargo <- input$DESCRICAO_CARGO4
+                     agregacao <- input$AGREGACAO_REGIONAL4
+                     uf <- input$UF3
+                     if(indicador == "Volatilidade eleitoral" & 
+                        cargo == "Deputado Federal" &
+                        agregacao == "Brasil"){
+                       data = vol_br 
+                       
+                     }
+                   })
+})
+
+
+## Resumo
+
+### Volatilidade (UF) 
+
+depufve <- reactive({ ## Atributos das tabelas 
+  indicador <- req(input$INDICADORES_VOL)
+  agregacao <- req(input$DESCRICAO_CARGO4)
+  if(indicador == "Volatilidade eleitoral" & 
+     agregacao == "UF"){
+    return(input$vol_ele_uf)
+  }
+})
+
+
+output$vol_ele_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  bvol_ele_uf()
+})
+
+bvol_ele_uf <- eventReactive(input$BCALC4, { ## Botao de acao
+  datatable(options = list(
+    autoWidth = FALSE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 1
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'vol_ele_uf',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',              
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- req(input$INDICADORES_VOL)
+                     agregacao <- req(input$AGREGACAO_REGIONAL4)
+                     uf <- req(input$UF4)
+                     if(indicador == "Volatilidade eleitoral" &
+                        agregacao == "UF"){
+                       if(uf == ""){
+                         return()
+                       } else if(uf == "Todas UFs"){
+                         vol_uf %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Volatilidade eleitoral`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Volatilidade eleitoral`) %>% 
+                           unique()
+                       } else{
+                         vol_uf %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                           UF == req(input$UF4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Volatilidade eleitoral`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Volatilidade eleitoral`) %>% 
+                           unique()
+                       }
+                     }
+                   })
+}) 
+
+## Dados desagregados
+
+### Volatilidade (UF) 
+
+ag_ufve <- reactive({
+  indicador <- req(input$INDICADORES_VOL)
+  agregacao <- req(input$AGREGACAO_REGIONAL4)
+  if(indicador == "Volatilidade eleitoral" &
+     agregacao == "UF"){
+    return(input$agreg_vol_ele_uf)
+  }
+})
+
+output$agreg_vol_ele_uf <- DT::renderDataTable(server = FALSE,{
+  bagreg_vol_ele_uf()
+})
+
+bagreg_vol_ele_uf <- eventReactive(input$BCALC4, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'vol_ele_uf_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',        
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- req(input$INDICADORES_VOL)
+                     agregacao <- req(input$AGREGACAO_REGIONAL4)
+                     uf <- req(input$UF4)
+                     if(indicador == "Volatilidade eleitoral" & 
+                        agregacao == "UF"){
+                       if(uf == ""){
+                         return()
+                       } else if(uf == "Todas UFs"){
+                         data = vol_uf %>% 
+                           filter(Cargo == req(input$DESCRICAO_CARGO4)) %>% 
+                           unique()
+                       } else{
+                         data = vol_uf %>% 
+                           filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                    UF == req(input$UF4)) %>% 
+                           unique()
+                       }
+                     }
+                   })
+})
+
+
+# 2.4.2. Volatilidade parlamentar -----------------------------------------
+
+## Resumo
+
+### Volatilidade (Brasil)  
+
+depfedvep <- reactive({ ## Atributos das tabelas 
+  indicador <- input$INDICADORES_VOL
+  cargo <- input$DESCRICAO_CARGO4
+  agregacao <- input$DESCRICAO_CARGO4
+  if(indicador == "Volatilidade parlamentar" & 
+     cargo == "Deputado Federal" &
+     agregacao == "Brasil"){
+    return(input$vol_par_fed)
+  }
+})
+
+
+output$vol_par_fed <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  bvol_par_fed()
+})
+
+bvol_par_fed <- eventReactive(input$BCALC4, { ## Botao de acao
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'vol_par_fed',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_VOL
+                     cargo <- input$DESCRICAO_CARGO4
+                     agregacao <- input$AGREGACAO_REGIONAL4
+                     if(indicador == "Volatilidade parlamentar" &
+                        cargo == "Deputado Federal" &
+                        agregacao == "Brasil"){
+                       vol_br %>% 
+                         dplyr::select(`Ano da eleição`,
+                                       `Volatilidade parlamentar`) %>% 
+                         spread(`Ano da eleição`,
+                                `Volatilidade parlamentar`)
+                       
+                     }
+                   })
+}) 
+
+## Dados desagregados
+
+### Volatilidade (Brasil)  
+
+ag_alifedvp <- reactive({
+  indicador <- input$INDICADORES_VOL
+  cargo <- input$DESCRICAO_CARGO4
+  agregacao <- input$AGREGACAO_REGIONAL4
+  if(indicador == "Volatilidade parlamentar" &
+     cargo == "Deputado Federal" &
+     agregacao == "Brasil"){
+    return(input$agreg_vol_par_fed)
+  }
+})
+
+output$agreg_vol_par_fed <- DT::renderDataTable(server = FALSE,{
+  bagreg_vol_par_fed()
+})
+
+bagreg_vol_par_fed <- eventReactive(input$BCALC4, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'vol_par_fed_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',        
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_VOL
+                     cargo <- input$DESCRICAO_CARGO4
+                     agregacao <- input$AGREGACAO_REGIONAL4
+                     uf <- input$UF3
+                     if(indicador == "Volatilidade parlamentar" & 
+                        cargo == "Deputado Federal" &
+                        agregacao == "Brasil"){
+                       data = vol_br 
+                       
+                     }
+                   })
+})
+
+
+## Resumo
+
+### Volatilidade (UF) 
+
+depufvp <- reactive({ ## Atributos das tabelas 
+  indicador <- input$INDICADORES_VOL
+  agregacao <- input$DESCRICAO_CARGO4
+  if(indicador == "Volatilidade parlamentar" & 
+     agregacao == "UF"){
+    return(input$vol_par_uf)
+  }
+})
+
+
+output$vol_par_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  bvol_par_uf()
+})
+
+bvol_par_uf <- eventReactive(input$BCALC4, { ## Botao de acao
+  datatable(options = list(
+    autoWidth = FALSE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 1
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'vol_par_uf',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',              
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_VOL
+                     agregacao <- input$AGREGACAO_REGIONAL4
+                     uf <- req(input$UF4)
+                     if(indicador == "Volatilidade parlamentar" &
+                        agregacao == "UF"){
+                       if(uf == ""){
+                         return()
+                       } else if(uf == "Todas UFs"){
+                         vol_uf %>% 
+                           dplyr::filter(Cargo == input$DESCRICAO_CARGO4) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Volatilidade parlamentar`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Volatilidade parlamentar`) %>% 
+                           unique()
+                       } else{
+                         vol_uf %>% 
+                           dplyr::filter(Cargo == input$DESCRICAO_CARGO4 &
+                                           UF == input$UF4) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Volatilidade parlamentar`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Volatilidade parlamentar`) %>% 
+                           unique()
+                       }
+                     }
+                   })
+}) 
+
+## Dados desagregados
+
+### Volatilidade (UF) 
+
+ag_ufvp <- reactive({
+  indicador <- input$INDICADORES_VOL
+  agregacao <- input$AGREGACAO_REGIONAL4
+  if(indicador == "Volatilidade parlamentar" &
+     agregacao == "UF"){
+    return(input$agreg_vol_par_uf)
+  }
+})
+
+output$agreg_vol_par_uf <- DT::renderDataTable(server = FALSE,{
+  bagreg_vol_par_uf()
+})
+
+bagreg_vol_par_uf <- eventReactive(input$BCALC4, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'vol_par_uf_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',        
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_VOL
+                     agregacao <- input$AGREGACAO_REGIONAL4
+                     uf <- req(input$UF4)
+                     if(indicador == "Volatilidade parlamentar" & 
+                        agregacao == "UF"){
+                       if(uf == ""){
+                         return()
+                       } else if(uf == "Todas UFs"){
+                         data = vol_uf %>% 
+                           filter(Cargo == input$DESCRICAO_CARGO4) %>% 
+                           unique()
+                       } else{
+                         data = vol_uf %>% 
+                           filter(Cargo == input$DESCRICAO_CARGO4 &
+                                    UF == input$UF4) %>% 
+                           unique()
+                       }
+                     }
+                   })
+})
+
 
 }
 

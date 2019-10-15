@@ -18,22 +18,22 @@ library(shinyWidgets)
 library(plotly)
 library(DT)
 library(shinyjs)
-library(crosstalk)
 library(shinydashboardPlus)
-library(V8)
 library(rintrojs)
+library(jsonlite)
+
 
 
 
 # Objetivo
 #'        - Carregar os arquivos usados no app;
 #'        - Rodar o app.
+#'        
 
 
 # 1. Data -----------------------------------------------------------------
 
 ## Carrega os arquivos com os indicadores pré-calculados
-
 
 files <- list.files(file.path(getwd(),"/data/output"))
 
@@ -45,4 +45,9 @@ for(i in files){
 }
 
 rm(df)
+
+steps <- read.csv("help.csv")
+
+
+
 

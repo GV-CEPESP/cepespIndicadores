@@ -1,0 +1,6 @@
+﻿"","Ano da eleição","Cargo","Volatilidade eleitoral","Volatilidade parlamentar"
+"1",2002,"Deputado Federal","15,04","15,00"
+"2",2006,"Deputado Federal","14,99","15,00"
+"3",2010,"Deputado Federal","14,45","14,44"
+"4",2014,"Deputado Federal","16,08","16,08"
+"5",2018,"Deputado Federal","18,03","18,03"

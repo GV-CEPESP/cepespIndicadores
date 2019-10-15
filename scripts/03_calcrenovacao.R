@@ -8,8 +8,7 @@ library(abjutils)
 
 # Objetivo
 #'        - Calcular os indicadores de renovacao das bancadas:
-#'        - Conservacao, Renovacao bruta, Renovacao liquida,
-#'        - Volatilidade eleitoral;
+#'        - Conservacao, Renovacao bruta, Renovacao liquida;
 #'        - Limpeza e padronizacao dos dados.
 
 
@@ -34,28 +33,8 @@ renov_liq <- function(derr, reel){
   derr/(reel + derr)*100
 }
 
-## Formula para o calculo da volatilidade eleitoral
-
-volat_elet <- function(vt1,vt2) {
-  sum(vt1 - (vt2-1))/2 
-}
-      
-
 
 # 2. Calculo dos indicadores ----------------------------------------------------------
-
-## Transforma a variavel `NUM_TITULO_ELEITORAL_CANDIDATO` em character
-
-### Deputado Federal
-
-#eleicao_94$NUM_TITULO_ELEITORAL_CANDIDATO <- 
-  #as.character(eleicao_94$NUM_TITULO_ELEITORAL_CANDIDATO)
-
-## Junta o banco com os candidatos de 94 aos demais candidatos
-
-### Deputado Federal
-
-#df <- bind_rows(df,eleicao_94)
 
 ## Descarta as colunas desnecessarias
 
@@ -235,8 +214,7 @@ for(ano in sort(unique(df$ANO_ELEICAO))){
   indicadores1$`Renovação líquida` <- renov_liq(indicadores1$Derrotados, 
                                           indicadores1$Reeleitos)
   }
-  indicadores1$`Volatilidade eleitoral` <- volat_elet(estatisticas_ano1$`Percentual de votos conquistados`,
-                                                      estatisticas_ano2$`Percentual de votos conquistados`)
+
   ## Empilha todas as eleicoes 
   
   ind_eleicoes_fed_br <- bind_rows(ind_eleicoes_fed_br,indicadores1)
@@ -257,8 +235,7 @@ ind_eleicoes_fed_br <- ind_eleicoes_fed_br %>%
          Reeleitos,
          Conservação,
          `Renovação bruta`,
-         `Renovação líquida`,
-         `Volatilidade eleitoral`)
+         `Renovação líquida`)
 
 ### Deputado Federal (UF)
 
@@ -350,8 +327,6 @@ for(ano in sort(unique(df$ANO_ELEICAO))){
     indicadores1$`Renovação líquida` <- renov_liq(indicadores1$Derrotados, 
                                                   indicadores1$Reeleitos)
   }
-  indicadores1$`Volatilidade eleitoral` <- volat_elet(estatisticas_ano1$`Percentual de votos conquistados`,
-                                                      estatisticas_ano2$`Percentual de votos conquistados`)
   ## Empilha todas as eleicoes 
   
   ind_eleicoes_fed_uf <- bind_rows(ind_eleicoes_fed_uf,indicadores1)
@@ -374,22 +349,16 @@ ind_eleicoes_fed_uf <- ind_eleicoes_fed_uf %>%
          Reeleitos,
          Conservação,
          `Renovação bruta`,
-         `Renovação líquida`,
-         `Volatilidade eleitoral`)
+         `Renovação líquida`)
 
 ### Deputado Estadual
-
-estados <- c("AC", "AL", "AM", "AP", "BA", "CE", "ES", 
-             "GO", "MA", "MG","MS", "MT", "PA", "PB", 
-             "PE", "PI", "PR","RJ", "RN", "RO", "RR",
-             "RS", "SC", "SE", "SP", "TO")
 
 
 
 ind_eleicoes_est <- list()
 
 for(ano in sort(unique(de$ANO_ELEICAO))){
-  for(uf in estados){
+  for(uf in sort(unique(de$UF))){
   cat("Lendo",ano,uf,"\n")
     
 ## Banco com os candidatos da proxima eleicao
@@ -487,8 +456,6 @@ for(ano in sort(unique(de$ANO_ELEICAO))){
   indicadores1$`Renovação líquida` <- renov_liq(indicadores1$Derrotados, 
                                                 indicadores1$Reeleitos)
   }
-  indicadores1$`Volatilidade eleitoral` <- volat_elet(estatisticas_ano1$`Percentual de votos conquistados`,
-                                                     estatisticas_ano2$`Percentual de votos conquistados`)
   
 ## Empilha todas as ufs e eleicoes 
   
@@ -512,8 +479,7 @@ ind_eleicoes_est <- ind_eleicoes_est %>%
          Reeleitos,
          Conservação,
          `Renovação bruta`,
-         `Renovação líquida`,
-         `Volatilidade eleitoral`)
+         `Renovação líquida`)
 
 
 # 3. Padronização ----------------------------------------------------------------------
@@ -539,10 +505,6 @@ ind_eleicoes_fed_br$`Renovação líquida` <-
                digits = 2),  
          nsmall = 2)
 
-ind_eleicoes_fed_br$`Volatilidade eleitoral` <- 
-  format(round(ind_eleicoes_fed_br$`Volatilidade eleitoral`, 
-               digits = 2),  
-         nsmall = 2)
 
 ### Deputado Federal (UF)
 
@@ -558,11 +520,6 @@ ind_eleicoes_fed_uf$`Renovação bruta` <-
 
 ind_eleicoes_fed_uf$`Renovação líquida` <- 
   format(round(ind_eleicoes_fed_uf$`Renovação líquida`, 
-               digits = 2),  
-         nsmall = 2)
-
-ind_eleicoes_fed_uf$`Volatilidade eleitoral` <- 
-  format(round(ind_eleicoes_fed_uf$`Volatilidade eleitoral`, 
                digits = 2),  
          nsmall = 2)
 
@@ -585,10 +542,6 @@ ind_eleicoes_est$`Renovação líquida` <-
                digits = 2),  
          nsmall = 2)
 
-ind_eleicoes_est$`Volatilidade eleitoral` <- 
-  format(round(ind_eleicoes_est$`Volatilidade eleitoral`, 
-               digits = 2),  
-         nsmall = 2)
 
 ## Junta os bancos de acordo com seu nivel de agregacao regional
 
@@ -611,6 +564,7 @@ write.csv(ind_eleicoes_uf, "data/output/renov_parl_uf.csv")
 
 ## Remove os arquivos que nao serao mais utilizados
 
-rm(estatisticas_ano1,estatisticas_ano2,cand_de,cand_df,de,de1,df,df1_br,
-   df1_uf,eleicao_94,ind_eleicoes_est,ind_eleicoes_fed_br, ind_eleicoes_fed_uf, 
-   ind_eleicoes_uf,indicadores1,indicadores2,candidatos_ano2,candidatos)
+rm(estatisticas_ano1,estatisticas_ano2,cand_de,cand_df,de,df,
+   ind_eleicoes_est,ind_eleicoes_fed_br, ind_eleicoes_fed_uf, 
+   ind_eleicoes_uf,indicadores1,indicadores2,candidatos_ano2,
+   candidatos)
