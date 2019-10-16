@@ -13,6 +13,8 @@ ui <-
   
   fluidPage(
     
+     useShinyjs(),
+    
    
   tags$head(
     tags$style(HTML(".navbar .navbar-nav {float: left}
@@ -140,7 +142,7 @@ ui <-
                                         div(id ="step3",tabsetPanel(type = "pills",
                                                     
                                                     tabPanel("Resumo", br(),
-                                                             verbatimTextOutput('output'),
+                                                             
                                                                  column(12,  
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 , 

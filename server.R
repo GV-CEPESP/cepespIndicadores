@@ -12,6 +12,7 @@ server <- function(input, output,session){
   
   
   
+ 
 # 1.1. Sobre --------------------------------------------------------------
 
   
@@ -5746,7 +5747,6 @@ bagreg_vol_par_uf <- eventReactive(input$BCALC4, {
 
 
 }
-
 
 
 
