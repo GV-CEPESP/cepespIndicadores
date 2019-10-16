@@ -14,20 +14,6 @@ ui <-
   fluidPage(
     
    
-    includeCSS("introjs.min.css"),
-    
-     includeScript("intro.min.js"),
-    
-    includeScript("app.js"),
-    
-    includeScript("jquery.cookie.js"),
-    
-    includeScript("cookies.js"),
-    
-    
-    useShinyjs(),
- 
-    
   tags$head(
     tags$style(HTML(".navbar .navbar-nav {float: left}
                     .navbar .navbar-header {float: right}"))),
@@ -35,9 +21,9 @@ ui <-
  
   title = "CEPESP Indicadores", ## Titulo da pagina do aplicativo em versao web
   
-  navbarPage(collapsible=F,id = "CepespIndicadores", 
-             theme = shinytheme("flatly"),
-             
+  
+    navbarPage(collapsible=F,id = "CepespIndicadores", 
+             theme = shinytheme("flatly"), 
              
             
              tags$div(class = "header", checked = NA, 
@@ -93,9 +79,7 @@ ui <-
                       )),
              
              
-             
-           
-             
+            
             tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
                                          ## "Fragmentacao legislativa"
                       
@@ -138,21 +122,25 @@ ui <-
                                          icon = icon("bars"),
                                          type = "toggle", 
                                          value = TRUE)),
+                                  
+                                 
                                 
                                 
                           absolutePanel(top = 0, right = 0, left = 65,
                                         
+                                        absolutePanel(top = 0, right = 0, left = 260,
+                                        div(id ="step4",
+                                            actionBttn(inputId = "modal_frag",
+                                                       color = "default",
+                                                       icon = icon("question"), 
+                                                       style = "material-circle",
+                                                       size = "md"))),
                                         
-                                        tabsetPanel(type = "pills",
+                                        
+                                        div(id ="step3",tabsetPanel(type = "pills",
                                                     
-                                                    tabPanel(div(id ="step3","Resumo"), br(),
-                                                                absolutePanel(top = 0, right = 0, left = 260,
-                                                                              div(id ="step5",
-                                                                              actionBttn(inputId = "modal_frag",
-                                                                                         color = "default",
-                                                                                         icon = icon("question"), 
-                                                                                         style = "material-circle",
-                                                                                         size = "md"))),
+                                                    tabPanel("Resumo", br(),
+                                                             verbatimTextOutput('output'),
                                                                  column(12,  
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 , 
@@ -235,13 +223,8 @@ ui <-
                                                                                   right = 0 ,  
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("quocp_est", width = "100%")))),
-                                                   tabPanel(div(id ="step4","Dados desagregados"), br(),
-                                                            absolutePanel(top = 0, right = 0, left = 260,
-                                                                          actionBttn(inputId = "modal_frag_ag",
-                                                                                     color = "default",
-                                                                                     icon = icon("question"), 
-                                                                                     style = "material-circle",
-                                                                                     size = "md")),
+                                                   tabPanel("Dados desagregados", br(),
+                                                           
                                                                  column(12,
                                                                     absolutePanel(top = 0,
                                                                                  right = 0 , 
@@ -321,7 +304,7 @@ ui <-
                                                                    absolutePanel(top = 0, 
                                                                                  right = 0 ,  
                                                                                  left = 15,
-                                                                                 DT::dataTableOutput("agreg_quocpest"))))))))), ## Definicao dos indicadores
+                                                                                 DT::dataTableOutput("agreg_quocpest")))))))))), ## Definicao dos indicadores
           
              
              tabPanel("Renovação parlamentar",  ## Definicao das ferramentas de selecao para a guia
@@ -370,15 +353,16 @@ ui <-
                           
                          
                           absolutePanel(top = 0, right = 0, left = 65,
+                                        
+                                        absolutePanel(top = 0, right = 0, left = 260,
+                                                      actionBttn(inputId = "modal_renovp",
+                                                                 color = "default",
+                                                                 icon = icon("question"), 
+                                                                 style = "material-circle",
+                                                                 size = "md")),
                                         tabsetPanel(type = "pills",
                                                          tabPanel("Resumo", br(),
-                                                                  absolutePanel(top = 0, right = 0, left = 260,
-                                                                                actionBttn(inputId = "modal_renovp",
-                                                                                           color = "default",
-                                                                                           icon = icon("question"), 
-                                                                                           style = "material-circle",
-                                                                                           size = "md")),
-                                                                  
+                                                                 
                                                                  column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
@@ -410,12 +394,7 @@ ui <-
                                                                               left = 15,
                                                                                DT::dataTableOutput("renov_liq_est")))), ## Tabelas que serao exibidas
                                                              tabPanel("Dados desagregados", br(),
-                                                                      absolutePanel(top = 0, right = 0, left = 260,
-                                                                                    actionBttn(inputId = "modal_renovp_ag",
-                                                                                               color = "default",
-                                                                                               icon = icon("question"), 
-                                                                                               style = "material-circle",
-                                                                                               size = "md")),
+                                                                      
                                                                       column(12,
                                                                              absolutePanel(top = 0, 
                                                                                         right = 0 ,  
@@ -500,14 +479,16 @@ ui <-
                           
                           
                           absolutePanel(top = 0, right = 0, left = 65,
+                                        
+                                        absolutePanel(top = 0, right = 0, left = 260,
+                                                      actionBttn(inputId = "modal_alien",
+                                                                 color = "default",
+                                                                 icon = icon("question"), 
+                                                                 style = "material-circle",
+                                                                 size = "md")),
                                         tabsetPanel(type = "pills",
                                                        tabPanel("Resumo", br(),
-                                                                absolutePanel(top = 0, right = 0, left = 260,
-                                                                              actionBttn(inputId = "modal_alien",
-                                                                                         color = "default",
-                                                                                         icon = icon("question"), 
-                                                                                         style = "material-circle",
-                                                                                         size = "md")),
+                                                               
                                                                    column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
@@ -559,12 +540,7 @@ ui <-
                                                                                      left = 15,
                                                                                      DT::dataTableOutput("alien_fedvn_uf")))),
                                                     tabPanel("Dados desagregados", br(),
-                                                             absolutePanel(top = 0, right = 0, left = 260,
-                                                                           actionBttn(inputId = "modal_alien_ag",
-                                                                                      color = "default",
-                                                                                      icon = icon("question"), 
-                                                                                      style = "material-circle",
-                                                                                      size = "md")),
+                                                             
                                                              column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
@@ -662,14 +638,16 @@ ui <-
                                  
                                  
                                  absolutePanel(top = 0, right = 0, left = 65,
+                                               
+                                               absolutePanel(top = 0, right = 0, left = 260,
+                                                             actionBttn(inputId = "modal_vol",
+                                                                        color = "default",
+                                                                        icon = icon("question"), 
+                                                                        style = "material-circle",
+                                                                        size = "md")),
                                                tabsetPanel(type = "pills",
                                                            tabPanel("Resumo", br(),
-                                                                    absolutePanel(top = 0, right = 0, left = 260,
-                                                                                  actionBttn(inputId = "modal_vol",
-                                                                                             color = "default",
-                                                                                             icon = icon("question"), 
-                                                                                             style = "material-circle",
-                                                                                             size = "md")),
+                                                                   
                                                            column(12,
                                                                   absolutePanel(top = 0, 
                                                                                 right = 0 ,  
@@ -692,12 +670,6 @@ ui <-
                                                                                 DT::dataTableOutput("vol_par_uf")))),
                                                                      ## Tabelas que serao exibidas
                                                            tabPanel("Dados desagregados", br(),
-                                                                    absolutePanel(top = 0, right = 0, left = 260,
-                                                                                  actionBttn(inputId = "modal_vol_ag",
-                                                                                             color = "default",
-                                                                                             icon = icon("question"), 
-                                                                                             style = "material-circle",
-                                                                                             size = "md")),
                                                                     column(12,
                                                                            absolutePanel(top = 0, 
                                                                                          right = 0 ,  

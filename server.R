@@ -11,52 +11,6 @@
 server <- function(input, output,session){
   
   
-  session$sendCustomMessage(type = 'setHelpContent', message = list(steps = toJSON(steps) ))
-  
-  # listen to the action button
-  observeEvent(input$startHelp,{
-    
-    # on click, send custom message to start help
-    session$sendCustomMessage(type = 'startHelp', message = list(""))
-    
-  })
-  
-  
-   
-  
-  
-  observeEvent(input$CepespIndicadores, ignoreInit = FALSE, once = TRUE, {
-    showModal(
-     modalDialog(
-      title = h3(align = "center", "Olá,"),
-     h4(align = "center", "Bem-vindo ao CEPESP Indicadores!", br()),
-     br(),
-     h5(align = "justify", style='line-height:150%', "Para visualizar o tutorial do aplicativo clique em 'Iniciar'.
-        Para pular o tutorial clique em 'Fechar' ou em qualquer lugar fora dessa caixa.",br()),
-     br(),
-     h4(align = "center", "Bons estudos!"),
-     
-    
-      easyClose = TRUE,
-     footer = tagList(
-      modalButton("Fechar"), 
-     actionButton(inputId="startHelp", 
-                 label="Iniciar", 
-                class="btn-success"),
-h5(align = "left",
-   HTML('<div class="d-flex flex-grow-1 justify-content-start custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" id="popupMaintenanceCheckbox" name="checkbox-maintenance"/>
-        <label class="custom-control-label checkbox-maintenance" for="popupMaintenanceCheckbox">Não mostre novamente</label>
-        </div>')))                    
-   ))
- })
-
-  
-  observeEvent(input$startHelp,{
-    
-    removeModal()
-  })
- 
   
 # 1.1. Sobre --------------------------------------------------------------
 
@@ -3810,15 +3764,32 @@ h5(align = "left",
                    <p>
                    <h4><br />Alienação percentual</h4>
                    <h5 align = 'justify'><br />
-                   <p style='line-height:150%'> A 'alienação percentual' é o índice de 'alienação absoluta' dividido pelo total de eleitores 
+                   <p style='line-height:150%'> A 'alienação percentual' é o índice de 'alienação absoluta' 
+                   dividido pelo total de eleitores 
                    aptos da unidade eleitoral.</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
                    AP = (Índice de alienação absoluta)/(Total de eleitores aptos)
+                   <p>
+                   <h4><br />Abstenções</h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'>Quantidade de eleitores que não compareceram às eleições 
+                   naquela agregação regional.</p></h5>
+                   <p>
+                   <h4><br />Votos brancos</h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'>Quantidade de votos brancos totalizados naquela 
+                   agregação regional.</p></h5>
+                   <p>
+                   <p>
+                   <h4><br />Votos nulos</h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'>Quantidade de votos nulos totalizados naquela 
+                   agregação regional.</p></h5>
                    <p><br />
-                  <strong>Fonte:</strong> 
-                  <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
+                   <strong>Fonte:</strong> 
+                   <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
                    países/ Organização de Wanderley Guilherme dos Santos, com a colaboração de Fabrícia Guimarães. -
                    Rio de Janeiro: Editora FGV, 2002).</p></font>")
     HTML(note)

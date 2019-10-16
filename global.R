@@ -46,8 +46,4 @@ for(i in files){
 
 rm(df)
 
-steps <- read.csv("help.csv")
-
-
-
 
