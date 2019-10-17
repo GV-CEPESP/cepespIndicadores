@@ -109,6 +109,14 @@ cons_br$`Alienação percentual` <- round(100*(cons_br$`Quantidade de abstençõ
                                              cons_br$`Quantidade de votos nulos`)/
                                              cons_br$`Quantidade de eleitores aptos`,2)
 
+cons_br$`Percentual de abstenções` <- round(100*(cons_br$`Quantidade de abstenções`)/
+                                              cons_br$`Quantidade de eleitores aptos`,2)
+
+cons_br$`Percentual de votos brancos` <- round(100*(cons_br$`Quantidade de votos brancos`)/
+                                              cons_br$`Quantidade de eleitores aptos`,2)
+
+cons_br$`Percentual de votos nulos` <- round(100*(cons_br$`Quantidade de votos nulos`)/
+                                              cons_br$`Quantidade de eleitores aptos`,2)
 ### Cargos UF
 
 cons_uf$`Alienação percentual` <- round(100*(cons_uf$`Quantidade de abstenções` + 
@@ -116,41 +124,99 @@ cons_uf$`Alienação percentual` <- round(100*(cons_uf$`Quantidade de abstençõ
                                             cons_uf$`Quantidade de votos nulos`)/
                                             cons_uf$`Quantidade de eleitores aptos`,2)
 
+cons_uf$`Percentual de abstenções` <- round(100*(cons_uf$`Quantidade de abstenções`)/
+                                              cons_uf$`Quantidade de eleitores aptos`,2)
+
+cons_uf$`Percentual de votos brancos` <- round(100*(cons_uf$`Quantidade de votos brancos`)/
+                                                 cons_uf$`Quantidade de eleitores aptos`,2)
+
+cons_uf$`Percentual de votos nulos` <- round(100*(cons_uf$`Quantidade de votos nulos`)/
+                                               cons_uf$`Quantidade de eleitores aptos`,2)
+
      
 
 # 3. Limpeza e padronizacao dos dados -------------------------------------
 
-options(OutDec= ",")
+options(OutDec= ",", digits=4)
 
 ## Padroniza o formato numerico das colunas
 
+
 ### Brasil
 
-cons_br$`Quantidade de abstenções` <- pont_virg(cons_br$`Quantidade de abstenções`)
+cons_br$`Quantidade de abstenções` <- formatC(cons_br$`Quantidade de abstenções`, format="f", big.mark = ".", digits=0)
 
-cons_br$`Quantidade de votos brancos` <- pont_virg(cons_br$`Quantidade de votos brancos`)
+cons_br$`Quantidade de votos brancos` <- formatC(cons_br$`Quantidade de votos brancos`, format="f", big.mark = ".", digits=0)
 
-cons_br$`Quantidade de votos nulos` <- pont_virg(cons_br$`Quantidade de votos nulos`)
+cons_br$`Quantidade de votos nulos` <- formatC(cons_br$`Quantidade de votos nulos`, format="f", big.mark = ".", digits=0)
 
-cons_br$`Quantidade de eleitores aptos` <- pont_virg(cons_br$`Quantidade de eleitores aptos`)
+cons_br$`Quantidade de eleitores aptos` <- formatC(cons_br$`Quantidade de eleitores aptos`, format="f", big.mark = ".", digits=0)
 
-cons_br$`Alienação absoluta` <- pont_virg(cons_br$`Alienação absoluta`)
+cons_br$`Alienação absoluta` <- formatC(cons_br$`Alienação absoluta`, format="f", big.mark = ".", digits=0)
 
 cons_br$`Alienação percentual` <- as.character(cons_br$`Alienação percentual`)
 
+cons_br$`Percentual de abstenções` <- as.character(cons_br$`Percentual de abstenções`)
+
+cons_br$`Percentual de votos brancos` <- as.character(cons_br$`Percentual de votos brancos`)
+
+cons_br$`Percentual de votos nulos` <- as.character(cons_br$`Percentual de votos nulos`)
+
+
 ### UF
 
-cons_uf$`Quantidade de abstenções` <- pont_virg(cons_uf$`Quantidade de abstenções`)
+cons_uf$`Quantidade de abstenções` <- formatC(cons_uf$`Quantidade de abstenções`, format="f", big.mark = ".", digits=0)
 
-cons_uf$`Quantidade de votos brancos` <- pont_virg(cons_uf$`Quantidade de votos brancos`)
+cons_uf$`Quantidade de votos brancos` <- formatC(cons_uf$`Quantidade de votos brancos`, format="f", big.mark = ".", digits=0)
 
-cons_uf$`Quantidade de votos nulos` <- pont_virg(cons_uf$`Quantidade de votos nulos`)
+cons_uf$`Quantidade de votos nulos` <- formatC(cons_uf$`Quantidade de votos nulos`, format="f", big.mark = ".", digits=0)
 
-cons_uf$`Quantidade de eleitores aptos` <- pont_virg(cons_uf$`Quantidade de eleitores aptos`)
+cons_uf$`Quantidade de eleitores aptos` <- formatC(cons_uf$`Quantidade de eleitores aptos`, format="f", big.mark = ".", digits=0)
 
-cons_uf$`Alienação absoluta` <- pont_virg(cons_uf$`Alienação absoluta`)
+cons_uf$`Alienação absoluta` <- formatC(cons_uf$`Alienação absoluta`, format="f", big.mark = ".", digits=0)
 
 cons_uf$`Alienação percentual` <- as.character(cons_uf$`Alienação percentual`)
+
+cons_uf$`Percentual de abstenções` <- as.character(cons_uf$`Percentual de abstenções`)
+
+cons_uf$`Percentual de votos brancos` <- as.character(cons_uf$`Percentual de votos brancos`)
+
+cons_uf$`Percentual de votos nulos` <- as.character(cons_uf$`Percentual de votos nulos`)
+
+## Organiza as colunas
+
+## Brasil
+
+cons_br <- cons_br %>% 
+  select(`Ano da eleição`,
+         Cargo,
+         Turno,
+         `Quantidade de eleitores aptos`,
+         `Quantidade de abstenções`,
+         `Percentual de abstenções`,
+         `Quantidade de votos brancos`,
+         `Percentual de votos brancos`,
+         `Quantidade de votos nulos`,
+         `Percentual de votos nulos`,
+         `Alienação absoluta`,
+         `Alienação percentual`)
+
+## UF
+
+cons_uf <- cons_uf %>% 
+  select(`Ano da eleição`,
+         UF,
+         Cargo,
+         Turno,
+         `Quantidade de eleitores aptos`,
+         `Quantidade de abstenções`,
+         `Percentual de abstenções`,
+         `Quantidade de votos brancos`,
+         `Percentual de votos brancos`,
+         `Quantidade de votos nulos`,
+         `Percentual de votos nulos`,
+         `Alienação absoluta`,
+         `Alienação percentual`)
 
 # 4. Salva os arquivos ----------------------------------------------------
 

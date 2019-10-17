@@ -10,8 +10,7 @@
 
 server <- function(input, output,session){
   
-  
-  
+ 
  
 # 1.1. Sobre --------------------------------------------------------------
 
@@ -3773,21 +3772,51 @@ server <- function(input, output,session){
                    <p>
                    AP = (Índice de alienação absoluta)/(Total de eleitores aptos)
                    <p>
-                   <h4><br />Abstenções</h4>
+                   <h4><br />Abstenção absoluta</h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>Quantidade de eleitores que não compareceram às eleições 
                    naquela agregação regional.</p></h5>
                    <p>
-                   <h4><br />Votos brancos</h4>
+                   <h4><br />Abstenção percentual</h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'>A 'abstenção percentual' é o índice de 'abstenção absoluta' 
+                   dividido pelo total de eleitores 
+                   aptos da unidade eleitoral.</p></h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   ABP = (Índice de abstenção absoluta)/(Total de eleitores aptos)
+                   <p>
+                   <h4><br />Votos brancos absolutos</h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>Quantidade de votos brancos totalizados naquela 
                    agregação regional.</p></h5>
                    <p>
+                   <h4><br />Votos brancos percentuais</h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'>Os 'votos brancos percentuais' são calculados através
+                   da divisão do índice de 'votos brancos absolutos' pelo total de eleitores 
+                   aptos da unidade eleitoral.</p></h5>
                    <p>
-                   <h4><br />Votos nulos</h4>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   VBP = (Índice de votos brancos absolutos)/(Total de eleitores aptos)
+                   <p>
+                   <h4><br />Votos nulos absolutos</h4>
                    <h5 align = 'justify'><br />
                    <p style='line-height:150%'>Quantidade de votos nulos totalizados naquela 
                    agregação regional.</p></h5>
+                   <p>
+                   <h4><br />Votos nulos percentuais</h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'>Os 'votos nulos percentuais' são calculados através
+                   da divisão do índice de 'votos nulos absolutos' pelo total de eleitores 
+                   aptos da unidade eleitoral.</p></h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   VNP = (Índice de votos nulos absolutos)/(Total de eleitores aptos)
+                   <p>
                    <p><br />
                    <strong>Fonte:</strong> 
                    <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
@@ -4327,7 +4356,7 @@ bagreg_alifedp_uf <- eventReactive(input$BCALC3, {
 })
 
 
-# 2.3.3. Abstencoes -------------------------------------------------------
+# 2.3.3. Abstencao absoluta -------------------------------------------------------
 
 ## Tabela para visualizacao
 
@@ -4337,7 +4366,7 @@ depfedab_br <- reactive({
   indicador <- input$INDICADORES_ALIE
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$DESCRICAO_CARGO3
-  if(indicador == "Abstenções" & 
+  if(indicador == "Abstenção percentual" & 
      agregacao == "Brasil"){
     return(input$alien_fedab_br)
   }
@@ -4374,16 +4403,15 @@ balien_fedab_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao p
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
-                     if(indicador == "Abstenções" & 
+                     if(indicador == "Abstenção percentual" & 
                         agregacao == "Brasil"){
                        alien_br %>% 
                          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                          dplyr::select(`Ano da eleição`,
                                        Turno, 
-                                       `Quantidade de abstenções`) %>% 
+                                       `Percentual de abstenções`) %>% 
                          spread(`Ano da eleição`,
-                                `Quantidade de abstenções`)
-                       
+                                `Percentual de abstenções`)
                      }
                    })
 }) 
@@ -4396,7 +4424,7 @@ ag_alifedab_br <- reactive({
   indicador <- input$INDICADORES_ALIE
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$AGREGACAO_REGIONAL3
-  if(indicador == "Abstenções" & 
+  if(indicador == "Abstenção percentual" & 
      agregacao == "Brasil"){
     return(input$agreg_alifedab_br)
   }
@@ -4440,7 +4468,7 @@ bagreg_alifedab_br <- eventReactive(input$BCALC3, {
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
                      uf <- input$UF3
-                     if(indicador == "Abstenções" & 
+                     if(indicador == "Abstenção percentual" & 
                         agregacao == "Brasil"){
                        alien_br %>%
                          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
@@ -4461,7 +4489,7 @@ depfedab_uf <- reactive({
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$DESCRICAO_CARGO3
   uf <- input$UF3
-  if(indicador == "Abstenções" & 
+  if(indicador == "Abstenção percentual" & 
      agregacao == "UF"){
     return(input$alien_fedab_uf)
   }
@@ -4499,7 +4527,7 @@ balien_fedab_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao p
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
                      uf <- input$UF3
-                     if(indicador == "Abstenções" & 
+                     if(indicador == "Abstenção percentual" & 
                         agregacao == "UF"){
                        if(uf=="Todas UFs"){
                          alien_uf %>% 
@@ -4508,9 +4536,9 @@ balien_fedab_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao p
                                          UF,
                                          Cargo,
                                          Turno,
-                                         `Quantidade de abstenções`) %>% 
+                                         `Percentual de abstenções`) %>% 
                            spread(`Ano da eleição`,
-                                  `Quantidade de abstenções`)
+                                  `Percentual de abstenções`)
                        }
                        else{
                          alien_uf %>% 
@@ -4519,9 +4547,9 @@ balien_fedab_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao p
                            dplyr::select(`Ano da eleição`,
                                          UF,
                                          Turno,
-                                         `Quantidade de abstenções`) %>% 
+                                         `Percentual de abstenções`) %>% 
                            spread(`Ano da eleição`,
-                                  `Quantidade de abstenções`)}
+                                  `Percentual de abstenções`)}
                        
                      }
                    })
@@ -4536,7 +4564,7 @@ ag_alifedab_uf <- reactive({
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$AGREGACAO_REGIONAL3
   uf <- input$UF3
-  if(indicador == "Abstenções" & 
+  if(indicador == "Abstenção percentual" & 
      agregacao == "UF"){
     return(input$agreg_alifedab_uf)
   }
@@ -4580,12 +4608,12 @@ bagreg_alifedab_uf <- eventReactive(input$BCALC3, {
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
                      uf <- input$UF3
-                     if(indicador == "Abstenções" & 
+                     if(indicador == "Abstenção percentual" & 
                         agregacao == "UF"){
                        if(input$UF3 == "Todas UFs"){
                          data =alien_uf %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                          unique()
+                           unique()
                        } else{ 
                          data = alien_uf %>% 
                            dplyr::filter(UF == input$UF3 &
@@ -4596,8 +4624,276 @@ bagreg_alifedab_uf <- eventReactive(input$BCALC3, {
 })
 
 
+# 2.3.4. Abstencao percentual ---------------------------------------------
 
-# 2.3.3. Votos brancos ----------------------------------------------------
+
+## Tabela para visualizacao
+
+### Deputado Federal BR
+
+depfedabp_br <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  if(indicador == "Abstenção absoluta" & 
+     agregacao == "Brasil"){
+    return(input$alien_fedabp_br)
+  }
+})
+
+
+output$alien_fedabp_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  balien_fedabp_br()
+})
+
+balien_fedabp_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 1
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'alien_per_fed_br',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',   
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     if(indicador == "Abstenção absoluta" & 
+                        agregacao == "Brasil"){
+                       alien_br %>% 
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                         dplyr::select(`Ano da eleição`,
+                                       Turno, 
+                                       `Quantidade de abstenções`) %>% 
+                         spread(`Ano da eleição`,
+                                `Quantidade de abstenções`)
+                     }
+                   })
+}) 
+
+## Dados desagregados
+
+### Deputado Federal BR
+
+ag_alifedabp_br <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  if(indicador == "Abstenção absoluta" & 
+     agregacao == "Brasil"){
+    return(input$agreg_alifedabp_br)
+  }
+})
+
+output$agreg_alifedabp_br <- DT::renderDataTable(server = FALSE,{
+  bagreg_alifedabp_br()
+})
+
+bagreg_alifedabp_br <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'alien_per_fed_br_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
+                     if(indicador == "Abstenção absoluta" & 
+                        agregacao == "Brasil"){
+                       alien_br %>%
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                         unique()
+                       
+                       
+                     }
+                   })
+})
+
+
+## Tabela para visualizacao
+
+### Deputado Federal UF
+
+depfedabp_uf <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Abstenção absoluta" & 
+     agregacao == "UF"){
+    return(input$alien_fedabp_uf)
+  }
+})
+
+
+output$alien_fedabp_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  balien_fedabp_uf()
+})
+
+balien_fedabp_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'alien_per_fed_uf',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',                              
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
+                     if(indicador == "Abstenção absoluta" & 
+                        agregacao == "UF"){
+                       if(uf=="Todas UFs"){
+                         alien_uf %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         Cargo,
+                                         Turno,
+                                         `Quantidade de abstenções`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Quantidade de abstenções`)
+                       }
+                       else{
+                         alien_uf %>% 
+                           dplyr::filter(UF == input$UF3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         Turno,
+                                         `Quantidade de abstenções`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Quantidade de abstenções`)}
+                       
+                     }
+                   })
+})
+
+## Dados desagregados
+
+### Deputado Federal UF
+
+ag_alifedabp_uf <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
+  if(indicador == "Abstenção absoluta" & 
+     agregacao == "UF"){
+    return(input$agreg_alifedabp_uf)
+  }
+})
+
+output$agreg_alifedabp_uf <- DT::renderDataTable(server = FALSE,{
+  bagreg_alifedabp_uf()
+})
+
+bagreg_alifedabp_uf <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'alien_per_fed_uf_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
+                     if(indicador == "Abstenção absoluta" & 
+                        agregacao == "UF"){
+                       if(input$UF3 == "Todas UFs"){
+                         data =alien_uf %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           unique()
+                       } else{ 
+                         data = alien_uf %>% 
+                           dplyr::filter(UF == input$UF3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           unique()
+                       }}
+                   })
+})
+
+
+# 2.3.5. Votos brancos absolutos ----------------------------------------------------
 
 ## Tabela para visualizacao
 
@@ -4607,7 +4903,7 @@ depfedvb_br <- reactive({
   indicador <- input$INDICADORES_ALIE
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$DESCRICAO_CARGO3
-  if(indicador == "Votos brancos" & 
+  if(indicador == "Votos brancos absolutos" & 
      agregacao == "Brasil"){
     return(input$alien_fedvb_br)
   }
@@ -4644,7 +4940,7 @@ balien_fedvb_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao p
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
-                     if(indicador == "Votos brancos" & 
+                     if(indicador == "Votos brancos absolutos" & 
                         agregacao == "Brasil"){
                        alien_br %>% 
                          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
@@ -4666,9 +4962,9 @@ ag_alifedvb_br <- reactive({
   indicador <- input$INDICADORES_ALIE
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$AGREGACAO_REGIONAL3
-  if(indicador == "Votos brancos" & 
+  if(indicador == "Votos brancos absolutos" & 
      agregacao == "Brasil"){
-    return(input$agreg_alifedp_br)
+    return(input$agreg_alifedvb_br)
   }
 })
 
@@ -4710,7 +5006,7 @@ bagreg_alifedvb_br <- eventReactive(input$BCALC3, {
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
                      uf <- input$UF3
-                     if(indicador == "Votos brancos" & 
+                     if(indicador == "Votos brancos absolutos" & 
                         agregacao == "Brasil"){
                        alien_br %>%
                          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
@@ -4731,7 +5027,7 @@ depfedvb_uf <- reactive({
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$DESCRICAO_CARGO3
   uf <- input$UF3
-  if(indicador == "Votos brancos" & 
+  if(indicador == "Votos brancos absolutos" & 
      agregacao == "UF"){
     return(input$alien_fedvb_uf)
   }
@@ -4769,7 +5065,7 @@ balien_fedvb_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao p
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
                      uf <- input$UF3
-                     if(indicador == "Votos brancos" & 
+                     if(indicador == "Votos brancos absolutos" & 
                         agregacao == "UF"){
                        if(uf=="Todas UFs"){
                          alien_uf %>% 
@@ -4806,9 +5102,9 @@ ag_alifedvb_uf <- reactive({
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$AGREGACAO_REGIONAL3
   uf <- input$UF3
-  if(indicador == "Votos brancos" & 
+  if(indicador == "Votos brancos absolutos" & 
      agregacao == "UF"){
-    return(input$agreg_alifedp_uf)
+    return(input$agreg_alifedvb_uf)
   }
 })
 
@@ -4850,7 +5146,7 @@ bagreg_alifedvb_uf <- eventReactive(input$BCALC3, {
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
                      uf <- input$UF3
-                     if(indicador == "Votos brancos" & 
+                     if(indicador == "Votos brancos absolutos" & 
                         agregacao == "UF"){
                        if(input$UF3 == "Todas UFs"){
                          data =alien_uf %>% 
@@ -4866,7 +5162,277 @@ bagreg_alifedvb_uf <- eventReactive(input$BCALC3, {
 })
 
 
-# 2.3.5. Votos nulos ------------------------------------------------------
+
+# 2.3.6. Votos brancos percentuais ----------------------------------------
+
+## Tabela para visualizacao
+
+### Deputado Federal BR
+
+depfedvbp_br <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  if(indicador == "Votos brancos percentuais" & 
+     agregacao == "Brasil"){
+    return(input$alien_fedvbp_br)
+  }
+})
+
+
+output$alien_fedvbp_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  balien_fedvbp_br()
+})
+
+balien_fedvbp_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 1
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'alien_per_fed_br',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',   
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     if(indicador == "Votos brancos percentuais" & 
+                        agregacao == "Brasil"){
+                       alien_br %>% 
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                         dplyr::select(`Ano da eleição`,
+                                       Turno, 
+                                       `Percentual de votos brancos`) %>% 
+                         spread(`Ano da eleição`,
+                                `Percentual de votos brancos`)
+                       
+                     }
+                   })
+}) 
+
+## Dados desagregados
+
+### Deputado Federal BR
+
+ag_alifedvbp_br <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  if(indicador == "Votos brancos percentuais" & 
+     agregacao == "Brasil"){
+    return(input$agreg_alifedvbp_br)
+  }
+})
+
+output$agreg_alifedvbp_br <- DT::renderDataTable(server = FALSE,{
+  bagreg_alifedvbp_br()
+})
+
+bagreg_alifedvbp_br <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'alien_per_fed_br_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
+                     if(indicador == "Votos brancos percentuais" & 
+                        agregacao == "Brasil"){
+                       alien_br %>%
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                         unique()
+                       
+                       
+                     }
+                   })
+})
+
+
+## Tabela para visualizacao
+
+### Deputado Federal UF
+
+depfedvbp_uf <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Votos brancos percentuais" & 
+     agregacao == "UF"){
+    return(input$alien_fedvbp_uf)
+  }
+})
+
+
+output$alien_fedvbp_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  balien_fedvbp_uf()
+})
+
+balien_fedvbp_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'alien_per_fed_uf',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',                              
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
+                     if(indicador == "Votos brancos percentuais" & 
+                        agregacao == "UF"){
+                       if(uf=="Todas UFs"){
+                         alien_uf %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         Cargo,
+                                         Turno,
+                                         `Percentual de votos brancos`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Percentual de votos brancos`)
+                       }
+                       else{
+                         alien_uf %>% 
+                           dplyr::filter(UF == input$UF3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         Turno,
+                                         `Percentual de votos brancos`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Percentual de votos brancos`)}
+                       
+                     }
+                   })
+})
+
+## Dados desagregados
+
+### Deputado Federal UF
+
+ag_alifedvbp_uf <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
+  if(indicador == "Votos brancos percentuais" & 
+     agregacao == "UF"){
+    return(input$agreg_alifedvbp_uf)
+  }
+})
+
+output$agreg_alifedvbp_uf <- DT::renderDataTable(server = FALSE,{
+  bagreg_alifedvbp_uf()
+})
+
+bagreg_alifedvbp_uf <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'alien_per_fed_uf_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
+                     if(indicador == "Votos brancos percentuais" & 
+                        agregacao == "UF"){
+                       if(input$UF3 == "Todas UFs"){
+                         data =alien_uf %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           unique()
+                       } else{ 
+                         data = alien_uf %>% 
+                           dplyr::filter(UF == input$UF3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           unique()
+                       }}
+                   })
+})
+
+
+# 2.3.7. Votos nulos absolutos ------------------------------------------------------
 
 
 ## Tabela para visualizacao
@@ -4877,7 +5443,7 @@ depfedvn_br <- reactive({
   indicador <- input$INDICADORES_ALIE
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$DESCRICAO_CARGO3
-  if(indicador == "Votos nulos" & 
+  if(indicador == "Votos nulos absolutos" & 
      agregacao == "Brasil"){
     return(input$alien_fedvn_br)
   }
@@ -4914,7 +5480,7 @@ balien_fedvn_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao p
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
-                     if(indicador == "Votos nulos" & 
+                     if(indicador == "Votos nulos absolutos" & 
                         agregacao == "Brasil"){
                        alien_br %>% 
                          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
@@ -4936,7 +5502,7 @@ ag_alifedvn_br <- reactive({
   indicador <- input$INDICADORES_ALIE
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$AGREGACAO_REGIONAL3
-  if(indicador == "Votos nulos" & 
+  if(indicador == "Votos nulos absolutos" & 
      agregacao == "Brasil"){
     return(input$agreg_alifedvn_br)
   }
@@ -4980,7 +5546,7 @@ bagreg_alifedvn_br <- eventReactive(input$BCALC3, {
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
                      uf <- input$UF3
-                     if(indicador == "Votos nulos" & 
+                     if(indicador == "Votos nulos absolutos" & 
                         agregacao == "Brasil"){
                        alien_br %>%
                          dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
@@ -5001,7 +5567,7 @@ depfedvn_uf <- reactive({
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$DESCRICAO_CARGO3
   uf <- input$UF3
-  if(indicador == "Votos nulos" & 
+  if(indicador == "Votos nulos absolutos" & 
      agregacao == "UF"){
     return(input$alien_fedvn_uf)
   }
@@ -5039,7 +5605,7 @@ balien_fedvn_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao p
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
                      uf <- input$UF3
-                     if(indicador == "Votos nulos" & 
+                     if(indicador == "Votos nulos absolutos" & 
                         agregacao == "UF"){
                        if(uf=="Todas UFs"){
                          alien_uf %>% 
@@ -5076,7 +5642,7 @@ ag_alifedvn_uf <- reactive({
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$AGREGACAO_REGIONAL3
   uf <- input$UF3
-  if(indicador == "Votos nulos" & 
+  if(indicador == "Votos nulos absolutos" & 
      agregacao == "UF"){
     return(input$agreg_alifedvn_uf)
   }
@@ -5120,12 +5686,282 @@ bagreg_alifedvn_uf <- eventReactive(input$BCALC3, {
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
                      uf <- input$UF3
-                     if(indicador == "Votos nulos" & 
+                     if(indicador == "Votos nulos absolutos" & 
                         agregacao == "UF"){
                        if(input$UF3 == "Todas UFs"){
                          alien_uf %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                           unique()
+                       } else{ 
+                         data = alien_uf %>% 
+                           dplyr::filter(UF == input$UF3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           unique()
+                       }}
+                   })
+})
+
+
+
+# 2.3.8. Votos nulos percentuais ------------------------------------------
+
+## Tabela para visualizacao
+
+### Deputado Federal BR
+
+depfedvnp_br <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  if(indicador == "Votos nulos percentuais" & 
+     agregacao == "Brasil"){
+    return(input$alien_fedvnp_br)
+  }
+})
+
+
+output$alien_fedvnp_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  balien_fedvnp_br()
+})
+
+balien_fedvnp_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 1
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'alien_per_fed_br',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',   
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     if(indicador == "Votos nulos percentuais" & 
+                        agregacao == "Brasil"){
+                       alien_br %>% 
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                         dplyr::select(`Ano da eleição`,
+                                       Turno, 
+                                       `Percentual de votos nulos`) %>% 
+                         spread(`Ano da eleição`,
+                                `Percentual de votos nulos`)
+                       
+                     }
+                   })
+}) 
+
+## Dados desagregados
+
+### Deputado Federal BR
+
+ag_alifedvnp_br <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  if(indicador == "Votos nulos percentuais" & 
+     agregacao == "Brasil"){
+    return(input$agreg_alifedvnp_br)
+  }
+})
+
+output$agreg_alifedvnp_br <- DT::renderDataTable(server = FALSE,{
+  bagreg_alifedvnp_br()
+})
+
+bagreg_alifedvnp_br <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'alien_per_fed_br_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
+                     if(indicador == "Votos nulos percentuais" & 
+                        agregacao == "Brasil"){
+                       alien_br %>%
+                         dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                         unique()
+                       
+                       
+                     }
+                   })
+})
+
+
+## Tabela para visualizacao
+
+### Deputado Federal UF
+
+depfedvnp_uf <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Votos nulos percentuais" & 
+     agregacao == "UF"){
+    return(input$alien_fedvnp_uf)
+  }
+})
+
+
+output$alien_fedvnp_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  balien_fedvnp_uf()
+})
+
+balien_fedvnp_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'alien_per_fed_uf',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',                              
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
+                     if(indicador == "Votos nulos percentuais" & 
+                        agregacao == "UF"){
+                       if(uf=="Todas UFs"){
+                         alien_uf %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         Cargo,
+                                         Turno,
+                                         `Percentual de votos nulos`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Percentual de votos nulos`)
+                       }
+                       else{
+                         alien_uf %>% 
+                           dplyr::filter(UF == input$UF3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         Turno,
+                                         `Percentual de votos nulos`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Percentual de votos nulos`)}
+                       
+                     }
+                   })
+})
+
+## Dados desagregados
+
+### Deputado Federal UF
+
+ag_alifedvnp_uf <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
+  if(indicador == "Votos nulos percentuais" & 
+     agregacao == "UF"){
+    return(input$agreg_alifedvnp_uf)
+  }
+})
+
+output$agreg_alifedvnp_uf <- DT::renderDataTable(server = FALSE,{
+  bagreg_alifedvnp_uf()
+})
+
+bagreg_alifedvnp_uf <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    select = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'alien_per_fed_uf_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'Select',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     uf <- input$UF3
+                     if(indicador == "Votos nulos percentuais" & 
+                        agregacao == "UF"){
+                       if(input$UF3 == "Todas UFs"){
+                         alien_uf %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           unique()
                        } else{ 
                          data = alien_uf %>% 
                            dplyr::filter(UF == input$UF3 &
