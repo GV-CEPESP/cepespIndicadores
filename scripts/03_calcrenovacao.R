@@ -96,7 +96,6 @@ de2 <- de2 %>%
 
 de2 <- unique(de2)
 
-de2 <- de2[-c(37:39),]
 
 ## Cria um banco com somente os candidatos eleitos em cada eleicao
 
@@ -228,9 +227,12 @@ ind_eleicoes_fed_br$Cargo <- "Deputado Federal"
 
 ## Reorganiza a tabela
 
+ind_eleicoes_fed_br$`Cadeiras disponíveis` <- 513
+
 ind_eleicoes_fed_br <- ind_eleicoes_fed_br %>% 
   select(`Ano da eleição`,
          Cargo,
+         `Cadeiras disponíveis`,
          Reapresentação,
          Reeleitos,
          Conservação,
@@ -333,11 +335,23 @@ for(ano in sort(unique(df$ANO_ELEICAO))){
   }
 }
 
+
 ## Remove as linhas desnecessarias
 
 ind_eleicoes_fed_uf <- ind_eleicoes_fed_uf[-c(136:162),]
 
 ind_eleicoes_fed_uf$Cargo <- "Deputado Federal"
+
+vagas <- df1_uf %>% 
+  select(`Ano da eleição`, 
+         UF, 
+         Vagas) %>% 
+  unique()
+
+ind_eleicoes_fed_uf <- left_join(ind_eleicoes_fed_uf, vagas, 
+                                 by = c("Ano da eleição",
+                                        "UF"))
+
 
 ## Reorganiza a tabela
 
@@ -345,11 +359,13 @@ ind_eleicoes_fed_uf <- ind_eleicoes_fed_uf %>%
   select(`Ano da eleição`,
          UF,
          Cargo,
+         Vagas,
          Reapresentação,
          Reeleitos,
          Conservação,
          `Renovação bruta`,
-         `Renovação líquida`)
+         `Renovação líquida`) %>% 
+  dplyr::rename("Cadeiras disponíveis" = "Vagas")
 
 ### Deputado Estadual
 
@@ -465,7 +481,7 @@ for(ano in sort(unique(de$ANO_ELEICAO))){
 
 ## Remove as linhas desnecessarias
 
-ind_eleicoes_est <- ind_eleicoes_est[-c(131:156),]
+ind_eleicoes_est <- ind_eleicoes_est[-c(136:162),]
 
 ## Reorganiza a tabela
 
@@ -475,11 +491,13 @@ ind_eleicoes_est <- ind_eleicoes_est %>%
   select(`Ano da eleição`,
          UF,
          Cargo,
+         Vagas,
          Reapresentação,
          Reeleitos,
          Conservação,
          `Renovação bruta`,
-         `Renovação líquida`)
+         `Renovação líquida`) %>% 
+  rename("Cadeiras disponíveis" = "Vagas")
 
 
 # 3. Padronização ----------------------------------------------------------------------

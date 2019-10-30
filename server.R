@@ -3077,8 +3077,7 @@ server <- function(input, output,session){
         uf <- req(input$UF2)
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Conservação" & 
-           cargo == "Deputado Federal" |
-           cargo == "Deputado Estadual")
+           agregacao == "UF")
           if(uf == ""){
             return()
           } else if(uf == "Todas UFs"){
@@ -3337,6 +3336,7 @@ server <- function(input, output,session){
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
+        cargo <- input$DESCRICAO_CARGO2
         if(indicador == "Renovação bruta" & 
            agregacao == "UF"){
           if(uf == ""){
@@ -3596,6 +3596,7 @@ server <- function(input, output,session){
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
+        cargo <- input$DESCRICAO_CARGO2
         if(indicador == "Renovação líquida" &
            agregacao == "UF"){
           if(uf == ""){
