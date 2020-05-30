@@ -125,11 +125,46 @@ for(ano in anos){
   }
 }
 
+### Vereador
+
+anos_mun <- c(2000,2004,2008,2012,2016)
+
+ind_eleicoes_vr <- list()
+
+
+for(ano in anos_mun){
+  for(municipio in sort(unique(vr1$`Código do município`))){
+    cat("Lendo",ano,municipio,"\n")
+    indicadores1 <- filter(vr1,
+                           `Ano da eleição` == ano+4,
+                           `Código do município` == municipio)
+    
+    ## Filtra nos bancos referentes as estatiscas gerais das
+    ## eleicoes, somente os anos que estao sendo 
+    ## utilizados no momento  
+    estatisticas_ano1 <- filter(vr1,
+                                `Ano da eleição` == ano,
+                                `Código do município` == municipio)
+    estatisticas_ano2 <- filter(vr1,
+                                `Ano da eleição` == ano + 4,
+                                `Código do município` == municipio)
+    if(nrow(estatisticas_ano1 > 0)){
+    ## Calculo dos indicadores de volatilidade 
+    indicadores1$`Volatilidade eleitoral` <- volat_elet(estatisticas_ano1$`Percentual de votos conquistados`,
+                                                        estatisticas_ano2$`Percentual de votos conquistados`)
+    indicadores1$`Volatilidade parlamentar` <- volat_elet(estatisticas_ano1$`Percentual de cadeiras conquistadas`,
+                                                          estatisticas_ano2$`Percentual de cadeiras conquistadas`)
+    ## Empilha todas as eleicoes 
+    
+    ind_eleicoes_vr <- bind_rows(ind_eleicoes_vr,indicadores1)
+    }
+  }
+}
+
+
 ### Junta os bancos agregados por UF
 
 ind_eleicoes_est <- bind_rows(ind_eleicoes_fed_uf, ind_eleicoes_est)
-
-
 
 
 # 3. Padronizacao dos dados -----------------------------------------------
@@ -149,6 +184,25 @@ ind_eleicoes_fed_br <- ind_eleicoes_fed_br %>%
 ind_eleicoes_est <- ind_eleicoes_est %>% 
   select(`Ano da eleição`,
          UF,
+         Cargo,
+         `Volatilidade eleitoral`, 
+         `Volatilidade parlamentar`
+  ) %>% 
+  unique()
+
+### Municipio
+
+teste <- ind_eleicoes_vr %>% 
+  filter(`Volatilidade eleitoral` < 0)
+
+ind_eleicoes_vr <- ind_eleicoes_vr %>% 
+  filter(`Volatilidade eleitoral` > 0)
+
+ind_eleicoes_vr <- ind_eleicoes_vr %>% 
+  select(`Ano da eleição`,
+         UF,
+         `Código do município`,
+         `Nome do município`,
          Cargo,
          `Volatilidade eleitoral`, 
          `Volatilidade parlamentar`
@@ -183,7 +237,20 @@ ind_eleicoes_est$`Volatilidade parlamentar` <-
                digits = 2),  
          nsmall = 2)
 
+### Volatilidade (MUN)
 
+ind_eleicoes_vr$`Volatilidade eleitoral` <- 
+  format(round(ind_eleicoes_vr$`Volatilidade eleitoral`, 
+               digits = 2),  
+         nsmall = 2)
+
+ind_eleicoes_vr$`Volatilidade parlamentar` <- 
+  format(round(ind_eleicoes_vr$`Volatilidade parlamentar`, 
+               digits = 2),  
+         nsmall = 2)
+
+ind_eleicoes_vr <- ind_eleicoes_vr %>% 
+  arrange(UF)
 
 # 4. Salva os arquivos ----------------------------------------------------
 
@@ -194,6 +261,10 @@ write.csv(ind_eleicoes_fed_br, "data/output/vol_br.csv")
 ### Volatilidade (UF)
 
 write.csv(ind_eleicoes_est, "data/output/vol_uf.csv")
+
+### Volatilidade (MUN)
+
+write.csv(ind_eleicoes_vr, "data/output/vol_mun.csv")
 
 ## Remove os arquivos que nao serao mais utilizados
 

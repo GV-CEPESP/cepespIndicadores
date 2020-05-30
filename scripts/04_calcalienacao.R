@@ -76,6 +76,43 @@ cons_uf$Cargo <-ifelse(cons_uf$Cargo =="DEPUTADO DISTRITAL",
 
 cons_uf$Cargo <- str_to_title(cons_uf$Cargo)
 
+
+### Cargos MUN
+
+cons_mun <- cons_mun %>% 
+  dplyr::select(ANO_ELEICAO,UF,COD_MUN_TSE,NOME_MUNICIPIO,NUM_TURNO, DESCRICAO_CARGO, QTD_ABSTENCOES,
+                QT_VOTOS_BRANCOS, QT_VOTOS_NULOS, QTD_APTOS) %>% 
+  dplyr::rename("Ano da eleição" = "ANO_ELEICAO",
+                "Código do município" = "COD_MUN_TSE",
+                "Nome do município" = "NOME_MUNICIPIO",
+                "Turno" = "NUM_TURNO",
+                "Cargo" = "DESCRICAO_CARGO", 
+                "Quantidade de abstenções" = "QTD_ABSTENCOES",
+                "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS", 
+                "Quantidade de votos nulos" = "QT_VOTOS_NULOS", 
+                "Quantidade de eleitores aptos"="QTD_APTOS")  %>% 
+  dplyr::arrange(`Ano da eleição`) 
+
+
+cons_mun <- cons_mun %>% 
+  group_by(`Ano da eleição`,
+           UF,
+           `Código do município`, 
+           `Nome do município`,
+           Turno,
+           Cargo) %>% 
+  summarise(
+    "Quantidade de abstenções" = sum(`Quantidade de abstenções`),
+    "Quantidade de votos brancos" = sum(`Quantidade de votos brancos`), 
+    "Quantidade de votos nulos" = sum(`Quantidade de votos nulos`), 
+    "Quantidade de eleitores aptos"= sum(`Quantidade de eleitores aptos`))
+
+
+## Transforma a primeira letra de cada palavra
+## em maiuscula  
+
+cons_mun$Cargo <- str_to_title(cons_mun$Cargo)
+
 # 2. Alienacao -------------------------------------------------
 
 
@@ -96,6 +133,11 @@ cons_br$`Alienação absoluta` <- cons_br$`Quantidade de abstenções` +
 cons_uf$`Alienação absoluta` <- cons_uf$`Quantidade de abstenções` + 
   cons_uf$`Quantidade de votos brancos` + cons_uf$`Quantidade de votos nulos`
 
+
+### Cargos MUN
+
+cons_mun$`Alienação absoluta` <- cons_mun$`Quantidade de abstenções` + 
+  cons_mun$`Quantidade de votos brancos` + cons_mun$`Quantidade de votos nulos`
 
 # 2.2. Alienacao percentual ----------------------------------------------
 
@@ -133,6 +175,22 @@ cons_uf$`Percentual de votos brancos` <- round(100*(cons_uf$`Quantidade de votos
 cons_uf$`Percentual de votos nulos` <- round(100*(cons_uf$`Quantidade de votos nulos`)/
                                                cons_uf$`Quantidade de eleitores aptos`,2)
 
+### Cargos MUN
+
+
+cons_mun$`Alienação percentual` <- round(100*(cons_mun$`Quantidade de abstenções` + 
+                                               cons_mun$`Quantidade de votos brancos` + 
+                                               cons_mun$`Quantidade de votos nulos`)/
+                                          cons_mun$`Quantidade de eleitores aptos`,2)
+
+cons_mun$`Percentual de abstenções` <- round(100*(cons_mun$`Quantidade de abstenções`)/
+                                              cons_mun$`Quantidade de eleitores aptos`,2)
+
+cons_mun$`Percentual de votos brancos` <- round(100*(cons_mun$`Quantidade de votos brancos`)/
+                                                 cons_mun$`Quantidade de eleitores aptos`,2)
+
+cons_mun$`Percentual de votos nulos` <- round(100*(cons_mun$`Quantidade de votos nulos`)/
+                                               cons_mun$`Quantidade de eleitores aptos`,2)
      
 
 # 3. Limpeza e padronizacao dos dados -------------------------------------
@@ -183,6 +241,26 @@ cons_uf$`Percentual de votos brancos` <- as.character(cons_uf$`Percentual de vot
 
 cons_uf$`Percentual de votos nulos` <- as.character(cons_uf$`Percentual de votos nulos`)
 
+### Municipio
+
+cons_mun$`Quantidade de abstenções` <- formatC(cons_mun$`Quantidade de abstenções`, format="f", big.mark = ".", digits=0)
+
+cons_mun$`Quantidade de votos brancos` <- formatC(cons_mun$`Quantidade de votos brancos`, format="f", big.mark = ".", digits=0)
+
+cons_mun$`Quantidade de votos nulos` <- formatC(cons_mun$`Quantidade de votos nulos`, format="f", big.mark = ".", digits=0)
+
+cons_mun$`Quantidade de eleitores aptos` <- formatC(cons_mun$`Quantidade de eleitores aptos`, format="f", big.mark = ".", digits=0)
+
+cons_mun$`Alienação absoluta` <- formatC(cons_mun$`Alienação absoluta`, format="f", big.mark = ".", digits=0)
+
+cons_mun$`Alienação percentual` <- as.character(cons_mun$`Alienação percentual`)
+
+cons_mun$`Percentual de abstenções` <- as.character(cons_mun$`Percentual de abstenções`)
+
+cons_mun$`Percentual de votos brancos` <- as.character(cons_mun$`Percentual de votos brancos`)
+
+cons_mun$`Percentual de votos nulos` <- as.character(cons_mun$`Percentual de votos nulos`)
+
 ## Organiza as colunas
 
 ## Brasil
@@ -218,6 +296,25 @@ cons_uf <- cons_uf %>%
          `Alienação absoluta`,
          `Alienação percentual`)
 
+### Municipio
+
+cons_mun <- cons_mun %>% 
+  select(`Ano da eleição`,
+         UF,
+         `Código do município`,
+         `Nome do município`,
+         Cargo,
+         Turno,
+         `Quantidade de eleitores aptos`,
+         `Quantidade de abstenções`,
+         `Percentual de abstenções`,
+         `Quantidade de votos brancos`,
+         `Percentual de votos brancos`,
+         `Quantidade de votos nulos`,
+         `Percentual de votos nulos`,
+         `Alienação absoluta`,
+         `Alienação percentual`)
+
 # 4. Salva os arquivos ----------------------------------------------------
 
 ## Salva os arquivos referentes aos indicadores de alienacao em .csv
@@ -230,8 +327,12 @@ write.csv(cons_br, "data/output/alien_br.csv")
 
 write.csv(cons_uf, "data/output/alien_uf.csv")
 
+### Cargos MUN
+
+write.csv(cons_mun, "data/output/alien_mun.csv")
+
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
-rm(cons_br,cons_uf)
+rm(cons_br,cons_uf,cons_mun)
 
 

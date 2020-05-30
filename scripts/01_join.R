@@ -23,22 +23,26 @@ library(abjutils)
 dfp <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018",
                      position = "Deputado Federal",
                      regional_aggregation = "Estado", 
-                     political_aggregation = "Partido")
+                     political_aggregation = "Partido",
+                     cached = TRUE)
 
 dfc <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
                      position = "Deputado Federal",
                      regional_aggregation = "Estado", 
-                     political_aggregation = "Consolidado")
+                     political_aggregation = "Consolidado",
+                     cached = TRUE)
 
 dfcb <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
                       position = "Deputado Federal",
                       regional_aggregation = "Brasil", 
-                      political_aggregation = "Consolidado")
+                      political_aggregation = "Consolidado",
+                      cached = TRUE)
 
 df <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
                     position = "Deputado Federal",
                     regional_aggregation = "Estado", 
-                    political_aggregation = "Candidato")
+                    political_aggregation = "Candidato",
+                    cached = TRUE)
 
 
 ### Deputado Estadual
@@ -46,39 +50,84 @@ df <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018",
 dep <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018",
                      position = "Deputado Estadual",
                      regional_aggregation = "Estado", 
-                     political_aggregation = "Partido")
+                     political_aggregation = "Partido",
+                     cached = TRUE)
 
 dec <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", 
                      position = "Deputado Estadual",
                      regional_aggregation = "Estado", 
-                     political_aggregation = "Consolidado")
+                     political_aggregation = "Consolidado",
+                     cached = TRUE)
 
 decb <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", 
                       position = "Deputado Estadual",
                       regional_aggregation = "Brasil", 
-                      political_aggregation = "Consolidado")
+                      political_aggregation = "Consolidado",
+                      cached = TRUE)
 
 de <- get_elections(year = "1998,2002, 2006, 2010, 2014, 2018", 
                     position = "Deputado Estadual",
                     regional_aggregation = "Estado", 
-                    political_aggregation = "Candidato")
+                    political_aggregation = "Candidato",
+                    cached = TRUE)
+
+## Vereador
+
+
+vrp <- get_elections(year = "2000,2004,2008,2012,2016",
+                     position = "Vereador",
+                     regional_aggregation = "Municipio", 
+                     political_aggregation = "Partido",
+                     cached = TRUE)
+
+vrc <- get_elections(year = "2000,2004,2008,2012,2016", 
+                     position = "Vereador",
+                     regional_aggregation = "Municipio", 
+                     political_aggregation = "Consolidado",
+                     cached = TRUE)
+
+vrcm <- get_elections(year = "2000,2004,2008,2012,2016", 
+                      position = "Vereador",
+                      regional_aggregation = "Municipio", 
+                      political_aggregation = "Consolidado",
+                      cached = TRUE)
+
+anos <- c(2000, 2004, 2008, 2012, 2016)
+
+vr <- list()
+
+for(i in anos){
+temp <- get_elections(year = i, 
+                    position = "Vereador",
+                    regional_aggregation = "Municipio", 
+                    political_aggregation = "Candidato",
+                    cached = TRUE)
+temp$CODIGO_LEGENDA <- as.character(temp$CODIGO_LEGENDA)
+vr <- rbind(vr, temp)
+}
+
+rm(temp)
+
 
 ## Outros cargos BR
 
 pr_br <- get_elections(year = "2002,2006,2010,2014,2018", 
                         position = "Presidente",
                         regional_aggregation = "Brasil", 
-                        political_aggregation = "Consolidado")
+                        political_aggregation = "Consolidado",
+                        cached = TRUE)
 
 gov_br <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
                         position = "Governador",
                         regional_aggregation = "Brasil", 
-                        political_aggregation = "Consolidado")
+                        political_aggregation = "Consolidado",
+                        cached = TRUE)
 
 sen_br <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
                         position = "Senador",
                         regional_aggregation = "Brasil", 
-                        political_aggregation = "Consolidado")
+                        political_aggregation = "Consolidado",
+                        cached = TRUE)
 
 
 ## Outros Cargos UF
@@ -86,28 +135,42 @@ sen_br <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018",
 pr_uf <- get_elections(year = "2002,2006,2010,2014,2018", 
                     position = "Presidente",
                     regional_aggregation = "Estado", 
-                    political_aggregation = "Consolidado")
+                    political_aggregation = "Consolidado",
+                    cached = TRUE)
 
 gov_uf <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
                      position = "Governador",
                      regional_aggregation = "Estado", 
-                     political_aggregation = "Consolidado")
+                     political_aggregation = "Consolidado",
+                     cached = TRUE)
 
 sen_uf1 <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
                      position = "Senador",
                      regional_aggregation = "Estado", 
-                     political_aggregation = "Consolidado")
+                     political_aggregation = "Consolidado",
+                     cached = TRUE)
 
 sen_uf <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
                         position = "Senador",
                         regional_aggregation = "Brasil", 
-                        political_aggregation = "Candidato")
+                        political_aggregation = "Candidato",
+                        cached = TRUE)
 
 
 sen_uft <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018", 
                          position = "Senador",
                          regional_aggregation = "Estado", 
-                         political_aggregation = "Partido")
+                         political_aggregation = "Partido",
+                         cached = TRUE)
+
+
+## Outros cargos MUN
+
+pfcm <- get_elections(year = "2000,2004,2008,2012,2016", 
+                      position = "Vereador",
+                      regional_aggregation = "Municipio", 
+                      political_aggregation = "Consolidado",
+                      cached = TRUE)
 
 
 ## Carrega os arquivos de vagas
@@ -118,8 +181,11 @@ vags_fed <- read_csv("data/input/vags_fed.csv")
 
 ### Deputado Estadual
 
-vags_est <- read_csv("data/input/vags_est.csv") 
+vags_est <- read_csv("data/input/vags_est.csv")
 
+### Vereador
+
+vags_ver <- read_csv("data/input/vags_ver.csv") 
 
 # 2. Calculo da votacao dos partidos e dos votos validos ------------------
 
@@ -142,6 +208,18 @@ dep <- dep %>%
                   SIGLA_PARTIDO) %>% 
   dplyr::summarise(
     VOT_PART_UF = sum(QTDE_VOTOS)
+  ) 
+
+## Votacao municipal dos partidos
+### Vereador
+
+vrp <- vrp %>% 
+  dplyr::group_by(ANO_ELEICAO,
+                  UF,
+                  COD_MUN_TSE,
+                  SIGLA_PARTIDO) %>% 
+  dplyr::summarise(
+    VOT_PART_MUN = sum(QTDE_VOTOS)
   ) 
 
 ## Votos validos de cada eleicao
@@ -169,6 +247,17 @@ dec1 <- dec %>%
                   UF) %>% 
   dplyr::summarise(
     VOTOS_VALIDOS_UF = sum(QT_VOTOS_NOMINAIS,
+                           QT_VOTOS_LEGENDA)
+  )
+
+### Vereador
+
+vrc1 <- vrc %>% 
+  dplyr::group_by(ANO_ELEICAO,
+                  UF,
+                  COD_MUN_TSE) %>% 
+  dplyr::summarise(
+    VOTOS_VALIDOS_MUN = sum(QT_VOTOS_NOMINAIS,
                            QT_VOTOS_LEGENDA)
   )
 
@@ -223,9 +312,24 @@ vags_est <- left_join(vags_est,
                       dep, 
                       by = c("ANO_ELEICAO", "UF"))
 
+### Vereador
+
+vags_ver$COD_MUN_TSE <- as.character(vags_ver$COD_MUN_TSE)
+
+vags_ver$COD_MUN_TSE <- str_pad(vags_ver$COD_MUN_TSE, width = 5, pad = 0)
+
+vags_ver <- left_join(vags_ver,
+                      vrc1)
+
+vags_ver <- left_join(vags_ver, 
+                      vrp)
+
+
 est <- vags_est
 
 fed <- vags_fed
+
+ver <- vags_ver
 
 
 ## Junta os bancos sobre o consolidado em um unico
@@ -237,6 +341,10 @@ cons_br <- rbind(pr_br, gov_br, sen_br, dfcb, decb)
 ## Consolidado UF
 
 cons_uf <- rbind(pr_uf, gov_uf,sen_uf1, dfc, dec)
+
+## Consolidado MUN
+
+cons_mun <- rbind(pfcm, vrcm)
 
 
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
