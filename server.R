@@ -8,7 +8,7 @@
 # 1. Server ---------------------------------------------------------------
 
 
-server <- function(input, output,session){
+server <- function(input, output){
   
  
  
@@ -186,6 +186,10 @@ server <- function(input, output,session){
   frag_leg_mun$`Nome do município2` <- paste(frag_leg_mun$`Nome do município`, "-",
                                              frag_leg_mun$UF)
   
+  distcad_mun$`Nome do município2` <- paste(distcad_mun$`Nome do município`, "-",
+                                             distcad_mun$UF)
+  
+  
   municipio1 <- reactive({
     indicador <- req(input$INDICADORES_FRAG)
     cargo <- req(input$DESCRICAO_CARGO1)
@@ -208,8 +212,7 @@ server <- function(input, output,session){
       selectizeInput("MUN1",
                      label = NULL,
                      choices = 
-                       c("","Todos os municípios", 
-                         unique(sort(frag_leg_mun$`Nome do município2`))),
+                       c("","Todos os municípios", municipios),
                      selected = NULL,
                      options = list(placeholder = 'Escolha um município'))
     } else{
@@ -334,8 +337,7 @@ server <- function(input, output,session){
       selectizeInput("MUN2",
                      label = NULL,
                      choices = 
-                       c("","Todos os municípios", 
-                         unique(sort(frag_leg_mun$`Nome do município2`))),
+                       c("","Todos os municípios", municipios),
                      selected = NULL,
                      options = list(placeholder = 'Escolha um município'))
     } else{
@@ -449,8 +451,7 @@ server <- function(input, output,session){
       selectizeInput("MUN3",
                      label = NULL,
                      choices = 
-                       c("","Todas os municípios", 
-                         unique(sort(frag_leg_mun$`Nome do município2`))),
+                       c("","Todos os municípios", municipios),
                      selected = NULL,
                      options = list(placeholder = 'Escolha um município'))
     } else{
@@ -573,11 +574,10 @@ server <- function(input, output,session){
       return()
     } else if(cargo == "Vereador" &
               length(agregacao == "Município") > 0){
-      selectizeInput("MUN3",
+      selectizeInput("MUN4",
                      label = NULL,
                      choices = 
-                       c("","Todas os municípios", 
-                         unique(sort(frag_leg_mun$`Nome do município2`))),
+                       c("","Todos os municípios", municipios),
                      selected = NULL,
                      options = list(placeholder = 'Escolha um município'))
     } else{
@@ -791,10 +791,10 @@ server <- function(input, output,session){
     bdpg_br()
   })
   
-  bdpg_fed <- eventReactive(input$BCALC1, { ## Botao de acao
+  bdpg_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -809,7 +809,7 @@ server <- function(input, output,session){
         class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -849,7 +849,7 @@ server <- function(input, output,session){
   bagreg_dpg_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      select = TRUE,
+      
      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
@@ -874,7 +874,7 @@ server <- function(input, output,session){
         class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -918,7 +918,7 @@ server <- function(input, output,session){
   bdpg_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -936,7 +936,7 @@ server <- function(input, output,session){
         class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -994,7 +994,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1019,7 +1019,7 @@ server <- function(input, output,session){
         class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -1083,7 +1083,7 @@ server <- function(input, output,session){
   bdpg_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -1101,7 +1101,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -1159,7 +1159,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1184,7 +1184,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -1252,7 +1252,7 @@ server <- function(input, output,session){
   bfracio_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                autoWidth = FALSE,
-                select = TRUE,
+                
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -1267,7 +1267,7 @@ server <- function(input, output,session){
                 class = "display",
               rownames = FALSE,
               extensions = c('Buttons',
-                             'Select',
+                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -1309,7 +1309,7 @@ server <- function(input, output,session){
     datatable(options = list(
                 scrollX = TRUE,
                autoWidth = FALSE,
-                select = TRUE,
+                
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -1335,7 +1335,7 @@ server <- function(input, output,session){
               
               rownames = FALSE,
               extensions = c('Buttons', 
-                             'Select',
+                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -1377,7 +1377,7 @@ server <- function(input, output,session){
   bfracio_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1395,7 +1395,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -1450,7 +1450,7 @@ server <- function(input, output,session){
   bagreg_fracio_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      select = TRUE,
+      
      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
@@ -1475,7 +1475,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -1539,7 +1539,7 @@ server <- function(input, output,session){
   bfracio_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -1557,7 +1557,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -1614,7 +1614,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1639,7 +1639,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -1704,7 +1704,7 @@ server <- function(input, output,session){
   bfracio_max_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                autoWidth = FALSE,
-                select = TRUE,
+                
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -1719,7 +1719,7 @@ server <- function(input, output,session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons', 
-                             'Select',
+                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -1758,7 +1758,7 @@ server <- function(input, output,session){
   bagreg_fracio_max_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
-                select = TRUE,
+                
                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
@@ -1783,7 +1783,7 @@ server <- function(input, output,session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons', 
-                             'Select',
+                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -1825,7 +1825,7 @@ server <- function(input, output,session){
   bfracio_max_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1843,7 +1843,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- req(input$INDICADORES_FRAG)
         agregacao <- req(input$AGREGACAO_REGIONAL1)
@@ -1896,7 +1896,7 @@ server <- function(input, output,session){
   bagreg_fracio_max_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      select = TRUE,
+      
      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
@@ -1921,7 +1921,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -1985,7 +1985,7 @@ server <- function(input, output,session){
   bfracio_max_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -2003,7 +2003,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -2061,7 +2061,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -2086,7 +2086,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -2152,7 +2152,7 @@ server <- function(input, output,session){
   bfrag_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                autoWidth = FALSE,
-                select = TRUE,
+                
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -2167,7 +2167,7 @@ server <- function(input, output,session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons',
-                             'Select',
+                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -2206,7 +2206,7 @@ server <- function(input, output,session){
   bagreg_frag_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
-                select = TRUE,
+                
                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
@@ -2231,7 +2231,7 @@ server <- function(input, output,session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons',
-                             'Select',
+                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -2271,10 +2271,10 @@ server <- function(input, output,session){
   })
   
   
-  bfrag_est <- eventReactive(input$BCALC1, { ## Botao de acao
+  bfrag_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -2292,7 +2292,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -2348,7 +2348,7 @@ server <- function(input, output,session){
   bagreg_frag_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      select = TRUE,
+      
      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
@@ -2373,7 +2373,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -2437,7 +2437,7 @@ server <- function(input, output,session){
   bfrag_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -2455,7 +2455,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -2513,7 +2513,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -2538,7 +2538,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -2603,7 +2603,7 @@ server <- function(input, output,session){
   bnepl_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                autoWidth = FALSE,
-                select = TRUE,
+                
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -2618,7 +2618,7 @@ server <- function(input, output,session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons',  
-                              'Select',
+                             
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -2656,7 +2656,7 @@ server <- function(input, output,session){
   bagreg_nepl_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
-                select = TRUE,
+                
                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
@@ -2681,7 +2681,7 @@ server <- function(input, output,session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons',   
-                              'Select',
+                             
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -2722,7 +2722,7 @@ server <- function(input, output,session){
   bnepl_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
                autoWidth = FALSE,
-                select = TRUE,
+                
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -2740,7 +2740,7 @@ server <- function(input, output,session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons', 
-                             'Select',
+                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -2795,7 +2795,7 @@ server <- function(input, output,session){
   bagreg_nepl_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
-                select = TRUE,
+                
                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
@@ -2819,7 +2819,7 @@ server <- function(input, output,session){
                class = "display",
               rownames = FALSE,
       extensions = c('Buttons',      
-                     'Select',
+                    
                      'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -2882,7 +2882,7 @@ server <- function(input, output,session){
   bnepl_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -2900,7 +2900,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -2958,7 +2958,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -2983,7 +2983,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -3048,7 +3048,7 @@ server <- function(input, output,session){
   bnepel_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3063,7 +3063,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',   
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -3101,7 +3101,7 @@ server <- function(input, output,session){
   bagreg_nepel_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      select = TRUE,
+      
      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
@@ -3126,7 +3126,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',  
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -3167,7 +3167,7 @@ server <- function(input, output,session){
   bnepel_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3185,7 +3185,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',   
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -3239,7 +3239,7 @@ server <- function(input, output,session){
   bagreg_nepel_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      select = TRUE,
+      
      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
@@ -3264,7 +3264,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -3328,7 +3328,7 @@ server <- function(input, output,session){
   bnepel_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -3346,7 +3346,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -3403,7 +3403,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3428,7 +3428,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -3497,7 +3497,7 @@ server <- function(input, output,session){
   bquoce_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3525,7 +3525,7 @@ server <- function(input, output,session){
       #                target = 'row+column'),
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -3557,24 +3557,6 @@ server <- function(input, output,session){
   
   
   
-  output$x1 <-renderPlotly({
-    s = input$quoce_fed_rows_selected
-    if(length(s))
-      plot_ly(
-        data = distcad_fed1, 
-        x = ~`Ano da eleição`,
-        y = ~`Quociente eleitoral`,
-        size = ~`Quociente eleitoral`,
-        color = ~UF,
-        type = "scatter",
-        mode = "lines+markers") %>% 
-      layout(
-        title = "Quociente eleitoral: 1998-1018",
-        showlegend = TRUE) 
-  })
-  
-  
-  
   ## Dados desagregados
   
   ### Deputado Federal
@@ -3597,7 +3579,7 @@ server <- function(input, output,session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3621,7 +3603,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -3662,7 +3644,7 @@ server <- function(input, output,session){
   bquoce_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3680,7 +3662,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -3730,7 +3712,7 @@ server <- function(input, output,session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3754,7 +3736,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -3796,7 +3778,7 @@ server <- function(input, output,session){
   bquoce_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -3814,7 +3796,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -3836,7 +3818,7 @@ server <- function(input, output,session){
                          } else{
                            distcad_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN1 &
-                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                                           Cargo == input$DESCRICAO_CARGO1) %>% 
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
@@ -3872,7 +3854,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3897,7 +3879,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -3909,11 +3891,13 @@ server <- function(input, output,session){
                          } else if(municipio == "Todos os municípios"){
                            data = distcad_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(-`Nome do município2`) %>% 
                              unique()
                          } else{
                            data = distcad_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(-`Nome do município2`) %>% 
                              unique()
                          }
                        }
@@ -3943,7 +3927,7 @@ server <- function(input, output,session){
     datatable(options = list(
      autoWidth = FALSE,
       ordering = TRUE,
-      select = TRUE,
+      
       searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -3960,7 +3944,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -4008,7 +3992,7 @@ server <- function(input, output,session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4032,7 +4016,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -4071,7 +4055,7 @@ server <- function(input, output,session){
   bquocp_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4089,7 +4073,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -4135,7 +4119,7 @@ server <- function(input, output,session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4159,7 +4143,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -4201,7 +4185,7 @@ server <- function(input, output,session){
   bquocp_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -4219,7 +4203,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -4241,12 +4225,13 @@ server <- function(input, output,session){
                          } else{
                            distcad_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN1 &
-                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                                           Cargo == input$DESCRICAO_CARGO1) %>% 
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
+                                           `Sigla do partido`,
                                            `Quociente partidário`) %>% 
-                             unique() %>% 
+                             unique %>% 
                              spread(`Ano da eleição`,
                                     `Quociente partidário`)
                            
@@ -4277,7 +4262,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4302,7 +4287,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -4313,12 +4298,14 @@ server <- function(input, output,session){
                            return()
                          } else if(municipio == "Todos os municípios"){
                            data = distcad_mun %>%
-                             dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>%
+                             select(-`Nome do município2`) %>% 
                              unique()
                          } else{
                            data = distcad_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(-`Nome do município2`) %>% 
                              unique()
                          }
                        }
@@ -4439,7 +4426,7 @@ server <- function(input, output,session){
   bconserv_br <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4454,7 +4441,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',       
-                     'Select'),{
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -4493,7 +4480,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4517,7 +4504,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
@@ -4554,7 +4541,7 @@ server <- function(input, output,session){
   bconserv_uf <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4572,7 +4559,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
@@ -4625,7 +4612,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4651,7 +4638,7 @@ server <- function(input, output,session){
       
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -4696,7 +4683,7 @@ server <- function(input, output,session){
   bconserv_mun <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -4714,7 +4701,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
@@ -4772,7 +4759,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4797,7 +4784,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
@@ -4808,12 +4795,14 @@ server <- function(input, output,session){
                            return()
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_mun %>%
-                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`) %>% 
                              unique()
                          }
                        }
@@ -4844,7 +4833,7 @@ server <- function(input, output,session){
   brenov_bt_br <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4859,7 +4848,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
@@ -4902,7 +4891,7 @@ server <- function(input, output,session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4925,7 +4914,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
@@ -4961,7 +4950,7 @@ server <- function(input, output,session){
   brenov_bt_uf <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4979,7 +4968,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',     
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -5034,7 +5023,7 @@ server <- function(input, output,session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -5058,7 +5047,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -5101,7 +5090,7 @@ server <- function(input, output,session){
   brenov_bt_mun <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -5119,7 +5108,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
@@ -5177,7 +5166,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -5202,7 +5191,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
@@ -5214,11 +5203,13 @@ server <- function(input, output,session){
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
-                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                                             Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`) %>% 
                              unique()
                          }
                        }
@@ -5252,7 +5243,7 @@ server <- function(input, output,session){
   brenov_liq_br <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -5267,7 +5258,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',  
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
@@ -5308,7 +5299,7 @@ server <- function(input, output,session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -5332,7 +5323,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
@@ -5368,7 +5359,7 @@ server <- function(input, output,session){
   brenov_liq_uf <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -5386,7 +5377,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -5441,7 +5432,7 @@ server <- function(input, output,session){
   bagreg_renov_liq_uf <- eventReactive(input$BCALC2, {
     datatable(options = list(
      autoWidth = FALSE,
-      select = TRUE,
+      
       scrollX = TRUE,
       ordering = TRUE, 
       searching = FALSE,
@@ -5466,7 +5457,7 @@ server <- function(input, output,session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
@@ -5511,7 +5502,7 @@ server <- function(input, output,session){
   brenov_liq_mun <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -5529,7 +5520,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
@@ -5587,7 +5578,7 @@ server <- function(input, output,session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      select = TRUE,
+      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -5612,7 +5603,7 @@ server <- function(input, output,session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'Select',
+                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
@@ -5623,12 +5614,14 @@ server <- function(input, output,session){
                            return()
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_mun %>%
-                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
-                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                                             Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`) %>% 
                              unique()
                          }
                        }
@@ -5795,7 +5788,6 @@ server <- function(input, output,session){
   balien_abs_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
                autoWidth = FALSE,
-                select = TRUE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -5812,8 +5804,7 @@ server <- function(input, output,session){
                   bom = TRUE))), 
                class = "display",
               rownames = FALSE,
-              extensions = c('Buttons',  
-                             'Select',
+              extensions = c('Buttons',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO3
@@ -5854,7 +5845,6 @@ server <- function(input, output,session){
     datatable(options = list(
                autoWidth = FALSE,
                 scrollX = TRUE,
-                select = TRUE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -5877,8 +5867,7 @@ server <- function(input, output,session){
                     text = 'Colunas'))), 
                class = "display",
               rownames = FALSE,
-              extensions = c('Buttons',   
-                             'Select',
+              extensions = c('Buttons',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO3
@@ -5915,7 +5904,6 @@ server <- function(input, output,session){
   balien_abs_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
                autoWidth = FALSE,
-                select = TRUE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -5932,8 +5920,7 @@ server <- function(input, output,session){
                   bom = TRUE))), 
                class = "display",
               rownames = FALSE,
-              extensions = c('Buttons', 
-                              'Select',
+              extensions = c('Buttons',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO3
@@ -5987,7 +5974,6 @@ server <- function(input, output,session){
     datatable(options = list(
                autoWidth = FALSE,
                 scrollX = TRUE,
-                select = TRUE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -6010,8 +5996,7 @@ server <- function(input, output,session){
                     text = 'Colunas'))), 
                class = "display",
               rownames = FALSE,
-              extensions = c('Buttons',  
-                              'Select',
+              extensions = c('Buttons',
                              'FixedColumns'),{
       indicador <- input$INDICADORES_ALIE
       cargo <- input$DESCRICAO_CARGO3
@@ -6053,7 +6038,6 @@ server <- function(input, output,session){
   balien_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
     datatable(options = list(
       autoWidth = FALSE,
-      select = TRUE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -6070,8 +6054,7 @@ server <- function(input, output,session){
         bom = TRUE))), 
       class = "display",
       rownames = FALSE,
-      extensions = c('Buttons', 
-                     'Select',
+      extensions = c('Buttons',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_ALIE
                        cargo <- input$DESCRICAO_CARGO3
@@ -6079,8 +6062,8 @@ server <- function(input, output,session){
                        municipio <- input$MUN3
                        if(indicador == "Alienação absoluta" & 
                           agregacao == "Município"){
-                         if(municipio =="Todos os municípios"){
-                           alien_mun %>% 
+                         if(municipio == "Todos os municípios"){
+                           data = alien_mun %>% 
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
                              dplyr::select(`Ano da eleição`,
                                            UF,
@@ -6090,9 +6073,9 @@ server <- function(input, output,session){
                              spread(`Ano da eleição`,
                                     `Alienação absoluta`) 
                          }else{
-                           alien_mun %>% 
+                           data = alien_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN3 & 
-                                             Cargo==input$DESCRICAO_CARGO3) %>% 
+                                            Cargo == input$DESCRICAO_CARGO3) %>% 
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
@@ -6128,7 +6111,6 @@ server <- function(input, output,session){
     datatable(options = list(
       autoWidth = FALSE,
       scrollX = TRUE,
-      select = TRUE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -6151,8 +6133,7 @@ server <- function(input, output,session){
           text = 'Colunas'))), 
       class = "display",
       rownames = FALSE,
-      extensions = c('Buttons',  
-                     'Select',
+      extensions = c('Buttons',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_ALIE
                        cargo <- input$DESCRICAO_CARGO3
@@ -6160,13 +6141,15 @@ server <- function(input, output,session){
                        municipio <- input$MUN3
                        if(indicador == "Alienação absoluta" & 
                           agregacao == "Município"){
-                         if(input$UF3 == "Todos os municípios"){
+                         if(municipio == "Todos os municípios"){
                            data = alien_mun %>% 
-                             dplyr::filter(Cargo==input$DESCRICAO_CARGO3)
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
+                             select(-`Nome do município2`)
                          } else{ 
                            data = alien_mun %>% 
                              dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
-                                             `Nome do município2` == input$MUN3) 
+                                             `Nome do município2` == input$MUN3)%>% 
+                             select(-`Nome do município2`)
                          }}
                      })
   })
@@ -6194,7 +6177,7 @@ output$alien_perc_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
 balien_perc_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
              autoWidth = FALSE,
-              select = TRUE,
+              
               ordering = TRUE, 
               searching = FALSE,
               lengthChange = FALSE,
@@ -6212,7 +6195,7 @@ balien_perc_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
              class = "display",
             rownames = FALSE,
             extensions = c('Buttons',   
-                           'Select',
+                          
                            'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO3
@@ -6253,7 +6236,7 @@ bagreg_alien_perc_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
              autoWidth = FALSE,
               scrollX = TRUE,
-              select = TRUE,
+              
               ordering = TRUE, 
               searching = FALSE,
               lengthChange = FALSE,
@@ -6277,7 +6260,7 @@ bagreg_alien_perc_br <- eventReactive(input$BCALC3, {
              class = "display",
             rownames = FALSE,
             extensions = c('Buttons',
-                           'Select',
+                          
                            'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO3
@@ -6318,7 +6301,7 @@ output$alien_perc_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
 balien_perc_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
              autoWidth = FALSE,
-              select = TRUE,
+              
               ordering = TRUE, 
               searching = FALSE,
               lengthChange = FALSE,
@@ -6336,7 +6319,7 @@ balien_perc_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
              class = "display",
             rownames = FALSE,
             extensions = c('Buttons',                              
-                           'Select',
+                          
                            'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO3
@@ -6393,7 +6376,7 @@ bagreg_alien_perc_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
              autoWidth = FALSE,
               scrollX = TRUE,
-              select = TRUE,
+              
               ordering = TRUE, 
               searching = FALSE,
               lengthChange = FALSE,
@@ -6417,7 +6400,7 @@ bagreg_alien_perc_uf <- eventReactive(input$BCALC3, {
              class = "display",
             rownames = FALSE,
             extensions = c('Buttons',
-                           'Select',
+                          
                            'FixedColumns'),{
     indicador <- input$INDICADORES_ALIE
     cargo <- input$DESCRICAO_CARGO3
@@ -6461,7 +6444,7 @@ output$alien_perc_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alien
 balien_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -6479,7 +6462,7 @@ balien_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao a
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons', 
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -6536,7 +6519,7 @@ bagreg_alien_perc_mun <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -6560,7 +6543,7 @@ bagreg_alien_perc_mun <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',  
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -6570,11 +6553,13 @@ bagreg_alien_perc_mun <- eventReactive(input$BCALC3, {
                         agregacao == "Município"){
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
-                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3)
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`)
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
-                                           `Nome do município2` == input$MUN3) 
+                                           `Nome do município2` == input$MUN3) %>% 
+                           select(-`Nome do município2`)
                        }}
                    })
 })
@@ -6601,10 +6586,10 @@ output$abst_abs_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienaca
   babst_abs_br()
 })
 
-babst_fabs_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+babst_abs_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -6622,7 +6607,7 @@ babst_fabs_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',   
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -6662,7 +6647,7 @@ bagreg_abst_abs_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -6686,7 +6671,7 @@ bagreg_abst_abs_br <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -6727,7 +6712,7 @@ output$abst_abs_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienaca
 babst_abs_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -6745,7 +6730,7 @@ babst_abs_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao perc
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -6802,7 +6787,7 @@ bagreg_abst_abs_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -6826,7 +6811,7 @@ bagreg_abst_abs_uf <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -6872,7 +6857,7 @@ output$abst_abs_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 babst_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -6890,7 +6875,7 @@ babst_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -6949,7 +6934,7 @@ bagreg_abst_abs_mun <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -6973,7 +6958,7 @@ bagreg_abst_abs_mun <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -6984,11 +6969,13 @@ bagreg_abst_abs_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        }}
                    })
@@ -7019,7 +7006,7 @@ output$abst_perc_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 babst_perc_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7037,7 +7024,7 @@ babst_perc_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',   
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7077,7 +7064,7 @@ bagreg_abst_perc_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7101,7 +7088,7 @@ bagreg_abst_perc_br <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7140,7 +7127,7 @@ output$abst_perc_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 babst_perc_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7158,7 +7145,7 @@ babst_perc_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7215,7 +7202,7 @@ bagreg_abst_perc_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7239,7 +7226,7 @@ bagreg_abst_perc_uf <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7284,7 +7271,7 @@ output$abst_perc_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
 babst_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7302,7 +7289,7 @@ babst_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7361,7 +7348,7 @@ bagreg_abst_perc_mun <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7385,7 +7372,7 @@ bagreg_abst_perc_mun <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7396,11 +7383,13 @@ bagreg_abst_perc_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        }}
                    })
@@ -7431,7 +7420,7 @@ output$vtbr_abs_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienaca
 bvtbr_abs_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7449,7 +7438,7 @@ bvtbr_abs_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao perc
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',   
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7490,7 +7479,7 @@ bagreg_vtbr_abs_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7514,7 +7503,7 @@ bagreg_vtbr_abs_br <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7555,7 +7544,7 @@ output$vtbr_abs_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienaca
 bvtbr_abs_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7573,7 +7562,7 @@ bvtbr_abs_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao perc
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7630,7 +7619,7 @@ bagreg_vtbr_abs_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7654,7 +7643,7 @@ bagreg_vtbr_abs_uf <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7698,7 +7687,7 @@ output$vtbr_abs_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 bvtbr_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7716,7 +7705,7 @@ bvtbr_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7775,7 +7764,7 @@ bagreg_vtbr_abs_mun <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7799,7 +7788,7 @@ bagreg_vtbr_abs_mun <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7810,11 +7799,13 @@ bagreg_vtbr_abs_mun <- eventReactive(input$BCALC3, {
                        if(input$UF3 == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        }}
                    })
@@ -7845,7 +7836,7 @@ output$vtbr_perc_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 bvtbr_perc_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7863,7 +7854,7 @@ bvtbr_perc_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',   
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7904,7 +7895,7 @@ bagreg_vtbr_perc_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7928,7 +7919,7 @@ bagreg_vtbr_perc_br <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7969,7 +7960,7 @@ output$vtbr_perc_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 bvtbr_perc_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7987,7 +7978,7 @@ bvtbr_perc_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8044,7 +8035,7 @@ bagreg_vtbr_perc_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8068,7 +8059,7 @@ bagreg_vtbr_perc_uf <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8113,7 +8104,6 @@ output$vtbr_perc_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
 bvtbr_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8130,8 +8120,7 @@ bvtbr_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
       bom = TRUE))), 
     class = "display",
     rownames = FALSE,
-    extensions = c('Buttons',                              
-                   'Select',
+    extensions = c('Buttons',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8139,7 +8128,7 @@ bvtbr_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
                      municipio <- input$MUN3
                      if(indicador == "Votos brancos percentuais" & 
                         agregacao == "Município"){
-                       if(uf=="Todos os municípios"){
+                       if(municipio =="Todos os municípios"){
                          alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                            dplyr::select(`Ano da eleição`,
@@ -8190,7 +8179,6 @@ bagreg_vtbr_perc_mun <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8214,7 +8202,6 @@ bagreg_vtbr_perc_mun <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8222,14 +8209,16 @@ bagreg_vtbr_perc_mun <- eventReactive(input$BCALC3, {
                      municipio <- input$MUN3
                      if(indicador == "Votos brancos percentuais" & 
                         agregacao == "Município"){
-                       if(input$UF3 == "Todos os municípios"){
+                       if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        }}
                    })
@@ -8262,7 +8251,7 @@ output$vtnl_abs_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienaca
 bvtnl_abs_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8280,7 +8269,7 @@ bvtnl_abs_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao perc
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',   
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8321,7 +8310,7 @@ bagreg_vtnl_abs_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8345,7 +8334,7 @@ bagreg_vtnl_abs_br <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8386,7 +8375,7 @@ output$vtnl_abs_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienaca
 bvtnl_abs_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8404,7 +8393,7 @@ bvtnl_abs_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao perc
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8461,7 +8450,7 @@ bagreg_vtnl_abs_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8485,7 +8474,7 @@ bagreg_vtnl_abs_uf <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8530,7 +8519,7 @@ output$vtnl_abs_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 bvtnl_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8548,7 +8537,7 @@ bvtnl_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8607,7 +8596,7 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8631,7 +8620,7 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8642,11 +8631,13 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município` == input$MUN3 &
-                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                                           Cargo==input$DESCRICAO_CARGO3) %>%
+                           select(-`Nome do município2`) %>% 
                            unique()
                        }}
                    })
@@ -8678,7 +8669,7 @@ output$vtnl_perc_br <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 bvtnl_perc_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8696,7 +8687,7 @@ bvtnl_perc_br <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',   
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8737,7 +8728,7 @@ bagreg_vtnl_perc_br <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8761,7 +8752,7 @@ bagreg_vtnl_perc_br <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8802,7 +8793,7 @@ output$vtnl_perc_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 bvtnl_perc_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8820,7 +8811,7 @@ bvtnl_perc_uf <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8877,7 +8868,7 @@ bagreg_vtnl_perc_uf <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8901,7 +8892,7 @@ bagreg_vtnl_perc_uf <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8945,7 +8936,7 @@ output$vtnl_perc_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da aliena
 bvtnl_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8963,7 +8954,7 @@ bvtnl_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -9022,7 +9013,7 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9046,7 +9037,7 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -9057,11 +9048,13 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município` == input$MUN3 &
-                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                                           Cargo==input$DESCRICAO_CARGO3) %>%
+                           select(-`Nome do município2`) %>% 
                            unique()
                        }}
                    })
@@ -9193,7 +9186,7 @@ bvol_ele_br <- eventReactive(input$BCALC4, { ## Botao de acao
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_VOL
                      cargo <- input$DESCRICAO_CARGO4
@@ -9235,7 +9228,7 @@ bagreg_vol_ele_br <- eventReactive(input$BCALC4, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9259,7 +9252,7 @@ bagreg_vol_ele_br <- eventReactive(input$BCALC4, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',        
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_VOL
                      cargo <- input$DESCRICAO_CARGO4
@@ -9296,7 +9289,7 @@ output$vol_ele_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera s
 bvol_ele_uf <- eventReactive(input$BCALC4, { ## Botao de acao
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9314,7 +9307,7 @@ bvol_ele_uf <- eventReactive(input$BCALC4, { ## Botao de acao
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- req(input$INDICADORES_VOL)
                      agregacao <- req(input$AGREGACAO_REGIONAL4)
@@ -9368,7 +9361,7 @@ bagreg_vol_ele_uf <- eventReactive(input$BCALC4, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9392,7 +9385,7 @@ bagreg_vol_ele_uf <- eventReactive(input$BCALC4, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',        
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- req(input$INDICADORES_VOL)
                      agregacao <- req(input$AGREGACAO_REGIONAL4)
@@ -9437,7 +9430,6 @@ output$vol_ele_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera 
 bvol_ele_mun <- eventReactive(input$BCALC4, { ## Botao de acao
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9454,8 +9446,7 @@ bvol_ele_mun <- eventReactive(input$BCALC4, { ## Botao de acao
       bom = TRUE))), 
     class = "display",
     rownames = FALSE,
-    extensions = c('Buttons',              
-                   'Select',
+    extensions = c('Buttons',
                    'FixedColumns'),{
                      indicador <- req(input$INDICADORES_VOL)
                      agregacao <- req(input$AGREGACAO_REGIONAL4)
@@ -9464,7 +9455,7 @@ bvol_ele_mun <- eventReactive(input$BCALC4, { ## Botao de acao
                         agregacao == "Município"){
                        if(municipio == ""){
                          return()
-                       } else if(municipio == "Todas os municípios"){
+                       } else if(municipio == "Todos os municípios"){
                          vol_mun %>% 
                            dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4)) %>%
                            dplyr::select(`Ano da eleição`,
@@ -9511,7 +9502,7 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9534,8 +9525,7 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
         text = 'Colunas'))), 
     class = "display",
     rownames = FALSE,
-    extensions = c('Buttons',        
-                   'Select',
+    extensions = c('Buttons',
                    'FixedColumns'),{
                      indicador <- req(input$INDICADORES_VOL)
                      agregacao <- req(input$AGREGACAO_REGIONAL4)
@@ -9547,11 +9537,13 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
                        } else if(municipio == "Todos os municípios"){
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4)) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        } else{
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4) &
                                   `Nome do município2` == req(input$MUN4)) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        }
                      }
@@ -9598,7 +9590,7 @@ bvol_parl_br <- eventReactive(input$BCALC4, { ## Botao de acao
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_VOL
                      cargo <- input$DESCRICAO_CARGO4
@@ -9639,7 +9631,7 @@ bagreg_vol_parl_br <- eventReactive(input$BCALC4, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9663,7 +9655,7 @@ bagreg_vol_parl_br <- eventReactive(input$BCALC4, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',        
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_VOL
                      cargo <- input$DESCRICAO_CARGO4
@@ -9700,7 +9692,7 @@ output$vol_parl_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera 
 bvol_parl_uf <- eventReactive(input$BCALC4, { ## Botao de acao
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9718,7 +9710,7 @@ bvol_parl_uf <- eventReactive(input$BCALC4, { ## Botao de acao
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_VOL
                      agregacao <- input$AGREGACAO_REGIONAL4
@@ -9772,7 +9764,7 @@ bagreg_vol_parl_uf <- eventReactive(input$BCALC4, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9796,7 +9788,7 @@ bagreg_vol_parl_uf <- eventReactive(input$BCALC4, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',        
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_VOL
                      agregacao <- input$AGREGACAO_REGIONAL4
@@ -9841,7 +9833,7 @@ output$vol_parl_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera
 bvol_parl_mun <- eventReactive(input$BCALC4, { ## Botao de acao
   datatable(options = list(
     autoWidth = FALSE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9859,7 +9851,7 @@ bvol_parl_mun <- eventReactive(input$BCALC4, { ## Botao de acao
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',              
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- req(input$INDICADORES_VOL)
                      agregacao <- req(input$AGREGACAO_REGIONAL4)
@@ -9868,7 +9860,7 @@ bvol_parl_mun <- eventReactive(input$BCALC4, { ## Botao de acao
                         agregacao == "Município"){
                        if(municipio == ""){
                          return()
-                       } else if(municipio == "Todas os municípios"){
+                       } else if(municipio == "Todos os municípios"){
                          vol_mun %>% 
                            dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4)) %>%
                            dplyr::select(`Ano da eleição`,
@@ -9915,7 +9907,7 @@ bagreg_vol_parl_mun <- eventReactive(input$BCALC4, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    select = TRUE,
+    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9939,7 +9931,7 @@ bagreg_vol_parl_mun <- eventReactive(input$BCALC4, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',        
-                   'Select',
+                  
                    'FixedColumns'),{
                      indicador <- req(input$INDICADORES_VOL)
                      agregacao <- req(input$AGREGACAO_REGIONAL4)
@@ -9951,11 +9943,13 @@ bagreg_vol_parl_mun <- eventReactive(input$BCALC4, {
                        } else if(municipio == "Todos os municípios"){
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4)) %>% 
+                           select(-`Nome do município2`) %>% 
                            unique()
                        } else{
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4) &
-                                    `Nome do município2` == req(input$MUN4)) %>% 
+                                    `Nome do município2` == req(input$MUN4)) %>%
+                           select(-`Nome do município2`) %>% 
                            unique()
                        }
                      }
@@ -9963,6 +9957,5 @@ bagreg_vol_parl_mun <- eventReactive(input$BCALC4, {
 })
 
 }
-
 
 

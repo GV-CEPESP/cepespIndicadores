@@ -252,6 +252,8 @@ ind_eleicoes_vr$`Volatilidade parlamentar` <-
 ind_eleicoes_vr <- ind_eleicoes_vr %>% 
   arrange(UF)
 
+
+
 # 4. Salva os arquivos ----------------------------------------------------
 
 ### Volatilidade (Brasil)

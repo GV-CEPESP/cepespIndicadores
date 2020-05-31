@@ -80,14 +80,12 @@ ui <-
                              
                       )),
              
-             
             
-            tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  ## Definicao das ferramentas de selecao para a guia
-                                         ## "Fragmentacao legislativa"
+            tabPanel("Fragmentação legislativa", useShinydashboardPlus(),  
                       
                      sidebarLayout( 
                         
-                       div(id ="step1",
+                      
                         div(id ="Sidebar1",sidebarPanel(h5(align = "center","Faça sua consulta:"),width = 3,
                                                         
                                                        
@@ -116,16 +114,16 @@ ui <-
                                                   width = "50%"))
                                      
                                      
-                        ))),
+                        )),
                         
                         
                         mainPanel(id = "Main1",
                           
-                                  div(id ="step2",bsButton("showpanel1", 
+                                         bsButton("showpanel1", 
                                          label = NULL, 
                                          icon = icon("bars"),
                                          type = "toggle", 
-                                         value = TRUE)),
+                                         value = TRUE),
                                   
                                  
                                 
@@ -133,15 +131,15 @@ ui <-
                           absolutePanel(top = 0, right = 0, left = 65,
                                         
                                         absolutePanel(top = 0, right = 0, left = 260,
-                                        div(id ="step4",
+                                        
                                             actionBttn(inputId = "modal_frag",
                                                        color = "default",
                                                        icon = icon("question"), 
                                                        style = "material-circle",
-                                                       size = "md"))),
+                                                       size = "md")),
                                         
                                         
-                                        div(id ="step3",tabsetPanel(type = "pills",
+                                        tabsetPanel(type = "pills",
                                                     
                                                     tabPanel("Resumo", br(),
                                                              
@@ -152,13 +150,13 @@ ui <-
                                                                                   DT::dataTableOutput("nepl_br", width = "100%"))),
                                                                  column(12,
                                                                     absolutePanel(top = 0,
-                                                                                  right = 0 , 
+                                                                                  right = 0, 
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("nepl_uf", width = "100%"))),
                                                              
                                                                  column(12,
                                                                     absolutePanel(top = 0,
-                                                                                  right = 0 , 
+                                                                                  right = 0, 
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("nepl_mun", width = "100%"))),
                                                                  column(12,
@@ -168,7 +166,7 @@ ui <-
                                                                                   DT::dataTableOutput("nepel_br", width = "100%"))),
                                                                  column(12,
                                                                     absolutePanel(top = 0, 
-                                                                                  right = 0 ,  
+                                                                                  right = 0,  
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("nepel_uf", width = "100%"))),
                                                                  column(12,
@@ -184,23 +182,25 @@ ui <-
                                                                  column(12,
                                                                         absolutePanel(top = 0,
                                                                                    right = 0 , 
-                                                                                  left = 15,
+                                                                                   left = 15,
                                                                                    DT::dataTableOutput("fracio_uf", width = "100%"))),
-                                                                 column(12,
+                                                                  column(12,
                                                                     absolutePanel(top = 0,
                                                                                   right = 0 , 
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("fracio_mun", width = "100%"))),## Tabelas que serao exibidas
-                                                                 column(12,
+                                                                                  DT::dataTableOutput("fracio_mun", width = "100%"))),
+                                                                  column(12,
                                                                         absolutePanel(top = 0,
                                                                                    right = 0 , 
                                                                                   left = 15,
                                                                                    DT::dataTableOutput("fracio_max_br", width = "100%"))),
+                                                            
                                                                  column(12,
                                                                         absolutePanel(top = 0, 
                                                                                    right = 0 , 
                                                                                   left = 15,
                                                                                    DT::dataTableOutput("fracio_max_uf", width = "100%"))),
+                                                             
                                                                  column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 , 
@@ -231,12 +231,6 @@ ui <-
                                                                                   right = 0 ,  
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("dpg_uf", width = "100%"))),
-                                                             
-                                                                 column(12,
-                                                                    absolutePanel(top = 0, 
-                                                                                  right = 0 ,  
-                                                                                  left = 15,
-                                                                                  DT::dataTableOutput("dpg_mun", width = "100%"))),
                                                                  column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
@@ -246,7 +240,8 @@ ui <-
                                                                     absolutePanel(top = 0,
                                                                                   right = 0 , 
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("quoce_br", width = "100%"))),                                                               column(12,
+                                                                                  DT::dataTableOutput("quoce_br", width = "100%"))),                                                               
+                                                                 column(12,
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 , 
                                                                                   left = 15,
@@ -263,7 +258,7 @@ ui <-
                                                                                   DT::dataTableOutput("quocp_br", width = "100%"))),
                                                                   column(12,
                                                                     absolutePanel(top = 0, 
-                                                                                  right = 0 ,  
+                                                                                  right = 0,  
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("quocp_uf", width = "100%"))),
                                                                   column(12,
@@ -390,11 +385,11 @@ ui <-
                                                                                  right = 0 ,  
                                                                                  left = 15,
                                                                                  DT::dataTableOutput("agreg_quocp_uf"))),
-                                                            column(12,
+                                                                column(12,
                                                                    absolutePanel(top = 0, 
                                                                                  right = 0 ,  
                                                                                  left = 15,
-                                                                                 DT::dataTableOutput("agreg_quocp_mun")))))))))), ## Definicao dos indicadores
+                                                                                 DT::dataTableOutput("agreg_quocp_mun"))))))))), 
           
              
              tabPanel("Renovação parlamentar",  ## Definicao das ferramentas de selecao para a guia
@@ -499,7 +494,8 @@ ui <-
                                                                         absolutePanel(top = 0, 
                                                                                       right = 0 ,  
                                                                                       left = 15,
-                                                                                      DT::dataTableOutput("renov_liq_mun")))), ## Tabelas que serao exibidas
+                                                                                      DT::dataTableOutput("renov_liq_mun")))), 
+                                                    ## Tabelas que serao exibidas
                                                              tabPanel("Dados desagregados", br(),
                                                                       
                                                                       column(12,
@@ -733,6 +729,7 @@ ui <-
                                                                                      right = 0 , 
                                                                                      left = 15,
                                                                                      DT::dataTableOutput("vtnl_perc_mun")))),
+                                                    
                                                     tabPanel("Dados desagregados", br(),
                                                              
                                                              column(12,
@@ -944,6 +941,7 @@ ui <-
                                                                                 right = 0 ,  
                                                                                 left = 15, 
                                                                                 DT::dataTableOutput("vol_parl_mun")))),
+                                                           
                                                                      ## Tabelas que serao exibidas
                                                            tabPanel("Dados desagregados", br(),
                                                                     column(12,
@@ -981,6 +979,11 @@ ui <-
              
              
     tabPanel("Sobre", htmlOutput("sobre"))),
+  
+  add_busy_spinner(spin = "fulfilling-bouncing-circle",
+                   position = "top-right",
+                   margins = c(300, 650)
+  ),
   
     tags$footer(class = "rodape",
               

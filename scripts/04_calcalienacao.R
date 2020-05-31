@@ -315,7 +315,25 @@ cons_mun <- cons_mun %>%
          `Alienação absoluta`,
          `Alienação percentual`)
 
-# 4. Salva os arquivos ----------------------------------------------------
+# 4. Municipios -----------------------------------------------------------
+
+### Cria um dataframe com os municipios do Brasil
+
+
+municipios <- alien_mun %>% 
+  select(UF, `Código do município`,
+         `Nome do município`) %>% 
+  arrange(UF, `Nome do município`)
+
+municipios <- unique(municipios)
+
+municipios$`Município - UF` <- unique(paste(municipios$`Nome do município`, "-",
+                                            municipios$UF))
+
+municipios <- municipios %>% 
+  select(`Município - UF`)
+
+# 5. Salva os arquivos ----------------------------------------------------
 
 ## Salva os arquivos referentes aos indicadores de alienacao em .csv
 
@@ -329,10 +347,14 @@ write.csv(cons_uf, "data/output/alien_uf.csv")
 
 ### Cargos MUN
 
-write.csv(cons_mun, "data/output/alien_mun.csv")
+saveRDS(distcad_mun, "data/output/distcad_mun.rds")
+
+### Municipios
+
+write.csv(municipios, "data/output/municipios.csv")
 
 ## Remove da area de trabalho os bancos que nao serao mais utilizados
 
-rm(cons_br,cons_uf,cons_mun)
+rm(cons_br,cons_uf,cons_mun, municipios)
 
 

@@ -167,7 +167,7 @@ sen_uft <- get_elections(year = "1998, 2002, 2006, 2010, 2014, 2018",
 ## Outros cargos MUN
 
 pfcm <- get_elections(year = "2000,2004,2008,2012,2016", 
-                      position = "Vereador",
+                      position = "Prefeito",
                       regional_aggregation = "Municipio", 
                       political_aggregation = "Consolidado",
                       cached = TRUE)

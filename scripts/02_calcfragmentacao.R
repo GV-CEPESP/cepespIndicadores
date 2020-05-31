@@ -1181,6 +1181,7 @@ frag_leg_vr$`Número efetivo de partidos legislativo` <- as.character(frag_leg_v
 frag_leg_vr$Desproporcionalidade <- as.character(frag_leg_vr$Desproporcionalidade)
 
 
+
 # 6. Salva os arquivos ------------------------------------------------------
 
 ## Salva os arquivos referentes aos indicadores de fragmentacao
@@ -1196,7 +1197,7 @@ write.csv(frag_leg_uf, "data/output/frag_leg_uf.csv")
 
 ### Fragmentcao legislativa (Municipio)
 
-write.csv(frag_leg_vr, "data/output/frag_leg_mun.csv")
+saveRDS(frag_leg_mun, "data/output/frag_leg_mun.rds")
 
 ###  Distribuicao de cadeiras (Deputado Federal)
 
@@ -1208,7 +1209,7 @@ write.csv(vags_est, "data/output/distcad_est.csv")
 
 ### Distribuicao de cadeiras (Vereador)
 
-write.csv(vags_ver, "data/output/distcad_mun.csv")
+saveRDS(alien_mun, "data/output/alien_mun.rds")
 
 ### Problemas e cidades faltando
 
