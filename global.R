@@ -45,4 +45,10 @@ for(i in files){
 rm(df)
 
 
+frag_leg_mun <- readRDS("data/output/frag_leg_mun.rds")
 
+distcad_mun <- readRDS("data/output/distcad_mun.rds")
+
+alien_mun <- readRDS("data/output/alien_mun.rds")
+
+vol_mun <- readRDS("data/output/vol_mun.rds")
