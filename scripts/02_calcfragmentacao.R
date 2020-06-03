@@ -110,6 +110,14 @@ vags_fed$VOTOS_VALIDOS_UF <- pont_virg(vags_fed$VOTOS_VALIDOS_UF)
 
 vags_fed$VOT_PART_UF <- pont_virg(vags_fed$VOT_PART_UF)
 
+vags_fed$`Quociente partidário` <- gsub("\\,", ".", vags_fed$`Quociente partidário`)
+
+vags_fed$`Quociente partidário` <- as.numeric(vags_fed$`Quociente partidário`)
+
+vags_fed$`Quociente partidário` <- format(round(vags_fed$`Quociente partidário`,
+                                                   digits = 2),
+                                             nsmall = 2)
+
 
 ### Deputado estadual
 
@@ -121,6 +129,14 @@ vags_est$QUOCIENTE_ELEITORAL <-pont_virg(vags_est$QUOCIENTE_ELEITORAL)
 vags_est$VOTOS_VALIDOS_UF <- pont_virg(vags_est$VOTOS_VALIDOS_UF)
 
 vags_est$VOT_PART_UF <- pont_virg(vags_est$VOT_PART_UF)
+
+vags_est$`Quociente partidário` <- gsub("\\,", ".", vags_est$`Quociente partidário`)
+
+vags_est$`Quociente partidário` <- as.numeric(vags_est$`Quociente partidário`)
+
+vags_est$`Quociente partidário` <- format(round(vags_est$`Quociente partidário`,
+                                                digits = 2),
+                                          nsmall = 2)
 
 
 ### Vereador
@@ -140,6 +156,14 @@ vags_ver$`Votos válidos` <- pont_virg(vags_ver$`Votos válidos`)
 vags_ver$`Votos do partido` <- pont_virg(vags_ver$`Votos do partido`)
 
 vags_ver$`Quociente eleitoral` <- pont_virg(vags_ver$`Quociente eleitoral`)
+
+vags_ver$`Quociente partidário` <- gsub("\\,", ".", vags_ver$`Quociente partidário`)
+
+vags_ver$`Quociente partidário` <- as.numeric(vags_ver$`Quociente partidário`)
+
+vags_ver$`Quociente partidário` <- format(round(vags_ver$`Quociente partidário`,
+                                                   digits = 2),
+                                             nsmall = 2)
 
 ## Descarta as colunas desnecessarias, padroniza e renomeia as restantes
 
@@ -227,7 +251,6 @@ vags_ver$Cargo <- str_to_title(vags_ver$Cargo) ## Transforma a primeira letra de
 
 vags_ver$`Nome do município` <- str_to_title(vags_ver$`Nome do município`)
 
-vags_ver$`Quociente partidário` <- as.character(vags_ver$`Quociente partidário`)
 
 vags_ver <- unique(vags_ver)
 
@@ -1209,7 +1232,7 @@ write.csv(vags_est, "data/output/distcad_est.csv")
 
 ### Distribuicao de cadeiras (Vereador)
 
-saveRDS(alien_mun, "data/output/alien_mun.rds")
+saveRDS(vags_ver, "data/output/distcad_mun.rds")
 
 ### Problemas e cidades faltando
 

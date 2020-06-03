@@ -3830,6 +3830,7 @@ server <- function(input, output){
                            
                          }
                        }
+                       
                      })
   })  
   
@@ -3854,7 +3855,6 @@ server <- function(input, output){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3879,7 +3879,6 @@ server <- function(input, output){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -4202,8 +4201,7 @@ server <- function(input, output){
         bom = TRUE))), 
       class = "display",
       rownames = FALSE,
-      extensions = c('Buttons', 
-                    
+      extensions = c('Buttons',
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -4218,6 +4216,7 @@ server <- function(input, output){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
+                                           `Sigla do partido`,
                                            `Quociente partidário`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
@@ -4234,8 +4233,6 @@ server <- function(input, output){
                              unique %>% 
                              spread(`Ano da eleição`,
                                     `Quociente partidário`)
-                           
-                           
                          }
                        }
                      })
@@ -4262,7 +4259,6 @@ server <- function(input, output){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4311,6 +4307,7 @@ server <- function(input, output){
                        }
                      })
   })
+  
   
   
 # 2.2. Renovacao parlamentar ---------------------------------------------- 

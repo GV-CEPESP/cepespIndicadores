@@ -195,7 +195,7 @@ cons_mun$`Percentual de votos nulos` <- round(100*(cons_mun$`Quantidade de votos
 
 # 3. Limpeza e padronizacao dos dados -------------------------------------
 
-options(OutDec= ",", digits=4)
+options(OutDec= ",")
 
 ## Padroniza o formato numerico das colunas
 
@@ -212,13 +212,35 @@ cons_br$`Quantidade de eleitores aptos` <- formatC(cons_br$`Quantidade de eleito
 
 cons_br$`Alienação absoluta` <- formatC(cons_br$`Alienação absoluta`, format="f", big.mark = ".", digits=0)
 
-cons_br$`Alienação percentual` <- as.character(cons_br$`Alienação percentual`)
+cons_br$`Percentual de abstenções` <- gsub("\\,", ".", cons_br$`Percentual de abstenções`)
 
-cons_br$`Percentual de abstenções` <- as.character(cons_br$`Percentual de abstenções`)
+cons_br$`Percentual de abstenções` <- as.numeric(cons_br$`Percentual de abstenções`)
 
-cons_br$`Percentual de votos brancos` <- as.character(cons_br$`Percentual de votos brancos`)
+cons_br$`Percentual de abstenções` <- format(round(cons_br$`Percentual de abstenções`,
+                                                    digits = 2),
+                                              nsmall = 2)
+cons_br$`Percentual de votos brancos` <- gsub("\\,", ".", cons_br$`Percentual de votos brancos`)
 
-cons_br$`Percentual de votos nulos` <- as.character(cons_br$`Percentual de votos nulos`)
+cons_br$`Percentual de votos brancos` <- as.numeric(cons_br$`Percentual de votos brancos`)
+
+cons_br$`Percentual de votos brancos` <- format(round(cons_br$`Percentual de votos brancos`,
+                                                       digits = 2),
+                                                 nsmall = 2)
+
+cons_br$`Percentual de votos nulos` <- gsub("\\,", ".", cons_br$`Percentual de votos nulos`)
+
+cons_br$`Percentual de votos nulos` <- as.numeric(cons_br$`Percentual de votos nulos`)
+
+cons_br$`Percentual de votos nulos` <- format(round(cons_br$`Percentual de votos nulos`,
+                                                     digits = 2),
+                                               nsmall = 2)
+cons_br$`Alienação percentual` <- gsub("\\,", ".", cons_br$`Alienação percentual`)
+
+cons_br$`Alienação percentual` <- as.numeric(cons_br$`Alienação percentual`)
+
+cons_br$`Alienação percentual` <- format(round(cons_br$`Alienação percentual`,
+                                                digits = 2),
+                                          nsmall = 2)
 
 
 ### UF
@@ -233,13 +255,35 @@ cons_uf$`Quantidade de eleitores aptos` <- formatC(cons_uf$`Quantidade de eleito
 
 cons_uf$`Alienação absoluta` <- formatC(cons_uf$`Alienação absoluta`, format="f", big.mark = ".", digits=0)
 
-cons_uf$`Alienação percentual` <- as.character(cons_uf$`Alienação percentual`)
+cons_uf$`Percentual de abstenções` <- gsub("\\,", ".", cons_uf$`Percentual de abstenções`)
 
-cons_uf$`Percentual de abstenções` <- as.character(cons_uf$`Percentual de abstenções`)
+cons_uf$`Percentual de abstenções` <- as.numeric(cons_uf$`Percentual de abstenções`)
 
-cons_uf$`Percentual de votos brancos` <- as.character(cons_uf$`Percentual de votos brancos`)
+cons_uf$`Percentual de abstenções` <- format(round(cons_uf$`Percentual de abstenções`,
+                                                    digits = 2),
+                                              nsmall = 2)
+cons_uf$`Percentual de votos brancos` <- gsub("\\,", ".", cons_uf$`Percentual de votos brancos`)
 
-cons_uf$`Percentual de votos nulos` <- as.character(cons_uf$`Percentual de votos nulos`)
+cons_uf$`Percentual de votos brancos` <- as.numeric(cons_uf$`Percentual de votos brancos`)
+
+cons_uf$`Percentual de votos brancos` <- format(round(cons_uf$`Percentual de votos brancos`,
+                                                       digits = 2),
+                                                 nsmall = 2)
+
+cons_uf$`Percentual de votos nulos` <- gsub("\\,", ".", cons_uf$`Percentual de votos nulos`)
+
+cons_uf$`Percentual de votos nulos` <- as.numeric(cons_uf$`Percentual de votos nulos`)
+
+cons_uf$`Percentual de votos nulos` <- format(round(cons_uf$`Percentual de votos nulos`,
+                                                     digits = 2),
+                                               nsmall = 2)
+cons_uf$`Alienação percentual` <- gsub("\\,", ".", cons_uf$`Alienação percentual`)
+
+cons_uf$`Alienação percentual` <- as.numeric(cons_uf$`Alienação percentual`)
+
+cons_uf$`Alienação percentual` <- format(round(cons_uf$`Alienação percentual`,
+                                                digits = 2),
+                                          nsmall = 2)
 
 ### Municipio
 
@@ -251,15 +295,29 @@ cons_mun$`Quantidade de votos nulos` <- formatC(cons_mun$`Quantidade de votos nu
 
 cons_mun$`Quantidade de eleitores aptos` <- formatC(cons_mun$`Quantidade de eleitores aptos`, format="f", big.mark = ".", digits=0)
 
-cons_mun$`Alienação absoluta` <- formatC(cons_mun$`Alienação absoluta`, format="f", big.mark = ".", digits=0)
+cons_mun$`Percentual de abstenções` <- as.numeric(cons_mun$`Percentual de abstenções`)
 
-cons_mun$`Alienação percentual` <- as.character(cons_mun$`Alienação percentual`)
+cons_mun$`Percentual de abstenções` <- format(round(cons_mun$`Percentual de abstenções`,
+                                                     digits = 2),
+                                               nsmall = 2)
+cons_mun$`Percentual de votos brancos` <- as.numeric(cons_mun$`Percentual de votos brancos`)
 
-cons_mun$`Percentual de abstenções` <- as.character(cons_mun$`Percentual de abstenções`)
+cons_mun$`Percentual de votos brancos` <- format(round(cons_mun$`Percentual de votos brancos`,
+                                                     digits = 2),
+                                               nsmall = 2)
 
-cons_mun$`Percentual de votos brancos` <- as.character(cons_mun$`Percentual de votos brancos`)
+cons_mun$`Percentual de votos nulos` <- as.numeric(cons_mun$`Percentual de votos nulos`)
 
-cons_mun$`Percentual de votos nulos` <- as.character(cons_mun$`Percentual de votos nulos`)
+cons_mun$`Percentual de votos nulos` <- format(round(cons_mun$`Percentual de votos nulos`,
+                                                        digits = 2),
+                                                  nsmall = 2)
+
+cons_mun$`Alienação percentual` <- as.numeric(cons_mun$`Alienação percentual`)
+
+cons_mun$`Alienação percentual` <- format(round(cons_mun$`Alienação percentual`,
+                                                        digits = 2),
+                                                  nsmall = 2)
+
 
 ## Organiza as colunas
 
@@ -320,7 +378,7 @@ cons_mun <- cons_mun %>%
 ### Cria um dataframe com os municipios do Brasil
 
 
-municipios <- alien_mun %>% 
+municipios <- cons_mun %>% 
   select(UF, `Código do município`,
          `Nome do município`) %>% 
   arrange(UF, `Nome do município`)
@@ -347,7 +405,7 @@ write.csv(cons_uf, "data/output/alien_uf.csv")
 
 ### Cargos MUN
 
-saveRDS(distcad_mun, "data/output/distcad_mun.rds")
+saveRDS(cons_mun, "data/output/alien_mun.rds")
 
 ### Municipios
 
