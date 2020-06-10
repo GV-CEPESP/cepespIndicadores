@@ -7684,7 +7684,6 @@ output$vtbr_abs_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 bvtbr_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -7701,8 +7700,7 @@ bvtbr_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
       bom = TRUE))), 
     class = "display",
     rownames = FALSE,
-    extensions = c('Buttons',                              
-                  
+    extensions = c('Buttons',           
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -7710,7 +7708,7 @@ bvtbr_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
                      municipio <- input$MUN3
                      if(indicador == "Votos brancos absolutos" & 
                         agregacao == "Município"){
-                       if(uf=="Todos os municípios"){
+                       if(municipio =="Todos os municípios"){
                          alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                            dplyr::select(`Ano da eleição`,
@@ -7793,14 +7791,14 @@ bagreg_vtbr_abs_mun <- eventReactive(input$BCALC3, {
                      municipio <- input$MUN3
                      if(indicador == "Votos brancos absolutos" & 
                         agregacao == "Município"){
-                       if(input$UF3 == "Todos os municípios"){
+                       if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
                            select(-`Nome do município2`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
-                           dplyr::filter(`Nome do município` == input$MUN3 &
+                           dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
                            select(-`Nome do município2`) %>% 
                            unique()
@@ -8145,9 +8143,9 @@ bvtbr_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
                                          UF,
                                          `Nome do município`,
                                          Turno,
-                                         `Quantidade de votos brancos`) %>% 
+                                         `Percentual de votos brancos`) %>% 
                            spread(`Ano da eleição`,
-                                  `Quantidade de votos brancos`)}
+                                  `Percentual de votos brancos`)}
                        
                      }
                    })
@@ -8162,7 +8160,7 @@ ag_vtbrperc_mun <- reactive({
   cargo <- input$DESCRICAO_CARGO3
   agregacao <- input$AGREGACAO_REGIONAL3
   uf <- input$UF3
-  if(indicador == "Votos brancos percentual" & 
+  if(indicador == "Votos brancos percentuais" & 
      agregacao == "Município"){
     return(input$agreg_vtbr_perc_mun)
   }
@@ -8213,7 +8211,7 @@ bagreg_vtbr_perc_mun <- eventReactive(input$BCALC3, {
                            unique()
                        } else{ 
                          data = alien_mun %>% 
-                           dplyr::filter(`Nome do município` == input$MUN3 &
+                           dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
                            select(-`Nome do município2`) %>% 
                            unique()
@@ -8516,7 +8514,6 @@ output$vtnl_abs_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienac
 bvtnl_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
   datatable(options = list(
     autoWidth = FALSE,
-    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8534,14 +8531,13 @@ bvtnl_abs_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',                              
-                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
                      agregacao <- input$AGREGACAO_REGIONAL3
                      municipio <- input$MUN3
                      if(indicador == "Votos nulos absolutos" & 
-                        agregacao == "UF"){
+                        agregacao == "Município"){
                        if(municipio =="Todos os municípios"){
                          alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
@@ -8593,7 +8589,6 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -8617,7 +8612,6 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -8632,8 +8626,8 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
                            unique()
                        } else{ 
                          data = alien_mun %>% 
-                           dplyr::filter(`Nome do município` == input$MUN3 &
-                                           Cargo==input$DESCRICAO_CARGO3) %>%
+                           dplyr::filter(`Nome do município2` == input$MUN3 &
+                                          Cargo==input$DESCRICAO_CARGO3) %>%
                            select(-`Nome do município2`) %>% 
                            unique()
                        }}
@@ -8958,7 +8952,7 @@ bvtnl_perc_mun <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao pe
                      agregacao <- input$AGREGACAO_REGIONAL3
                      municipio <- input$MUN3
                      if(indicador == "Votos nulos percentuais" & 
-                        agregacao == "UF"){
+                        agregacao == "Município"){
                        if(municipio =="Todos os municípios"){
                          alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
@@ -9010,7 +9004,6 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -9034,7 +9027,6 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
     class = "display",
     rownames = FALSE,
     extensions = c('Buttons',
-                  
                    'FixedColumns'),{
                      indicador <- input$INDICADORES_ALIE
                      cargo <- input$DESCRICAO_CARGO3
@@ -9049,8 +9041,8 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
                            unique()
                        } else{ 
                          data = alien_mun %>% 
-                           dplyr::filter(`Nome do município` == input$MUN3 &
-                                           Cargo==input$DESCRICAO_CARGO3) %>%
+                           dplyr::filter(`Nome do município2` == input$MUN3 &
+                                         Cargo==input$DESCRICAO_CARGO3) %>%
                            select(-`Nome do município2`) %>% 
                            unique()
                        }}

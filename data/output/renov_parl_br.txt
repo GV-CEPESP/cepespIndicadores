@@ -1,6 +1,0 @@
-﻿"","Ano da eleição","Cargo","Cadeiras disponíveis","Reapresentação","Reeleitos","Conservação","Renovação bruta","Renovação líquida"
-"1",2002,"Deputado Federal",513,370,264,"71,35","48,54","28,65"
-"2",2006,"Deputado Federal",513,393,257,"65,39","49,90","34,61"
-"3",2010,"Deputado Federal",513,379,282,"74,41","45,03","25,59"
-"4",2014,"Deputado Federal",513,354,263,"74,29","48,73","25,71"
-"5",2018,"Deputado Federal",513,381,240,"62,99","53,22","37,01"
