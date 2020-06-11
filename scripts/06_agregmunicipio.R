@@ -41,17 +41,6 @@ vrcm <- get_elections(year = "2000,2004,2008,2012,2016",
                       political_aggregation = "Consolidado",
                       cached = TRUE)
 
-### Cria um banco com o numero de eleitores aptos por municipio
-
-aptos_mun <- vrcm %>% 
-  select("ANO_ELEICAO",
-         "UF",
-         "COD_MUN_TSE",
-         "QTD_APTOS") %>% 
-  rename("Ano da eleição" = "ANO_ELEICAO",
-         "Código do município" = "COD_MUN_TSE",
-         "Eleitores aptos" = "QTD_APTOS")
-
 ## Carrega os indicadores ja calculados
 
 files <- list.files(file.path(getwd(),"/data/output"), 
@@ -66,46 +55,216 @@ for(i in files){
 
 rm(df,i,files)
 
-                   
 
-# 2. Agrega os dados ------------------------------------------------------
+### Cria um banco com o numero de eleitores aptos por municipio
+
+aptos <- vrcm %>% 
+  select("ANO_ELEICAO",
+         "UF",
+         "COD_MUN_TSE",
+         "QTD_APTOS") %>% 
+  rename("Ano da eleição" = "ANO_ELEICAO",
+         "Código do município" = "COD_MUN_TSE",
+         "Eleitores aptos" = "QTD_APTOS")
+
+### Transforma a coluna ano da eleição em caracter
+
+aptos$`Ano da eleição` <- as.character(aptos$`Ano da eleição`)
+
+# 2. Join ------------------------------------------------------
 
 
 # 2.1. Eleitores aptos ----------------------------------------------------
 
 
+files <- ls(pattern = "_mun")
+
+for(i in 1:length(ls(pattern = "_mun"))){
+  
+  cat("Lendo", ls(pattern = "_mun")[i] , "\n")
+  df <- left_join(get(ls(pattern = "_mun")[i]), aptos)
+  df <- df[,1:length(df)]
+  assign(paste(substr(ls(pattern = "_mun")[i],1,nchar(ls(pattern = "_mun")[i]))), df)
+  
+}
+
+
+# 3. Cria os intervalos ---------------------------------------------------
+
+options(scipen = 999)
+
+## Cria os intervalos de eleitores aptos
+
+pretty_breaks <- c(0,5000,10000,20000,50000,100000,200000)
+
+## Cria uma variavel com o maior numero de eleitores aptos
+
+max <- max(frag_leg_mun$`Eleitores aptos`)
+
+## Cria as quebras e as legendas 
+
+labels <- c()
+
+brks <- c(pretty_breaks, max)
+
+for(idx in 1:length(brks)){
+  labels <- c(labels,round(brks[idx + 1], 2))
+}
+
+labels <- labels[1:length(labels)-1]
+
+
+## Cria uma variavel com os valores dos intervalos 
+
 ### Fragmentacao legislativa
 
-aptos_mun$`Ano da eleição` <- as.character(aptos_mun$`Ano da eleição`)
-
-frag_leg_mun <- left_join(frag_leg_mun, aptos_mun)
+frag_leg_mun$`Eleitores aptos` <- cut(frag_leg_mun$`Eleitores aptos`, 
+                                      breaks = brks, 
+                                      include.lowest = TRUE, 
+                                      labels = labels)
 
 frag_leg_mun <- frag_leg_mun %>% 
-  dplyr::select(`Ano da eleição`,
-                  UF, 
-                  `Código do município`,
-                  `Nome do município`,
-                  Cargo,
-                  `Vagas`,
-                  `Eleitores aptos`,
-                  `Votos válidos`,
-                  `Sigla do partido`,
-                  `Total de votos conquistados`,
-                  `Total de cadeiras conquistadas`,
-                  `Percentual de votos conquistados`,
-                  `Percentual de cadeiras conquistadas`,
-                  `Número efetivo de partidos eleitoral`,
-                  `Número efetivo de partidos legislativo`,
-                  Fracionalização,
-                  `Fracionalização máxima`,
-                  Fragmentação,
-                  `Desproporcionalidade`) %>% 
-  dplyr::rename("Cadeiras disponíveis" = "Vagas")
+  mutate(`Eleitores aptos` = ifelse(`Eleitores aptos` == 5000,
+                       "Até 5 mil eleitores",
+                       ifelse(`Eleitores aptos` == 10000,
+                              "De 5 a 10 mil eleitores",
+                              ifelse(`Eleitores aptos` == 20000,
+                                     "De 10 a 20 mil eleitores",
+                                     ifelse(`Eleitores aptos` == 50000,
+                                            "De 20 a 50 mil eleitores",
+                                            ifelse(`Eleitores aptos` == 100000,
+                                                   "De 50 a 100 mil eleitores",
+                                                   ifelse(`Eleitores aptos` == 200000,
+                                                          "De 100 a 200 mil eleitores",
+                                                          ifelse(`Eleitores aptos` == 8886195,
+                                                                 "Acima de 200 mil eleitores",
+                                                                 NA))))))))
 
 ### Distribuicao de cadeiras
 
-distcad_mun <- left_join(distcad_mun, aptos_mun)
+distcad_mun$`Eleitores aptos` <- cut(distcad_mun$`Eleitores aptos`, 
+                                      breaks = brks, 
+                                      include.lowest = TRUE, 
+                                      labels = labels)
 
+distcad_mun <- distcad_mun %>% 
+  mutate(`Eleitores aptos` = ifelse(`Eleitores aptos` == 5000,
+                       "Até 5 mil eleitores",
+                       ifelse(`Eleitores aptos` == 10000,
+                              "De 5 a 10 mil eleitores",
+                              ifelse(`Eleitores aptos` == 20000,
+                                     "De 10 a 20 mil eleitores",
+                                     ifelse(`Eleitores aptos` == 50000,
+                                            "De 20 a 50 mil eleitores",
+                                            ifelse(`Eleitores aptos` == 100000,
+                                                   "De 50 a 100 mil eleitores",
+                                                   ifelse(`Eleitores aptos` == 200000,
+                                                          "De 100 a 200 mil eleitores",
+                                                          ifelse(`Eleitores aptos` == 8886195,
+                                                                 "Acima de 200 mil eleitores",
+                                                                 NA))))))))
+
+### Renovacao parlamentar
+
+renov_parl_mun$`Eleitores aptos` <- cut(renov_parl_mun$`Eleitores aptos`, 
+                                      breaks = brks, 
+                                      include.lowest = TRUE, 
+                                      labels = labels)
+
+renov_parl_mun <- renov_parl_mun %>% 
+  mutate(`Eleitores aptos` = ifelse(`Eleitores aptos` == 5000,
+                       "Até 5 mil eleitores",
+                       ifelse(`Eleitores aptos` == 10000,
+                              "De 5 a 10 mil eleitores",
+                              ifelse(`Eleitores aptos` == 20000,
+                                     "De 10 a 20 mil eleitores",
+                                     ifelse(`Eleitores aptos` == 50000,
+                                            "De 20 a 50 mil eleitores",
+                                            ifelse(`Eleitores aptos` == 100000,
+                                                   "De 50 a 100 mil eleitores",
+                                                   ifelse(`Eleitores aptos` == 200000,
+                                                          "De 100 a 200 mil eleitores",
+                                                          ifelse(`Eleitores aptos` == 8886195,
+                                                                 "Acima de 200 mil eleitores",
+                                                                 NA))))))))
+
+### Alienacao
+
+alien_mun$`Eleitores aptos` <- cut(alien_mun$`Eleitores aptos`, 
+                                      breaks = brks, 
+                                      include.lowest = TRUE, 
+                                      labels = labels)
+
+alien_mun <- alien_mun %>% 
+  mutate(`Eleitores aptos` = ifelse(`Eleitores aptos` == 5000,
+                       "Até 5 mil eleitores",
+                       ifelse(`Eleitores aptos` == 10000,
+                              "De 5 a 10 mil eleitores",
+                              ifelse(`Eleitores aptos` == 20000,
+                                     "De 10 a 20 mil eleitores",
+                                     ifelse(`Eleitores aptos` == 50000,
+                                            "De 20 a 50 mil eleitores",
+                                            ifelse(`Eleitores aptos` == 100000,
+                                                   "De 50 a 100 mil eleitores",
+                                                   ifelse(`Eleitores aptos` == 200000,
+                                                          "De 100 a 200 mil eleitores",
+                                                          ifelse(`Eleitores aptos` == 8886195,
+                                                                 "Acima de 200 mil eleitores",
+                                                                 NA))))))))
+
+### Volatilidade eleitoral
+
+vol_mun$`Eleitores aptos` <- cut(vol_mun$`Eleitores aptos`, 
+                                      breaks = brks, 
+                                      include.lowest = TRUE, 
+                                      labels = labels)
+
+vol_mun <- vol_mun %>% 
+  mutate(`Eleitores aptos` = ifelse(`Eleitores aptos` == 5000,
+                       "Até 5 mil eleitores",
+                       ifelse(`Eleitores aptos` == 10000,
+                              "De 5 a 10 mil eleitores",
+                              ifelse(`Eleitores aptos` == 20000,
+                                     "De 10 a 20 mil eleitores",
+                                     ifelse(`Eleitores aptos` == 50000,
+                                            "De 20 a 50 mil eleitores",
+                                            ifelse(`Eleitores aptos` == 100000,
+                                                   "De 50 a 100 mil eleitores",
+                                                   ifelse(`Eleitores aptos` == 200000,
+                                                          "De 100 a 200 mil eleitores",
+                                                          ifelse(`Eleitores aptos` == 8886195,
+                                                                 "Acima de 200 mil eleitores",
+                                                                 NA))))))))
+
+
+# 4. Padroniza os dados ---------------------------------------------------
+
+### Fragmentacao legislativa
+
+frag_leg_mun <- frag_leg_mun %>% 
+  dplyr::select(`Ano da eleição`,
+                UF, 
+                `Código do município`,
+                `Nome do município`,
+                Cargo,
+                `Vagas`,
+                `Votos válidos`,
+                `Sigla do partido`,
+                `Total de votos conquistados`,
+                `Total de cadeiras conquistadas`,
+                `Percentual de votos conquistados`,
+                `Percentual de cadeiras conquistadas`,
+                `Número efetivo de partidos eleitoral`,
+                `Número efetivo de partidos legislativo`,
+                Fracionalização,
+                `Fracionalização máxima`,
+                Fragmentação,
+                `Desproporcionalidade`,
+                `Eleitores aptos`) %>% 
+  dplyr::rename("Cadeiras disponíveis" = "Vagas")
+
+
+### Distribuicao de cadeiras
 
 distcad_mun <- distcad_mun %>% 
   select(`Ano da eleição`,
@@ -114,18 +273,15 @@ distcad_mun <- distcad_mun %>%
          `Nome do município`,
          Cargo,
          `Cadeiras oferecidas`,
-         `Eleitores aptos`,
          `Votos válidos`,
          `Sigla do partido`,
          `Votos do partido`,
          `Quociente eleitoral`,
-         `Quociente partidário`) %>% 
+         `Quociente partidário`,
+         `Eleitores aptos`) %>% 
   rename("Cadeiras disponíveis" = "Cadeiras oferecidas")
 
 ### Renovacao parlamentar
-
-renov_parl_mun <- left_join(renov_parl_mun, aptos_mun)
-
 
 renov_parl_mun <- renov_parl_mun %>% 
   select(`Ano da eleição`,
@@ -134,16 +290,15 @@ renov_parl_mun <- renov_parl_mun %>%
          `Nome do município`,
          Cargo,
          `Cadeiras disponíveis`,
-         `Eleitores aptos`,
          Reapresentação,
          Reeleitos,
          Conservação,
          `Renovação bruta`,
-         `Renovação líquida`)
+         `Renovação líquida`,
+         `Eleitores aptos`
+         )
 
 ### Alienacao
-
-alien_mun <- left_join(alien_mun, aptos_mun)
 
 alien_mun <- alien_mun %>% 
   select(`Ano da eleição`,
@@ -151,7 +306,6 @@ alien_mun <- alien_mun %>%
          `Código do município`,
          `Nome do município`,
          Cargo,
-         `Eleitores aptos`,
          `Quantidade de eleitores aptos`,
          `Quantidade de abstenções`,
          `Percentual de abstenções`,
@@ -160,11 +314,10 @@ alien_mun <- alien_mun %>%
          `Quantidade de votos nulos`,
          `Percentual de votos nulos`,
          `Alienação absoluta`,
-         `Alienação percentual`)
+         `Alienação percentual`,
+         `Eleitores aptos`)
 
-### Volatilidade eleitoral e parlamentar
-
-vol_mun <- left_join(vol_mun, aptos_mun)
+### Volatilidade eleitoral
 
 vol_mun <- vol_mun %>% 
   select(`Ano da eleição`,
@@ -172,16 +325,17 @@ vol_mun <- vol_mun %>%
          `Código do município`,
          `Nome do município`,
          Cargo,
-         `Eleitores aptos`,
          `Volatilidade eleitoral`,
-         `Volatilidade parlamentar`)
+         `Volatilidade parlamentar`,
+         `Eleitores aptos`)
 
 
+# 5. Salva os arquivos ----------------------------------------------------
 
-# 3. Salva os arquivos ----------------------------------------------------
-
-for (i in 1:length(ls())) {
-  saveRDS(get(ls()[i]),paste0("data/output/",ls()[i],'.rds'),
+for (i in 1:length(ls(pattern = "_mun"))) {
+  saveRDS(get(ls(pattern = "_mun")[i]),paste0("data/output/",ls(pattern = "_mun")[i],'.rds'),
           compress=TRUE)
 }
+
+
 

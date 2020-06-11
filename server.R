@@ -134,9 +134,9 @@ server <- function(input, output){
       selectizeInput("AGREGACAO_REGIONAL1",
                      label = NULL,
                      choices = 
-                       c("", "Município"),
+                       c("", "Município", "Quantidade de eleitores aptos"),
                      selected = NULL,
-                     options = list(placeholder = 'Escolha uma agregação regional'))
+                     options = list(placeholder = 'Escolha uma agregação'))
     } else if(is.null(indicador) | is.na(indicador) &
               is.null(cargo) | is.na(cargo)){
       return()
@@ -208,6 +208,9 @@ server <- function(input, output){
        agregacao == "Brasil"){
       return()
     } else if(cargo == "Vereador" &
+              agregacao == "Quantidade de eleitores aptos"){
+      return()
+    } else if(cargo == "Vereador" &
               length(agregacao == "Município") > 0){
       selectizeInput("MUN1",
                      label = NULL,
@@ -215,6 +218,49 @@ server <- function(input, output){
                        c("","Todos os municípios", municipios),
                      selected = NULL,
                      options = list(placeholder = 'Escolha um município'))
+    } else{
+      return()
+    }
+  })
+  
+  
+  ### Intervalos de eleitores aptos
+  
+  intervalos1 <- reactive({
+    indicador <- req(input$INDICADORES_FRAG)
+    cargo <- req(input$DESCRICAO_CARGO1)
+    agregacao <- req(input$AGREGACAO_REGIONAL1)
+    if(length(agregacao == "Quantidade de eleitores aptos") > 0){
+      return(input$INT1)
+    } 
+  })
+  
+  
+  output$INT1 <- renderUI({
+    indicador <- req(input$INDICADORES_FRAG)
+    cargo <- req(input$DESCRICAO_CARGO1)
+    agregacao <- req(input$AGREGACAO_REGIONAL1)
+    if(cargo == "Deputado Federal" & 
+       agregacao == "Brasil"){
+      return()
+    } else if(cargo == "Vereador" &
+              agregacao == "Município"){
+      return()
+    } else if(cargo == "Vereador" &
+              length(agregacao == "Quantidade de eleitores aptos") > 0){
+      selectizeInput("INT1",
+                     label = NULL,
+                     choices = 
+                       c("",
+                         "Até 5 mil eleitores",
+                         "De 5 a 10 mil eleitores",
+                         "De 10 a 20 mil eleitores",
+                         "De 20 a 50 mil eleitores",
+                         "De 50 a 100 mil eleitores",
+                         "De 100 a 200 mil eleitores",
+                         "Acima de 200 mil eleitores"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha um intervalo de eleitores'))
     } else{
       return()
     }
@@ -269,9 +315,9 @@ server <- function(input, output){
     } else if(cargo == "Vereador"){
       selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
-                     choices = c("","Município"),
+                     choices = c("","Município", "Quantidade de eleitores aptos"),
                      selected = NULL,
-                     options = list(placeholder = 'Escolha uma agregação regional'))
+                     options = list(placeholder = 'Escolha uma agregação'))
     }
   })
   
@@ -333,6 +379,9 @@ server <- function(input, output){
        agregacao == "Brasil"){
       return()
     } else if(cargo == "Vereador" &
+              agregacao == "Quantidade de eleitores aptos"){
+      return()
+    } else if(cargo == "Vereador" &
               length(agregacao == "Município") > 0){
       selectizeInput("MUN2",
                      label = NULL,
@@ -344,6 +393,50 @@ server <- function(input, output){
       return()
     }
   })
+  
+  ### Intervalos de eleitores aptos
+  
+  intervalos2 <- reactive({
+    indicador <- req(input$INDICADORES_RENOV)
+    cargo <- req(input$DESCRICAO_CARGO2)
+    agregacao <- req(input$AGREGACAO_REGIONAL2)
+    if(length(agregacao == "Quantidade de eleitores aptos") > 0){
+      return(input$INT2)
+    } 
+  })
+  
+  
+  output$INT2 <- renderUI({
+    indicador <- req(input$INDICADORES_RENOV)
+    cargo <- req(input$DESCRICAO_CARGO2)
+    agregacao <- req(input$AGREGACAO_REGIONAL2)
+    if(cargo == "Deputado Federal" & 
+       agregacao == "Brasil"){
+      return()
+    } else if(cargo == "Vereador" &
+              agregacao == "Município"){
+      return()
+    } else if(cargo == "Vereador" &
+              length(agregacao == "Quantidade de eleitores aptos") > 0){
+      selectizeInput("INT2",
+                     label = NULL,
+                     choices = 
+                       c("",
+                         "Até 5 mil eleitores",
+                         "De 5 a 10 mil eleitores",
+                         "De 10 a 20 mil eleitores",
+                         "De 20 a 50 mil eleitores",
+                         "De 50 a 100 mil eleitores",
+                         "De 100 a 200 mil eleitores",
+                         "Acima de 200 mil eleitores"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha um intervalo de eleitores'))
+    } else{
+      return()
+    }
+  })
+  
+  
   
   ## Funcao que permite que o menu seja ocultado
   
@@ -385,9 +478,9 @@ server <- function(input, output){
               cargo == "Vereador"){
       selectizeInput("AGREGACAO_REGIONAL3",
                      label = NULL,
-                     choices = c("","Município"),
+                     choices = c("","Município", "Quantidade de eleitores aptos"),
                      selected = NULL,
-                     options = list(placeholder = 'Escolha uma agregação regional'))
+                     options = list(placeholder = 'Escolha uma agregação'))
     }
   })
   
@@ -446,6 +539,10 @@ server <- function(input, output){
        agregacao == "Brasil"){
       return()
     } else if((cargo == "Prefeito" |
+             cargo == "Vereador") &
+              agregacao == "Quantidade de eleitores aptos"){
+      return()
+    } else if((cargo == "Prefeito" |
               cargo == "Vereador") &
               length(agregacao == "Município") > 0){
       selectizeInput("MUN3",
@@ -458,6 +555,52 @@ server <- function(input, output){
       return()
     }
   })
+  
+  
+  ### Intervalos de eleitores aptos
+  
+  intervalos3 <- reactive({
+    indicador <- req(input$INDICADORES_ALIE)
+    cargo <- req(input$DESCRICAO_CARGO3)
+    agregacao <- req(input$AGREGACAO_REGIONAL3)
+    if(length(agregacao == "Quantidade de eleitores aptos") > 0){
+      return(input$INT3)
+    } 
+  })
+  
+  
+  output$INT3 <- renderUI({
+    indicador <- req(input$INDICADORES_ALIE)
+    cargo <- req(input$DESCRICAO_CARGO3)
+    agregacao <- req(input$AGREGACAO_REGIONAL3)
+    if(cargo == "Deputado Federal" & 
+       agregacao == "Brasil"){
+      return()
+    } else if((cargo == "Prefeito" | 
+               cargo == "Vereador") &
+              agregacao == "Município"){
+      return()
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
+              length(agregacao == "Quantidade de eleitores aptos") > 0){
+      selectizeInput("INT3",
+                     label = NULL,
+                     choices = 
+                       c("",
+                         "Até 5 mil eleitores",
+                         "De 5 a 10 mil eleitores",
+                         "De 10 a 20 mil eleitores",
+                         "De 20 a 50 mil eleitores",
+                         "De 50 a 100 mil eleitores",
+                         "De 100 a 200 mil eleitores",
+                         "Acima de 200 mil eleitores"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha um intervalo de eleitores'))
+    } else{
+      return()
+    }
+  })
+  
   
   ## Funcao que permite que o menu seja ocultado
   
@@ -508,9 +651,9 @@ server <- function(input, output){
     } else if(cargo == "Vereador"){
       selectizeInput("AGREGACAO_REGIONAL4",
                      label = NULL,
-                     choices = c("","Município"),
+                     choices = c("","Município", "Quantidade de eleitores aptos"),
                      selected = NULL,
-                     options = list(placeholder = 'Escolha uma agregação regional'))
+                     options = list(placeholder = 'Escolha uma agregação'))
     } else{
       return()
     }
@@ -573,6 +716,9 @@ server <- function(input, output){
        agregacao == "Brasil"){
       return()
     } else if(cargo == "Vereador" &
+             agregacao == "Quantidade de eleitores aptos"){
+      return()
+    } else if(cargo == "Vereador" &
               length(agregacao == "Município") > 0){
       selectizeInput("MUN4",
                      label = NULL,
@@ -584,6 +730,49 @@ server <- function(input, output){
       return()
     }
   })
+  
+  ### Intervalos de eleitores aptos
+  
+  intervalos4 <- reactive({
+    indicador <- req(input$INDICADORES_VOL)
+    cargo <- req(input$DESCRICAO_CARGO4)
+    agregacao <- req(input$AGREGACAO_REGIONAL4)
+    if(length(agregacao == "Quantidade de eleitores aptos") > 0){
+      return(input$INT4)
+    } 
+  })
+  
+  
+  output$INT4 <- renderUI({
+    indicador <- req(input$INDICADORES_VOL)
+    cargo <- req(input$DESCRICAO_CARGO4)
+    agregacao <- req(input$AGREGACAO_REGIONAL4)
+    if(cargo == "Deputado Federal" & 
+       agregacao == "Brasil"){
+      return()
+    } else if(cargo == "Vereador" &
+              agregacao == "Município"){
+      return()
+    } else if(cargo == "Vereador" &
+              length(agregacao == "Quantidade de eleitores aptos") > 0){
+      selectizeInput("INT4",
+                     label = NULL,
+                     choices = 
+                       c("",
+                         "Até 5 mil eleitores",
+                         "De 5 a 10 mil eleitores",
+                         "De 10 a 20 mil eleitores",
+                         "De 20 a 50 mil eleitores",
+                         "De 50 a 100 mil eleitores",
+                         "De 100 a 200 mil eleitores",
+                         "Acima de 200 mil eleitores"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha um intervalo de eleitores'))
+    } else{
+      return()
+    }
+  })
+  
   
   ## Funcao que permite que o menu seja ocultado
   
@@ -1227,6 +1416,145 @@ server <- function(input, output){
                      })
   })
   
+  
+  ## Resumo
+  
+  ### Fragmentacao legislativa (Intervalo de eleitores aptos)
+  
+  
+  dpgint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Desproporcionalidade" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$dpg_int)
+    }
+  })
+  
+  output$dpg_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bdpg_int()
+  })
+  
+  bdpg_int <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'dpg_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Desproporcionalidade" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Desproporcionalidade`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Desproporcionalidade`)
+                           
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Fragmentacao legislativa (MUN)  
+  
+  ag_dpg_int <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    if(indicador == "Desproporcionalidade" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_dpg_int)
+    }
+  })
+  
+  output$agreg_dpg_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_dpg_int()
+  })
+  
+  bagreg_dpg_int <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'dpg_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Desproporcionalidade" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 & 
+                                           Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(`Ano da eleição`,
+                                    UF,
+                                    `Nome do município`,
+                                    Cargo,
+                                    `Número efetivo de partidos eleitoral`,
+                                    `Número efetivo de partidos legislativo`,
+                                    `Fracionalização`,
+                                    `Fracionalização máxima`,
+                                    `Fragmentação`,
+                                    Desproporcionalidade) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
 # 1.1.1. Fracionalizacao -------------------------------------------------- 
 
 
@@ -1682,6 +2010,145 @@ server <- function(input, output){
                      })
   })
   
+  
+  ## Resumo
+  
+  ### Fragmentacao legislativa (Intervalo de eleitores aptos)
+  
+  
+  fracioint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Fracionalização" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$fracio_int)
+    }
+  })
+  
+  output$fracio_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    fracio_int()
+  })
+  
+  fracio_int <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'fracio_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Fracionalização" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Fracionalização`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Fracionalização`)
+                           
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Fragmentacao legislativa (MUN)  
+  
+  ag_fracio_int <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    if(indicador == "Fracionalização" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_fracio_int)
+    }
+  })
+  
+  output$agreg_fracio_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_fracio_int()
+  })
+  
+  bagreg_fracio_int <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'fracio_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Fracionalização" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 & 
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(`Ano da eleição`,
+                                    UF,
+                                    `Nome do município`,
+                                    Cargo,
+                                    `Número efetivo de partidos eleitoral`,
+                                    `Número efetivo de partidos legislativo`,
+                                    `Fracionalização`,
+                                    `Fracionalização máxima`,
+                                    `Fragmentação`,
+                                    Desproporcionalidade) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
 # 1.1.3. Fracionalizacao maxima -------------------------------------------
   
 ## Resumo
@@ -2112,6 +2579,144 @@ server <- function(input, output){
                          } else{
                            data = frag_leg_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN1 & 
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(`Ano da eleição`,
+                                    UF,
+                                    `Nome do município`,
+                                    Cargo,
+                                    `Número efetivo de partidos eleitoral`,
+                                    `Número efetivo de partidos legislativo`,
+                                    `Fracionalização`,
+                                    `Fracionalização máxima`,
+                                    `Fragmentação`,
+                                    Desproporcionalidade) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
+  ## Resumo
+  
+  ### Fragmentacao legislativa (Intervalo de eleitores aptos)
+  
+  
+  fraciomaxint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Fracionalização máxima" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$fracio_max_int)
+    }
+  })
+  
+  output$fracio_max_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bfracio_max_int()
+  })
+  
+  bfracio_max_int <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'fracio_max_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Fracionalização máxima" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Fracionalização máxima`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Fracionalização máxima`)
+                           
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Fragmentacao legislativa (MUN)  
+  
+  ag_fracio_max_int <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    if(indicador == "Fracionalização máxima" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_fracio_max_int)
+    }
+  })
+  
+  output$agreg_fracio_max_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_fracio_max_int()
+  })
+  
+  bagreg_fracio_int <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'fracio_max_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Fracionalização máxima" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
                              select(`Ano da eleição`,
                                     UF,
@@ -2581,6 +3186,145 @@ server <- function(input, output){
                      })
   })
   
+  
+  ## Resumo
+  
+  ### Fragmentacao legislativa (Intervalo de eleitores aptos)
+  
+  
+  fragint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Fragmentação" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$frag_int)
+    }
+  })
+  
+  output$frag_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    frag_int()
+  })
+  
+  frag_int <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'frag_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Fragmentação" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Fragmentação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Fragmentação`)
+                           
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Fragmentacao legislativa (MUN)  
+  
+  ag_frag_int <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    if(indicador == "Fragmentação" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_frag_int)
+    }
+  })
+  
+  output$agreg_frag_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_frag_int()
+  })
+  
+  bagreg_frag_int <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'frag_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Fragmentação" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 & 
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(`Ano da eleição`,
+                                    UF,
+                                    `Nome do município`,
+                                    Cargo,
+                                    `Número efetivo de partidos eleitoral`,
+                                    `Número efetivo de partidos legislativo`,
+                                    `Fracionalização`,
+                                    `Fracionalização máxima`,
+                                    `Fragmentação`,
+                                    Desproporcionalidade) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
 # 1.1.5. Numero efetivo de partidos legislativo -----------------------------------------------------
   
 ## Resumo 
@@ -3009,6 +3753,144 @@ server <- function(input, output){
                          } else{
                            data = frag_leg_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN1 & 
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(`Ano da eleição`,
+                                    UF,
+                                    `Nome do município`,
+                                    Cargo,
+                                    `Número efetivo de partidos eleitoral`,
+                                    `Número efetivo de partidos legislativo`,
+                                    `Fracionalização`,
+                                    `Fracionalização máxima`,
+                                    `Fragmentação`,
+                                    Desproporcionalidade) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
+  ## Resumo
+  
+  ### Fragmentacao legislativa (Intervalo de eleitores aptos)
+  
+  
+  neplint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Número efetivo de partidos legislativo" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$nepl_int)
+    }
+  })
+  
+  output$nepl_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    nepl_int()
+  })
+  
+  nepl_int <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'nepl_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Número efetivo de partidos legislativo" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Número efetivo de partidos legislativo`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Número efetivo de partidos legislativo`)
+                           
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Fragmentacao legislativa (MUN)  
+  
+  ag_nepl_int <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    if(indicador == "Número efetivo de partidos legislativo" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_nepl_int)
+    }
+  })
+  
+  output$agreg_nepl_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_nepl_int()
+  })
+  
+  bagreg_nepl_int <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'nepl_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Número efetivo de partidos legislativo" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
                              select(`Ano da eleição`,
                                     UF,
@@ -3471,6 +4353,144 @@ server <- function(input, output){
                      })
   })
   
+  
+  ## Resumo
+  
+  ### Fragmentacao legislativa (Intervalo de eleitores aptos)
+  
+  
+  nepelint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Número efetivo de partidos eleitoral" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$nepel_int)
+    }
+  })
+  
+  output$nepel_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    nepel_int()
+  })
+  
+  nepel_int <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'nepel_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Número efetivo de partidos eleitoral" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Número efetivo de partidos eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Número efetivo de partidos eleitoral`)
+                           
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Fragmentacao legislativa (MUN)  
+  
+  ag_nepel_int <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    if(indicador == "Número efetivo de partidos eleitoral" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_nepel_int)
+    }
+  })
+  
+  output$agreg_nepel_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_nepel_int()
+  })
+  
+  bagreg_nepel_int <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'nepel_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Número efetivo de partidos eleitoral" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 & 
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(`Ano da eleição`,
+                                    UF,
+                                    `Nome do município`,
+                                    Cargo,
+                                    `Número efetivo de partidos eleitoral`,
+                                    `Número efetivo de partidos legislativo`,
+                                    `Fracionalização`,
+                                    `Fracionalização máxima`,
+                                    `Fragmentação`,
+                                    Desproporcionalidade) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
 
 # 1.1.7. Quociente eleitoral -----------------------------------------------
   
@@ -3533,7 +4553,7 @@ server <- function(input, output){
                        if(indicador == "Quociente eleitoral" & 
                           cargo == "Deputado Federal"){
                          if(input$UF1 == "Todas UFs"){
-                           distcad_fed %>% 
+                           distcad_br %>% 
                              select(`Ano da eleição`, 
                                     UF,
                                     `Quociente eleitoral`) %>% 
@@ -3541,7 +4561,7 @@ server <- function(input, output){
                              spread(`Ano da eleição`,
                                     `Quociente eleitoral`)
                          }else{
-                           distcad_fed %>% 
+                           distcad_br %>% 
                              dplyr::filter(UF == input$UF1) %>% 
                              select(`Ano da eleição`, 
                                     UF,
@@ -3611,11 +4631,11 @@ server <- function(input, output){
                        if(indicador == "Quociente eleitoral" &
                           cargo == "Deputado Federal"){
                          if(input$UF1 == "Todas UFs"){
-                           data = distcad_fed %>% 
+                           data = distcad_br %>% 
                              unique() 
                          }
                          else{
-                           data = distcad_fed %>% 
+                           data = distcad_br %>% 
                              dplyr::filter(UF == input$UF1) %>% 
                              unique()
                          }}
@@ -3670,7 +4690,7 @@ server <- function(input, output){
                        if(indicador == "Quociente eleitoral" & 
                           cargo == "Deputado Estadual"){
                          if(input$UF1=="Todas UFs"){
-                           expr = distcad_est %>% 
+                           expr = distcad_uf %>% 
                              select(`Ano da eleição`, 
                                     UF,
                                     `Quociente eleitoral`) %>% 
@@ -3679,7 +4699,7 @@ server <- function(input, output){
                                     `Quociente eleitoral`)
                            
                          }else{
-                           expr = distcad_est %>% 
+                           expr = distcad_uf %>% 
                              dplyr::filter(UF == input$UF1) %>% 
                              select(`Ano da eleição`, 
                                     UF, 
@@ -3744,10 +4764,10 @@ server <- function(input, output){
                        if(indicador == "Quociente eleitoral" & 
                           cargo == "Deputado Estadual"){
                          if(input$UF1 == "Todas UFs"){
-                           expr = distcad_est %>% 
+                           expr = distcad_uf %>% 
                              unique()
                          } else {
-                           expr = distcad_est %>% 
+                           expr = distcad_uf %>% 
                              dplyr::filter(UF == input$UF1) %>% 
                              unique()
                            
@@ -3903,6 +4923,136 @@ server <- function(input, output){
                      })
   })
   
+  ## Resumo
+  
+  ### Vereador - Eleitores aptos
+  
+  
+  quoceint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Quociente eleitoral" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$quoce_int)
+    }
+  })
+  
+  output$quoce_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bquoce_int()
+  })
+  
+  bquoce_int <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'quoc_elei_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons', 
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Quociente eleitoral" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           distcad_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Quociente eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Quociente eleitoral`)
+                           
+                           
+                         }
+                       }
+                       
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Vereador - Eleitores aptos
+  
+  ag_quoce_int <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    if(indicador == "Quociente eleitoral" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_quoce_int)
+    }
+  })
+  
+  output$agreg_quoce_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_quoce_int()
+  })
+  
+  bagreg_quoce_int <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'quoc_elei_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Quociente eleitoral" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = distcad_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 & 
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(-`Nome do município2`) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
 # 1.1.8. Quociente partidario ---------------------------------------------
   
   ## Resumo
@@ -3951,14 +5101,14 @@ server <- function(input, output){
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Federal"){
                          if(input$UF1=="Todas UFs"){
-                           expr = distcad_fed %>% 
+                           expr = distcad_br %>% 
                              select(`Ano da eleição`, 
                                     UF, 
                                     `Sigla do partido`, 
                                     `Quociente partidário`)
                            
                          }else{
-                           expr = distcad_fed %>% 
+                           expr = distcad_br %>% 
                              dplyr::filter(UF == input$UF1) %>% 
                              select(`Ano da eleição`, 
                                     UF, 
@@ -4023,11 +5173,11 @@ server <- function(input, output){
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Federal"){
                          if(input$UF1 == "Todas UFs"){
-                           expr = distcad_fed %>% 
+                           expr = distcad_br %>% 
                              unique()
                            
                          }else{
-                           expr = distcad_fed %>% 
+                           expr = distcad_br %>% 
                              dplyr::filter(UF == input$UF1) %>% 
                              unique()}
                        }
@@ -4080,14 +5230,14 @@ server <- function(input, output){
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Estadual"){
                          if(input$UF1=="Todas UFs"){
-                           expr = distcad_est %>% 
+                           expr = distcad_uf %>% 
                              select(`Ano da eleição`, 
                                     UF,
                                     `Sigla do partido`,
                                     `Quociente partidário`)
                            
                          }else{
-                           expr = distcad_est %>% 
+                           expr = distcad_uf %>% 
                              dplyr::filter(UF == input$UF1) %>% 
                              select(`Ano da eleição`, 
                                     UF,
@@ -4150,10 +5300,10 @@ server <- function(input, output){
                        if(indicador == "Quociente partidário" & 
                           cargo == "Deputado Estadual"){
                          if(input$UF1 == "Todas UFs"){
-                           expr = distcad_est %>% 
+                           expr = distcad_uf %>% 
                              unique()
                          }else{          
-                           expr = distcad_est %>% 
+                           expr = distcad_uf %>% 
                              dplyr::filter(UF == input$UF1) %>% 
                              unique()}
                        }
@@ -4308,7 +5458,135 @@ server <- function(input, output){
                      })
   })
   
+  ## Resumo
   
+  ### Vereador - Eleitores aptos
+  
+  
+  quocpint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Quociente partidário" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$quocp_int)
+    }
+  })
+  
+  output$quocp_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bquocp_int()
+  })
+  
+  bquocp_int <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'quoc_part_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons', 
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Quociente partidário" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           distcad_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Quociente partidário`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Quociente partidário`)
+                           
+                           
+                         }
+                       }
+                       
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Vereador
+  
+  ag_quocp_int <- reactive({
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    if(indicador == "Quociente partidário" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_quocp_int)
+    }
+  })
+  
+  output$agreg_quocp_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_quocp_int()
+  })
+  
+  bagreg_quocp_int <- eventReactive(input$BCALC1, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'quoc_part_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Quociente partidário" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = distcad_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 & 
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(-`Nome do município2`) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })  
   
 # 2.2. Renovacao parlamentar ---------------------------------------------- 
   
@@ -4806,6 +6084,136 @@ server <- function(input, output){
                      })
   })
   
+  
+  ## Resumo
+  
+  ### Vereador
+  
+  conservint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Conservação" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$conserv_int)
+    }
+  })
+  
+  output$conserv_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bconserv_int()
+  })
+  
+  bconserv_int <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'conserv_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(indicador == "Conservação" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Conservação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Conservação`)
+                           
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (Eleitores aptos)  
+  
+  ag_conserv_int <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Conservação" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_conserv_int)
+    }
+  })
+  
+  output$agreg_conserv_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_conserv_int()
+  })
+  
+  bagreg_conserv_int <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'conserv_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(indicador == "Conservação" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`,-`Eleitores aptos`) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
+  
 # 2.2.2. Renovacao bruta --------------------------------------------------
   
   ## Resumo
@@ -5213,6 +6621,134 @@ server <- function(input, output){
                      })
   })
   
+  
+  ## Resumo
+  
+  ### Vereador
+  
+  renovbtint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Renovação bruta" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$renov_bt_int)
+    }
+  })
+  
+  output$renov_bt_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_bt_int()
+  })
+  
+  brenov_bt_int <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'renov_bt_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(indicador == "Renovação bruta" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação bruta`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação bruta`)
+                           
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (Eleitores aptos)  
+  
+  ag_renov_bt_int <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Conservação" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_renov_bt_int)
+    }
+  })
+  
+  output$agreg_renov_bt_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_renov_bt_int()
+  })
+  
+  bagreg_renov_bt_int <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'renov_bt_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(indicador == "Renovação bruta" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`,-`Eleitores aptos`) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
   
   
 # 2.2.2. Renovacao liquida ------------------------------------------------
@@ -5625,6 +7161,134 @@ server <- function(input, output){
                      })
   })
   
+  
+  ## Resumo
+  
+  ### Vereador
+  
+  renovliqint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Renovação líquida" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$renov_liq_int)
+    }
+  })
+  
+  output$renov_liq_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_liq_int()
+  })
+  
+  brenov_liq_int <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'renov_liq_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(indicador == "Renovação líquida" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação líquida`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação líquida`)
+                           
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (Eleitores aptos)  
+  
+  ag_renov_liq_int <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Renovação líquida" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_renov_liq_int)
+    }
+  })
+  
+  output$agreg_renov_liq_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_renov_liq_int()
+  })
+  
+  bagreg_renov_liq_int <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'renov_liq_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(indicador == "Renovação líquida" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`,-`Eleitores aptos`) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
   
   
   
