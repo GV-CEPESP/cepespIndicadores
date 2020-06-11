@@ -631,7 +631,13 @@ ui <-
                                                                         absolutePanel(top = 0, 
                                                                                       right = 0 ,  
                                                                                       left = 15,
-                                                                                      DT::dataTableOutput("renov_liq_int")))), 
+                                                                                      DT::dataTableOutput("renov_liq_int")))),
+
+
+# 1.2.4. Dados desagregados -----------------------------------------------
+
+
+                                                                                                                                                                            
                                                     ## Tabelas que serao exibidas
                                                              tabPanel("Dados desagregados", br(),
                                                                       
@@ -704,6 +710,9 @@ ui <-
              tabPanel("Participação e Alienação",  ## Definicao das ferramentas de selecao para a guia
                                     ## "Alienacao"
                       
+
+# 1.3.1. SidebarPanel -----------------------------------------------------
+
                       
                       sidebarLayout(
                         
@@ -744,7 +753,12 @@ ui <-
                                      
                         )),
                         
-                        mainPanel(id = "Main3",
+
+# 1.3.2. MainPanel --------------------------------------------------------
+
+
+                        
+                                mainPanel(id = "Main3",
                                   
                                   bsButton("showpanel3", 
                                            label = NULL, 
@@ -763,6 +777,11 @@ ui <-
                                                                  style = "material-circle",
                                                                  size = "md")),
                                         tabsetPanel(type = "pills",
+                                                    
+
+# 1.3.3. Resumo -----------------------------------------------------------
+
+                                                    
                                                        tabPanel("Resumo", br(),
                                                                
                                                                    column(12,
@@ -770,7 +789,7 @@ ui <-
                                                                                right = 0 ,  
                                                                               left = 15,
                                                                                DT::dataTableOutput("alien_abs_br"))), ## Tabelas que serao exibidas
-                                                                 column(12,
+                                                                   column(12,
                                                                     absolutePanel(top = 0, 
                                                                                right = 0 ,  
                                                                               left = 15,
@@ -780,6 +799,11 @@ ui <-
                                                                                      right = 0 ,  
                                                                                      left = 15,
                                                                                      DT::dataTableOutput("alien_abs_mun"))),
+                                                                 column(12,
+                                                                       absolutePanel(top = 0, 
+                                                                                     right = 0 ,  
+                                                                                     left = 15,
+                                                                                     DT::dataTableOutput("alien_abs_int"))),
                                                                   column(12,
                                                                        absolutePanel(top = 0, 
                                                                                      right = 0 ,  
@@ -799,6 +823,11 @@ ui <-
                                                                        absolutePanel(top = 0, 
                                                                                      right = 0 ,  
                                                                                      left = 15,
+                                                                                     DT::dataTableOutput("alien_perc_int"))),
+                                                                column(12,
+                                                                       absolutePanel(top = 0, 
+                                                                                     right = 0 ,  
+                                                                                     left = 15,
                                                                                      DT::dataTableOutput("abst_abs_br"))),
                                                                 column(12,
                                                                        absolutePanel(top = 0, 
@@ -810,6 +839,11 @@ ui <-
                                                                                      right = 0 ,  
                                                                                      left = 15,
                                                                                      DT::dataTableOutput("abst_abs_mun"))),
+                                                                column(12,
+                                                                       absolutePanel(top = 0, 
+                                                                                     right = 0 ,  
+                                                                                     left = 15,
+                                                                                     DT::dataTableOutput("abst_abs_int"))),
                                                                 
                                                                 column(12,
                                                                        absolutePanel(top = 0, 
@@ -830,6 +864,11 @@ ui <-
                                                                        absolutePanel(top = 0, 
                                                                                      right = 0 ,  
                                                                                      left = 15,
+                                                                                     DT::dataTableOutput("abst_perc_int"))),
+                                                                column(12,
+                                                                       absolutePanel(top = 0, 
+                                                                                     right = 0 ,  
+                                                                                     left = 15,
                                                                                      DT::dataTableOutput("vtbr_abs_br"))), 
                                                                  column(12,
                                                                     absolutePanel(top = 0, 
@@ -841,6 +880,11 @@ ui <-
                                                                                      right = 0 ,  
                                                                                      left = 15,
                                                                                      DT::dataTableOutput("vtbr_abs_mun"))),
+                                                                column(12,
+                                                                       absolutePanel(top = 0, 
+                                                                                     right = 0 ,  
+                                                                                     left = 15,
+                                                                                     DT::dataTableOutput("vtbr_abs_int"))),
                                                                  column(12,
                                                                     absolutePanel(top = 0,
                                                                                   right = 0 , 
@@ -860,6 +904,11 @@ ui <-
                                                                        absolutePanel(top = 0,
                                                                                      right = 0 , 
                                                                                      left = 15,
+                                                                                     DT::dataTableOutput("vtbr_perc_int"))),
+                                                                column(12,
+                                                                       absolutePanel(top = 0,
+                                                                                     right = 0 , 
+                                                                                     left = 15,
                                                                                      DT::dataTableOutput("vtnl_abs_br"))),
                                                                 column(12,
                                                                        absolutePanel(top = 0,
@@ -875,6 +924,11 @@ ui <-
                                                                        absolutePanel(top = 0,
                                                                                      right = 0 , 
                                                                                      left = 15,
+                                                                                     DT::dataTableOutput("vtnl_abs_int"))),
+                                                                column(12,
+                                                                       absolutePanel(top = 0,
+                                                                                     right = 0 , 
+                                                                                     left = 15,
                                                                                      DT::dataTableOutput("vtnl_perc_br"))),
                                                                 column(12,
                                                                        absolutePanel(top = 0,
@@ -885,7 +939,16 @@ ui <-
                                                                        absolutePanel(top = 0,
                                                                                      right = 0 , 
                                                                                      left = 15,
-                                                                                     DT::dataTableOutput("vtnl_perc_mun")))),
+                                                                                     DT::dataTableOutput("vtnl_perc_mun"))),
+                                                                column(12,
+                                                                       absolutePanel(top = 0,
+                                                                                     right = 0 , 
+                                                                                     left = 15,
+                                                                                     DT::dataTableOutput("vtnl_perc_int")))),
+
+# 1.3.4. Dados desagregados -----------------------------------------------
+
+
                                                     
                                                     tabPanel("Dados desagregados", br(),
                                                              
@@ -908,6 +971,11 @@ ui <-
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
                                                                                   left = 15,
+                                                                                  DT::dataTableOutput("agreg_alien_abs_int"))),
+                                                             column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
+                                                                                  left = 15,
                                                                                   DT::dataTableOutput("agreg_alien_perc_br"))), 
                                                              column(12,
                                                                     absolutePanel(top = 0, 
@@ -923,6 +991,11 @@ ui <-
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
                                                                                   left = 15,
+                                                                                  DT::dataTableOutput("agreg_alien_perc_int"))),
+                                                             column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
+                                                                                  left = 15,
                                                                                   DT::dataTableOutput("agreg_abst_abs_br"))),
                                                              column(12,
                                                                     absolutePanel(top = 0, 
@@ -934,6 +1007,11 @@ ui <-
                                                                                   right = 0 ,  
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("agreg_abst_abs_mun"))),
+                                                             column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
+                                                                                  left = 15,
+                                                                                  DT::dataTableOutput("agreg_abst_abs_int"))),
                                                              
                                                              column(12,
                                                                     absolutePanel(top = 0, 
@@ -954,6 +1032,11 @@ ui <-
                                                                     absolutePanel(top = 0, 
                                                                                   right = 0 ,  
                                                                                   left = 15,
+                                                                                  DT::dataTableOutput("agreg_abst_perc_int"))),
+                                                             column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
+                                                                                  left = 15,
                                                                                   DT::dataTableOutput("agreg_vtbr_abs_br"))), 
                                                              column(12,
                                                                     absolutePanel(top = 0, 
@@ -965,6 +1048,11 @@ ui <-
                                                                                   right = 0 ,  
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("agreg_vtbr_abs_mun"))),
+                                                             column(12,
+                                                                    absolutePanel(top = 0, 
+                                                                                  right = 0 ,  
+                                                                                  left = 15,
+                                                                                  DT::dataTableOutput("agreg_vtbr_abs_int"))),
                                                              column(12,
                                                                     absolutePanel(top = 0,
                                                                                   right = 0 , 
@@ -984,6 +1072,11 @@ ui <-
                                                                     absolutePanel(top = 0,
                                                                                   right = 0 , 
                                                                                   left = 15,
+                                                                                  DT::dataTableOutput("agreg_vtbr_perc_int"))),
+                                                             column(12,
+                                                                    absolutePanel(top = 0,
+                                                                                  right = 0 , 
+                                                                                  left = 15,
                                                                                   DT::dataTableOutput("agreg_vtnl_abs_br"))),
                                                              column(12,
                                                                     absolutePanel(top = 0,
@@ -999,6 +1092,11 @@ ui <-
                                                                     absolutePanel(top = 0,
                                                                                   right = 0 , 
                                                                                   left = 15,
+                                                                                  DT::dataTableOutput("agreg_vtnl_abs_int"))),
+                                                             column(12,
+                                                                    absolutePanel(top = 0,
+                                                                                  right = 0 , 
+                                                                                  left = 15,
                                                                                   DT::dataTableOutput("agreg_vtnl_perc_br"))),
                                                              column(12,
                                                                     absolutePanel(top = 0,
@@ -1009,7 +1107,12 @@ ui <-
                                                                     absolutePanel(top = 0,
                                                                                   right = 0 , 
                                                                                   left = 15,
-                                                                                  DT::dataTableOutput("agreg_vtnl_perc_mun"))))))))),
+                                                                                  DT::dataTableOutput("agreg_vtnl_perc_mun"))),
+                                                             column(12,
+                                                                    absolutePanel(top = 0,
+                                                                                  right = 0 , 
+                                                                                  left = 15,
+                                                                                  DT::dataTableOutput("agreg_vtnl_perc_int"))))))))),
 
 # 1.4. Volatilidade ---------------------------------------------------------
 
@@ -1018,6 +1121,9 @@ ui <-
             tabPanel("Volatilidade",  ## Definicao das ferramentas de selecao para a guia
                      ## "Renovação parlamentar"
                      
+
+# 1.4.1. SidebarPanel -----------------------------------------------------
+
                      
                      sidebarLayout(
                        
@@ -1055,6 +1161,11 @@ ui <-
                                                        
                        )),
                        
+
+# 1.4.2. MainPanel --------------------------------------------------------
+
+                       
+                       
                        mainPanel(id = "Main4",
                                  
                                  bsButton("showpanel4", 
@@ -1073,6 +1184,12 @@ ui <-
                                                                         style = "material-circle",
                                                                         size = "md")),
                                                tabsetPanel(type = "pills",
+                                                           
+
+# 1.4.3. Resumo -----------------------------------------------------------
+
+                                                           
+                                                           
                                                            tabPanel("Resumo", br(),
                                                                    
                                                            column(12,
@@ -1094,6 +1211,11 @@ ui <-
                                                                   absolutePanel(top = 0, 
                                                                                 right = 0 ,  
                                                                                 left = 15, 
+                                                                                DT::dataTableOutput("vol_ele_int"))),
+                                                           column(12,
+                                                                  absolutePanel(top = 0, 
+                                                                                right = 0 ,  
+                                                                                left = 15, 
                                                                                 DT::dataTableOutput("vol_parl_br"))),
                                                            column(12,
                                                                   absolutePanel(top = 0, 
@@ -1104,7 +1226,16 @@ ui <-
                                                                   absolutePanel(top = 0, 
                                                                                 right = 0 ,  
                                                                                 left = 15, 
-                                                                                DT::dataTableOutput("vol_parl_mun")))),
+                                                                                DT::dataTableOutput("vol_parl_mun"))),
+                                                           column(12,
+                                                                  absolutePanel(top = 0, 
+                                                                                right = 0 ,  
+                                                                                left = 15, 
+                                                                                DT::dataTableOutput("vol_parl_int")))),
+
+# 1.4.4. Dados desagregados -----------------------------------------------
+
+
                                                            
                                                                      ## Tabelas que serao exibidas
                                                            tabPanel("Dados desagregados", br(),
@@ -1127,6 +1258,11 @@ ui <-
                                                                            absolutePanel(top = 0, 
                                                                                          right = 0 ,  
                                                                                          left = 15, 
+                                                                                         DT::dataTableOutput("agreg_vol_ele_int"))),
+                                                                    column(12,
+                                                                           absolutePanel(top = 0, 
+                                                                                         right = 0 ,  
+                                                                                         left = 15, 
                                                                                          DT::dataTableOutput("agreg_vol_parl_br"))),
                                                                     column(12,
                                                                            absolutePanel(top = 0, 
@@ -1137,7 +1273,12 @@ ui <-
                                                                            absolutePanel(top = 0, 
                                                                                          right = 0 ,  
                                                                                          left = 15, 
-                                                                                         DT::dataTableOutput("agreg_vol_parl_mun"))))))))),
+                                                                                         DT::dataTableOutput("agreg_vol_parl_mun"))),
+                                                                    column(12,
+                                                                           absolutePanel(top = 0, 
+                                                                                         right = 0 ,  
+                                                                                         left = 15, 
+                                                                                         DT::dataTableOutput("agreg_vol_parl_int"))))))))),
              
 
 # 1.5. Sobre ----------------------------------------------------------------

@@ -7814,6 +7814,137 @@ server <- function(input, output){
                          }}
                      })
   })
+  
+  
+  ## Resumo
+  
+  ### Eleitores aptos
+  
+  alienabsint <- reactive({ ## Atributos das tabelas de alienacao absoluta 
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO3
+    uf <- input$UF3
+    if(indicador == "Alienação absoluta" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$alien_abs_int)
+    }    
+  })
+  
+  output$alien_abs_int <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao absoluta que devera ser chamada na ui
+    balien_abs_int()
+  })
+  
+  balien_abs_int <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 2
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'alien_abs_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_ALIE
+                       cargo <- input$DESCRICAO_CARGO3
+                       agregacao <- input$AGREGACAO_REGIONAL3
+                       intervalo <- input$INT3
+                       if(indicador == "Alienação absoluta" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                          return() 
+                         } else{
+                           data = alien_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo == input$DESCRICAO_CARGO3) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           Turno,
+                                           `Alienação absoluta`) %>% 
+                             spread(`Ano da eleição`,
+                                    `Alienação absoluta`)}
+                         
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Eleitores aptos
+  
+  ag_alienabs_int <- reactive({
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$AGREGACAO_REGIONAL3
+    uf <- input$UF3
+    if(indicador == "Alienação absoluta" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_alien_abs_int)
+    }
+  })
+  
+  output$agreg_alien_abs_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_alien_abs_int()
+  })
+  
+  bagreg_alien_abs_int <- eventReactive(input$BCALC3, {
+    datatable(options = list(
+      autoWidth = FALSE,
+      scrollX = TRUE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 3
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'alien_abs_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_ALIE
+                       cargo <- input$DESCRICAO_CARGO3
+                       agregacao <- input$AGREGACAO_REGIONAL3
+                       intervalo <- input$INT3
+                       if(indicador == "Alienação absoluta" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{ 
+                           data = alien_mun %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO3 & 
+                                           `Eleitores aptos` == input$INT3)%>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`)
+                         }}
+                     })
+  })
+  
+  
 # 2.3.2. Alienacao percentual ---------------------------------------------
 
 ## Tabela para visualizacao
@@ -8224,6 +8355,138 @@ bagreg_alien_perc_mun <- eventReactive(input$BCALC3, {
                        }}
                    })
 })
+
+
+## Resumo
+
+### Eleitores aptos
+
+alienpercint <- reactive({ ## Atributos das tabelas de alienacao absoluta 
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Alienação percentual" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$alien_perc_int)
+  }    
+})
+
+output$alien_perc_int <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao absoluta que devera ser chamada na ui
+  balien_perc_int()
+})
+
+balien_perc_int <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'alien_perc_int',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Alienação percentual" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                         return()
+                       }else{
+                         alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         Turno,
+                                         `Alienação percentual`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Alienação percentual`)}
+                       
+                     }
+                   })
+})  
+
+## Dados desagregados
+
+### Eleitores aptos
+
+ag_alienperc_int <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
+  if(indicador == "Alienação percentual" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$agreg_alien_perc_int)
+  }
+})
+
+output$agreg_alien_perc_int <- DT::renderDataTable(server = FALSE,{
+  bagreg_alien_perc_int()
+})
+
+bagreg_alien_perc_int <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'alien_perc_int_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Alienação percentual" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{ 
+                         data = alien_mun %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
+                                         `Eleitores aptos` == input$INT3) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`)
+                       }}
+                   })
+})
+
+
+
 
 
 # 2.3.3. Abstencao absoluta -------------------------------------------------------
@@ -8642,6 +8905,140 @@ bagreg_abst_abs_mun <- eventReactive(input$BCALC3, {
                    })
 })
 
+
+## Tabela para visualizacao
+
+### Eleitores aptos
+
+abstabsint <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Abstenção absoluta" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$abst_abs_int)
+  }
+})
+
+
+output$abst_abs_int <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  babst_abs_int()
+})
+
+babst_abs_int <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'abst_abs_int',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Abstenção absoluta" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                         return()
+                       }
+                       else{
+                         alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                         Cargo == input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         Turno,
+                                         `Quantidade de abstenções`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Quantidade de abstenções`)}
+                       
+                     }
+                   })
+})
+
+## Dados desagregados
+
+### Cargos MUN
+
+ag_abstabs_int <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
+  if(indicador == "Abstenção absoluta" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$agreg_abst_abs_int)
+  }
+})
+
+output$agreg_abst_abs_int <- DT::renderDataTable(server = FALSE,{
+  bagreg_abst_abs_int()
+})
+
+bagreg_abst_abs_int <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'abst_abs_int_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Abstenção absoluta" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{ 
+                         data = alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           unique()
+                       }}
+                   })
+})
+
+
+
 # 2.3.4. Abstencao percentual ---------------------------------------------
 
 
@@ -9057,6 +9454,138 @@ bagreg_abst_perc_mun <- eventReactive(input$BCALC3, {
 })
 
 
+
+## Tabela para visualizacao
+
+### Eleitores aptos
+
+abstpercint <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Abstenção percentual" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$abst_perc_int)
+  }
+})
+
+
+output$abst_perc_int <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  babst_perc_int()
+})
+
+babst_perc_int <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'abst_perc_int',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',                   
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Abstenção percentual" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                         return()
+                       }
+                       else{
+                         alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         Turno,
+                                         `Percentual de abstenções`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Percentual de abstenções`)}
+                       
+                     }
+                   })
+})
+
+## Dados desagregados
+
+### Eleitores aptos
+
+ag_abstperc_int <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
+  if(indicador == "Abstenção percentual" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$agreg_abst_perc_int)
+  }
+})
+
+output$agreg_abst_perc_int <- DT::renderDataTable(server = FALSE,{
+  bagreg_abst_perc_int()
+})
+
+bagreg_abst_perc_int <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'abst_perc_int_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Abstenção percentual" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{ 
+                         data = alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 &
+                                          Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           unique()
+                       }}
+                   })
+})
+
 # 2.3.5. Votos brancos absolutos ----------------------------------------------------
 
 ## Tabela para visualizacao
@@ -9471,6 +10000,143 @@ bagreg_vtbr_abs_mun <- eventReactive(input$BCALC3, {
 })
 
 
+
+## Tabela para visualizacao
+
+### Eleitores aptos
+
+vtbrabsint <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Votos brancos absolutos" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vtbr_abs_int)
+  }
+})
+
+
+output$vtbr_abs_int <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  bvtbr_abs_int()
+})
+
+bvtbr_abs_int <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'vtbr_abs_int',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',           
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos brancos absolutos" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                        return()
+                       }
+                       else{
+                         alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                         Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         Turno,
+                                         `Quantidade de votos brancos`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Quantidade de votos brancos`)}
+                       
+                     }
+                   })
+})
+
+## Dados desagregados
+
+### Cargos MUN
+
+ag_vtbrabs_int <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
+  if(indicador == "Votos brancos absolutos" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$agreg_vtbr_abs_int)
+  }
+})
+
+output$agreg_vtbr_abs_int <- DT::renderDataTable(server = FALSE,{
+  bagreg_vtbr_abs_int()
+})
+
+bagreg_vtbr_abs_int <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'vtbr_abs_int_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos brancos absolutos" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{ 
+                         data = alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           unique()
+                       }}
+                   })
+})
+
+
+
+
+
+
 # 2.3.6. Votos brancos percentuais ----------------------------------------
 
 ## Tabela para visualizacao
@@ -9878,6 +10544,138 @@ bagreg_vtbr_perc_mun <- eventReactive(input$BCALC3, {
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
                            select(-`Nome do município2`) %>% 
+                           unique()
+                       }}
+                   })
+})
+
+
+## Tabela para visualizacao
+
+### Eleitores aptos
+
+vtbrpercint <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Votos brancos percentuais" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vtbr_perc_int)
+  }
+})
+
+
+output$vtbr_perc_int <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  bvtbr_perc_int()
+})
+
+bvtbr_perc_int <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'vtbr_perc_int',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos brancos percentuais" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       }
+                       else{
+                         alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         Turno,
+                                         `Percentual de votos brancos`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Percentual de votos brancos`)}
+                       
+                     }
+                   })
+})
+
+## Dados desagregados
+
+### Eleitores aptos
+
+ag_vtbrperc_int <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
+  if(indicador == "Votos brancos percentuais" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$agreg_vtbr_perc_int)
+  }
+})
+
+output$agreg_vtbr_perc_int <- DT::renderDataTable(server = FALSE,{
+  bagreg_vtbr_perc_int()
+})
+
+bagreg_vtbr_perc_int <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'vtbr_perc_int_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos brancos percentuais" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{ 
+                         data = alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        }}
                    })
@@ -10299,6 +11097,138 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
 })
 
 
+## Tabela para visualizacao
+
+### Eleitores aptos
+
+vtnlabsint <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Votos nulos absolutos" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vtnl_abs_int)
+  }
+})
+
+
+output$vtnl_abs_int <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  bvtnl_abs_int()
+})
+
+bvtnl_abs_int <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'vtnl_abs_int',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',                              
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos nulos absolutos" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                        return()
+                       } else{
+                         alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         Turno,
+                                         `Quantidade de votos nulos`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Quantidade de votos nulos`)}
+                       
+                     }
+                   })
+})
+
+## Dados desagregados
+
+### Eleitores aptos
+
+ag_vtnlabs_int <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
+  if(indicador == "Votos nulos absolutos" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$agreg_vtnl_abs_int)
+  }
+})
+
+output$agreg_vtnl_abs_int <- DT::renderDataTable(server = FALSE,{
+  bagreg_vtnl_abs_int()
+})
+
+bagreg_vtnl_abs_int <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'vtnl_abs_int_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos nulos absolutos" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{ 
+                         data = alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>%
+                           select(-`Nome do município2`) %>% 
+                           unique()
+                       }}
+                   })
+})
+
+
+
 
 # 2.3.8. Votos nulos percentuais ------------------------------------------
 
@@ -10712,6 +11642,140 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
                        }}
                    })
 })
+
+
+## Tabela para visualizacao
+
+### Eleitores aptos
+
+vtnlpercint <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Votos nulos percentuais" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vtnl_perc_int)
+  }
+})
+
+
+output$vtnl_perc_int <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  bvtnl_perc_int()
+})
+
+bvtnl_perc_int <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'vtnl_perc_int',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',                              
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos nulos percentuais" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                         return()
+                       }
+                       else{
+                         alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         Turno,
+                                         `Percentual de votos nulos`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Percentual de votos nulos`)}
+                       
+                     }
+                   })
+})
+
+## Dados desagregados
+
+### Eleitores aptos
+
+ag_vtnlperc_int <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$AGREGACAO_REGIONAL3
+  uf <- input$UF3
+  if(indicador == "Votos nulos percentuais" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$agreg_vtnl_perc_int)
+  }
+})
+
+output$agreg_vtnl_perc_int <- DT::renderDataTable(server = FALSE,{
+  bagreg_vtnl_perc_int()
+})
+
+bagreg_vtnl_perc_int <- eventReactive(input$BCALC3, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'vtnl_perc_int_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos nulos percentuais" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                        return()
+                       } else{ 
+                         data = alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 &
+                                           Cargo==input$DESCRICAO_CARGO3) %>%
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           unique()
+                       }}
+                   })
+})
+
+
 
 
 # 2.3. Volatilidade -------------------------------------------------------
@@ -11204,6 +12268,134 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
 })
 
 
+
+## Resumo
+
+### Volatilidade (Eleitores aptos) 
+
+voleleint <- reactive({ ## Atributos das tabelas 
+  indicador <- req(input$INDICADORES_VOL)
+  agregacao <- req(input$DESCRICAO_CARGO4)
+  if(indicador == "Volatilidade eleitoral" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vol_ele_int)
+  }
+})
+
+
+output$vol_ele_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  bvol_ele_int()
+})
+
+bvol_ele_int <- eventReactive(input$BCALC4, { ## Botao de acao
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 1
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'vol_ele_int',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- req(input$INDICADORES_VOL)
+                     agregacao <- req(input$AGREGACAO_REGIONAL4)
+                     intervalo <- req(input$INT4)
+                     if(indicador == "Volatilidade eleitoral" &
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{
+                         vol_mun %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                           `Eleitores aptos` == req(input$INT4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         `Volatilidade eleitoral`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Volatilidade eleitoral`) %>% 
+                           unique()
+                       }
+                     }
+                   })
+}) 
+
+## Dados desagregados
+
+### Volatilidade (Eleitores aptos) 
+
+ag_volele_int <- reactive({
+  indicador <- req(input$INDICADORES_VOL)
+  agregacao <- req(input$AGREGACAO_REGIONAL4)
+  if(indicador == "Volatilidade eleitoral" &
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$agreg_vol_ele_int)
+  }
+})
+
+output$agreg_vol_ele_int <- DT::renderDataTable(server = FALSE,{
+  bagreg_vol_ele_int()
+})
+
+bagreg_vol_ele_int <- eventReactive(input$BCALC4, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'vol_ele_int_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',
+                   'FixedColumns'),{
+                     indicador <- req(input$INDICADORES_VOL)
+                     agregacao <- req(input$AGREGACAO_REGIONAL4)
+                     intervalo <- req(input$INT4)
+                     if(indicador == "Volatilidade eleitoral" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{
+                         data = vol_mun %>% 
+                           filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                    `Eleitores aptos` == req(input$INT4)) %>% 
+                           select(-`Nome do município2`,`Eleitores aptos`) %>% 
+                           unique()
+                       }
+                     }
+                   })
+})
+
+
+
 # 2.4.2. Volatilidade parlamentar -----------------------------------------
 
 ## Resumo
@@ -11608,6 +12800,133 @@ bagreg_vol_parl_mun <- eventReactive(input$BCALC4, {
                      }
                    })
 })
+
+## Resumo
+
+### Volatilidade (Eleitores aptos) 
+
+volparlint <- reactive({ ## Atributos das tabelas 
+  indicador <- req(input$INDICADORES_VOL)
+  agregacao <- req(input$DESCRICAO_CARGO4)
+  if(indicador == "Volatilidade parlamentar" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vol_parl_int)
+  }
+})
+
+
+output$vol_parl_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  bvol_parl_int()
+})
+
+bvol_parl_int <- eventReactive(input$BCALC4, { ## Botao de acao
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 1
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(list(
+      extend = 'csv',
+      title = 'vol_parl_int',
+      bom = TRUE))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',              
+                   'FixedColumns'),{
+                     indicador <- req(input$INDICADORES_VOL)
+                     agregacao <- req(input$AGREGACAO_REGIONAL4)
+                     intervalo <- req(input$INT4)
+                     if(indicador == "Volatilidade parlamentar" &
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{
+                         vol_mun %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                         `Eleitores aptos` == req(input$INT4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         `Volatilidade parlamentar`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Volatilidade parlamentar`) %>% 
+                           unique()
+                       }
+                     }
+                   })
+}) 
+
+## Dados desagregados
+
+### Volatilidade (Eleitores aptos) 
+
+ag_volparl_int <- reactive({
+  indicador <- req(input$INDICADORES_VOL)
+  agregacao <- req(input$AGREGACAO_REGIONAL4)
+  if(indicador == "Volatilidade parlamentar" &
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$agreg_vol_parl_int)
+  }
+})
+
+output$agreg_vol_parl_int <- DT::renderDataTable(server = FALSE,{
+  bagreg_vol_parl_int()
+})
+
+bagreg_vol_parl_int <- eventReactive(input$BCALC4, {
+  datatable(options = list(
+    autoWidth = FALSE,
+    scrollX = TRUE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 3
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 'Bflrtip',
+    buttons = list(
+      list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'vol_parl_int_agreg',
+        bom = TRUE),
+      list(                     
+        extend = 'colvis',                     
+        text = 'Colunas'))), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('Buttons',        
+                   'FixedColumns'),{
+                     indicador <- req(input$INDICADORES_VOL)
+                     agregacao <- req(input$AGREGACAO_REGIONAL4)
+                     intervalo <- req(input$INT4)
+                     if(indicador == "Volatilidade parlamentar" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{
+                         data = vol_mun %>% 
+                           filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                  `Eleitores aptos` == req(input$INT4)) %>%
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           unique()
+                       }
+                     }
+                   })
+})
+
+
 
 }
 
