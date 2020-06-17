@@ -306,6 +306,7 @@ alien_mun <- alien_mun %>%
          `Código do município`,
          `Nome do município`,
          Cargo,
+         Turno,
          `Quantidade de eleitores aptos`,
          `Quantidade de abstenções`,
          `Percentual de abstenções`,

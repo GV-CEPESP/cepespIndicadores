@@ -8,9 +8,9 @@
 # 1. Server ---------------------------------------------------------------
 
 
-server <- function(input, output){
+server <- function(input, output, session){
   
- 
+  
  
 # 1.1. Sobre --------------------------------------------------------------
 
@@ -1265,7 +1265,7 @@ server <- function(input, output){
     }
   })
   
-  output$dpg_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$dpg_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     bdpg_mun()
   })
   
@@ -1340,7 +1340,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_dpg_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_dpg_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_dpg_mun()
   })
   
@@ -1860,7 +1860,7 @@ server <- function(input, output){
     }
   })
   
-  output$fracio_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$fracio_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     bfracio_mun()
   })
   
@@ -1934,7 +1934,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_fracio_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_fracio_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_fracio_mun()
   })
   
@@ -2445,7 +2445,7 @@ server <- function(input, output){
     }
   })
   
-  output$fracio_max_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$fracio_max_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     bfracio_max_mun()
   })
   
@@ -2520,7 +2520,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_fracio_max_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_fracio_max_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_fracio_max_mun()
   })
   
@@ -2678,7 +2678,7 @@ server <- function(input, output){
     bagreg_fracio_max_int()
   })
   
-  bagreg_fracio_int <- eventReactive(input$BCALC1, {
+  bagreg_fracio_max_int <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
@@ -3035,7 +3035,7 @@ server <- function(input, output){
     }
   })
   
-  output$frag_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$frag_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     bfrag_mun()
   })
   
@@ -3110,7 +3110,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_frag_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_frag_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_frag_mun()
   })
   
@@ -3619,7 +3619,7 @@ server <- function(input, output){
     }
   })
   
-  output$nepl_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$nepl_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     bnepl_mun()
   })
   
@@ -3694,7 +3694,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_nepl_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_nepl_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_nepl_mun()
   })
   
@@ -4203,7 +4203,7 @@ server <- function(input, output){
     }
   })
   
-  output$nepel_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$nepel_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     bnepel_mun()
   })
   
@@ -4277,7 +4277,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_nepel_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_nepel_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_nepel_mun()
   })
   
@@ -4791,7 +4791,7 @@ server <- function(input, output){
     }
   })
   
-  output$quoce_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$quoce_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     bquoce_mun()
   })
   
@@ -4867,7 +4867,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_quoce_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_quoce_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_quoce_mun()
   })
   
@@ -4910,13 +4910,13 @@ server <- function(input, output){
                          } else if(municipio == "Todos os municípios"){
                            data = distcad_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          } else{
                            data = distcad_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          }
                        }
@@ -5046,7 +5046,7 @@ server <- function(input, output){
                            data = distcad_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          }
                        }
@@ -5327,7 +5327,7 @@ server <- function(input, output){
     }
   })
   
-  output$quocp_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$quocp_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     bquocp_mun()
   })
   
@@ -5401,7 +5401,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_quocp_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_quocp_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_quocp_mun()
   })
   
@@ -5433,8 +5433,7 @@ server <- function(input, output){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
-                     'FixedColumns'),{
+                    'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        municipio <- req(input$MUN1)
@@ -5445,13 +5444,13 @@ server <- function(input, output){
                          } else if(municipio == "Todos os municípios"){
                            data = distcad_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>%
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          } else{
                            data = distcad_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          }
                        }
@@ -5581,7 +5580,7 @@ server <- function(input, output){
                            data = distcad_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          }
                        }
@@ -5951,7 +5950,7 @@ server <- function(input, output){
     }
   })
   
-  output$conserv_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$conserv_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     bconserv_mun()
   })
   
@@ -6026,7 +6025,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_conserv_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_conserv_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_conserv_mun()
   })
   
@@ -6071,13 +6070,13 @@ server <- function(input, output){
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          }
                        }
@@ -6488,7 +6487,7 @@ server <- function(input, output){
     }
   })
   
-  output$renov_bt_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$renov_bt_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     brenov_bt_mun()
   })
   
@@ -6563,7 +6562,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_renov_bt_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_renov_bt_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_renov_bt_mun()
   })
   
@@ -6608,13 +6607,13 @@ server <- function(input, output){
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          }
                        }
@@ -7028,7 +7027,7 @@ server <- function(input, output){
     }
   })
   
-  output$renov_liq_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$renov_liq_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     brenov_liq_mun()
   })
   
@@ -7103,7 +7102,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_renov_liq_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_renov_liq_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_renov_liq_mun()
   })
   
@@ -7148,13 +7147,13 @@ server <- function(input, output){
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                              unique()
                          }
                        }
@@ -7692,7 +7691,7 @@ server <- function(input, output){
     }    
   })
   
-  output$alien_abs_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao absoluta que devera ser chamada na ui
+  output$alien_abs_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela da alienacao absoluta que devera ser chamada na ui
     balien_abs_mun()
   })
   
@@ -7764,7 +7763,7 @@ server <- function(input, output){
     }
   })
   
-  output$agreg_alien_abs_mun <- DT::renderDataTable(server = FALSE,{
+  output$agreg_alien_abs_mun <- DT::renderDataTable(server = TRUE,{
     bagreg_alien_abs_mun()
   })
   
@@ -7805,12 +7804,12 @@ server <- function(input, output){
                          if(municipio == "Todos os municípios"){
                            data = alien_mun %>% 
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
-                             select(-`Nome do município2`)
+                             select(-`Nome do município2`, -`Eleitores aptos`)
                          } else{ 
                            data = alien_mun %>% 
                              dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
                                              `Nome do município2` == input$MUN3)%>% 
-                             select(-`Nome do município2`)
+                             select(-`Nome do município2`, -`Eleitores aptos`)
                          }}
                      })
   })
@@ -8229,7 +8228,7 @@ alienpercmun <- reactive({ ## Atributos das tabelas de alienacao absoluta
   }    
 })
 
-output$alien_perc_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao absoluta que devera ser chamada na ui
+output$alien_perc_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela da alienacao absoluta que devera ser chamada na ui
   balien_perc_mun()
 })
 
@@ -8303,7 +8302,7 @@ ag_alienperc_mun <- reactive({
   }
 })
 
-output$agreg_alien_perc_mun <- DT::renderDataTable(server = FALSE,{
+output$agreg_alien_perc_mun <- DT::renderDataTable(server = TRUE,{
   bagreg_alien_perc_mun()
 })
 
@@ -8346,12 +8345,12 @@ bagreg_alien_perc_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`)
+                           select(-`Nome do município2`, -`Eleitores aptos`)
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
                                            `Nome do município2` == input$MUN3) %>% 
-                           select(-`Nome do município2`)
+                           select(-`Nome do município2`, -`Eleitores aptos`)
                        }}
                    })
 })
@@ -8774,7 +8773,7 @@ abstabsmun <- reactive({
 })
 
 
-output$abst_abs_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+output$abst_abs_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
   babst_abs_mun()
 })
 
@@ -8850,7 +8849,7 @@ ag_abstabs_mun <- reactive({
   }
 })
 
-output$agreg_abst_abs_mun <- DT::renderDataTable(server = FALSE,{
+output$agreg_abst_abs_mun <- DT::renderDataTable(server = TRUE,{
   bagreg_abst_abs_mun()
 })
 
@@ -8893,13 +8892,13 @@ bagreg_abst_abs_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        }}
                    })
@@ -9322,7 +9321,7 @@ abstpercmun <- reactive({
 })
 
 
-output$abst_perc_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+output$abst_perc_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
   babst_perc_mun()
 })
 
@@ -9398,7 +9397,7 @@ ag_abstperc_mun <- reactive({
   }
 })
 
-output$agreg_abst_perc_mun <- DT::renderDataTable(server = FALSE,{
+output$agreg_abst_perc_mun <- DT::renderDataTable(server = TRUE,{
   bagreg_abst_perc_mun()
 })
 
@@ -9441,13 +9440,13 @@ bagreg_abst_perc_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        }}
                    })
@@ -9870,7 +9869,7 @@ vtbrabsmun <- reactive({
 })
 
 
-output$vtbr_abs_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+output$vtbr_abs_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
   bvtbr_abs_mun()
 })
 
@@ -9944,7 +9943,7 @@ ag_vtbrabs_mun <- reactive({
   }
 })
 
-output$agreg_vtbr_abs_mun <- DT::renderDataTable(server = FALSE,{
+output$agreg_vtbr_abs_mun <- DT::renderDataTable(server = TRUE,{
   bagreg_vtbr_abs_mun()
 })
 
@@ -9987,13 +9986,13 @@ bagreg_vtbr_abs_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        }}
                    })
@@ -10422,7 +10421,7 @@ vtbrpercmun <- reactive({
 })
 
 
-output$vtbr_perc_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+output$vtbr_perc_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
   bvtbr_perc_mun()
 })
 
@@ -10496,7 +10495,7 @@ ag_vtbrperc_mun <- reactive({
   }
 })
 
-output$agreg_vtbr_perc_mun <- DT::renderDataTable(server = FALSE,{
+output$agreg_vtbr_perc_mun <- DT::renderDataTable(server = TRUE,{
   bagreg_vtbr_perc_mun()
 })
 
@@ -10537,13 +10536,13 @@ bagreg_vtbr_perc_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        }}
                    })
@@ -10969,7 +10968,7 @@ vtnlabsmun <- reactive({
 })
 
 
-output$vtnl_abs_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+output$vtnl_abs_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
   bvtnl_abs_mun()
 })
 
@@ -11043,7 +11042,7 @@ ag_vtnlabs_mun <- reactive({
   }
 })
 
-output$agreg_vtnl_abs_mun <- DT::renderDataTable(server = FALSE,{
+output$agreg_vtnl_abs_mun <- DT::renderDataTable(server = TRUE,{
   bagreg_vtnl_abs_mun()
 })
 
@@ -11084,13 +11083,13 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                           Cargo==input$DESCRICAO_CARGO3) %>%
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        }}
                    })
@@ -11221,7 +11220,7 @@ bagreg_vtnl_abs_int <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Eleitores aptos` == input$INT3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>%
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        }}
                    })
@@ -11514,7 +11513,7 @@ vtnlpercmun <- reactive({
 })
 
 
-output$vtnl_perc_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+output$vtnl_perc_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
   bvtnl_perc_mun()
 })
 
@@ -11590,7 +11589,7 @@ ag_vtnlperc_mun <- reactive({
   }
 })
 
-output$agreg_vtnl_perc_mun <- DT::renderDataTable(server = FALSE,{
+output$agreg_vtnl_perc_mun <- DT::renderDataTable(server = TRUE,{
   bagreg_vtnl_perc_mun()
 })
 
@@ -11631,13 +11630,13 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                          Cargo==input$DESCRICAO_CARGO3) %>%
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        }}
                    })
@@ -12140,7 +12139,7 @@ volelemun <- reactive({ ## Atributos das tabelas
 })
 
 
-output$vol_ele_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+output$vol_ele_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
   bvol_ele_mun()
 })
 
@@ -12211,7 +12210,7 @@ ag_volele_mun <- reactive({
   }
 })
 
-output$agreg_vol_ele_mun <- DT::renderDataTable(server = FALSE,{
+output$agreg_vol_ele_mun <- DT::renderDataTable(server = TRUE,{
   bagreg_vol_ele_mun()
 })
 
@@ -12254,13 +12253,13 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
                        } else if(municipio == "Todos os municípios"){
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4)) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        } else{
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4) &
                                   `Nome do município2` == req(input$MUN4)) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        }
                      }
@@ -12671,7 +12670,7 @@ volparlmun <- reactive({ ## Atributos das tabelas
 })
 
 
-output$vol_parl_mun <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+output$vol_parl_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
   bvol_parl_mun()
 })
 
@@ -12744,7 +12743,7 @@ ag_volparl_mun <- reactive({
   }
 })
 
-output$agreg_vol_parl_mun <- DT::renderDataTable(server = FALSE,{
+output$agreg_vol_parl_mun <- DT::renderDataTable(server = TRUE,{
   bagreg_vol_parl_mun()
 })
 
@@ -12788,13 +12787,13 @@ bagreg_vol_parl_mun <- eventReactive(input$BCALC4, {
                        } else if(municipio == "Todos os municípios"){
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4)) %>% 
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        } else{
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4) &
                                     `Nome do município2` == req(input$MUN4)) %>%
-                           select(-`Nome do município2`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
                            unique()
                        }
                      }
