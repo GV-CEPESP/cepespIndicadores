@@ -22,7 +22,7 @@ server <- function(input, output, session){
                    <h2 align = 'center'>
                    <font size ='6' color = 'black'><strong>
                    
-                   Sobre </font></h2>
+                   SOBRE </font></h2>
                    
                    <font size = '1' color = 'black'>
 
@@ -47,42 +47,48 @@ server <- function(input, output, session){
   
 ### Fragmentacao legislativa
   
-  
-  cargos <- reactive({
-    indicador <- input$INDICADORES_FRAG
-    if(length(indicador) > 0){
-      return(input$DESCRICAO_CARGO1)
+  indicadores1 <- reactive({
+    cargo <- input$DESCRICAO_CARGO1
+    if(length(cargo) > 0){
+      return(input$INDICADORES_FRAG)
     } 
   })
   
   
-  output$DESCRICAO_CARGO1 <- renderUI({
-    indicador <- input$INDICADORES_FRAG
-    if(length(indicador) > 0 &
-       indicador != "Quociente eleitoral" &
-       indicador != "Quociente partidário"){
-      selectizeInput(inputId = "DESCRICAO_CARGO1",
-                     label = NULL,
-                     choices = c("","Senador",
-                                 "Deputado Federal", 
-                                 "Deputado Estadual",
-                                 "Vereador"), ## Cargos disponiveis
+  output$INDICADORES_FRAG <- renderUI({
+    cargo <- input$DESCRICAO_CARGO1
+    if(length(cargo) > 0 &
+       cargo == "Senador"){
+  selectizeInput(inputId = "INDICADORES_FRAG",
+                 label = NULL, 
+                 choices = c("", "Número efetivo de partidos eleitoral",
+                             "Número efetivo de partidos legislativo","Fracionalização", 
+                             "Fracionalização máxima",            
+                             "Fragmentação", "Desproporcionalidade"),
+                 selected = NULL,
+                 options = list(placeholder = 'Escolha um indicador'))
+    } else if(length(cargo) > 0 &
+              cargo == "Prefeito"){
+      selectizeInput(inputId = "INDICADORES_FRAG",
+                     label = NULL, 
+                     choices = c("", "Número efetivo de partidos eleitoral"),
                      selected = NULL,
-                     options = list(placeholder = 'Escolha um cargo'))
-    } else if(indicador == "Quociente eleitoral"|
-              indicador == "Quociente partidário"){
-      selectizeInput(inputId = "DESCRICAO_CARGO1",
-                     label = NULL,
-                     choices = c("","Deputado Federal", "Deputado Estadual",
-                                 "Vereador"), ## Cargos disponiveis
-                     selected = NULL,
-                     options = list(placeholder = 'Escolha um cargo'))
+                     options = list(placeholder = 'Escolha um indicador'))
     } else{
-    return()
+      selectizeInput(inputId = "INDICADORES_FRAG",
+                     label = NULL, 
+                     choices = c("", "Número efetivo de partidos eleitoral",
+                                 "Número efetivo de partidos legislativo","Fracionalização", 
+                                 "Fracionalização máxima",            
+                                 "Fragmentação", "Desproporcionalidade",
+                                 "Quociente eleitoral", "Quociente partidário"),
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha um indicador'))
     }
+    
   })
   
-  
+ 
 ## Funcao que retorna uma nova caixa de selecao quando o usuario seleciona "UF" na agregacao regional    
   
 ### Fragmentacao legislativa
@@ -100,9 +106,7 @@ server <- function(input, output, session){
   output$AGREGACAO_REGIONAL1 <- renderUI({
     indicador <- req(input$INDICADORES_FRAG)
     cargo <- req(input$DESCRICAO_CARGO1)
-    if((indicador == "Quociente eleitoral" |
-       indicador == "Quociente partidário") &
-       cargo != "Vereador"){
+    if(cargo == "Deputado Estadual"){
     selectizeInput("AGREGACAO_REGIONAL1",
                    label = NULL,
                    choices = c("", "UF"),
@@ -130,7 +134,8 @@ server <- function(input, output, session){
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
       
-    } else if(cargo == "Vereador"){
+    } else if(cargo == "Prefeito" |
+              cargo == "Vereador"){
       selectizeInput("AGREGACAO_REGIONAL1",
                      label = NULL,
                      choices = 
@@ -163,6 +168,7 @@ server <- function(input, output, session){
        agregacao == "Brasil"){
       return()
     }else if(cargo != "Senador" &
+             cargo != "Prefeito" &
              cargo != "Vereador" &
       length(agregacao == "UF") > 0){
       selectizeInput("UF1",
@@ -186,6 +192,9 @@ server <- function(input, output, session){
   frag_leg_mun$`Nome do município2` <- paste(frag_leg_mun$`Nome do município`, "-",
                                              frag_leg_mun$UF)
   
+  frag_leg_pf$`Nome do município2` <- paste(frag_leg_pf$`Nome do município`, "-",
+                                             frag_leg_pf$UF)
+  
   distcad_mun$`Nome do município2` <- paste(distcad_mun$`Nome do município`, "-",
                                              distcad_mun$UF)
   
@@ -207,10 +216,12 @@ server <- function(input, output, session){
     if(cargo == "Deputado Federal" & 
        agregacao == "Brasil"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
               agregacao == "Quantidade de eleitores aptos"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" | 
+               cargo == "Vereador") &
               length(agregacao == "Município") > 0){
       selectizeInput("MUN1",
                      label = NULL,
@@ -243,10 +254,12 @@ server <- function(input, output, session){
     if(cargo == "Deputado Federal" & 
        agregacao == "Brasil"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador" )&
               agregacao == "Município"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
               length(agregacao == "Quantidade de eleitores aptos") > 0){
       selectizeInput("INT1",
                      label = NULL,
@@ -288,6 +301,27 @@ server <- function(input, output, session){
 ### Renovacao parlamentar
   
   
+  indicadores2 <- reactive({
+    cargo <- input$DESCRICAO_CARGO2
+    if(length(cargo) > 0){
+      return(input$INDICADORES_RENOV)
+    } 
+  })
+  
+  
+  output$INDICADORES_RENOV <- renderUI({
+    cargo <- input$DESCRICAO_CARGO2
+    if(length(cargo) > 0){
+      selectizeInput(inputId = "INDICADORES_RENOV",
+                     label = NULL, 
+                     choices = c("","Conservação", "Renovação bruta",
+                                 "Renovação líquida"), ## Indicadores disponiveis
+                     selected = NULL,
+                     options = list(placeholder = 'Escolha um indicador'))
+    }
+  })
+  
+  
   agregacao2 <- reactive({
     indicador <- input$INDICADORES_RENOV
     if(length(indicador) > 0){
@@ -312,7 +346,8 @@ server <- function(input, output, session){
                        c("","UF"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
-    } else if(cargo == "Vereador"){
+    } else if(cargo == "Prefeito" |
+              cargo == "Vereador"){
       selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
                      choices = c("","Município", "Quantidade de eleitores aptos"),
@@ -361,6 +396,9 @@ server <- function(input, output, session){
   renov_parl_mun$`Nome do município2` <- paste(renov_parl_mun$`Nome do município`, "-",
                                              renov_parl_mun$UF)
   
+  #renov_parl_pf$`Nome do município2` <- paste(renov_parl_pf$`Nome do município`, "-",
+   #                                            renov_parl_pf$UF)
+  
   municipio2 <- reactive({
     indicador <- req(input$INDICADORES_RENOV)
     cargo <- req(input$DESCRICAO_CARGO2)
@@ -378,10 +416,12 @@ server <- function(input, output, session){
     if(cargo == "Deputado Federal" & 
        agregacao == "Brasil"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
               agregacao == "Quantidade de eleitores aptos"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
               length(agregacao == "Município") > 0){
       selectizeInput("MUN2",
                      label = NULL,
@@ -413,10 +453,12 @@ server <- function(input, output, session){
     if(cargo == "Deputado Federal" & 
        agregacao == "Brasil"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
               agregacao == "Município"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
               length(agregacao == "Quantidade de eleitores aptos") > 0){
       selectizeInput("INT2",
                      label = NULL,
@@ -456,6 +498,28 @@ server <- function(input, output, session){
   
   
   ## Alienacao
+  
+  indicadores3 <- reactive({
+    cargo <- input$DESCRICAO_CARGO3
+    if(length(cargo) > 0){
+      return(input$INDICADORES_ALIE)
+    } 
+  })
+  
+  output$INDICADORES_ALIE <- renderUI({
+    cargo <- input$DESCRICAO_CARGO3
+    if(length(cargo) > 0){
+  selectizeInput(inputId = "INDICADORES_ALIE",
+                 label = NULL, 
+                 choices = c("","Alienação absoluta", "Alienação percentual",
+                             "Abstenção absoluta","Abstenção percentual",
+                             "Votos brancos absolutos", "Votos brancos percentuais",
+                             "Votos nulos absolutos", "Votos nulos percentuais"), ## Indicadores disponiveis
+                 selected = NULL,
+                 options = list(placeholder = 'Escolha um indicador'))
+    }
+  })
+  
   
   agregacao3 <- reactive({
     indicador <- input$INDICADORES_ALIE
@@ -623,6 +687,34 @@ server <- function(input, output, session){
   
   ### Agregacao regional
   
+  indicadores4 <- reactive({
+    cargo <- input$DESCRICAO_CARGO4
+    if(length(cargo) > 0){
+      return(input$INDICADORES_VOL)
+    } 
+  })
+  
+  output$INDICADORES_VOL <- renderUI({
+    cargo <- input$DESCRICAO_CARGO4
+    if(cargo == "Prefeito"){
+  selectizeInput(inputId = "INDICADORES_VOL",
+                 label = NULL, 
+                 choices = c("","Volatilidade eleitoral"), ## Indicadores disponiveis
+                 selected = NULL,
+                 options = list(placeholder = 'Escolha um indicador'))
+    } else if(cargo != "Prefeito"){
+    selectizeInput(inputId = "INDICADORES_VOL",
+                   label = NULL, 
+                   choices = c("","Volatilidade eleitoral",
+                               "Volatilidade parlamentar"), ## Indicadores disponiveis
+                   selected = NULL,
+                   options = list(placeholder = 'Escolha um indicador'))
+    } else{
+      return()
+    }
+  })
+  
+  
   agregacao4 <- reactive({
     indicador <- input$INDICADORES_VOL
     if(length(indicador) > 0){
@@ -648,7 +740,8 @@ server <- function(input, output, session){
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
       
-    } else if(cargo == "Vereador"){
+    } else if(cargo == "Prefeito" |
+              cargo == "Vereador"){
       selectizeInput("AGREGACAO_REGIONAL4",
                      label = NULL,
                      choices = c("","Município", "Quantidade de eleitores aptos"),
@@ -698,6 +791,9 @@ server <- function(input, output, session){
   vol_mun$`Nome do município2` <- paste(vol_mun$`Nome do município`, "-",
                                              vol_mun$UF)
   
+  vol_pf$`Nome do município2` <- paste(vol_pf$`Nome do município`, "-",
+                                        vol_pf$UF)
+  
   municipio4 <- reactive({
     indicador <- req(input$INDICADORES_VOL)
     cargo <- req(input$DESCRICAO_CARGO4)
@@ -715,10 +811,12 @@ server <- function(input, output, session){
     if(cargo == "Deputado Federal" & 
        agregacao == "Brasil"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
              agregacao == "Quantidade de eleitores aptos"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
               length(agregacao == "Município") > 0){
       selectizeInput("MUN4",
                      label = NULL,
@@ -750,10 +848,12 @@ server <- function(input, output, session){
     if(cargo == "Deputado Federal" & 
        agregacao == "Brasil"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
               agregacao == "Município"){
       return()
-    } else if(cargo == "Vereador" &
+    } else if((cargo == "Prefeito" |
+               cargo == "Vereador") &
               length(agregacao == "Quantidade de eleitores aptos") > 0){
       selectizeInput("INT4",
                      label = NULL,
@@ -805,9 +905,9 @@ server <- function(input, output, session){
   
   observeEvent(input$modal_frag,{
     showModal(modalDialog(
-                          title = tags$h4(align = "center",
-                                          "Ajuda"),
-                          footer = modalButton("Fechar"), 
+                          title = h4(class = "h4 titulo",
+                                          "AJUDA"),
+                          footer = modalButton("FECHAR"), 
                           size = "m",
                           htmlOutput("def_frag"),
                           easyClose = TRUE,
@@ -828,9 +928,9 @@ server <- function(input, output, session){
   
   observeEvent(input$modal_frag_ag,{
     showModal(modalDialog(
-                          title = tags$h4(align = 'center',
-                                          "Ajuda"),
-                          footer = modalButton("Fechar"), 
+                          title = h4(class = "h4 titulo",
+                                          "AJUDA"),
+                          footer = modalButton("FECHAR"), 
                           size = "m",
                           htmlOutput("def_frag"),
                           easyClose = TRUE,
@@ -982,8 +1082,7 @@ server <- function(input, output, session){
   
   bdpg_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -998,7 +1097,6 @@ server <- function(input, output, session){
         class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -1012,8 +1110,6 @@ server <- function(input, output, session){
             unique() %>% 
             spread(`Ano da eleição`,
                    `Desproporcionalidade`)
-          
-          
         }
       })
   })  
@@ -1038,8 +1134,7 @@ server <- function(input, output, session){
   bagreg_dpg_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      
-     autoWidth = FALSE,
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1063,7 +1158,6 @@ server <- function(input, output, session){
         class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -1080,6 +1174,8 @@ server <- function(input, output, session){
                    `Fragmentação`,
                    Desproporcionalidade) %>% 
             unique()
+        } else{
+          return()
         }
       })
   })
@@ -1106,8 +1202,7 @@ server <- function(input, output, session){
   
   bdpg_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -1125,7 +1220,6 @@ server <- function(input, output, session){
         class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -1143,8 +1237,6 @@ server <- function(input, output, session){
             unique() %>% 
             spread(`Ano da eleição`,
                    `Desproporcionalidade`)
-          
-          
           } else{
             frag_leg_uf %>% 
             dplyr::filter(UF == input$UF1 & 
@@ -1155,9 +1247,9 @@ server <- function(input, output, session){
             unique() %>% 
             spread(`Ano da eleição`,
                    `Desproporcionalidade`)
-          
-          
-        }
+          }
+        } else{
+          return()
         }
       })
   })  
@@ -1172,6 +1264,8 @@ server <- function(input, output, session){
     if(indicador == "Desproporcionalidade" & 
        agregacao == "UF"){
       return(input$agreg_dpg_uf)
+    } else{
+      return()
     }
   })
   
@@ -1182,8 +1276,7 @@ server <- function(input, output, session){
   bagreg_dpg_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1208,7 +1301,6 @@ server <- function(input, output, session){
         class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -1245,6 +1337,8 @@ server <- function(input, output, session){
                      Desproporcionalidade) %>% 
               unique()
         }
+        } else{
+          return()
         }
       })
   })
@@ -1272,7 +1366,6 @@ server <- function(input, output, session){
   bdpg_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -1290,7 +1383,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -1320,9 +1412,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Desproporcionalidade`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -1337,6 +1429,8 @@ server <- function(input, output, session){
     if(indicador == "Desproporcionalidade" & 
        agregacao == "Município"){
       return(input$agreg_dpg_mun)
+    } else{
+      return()
     }
   })
   
@@ -1348,7 +1442,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1373,7 +1466,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -1412,6 +1504,8 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -1420,6 +1514,81 @@ server <- function(input, output, session){
   ## Resumo
   
   ### Fragmentacao legislativa (Intervalo de eleitores aptos)
+  
+  
+  
+  dpgmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Desproporcionalidade" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$dpg_med)
+    }
+  })
+  
+  output$dpg_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bdpg_med()
+  })
+  
+  bdpg_med <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE,
+      searching = FALSE,
+      paging = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Desproporcionalidade" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                            Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional da desproporcionalidade`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da desproporcionalidade`)%>% 
+                             mutate("media" = "Média nacional da desproporcionalidade") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média da desproporcionalidade`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da desproporcionalidade`)%>% 
+                             mutate("media" = "Média da desproporcionalidade") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                         }
+                       } else{
+                         return()
+                       }
+                     })
+  })
   
   
   dpgint <- reactive({ ## Atributos da tabela
@@ -1475,9 +1644,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Desproporcionalidade`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -1492,6 +1661,8 @@ server <- function(input, output, session){
     if(indicador == "Desproporcionalidade" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$agreg_dpg_int)
+    } else{
+      return()
     }
   })
   
@@ -1533,7 +1704,7 @@ server <- function(input, output, session){
                        intervalo <- req(input$INT1)
                        if(indicador == "Desproporcionalidade" & 
                           agregacao == "Quantidade de eleitores aptos"){
-                         if(intervalo == ""){
+                         if(indicador != "Desproporcionalidade"){
                            return()
                          } else{
                            data = frag_leg_mun %>% 
@@ -1551,6 +1722,8 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -1570,6 +1743,8 @@ server <- function(input, output, session){
        cargo == "Deputado Federal" & 
        agregacao == "Brasil"){
       return(input$fracio_br)
+    } else{
+      return()
     }
   })
   
@@ -1579,8 +1754,7 @@ server <- function(input, output, session){
   
   bfracio_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-               autoWidth = FALSE,
-                
+                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -1595,8 +1769,7 @@ server <- function(input, output, session){
                 class = "display",
               rownames = FALSE,
               extensions = c('Buttons',
-                            
-                             'FixedColumns'),{
+                            'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
       uf <- input$UF1
@@ -1610,8 +1783,8 @@ server <- function(input, output, session){
           unique() %>% 
           spread(`Ano da eleição`,
                  `Fracionalização`)
-        
-        
+      } else{
+        return()
       }
     })
   })  
@@ -1626,6 +1799,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização" & 
        agregacao == "Brasil"){
       return(input$agreg_fracio_br)
+    } else{
+      return()
     }
   })
   
@@ -1636,8 +1811,7 @@ server <- function(input, output, session){
   bagreg_fracio_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
-               autoWidth = FALSE,
-                
+                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -1659,12 +1833,9 @@ server <- function(input, output, session){
                     extend = 'colvis',                     
                     text = 'Colunas'))), 
                 class = "display",
-             
-              
-              rownames = FALSE,
-              extensions = c('Buttons', 
-                            
-                             'FixedColumns'),{
+                rownames = FALSE,
+                extensions = c('Buttons', 
+                               'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
       if(indicador == "Fracionalização" & 
@@ -1680,6 +1851,8 @@ server <- function(input, output, session){
                  `Fragmentação`,
                  Desproporcionalidade) %>% 
           unique() 
+      } else{
+        return()
       }
     })
   })
@@ -1695,6 +1868,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização" & 
        agregacao == "UF"){
       return(input$fracio_uf)
+    } else{
+      return()
     }
   })
   
@@ -1704,8 +1879,7 @@ server <- function(input, output, session){
   
   bfracio_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1723,7 +1897,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -1752,8 +1925,9 @@ server <- function(input, output, session){
             unique() %>% 
             spread(`Ano da eleição`,
                    `Fracionalização`)
-        
            }
+        } else{
+          return()
         }
       })
   })  
@@ -1778,8 +1952,7 @@ server <- function(input, output, session){
   bagreg_fracio_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      
-     autoWidth = FALSE,
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1803,7 +1976,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -1839,8 +2011,10 @@ server <- function(input, output, session){
                    `Fragmentação`,
                    Desproporcionalidade) %>% 
             unique()
+          }
+        } else{
+          return()
         }
-           }
       })
   })  
   
@@ -1857,6 +2031,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização" & 
        agregacao == "Município"){
       return(input$fracio_mun)
+    } else{
+      return()
     }
   })
   
@@ -1867,7 +2043,6 @@ server <- function(input, output, session){
   bfracio_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -1885,7 +2060,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -1915,8 +2089,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Fracionalização`)
-                           
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -1931,6 +2106,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização" & 
        agregacao == "Município"){
       return(input$agreg_fracio_mun)
+    } else{
+      return()
     }
   })
   
@@ -1942,7 +2119,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -1967,7 +2143,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -2006,6 +2181,8 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -2016,6 +2193,81 @@ server <- function(input, output, session){
   ### Fragmentacao legislativa (Intervalo de eleitores aptos)
   
   
+  
+  fraciomed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Fracionalização" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$fracio_med)
+    } else{
+      return()
+    }
+  })
+  
+  output$fracio_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    fracio_med()
+  })
+  
+  fracio_med <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Fracionalização" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                          media1 <- frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional da fracionalização`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da fracionalização`) %>% 
+                             mutate("media" = "Média nacional da fracionalização") %>% 
+                             column_to_rownames("media")
+                          
+                          media2 <- frag_leg_mun %>% 
+                            dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                            Cargo == input$DESCRICAO_CARGO1) %>% 
+                            dplyr::select(`Ano da eleição`,
+                                          `Média da fracionalização`) %>% 
+                            unique() %>% 
+                            spread(`Ano da eleição`,
+                                   `Média da fracionalização`) %>% 
+                            mutate("media" = "Média da fracionalização") %>% 
+                            column_to_rownames("media")
+                          
+                          media1 <- rbind(media1, media2)
+                          
+                          media1
+                         }
+                       } else{
+                         return()
+                       }
+                     })
+  }) 
+  
+  
   fracioint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL1
@@ -2023,6 +2275,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$fracio_int)
+    } else{
+      return()
     }
   })
   
@@ -2069,9 +2323,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Fracionalização`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -2086,6 +2340,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$agreg_fracio_int)
+    } else{
+      return()
     }
   })
   
@@ -2145,6 +2401,8 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -2161,6 +2419,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização máxima" 
        & agregacao == "Brasil"){
       return(input$fracio_max_br)
+    } else{
+      return()
     }
   })
   
@@ -2170,8 +2430,7 @@ server <- function(input, output, session){
   
   bfracio_max_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-               autoWidth = FALSE,
-                
+                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -2186,7 +2445,6 @@ server <- function(input, output, session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons', 
-                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -2200,7 +2458,8 @@ server <- function(input, output, session){
           unique() %>% 
           spread(`Ano da eleição`,
                  `Fracionalização máxima`)
-        
+      } else{
+        return()
       }
     })
   })
@@ -2215,6 +2474,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização máxima" & 
        agregacao == "Brasil"){
       return(input$agreg_fracio_max_br)
+    } else{
+      return()
     }
   })
   
@@ -2225,8 +2486,7 @@ server <- function(input, output, session){
   bagreg_fracio_max_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
-                
-               autoWidth = FALSE,
+                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -2250,7 +2510,6 @@ server <- function(input, output, session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons', 
-                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -2267,6 +2526,8 @@ server <- function(input, output, session){
                  `Fragmentação`,
                  Desproporcionalidade) %>% 
           unique() 
+      } else{
+        return()
       }
     })
   })
@@ -2282,6 +2543,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização máxima" 
        & agregacao == "UF"){
       return(input$fracio_max_uf)
+    } else{
+      return()
     } 
   })
   
@@ -2291,8 +2554,7 @@ server <- function(input, output, session){
   
   bfracio_max_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -2310,7 +2572,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
         indicador <- req(input$INDICADORES_FRAG)
         agregacao <- req(input$AGREGACAO_REGIONAL1)
@@ -2339,6 +2600,8 @@ server <- function(input, output, session){
             spread(`Ano da eleição`,
                    `Fracionalização máxima`)
         }
+        } else{
+          return()
         }
       })
   })
@@ -2353,6 +2616,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização máxima" & 
        agregacao == "UF"){
       return(input$agreg_fracio_max_uf)
+    } else{
+      return()
     }
   })
   
@@ -2363,8 +2628,7 @@ server <- function(input, output, session){
   bagreg_fracio_max_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      
-     autoWidth = FALSE,
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -2388,7 +2652,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -2425,7 +2688,9 @@ server <- function(input, output, session){
                      Desproporcionalidade) %>% 
               unique()
         }
-      }
+        } else{
+          return()
+        }
       })
   })
   
@@ -2442,6 +2707,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização máxima" & 
        agregacao == "Município"){
       return(input$fracio_max_mun)
+    } else{
+      return()
     }
   })
   
@@ -2452,7 +2719,6 @@ server <- function(input, output, session){
   bfracio_max_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -2470,7 +2736,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -2500,9 +2765,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Fracionalização máxima`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -2517,6 +2782,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização máxima" & 
        agregacao == "Município"){
       return(input$agreg_fracio_max_mun)
+    } else{
+      return()
     }
   })
   
@@ -2528,7 +2795,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -2553,7 +2819,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -2592,6 +2857,8 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -2601,6 +2868,79 @@ server <- function(input, output, session){
   ### Fragmentacao legislativa (Intervalo de eleitores aptos)
   
   
+  fraciomaxmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Fracionalização máxima" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$fracio_max_med)
+    } else{
+      return()
+    }
+  })
+  
+  output$fracio_max_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bfracio_max_med()
+  })
+  
+  bfracio_max_med <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Fracionalização máxima" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional da fracionalização máxima`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da fracionalização máxima`) %>% 
+                             mutate("media" = "Média nacional da fracionalização máxima") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média da fracionalização máxima`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da fracionalização máxima`) %>% 
+                             mutate("media" = "Média da fracionalização máxima") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                         }
+                       } else{
+                         return()
+                       }
+                     })
+  }) 
+  
+  
   fraciomaxint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL1
@@ -2608,6 +2948,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização máxima" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$fracio_max_int)
+    } else{
+      return()
     }
   })
   
@@ -2654,16 +2996,16 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Fracionalização máxima`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
   
   ## Dados desagregados
   
-  ### Fragmentacao legislativa (MUN)  
+  ### Fragmentacao legislativa (INT)  
   
   ag_fracio_max_int <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -2671,6 +3013,8 @@ server <- function(input, output, session){
     if(indicador == "Fracionalização máxima" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$agreg_fracio_max_int)
+    } else{
+      return()
     }
   })
   
@@ -2730,6 +3074,8 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -2746,6 +3092,8 @@ server <- function(input, output, session){
     if(indicador == "Fragmentação" & 
        agregacao == "Brasil"){
       return(input$frag_br)
+    } else{
+      return()
     }
   })
   
@@ -2756,8 +3104,7 @@ server <- function(input, output, session){
   
   bfrag_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-               autoWidth = FALSE,
-                
+                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -2772,7 +3119,6 @@ server <- function(input, output, session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons',
-                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -2787,6 +3133,8 @@ server <- function(input, output, session){
           spread(`Ano da eleição`,
                  `Fragmentação`)
         
+      } else{
+        return()
       }
     })
   })
@@ -2801,6 +3149,8 @@ server <- function(input, output, session){
     if(indicador == "Fragmentação" & 
        agregacao == "Brasil"){
       return(input$agreg_frag_br)
+    } else{
+      return()
     }
   })
   
@@ -2811,8 +3161,7 @@ server <- function(input, output, session){
   bagreg_frag_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
-                
-               autoWidth = FALSE,
+                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -2836,12 +3185,14 @@ server <- function(input, output, session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons',
-                            
-                             'FixedColumns'),{
+                            'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
       if(indicador == "Fragmentação" & 
          agregacao == "Brasil"){
+        if(indicador == ""){
+          return()
+        } else{
         data = frag_leg_br %>% 
           dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
           select(`Ano da eleição`,
@@ -2853,7 +3204,10 @@ server <- function(input, output, session){
                  `Fragmentação`,
                  Desproporcionalidade) %>% 
           unique() 
-      }
+        }
+      } else{
+        return()
+      } 
     })
   })  
   
@@ -2868,6 +3222,8 @@ server <- function(input, output, session){
     if(indicador == "Fragmentação" & 
        agregacao == "UF"){
       return(input$frag_uf)
+    } else{
+      return()
     }
   })
   
@@ -2878,8 +3234,7 @@ server <- function(input, output, session){
   
   bfrag_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -2897,7 +3252,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -2929,6 +3283,8 @@ server <- function(input, output, session){
             spread(`Ano da eleição`,
                    `Fragmentação`)
           }
+        } else{
+          return()
         }
       })
   })
@@ -2943,6 +3299,8 @@ server <- function(input, output, session){
     if(indicador == "Fragmentação" &
        agregacao == "UF"){
       return(input$agreg_frag_uf)
+    } else{
+      return()
     }
   })
   
@@ -2953,8 +3311,7 @@ server <- function(input, output, session){
   bagreg_frag_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      
-     autoWidth = FALSE,
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -2978,7 +3335,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -3015,6 +3371,8 @@ server <- function(input, output, session){
                    Desproporcionalidade) %>% 
             unique()
         }
+        } else{
+          return()
         }
       })
   })
@@ -3032,6 +3390,8 @@ server <- function(input, output, session){
     if(indicador == "Fragmentação" & 
        agregacao == "Município"){
       return(input$frag_mun)
+    } else{
+      return()
     }
   })
   
@@ -3042,7 +3402,6 @@ server <- function(input, output, session){
   bfrag_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -3060,7 +3419,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -3090,9 +3448,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Fragmentação`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -3107,6 +3465,8 @@ server <- function(input, output, session){
     if(indicador == "Fragmentação" & 
        agregacao == "Município"){
       return(input$agreg_frag_mun)
+    } else{
+      return()
     }
   })
   
@@ -3118,7 +3478,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3143,7 +3502,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
@@ -3182,6 +3540,8 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -3192,6 +3552,80 @@ server <- function(input, output, session){
   ### Fragmentacao legislativa (Intervalo de eleitores aptos)
   
   
+  
+  fragmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Fragmentação" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$frag_med)
+    } else{
+      return()
+    }
+  })
+  
+  output$frag_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    frag_med()
+  })
+  
+  frag_med <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Fragmentação" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           media1 <- frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional da fragmentação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da fragmentação`) %>% 
+                             mutate("media" = "Média nacional da fragmentação") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média da fragmentação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da fragmentação`) %>% 
+                             mutate("media" = "Média da fragmentação") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                         }
+                       } else{
+                         return()
+                       }
+                     })
+  }) 
+  
+  
+  
   fragint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL1
@@ -3199,6 +3633,8 @@ server <- function(input, output, session){
     if(indicador == "Fragmentação" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$frag_int)
+    } else{
+      return()
     }
   })
   
@@ -3245,9 +3681,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Fragmentação`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -3262,6 +3698,8 @@ server <- function(input, output, session){
     if(indicador == "Fragmentação" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$agreg_frag_int)
+    } else{
+      return()
     }
   })
   
@@ -3321,6 +3759,8 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -3337,6 +3777,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "Brasil"){
       return(input$nepl_br)
+    } else{
+      return()
     }
   })
   
@@ -3346,8 +3788,7 @@ server <- function(input, output, session){
   
   bnepl_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-               autoWidth = FALSE,
-                
+                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -3362,7 +3803,6 @@ server <- function(input, output, session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons',  
-                             
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -3375,7 +3815,8 @@ server <- function(input, output, session){
           unique() %>% 
           spread(`Ano da eleição`,
                  `Número efetivo de partidos legislativo`)
-        
+      } else{
+        return()
       }
     })
   })
@@ -3390,6 +3831,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "Brasil"){
       return(input$agreg_nepl_br)
+    } else{
+      return()
     }
   })
   
@@ -3400,8 +3843,7 @@ server <- function(input, output, session){
   bagreg_nepl_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
-                
-               autoWidth = FALSE,
+                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -3425,7 +3867,6 @@ server <- function(input, output, session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons',   
-                             
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -3442,6 +3883,8 @@ server <- function(input, output, session){
                  `Fragmentação`,
                  Desproporcionalidade) %>% 
           unique() 
+      } else{
+        return()
       }
     })
   })  
@@ -3456,6 +3899,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "UF"){
       return(input$nepl_uf)
+    } else{
+      return()
     }
   })
   
@@ -3465,8 +3910,7 @@ server <- function(input, output, session){
   
   bnepl_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-               autoWidth = FALSE,
-                
+                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -3484,7 +3928,6 @@ server <- function(input, output, session){
                class = "display",
               rownames = FALSE,
               extensions = c('Buttons', 
-                            
                              'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -3514,6 +3957,8 @@ server <- function(input, output, session){
           spread(`Ano da eleição`,
                  `Número efetivo de partidos legislativo`)
         }
+      } else{
+        return()
       }
     })
   })  
@@ -3529,6 +3974,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "UF"){
       return(input$agreg_nepl_uf)
+    } else{
+      return()
     }
   })
   
@@ -3539,8 +3986,7 @@ server <- function(input, output, session){
   bagreg_nepl_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
                 scrollX = TRUE,
-                
-               autoWidth = FALSE,
+                autoWidth = FALSE,
                 ordering = TRUE, 
                 searching = FALSE,
                 lengthChange = FALSE,
@@ -3563,7 +4009,6 @@ server <- function(input, output, session){
                class = "display",
               rownames = FALSE,
       extensions = c('Buttons',      
-                    
                      'FixedColumns'),{
       indicador <- input$INDICADORES_FRAG
       agregacao <- input$AGREGACAO_REGIONAL1
@@ -3600,6 +4045,8 @@ server <- function(input, output, session){
                    Desproporcionalidade) %>% 
           unique() 
       }
+      } else{
+        return()
       }
     })
   })
@@ -3612,10 +4059,13 @@ server <- function(input, output, session){
   neplmun <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL1
-    uf <- input$UF1
-    if(indicador == "Número efetivo de partidos legislativo" & 
+    cargo <- input$DESCRICAO_CARGO1
+    if(cargo == "Vereador" &
+       indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "Município"){
       return(input$nepl_mun)
+    } else{
+      return()
     }
   })
   
@@ -3626,7 +4076,6 @@ server <- function(input, output, session){
   bnepl_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -3644,12 +4093,13 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        municipio <- req(input$MUN1)
-                       if(indicador == "Número efetivo de partidos legislativo" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Número efetivo de partidos legislativo" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -3674,9 +4124,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Número efetivo de partidos legislativo`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -3686,11 +4136,15 @@ server <- function(input, output, session){
   ### Fragmentacao legislativa (MUN)  
   
   ag_nepl_mun <- reactive({
+    cargo <- input$DESCRICAO_CARGO1
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL1
-    if(indicador == "Número efetivo de partidos legislativo" & 
+    if(cargo == "Vereador" &
+       indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "Município"){
       return(input$agreg_nepl_mun)
+    } else{
+      return()
     }
   })
   
@@ -3702,7 +4156,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3727,12 +4180,13 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        municipio <- req(input$MUN1)
-                       if(indicador == "Número efetivo de partidos legislativo" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Número efetivo de partidos legislativo" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -3766,6 +4220,8 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -3775,6 +4231,82 @@ server <- function(input, output, session){
   ### Fragmentacao legislativa (Intervalo de eleitores aptos)
   
   
+  neplmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Número efetivo de partidos legislativo" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$nepl_med)
+    } else{
+      return()
+    }
+  })
+  
+  output$nepl_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    nepl_med()
+  })
+  
+  nepl_med <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(cargo == "Vereador" &
+                          indicador == "Número efetivo de partidos legislativo" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <-  frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional do número efetivo de partidos legislativo`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional do número efetivo de partidos legislativo`) %>% 
+                             mutate("media" = "Média nacional do número efetivo de partidos legislativo") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <-  frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média do número efetivo de partidos legislativo`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média do número efetivo de partidos legislativo`) %>% 
+                             mutate("media" = "Média do número efetivo de partidos legislativo") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       } else{
+                         return()
+                       }
+                     })
+  })  
+  
+  
   neplint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL1
@@ -3782,6 +4314,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$nepl_int)
+    } else{
+      return()
     }
   })
   
@@ -3810,10 +4344,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        intervalo <- req(input$INT1)
-                       if(indicador == "Número efetivo de partidos legislativo" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Número efetivo de partidos legislativo" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -3828,9 +4364,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Número efetivo de partidos legislativo`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -3845,6 +4381,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos legislativo" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$agreg_nepl_int)
+    } else{
+      return()
     }
   })
   
@@ -3881,10 +4419,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        intervalo <- req(input$INT1)
-                       if(indicador == "Número efetivo de partidos legislativo" & 
+                       if(cargo == "Vereador" &
+                         indicador == "Número efetivo de partidos legislativo" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -3904,6 +4444,8 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -3920,6 +4462,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "Brasil"){
       return(input$nepel_br)
+    } else{
+      return()
     }
   })
   
@@ -3929,8 +4473,7 @@ server <- function(input, output, session){
   
   bnepel_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -3945,7 +4488,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',   
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -3958,7 +4500,8 @@ server <- function(input, output, session){
             unique() %>% 
             spread(`Ano da eleição`,
                    `Número efetivo de partidos eleitoral`)
-          
+        } else{
+          return()
         }
       })
   })
@@ -3973,6 +4516,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "Brasil"){
       return(input$agreg_nepel_br)
+    } else{
+      return()
     }
   })
   
@@ -3983,8 +4528,7 @@ server <- function(input, output, session){
   bagreg_nepel_br <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      
-     autoWidth = FALSE,
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4008,7 +4552,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',  
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -4025,6 +4568,8 @@ server <- function(input, output, session){
                    `Fragmentação`,
                    Desproporcionalidade) %>% 
             unique() 
+        } else{
+          return()
         }
       })
   })  
@@ -4039,6 +4584,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "UF"){
       return(input$nepel_uf)
+    } else{
+      return()
     }
   })
   
@@ -4048,8 +4595,7 @@ server <- function(input, output, session){
   
   bnepel_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4067,7 +4613,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',   
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -4085,7 +4630,6 @@ server <- function(input, output, session){
             unique() %>% 
             spread(`Ano da eleição`,
                   `Número efetivo de partidos eleitoral`)
-          
           } else{
             frag_leg_uf %>% 
             dplyr::filter(UF == input$UF1 &
@@ -4097,6 +4641,8 @@ server <- function(input, output, session){
             spread(`Ano da eleição`,
                    `Número efetivo de partidos eleitoral`)
         }
+        } else{
+          return()
         }
       })
   })
@@ -4111,6 +4657,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos eleitoral" &
        agregacao == "UF"){
       return(input$agreg_nepel_uf)
+    } else{
+      return()
     }
   })
   
@@ -4121,8 +4669,7 @@ server <- function(input, output, session){
   bagreg_nepel_uf <- eventReactive(input$BCALC1, {
     datatable(options = list(
       scrollX = TRUE,
-      
-     autoWidth = FALSE,
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4146,7 +4693,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -4182,8 +4728,9 @@ server <- function(input, output, session){
                      `Fragmentação`,
                      Desproporcionalidade) %>% 
               unique()  
-            
         }
+        } else{
+          return()
         }
       })
   })
@@ -4200,6 +4747,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "Município"){
       return(input$nepel_mun)
+    } else{
+      return()
     }
   })
   
@@ -4210,7 +4759,6 @@ server <- function(input, output, session){
   bnepel_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -4228,12 +4776,13 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        municipio <- req(input$MUN1)
-                       if(indicador == "Número efetivo de partidos eleitoral" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Número efetivo de partidos eleitoral" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -4260,6 +4809,34 @@ server <- function(input, output, session){
                                     `Número efetivo de partidos eleitoral`)
                            
                          }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Número efetivo de partidos eleitoral" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           frag_leg_pf %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Número efetivo de partidos eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Número efetivo de partidos eleitoral`)
+                         } else{
+                           frag_leg_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Número efetivo de partidos eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Número efetivo de partidos eleitoral`)
+                           
+                         }
                        }
                      })
   })  
@@ -4274,6 +4851,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "Município"){
       return(input$agreg_nepel_mun)
+    } else{
+      return()
     }
   })
   
@@ -4285,7 +4864,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4310,12 +4888,13 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
-                     'FixedColumns'),{
+                    'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        municipio <- req(input$MUN1)
-                       if(indicador == "Número efetivo de partidos eleitoral" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Número efetivo de partidos eleitoral" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -4349,6 +4928,31 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                         } else if(cargo == "Prefeito" &
+                                   indicador == "Número efetivo de partidos eleitoral" & 
+                                   agregacao == "Município"){
+                           if(municipio == ""){
+                             return()
+                           } else if(municipio == "Todos os municípios"){
+                             data = frag_leg_pf %>%
+                               dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
+                               select(`Ano da eleição`,
+                                      UF,
+                                      `Nome do município`,
+                                      Cargo,
+                                      `Número efetivo de partidos eleitoral`) %>% 
+                               unique()
+                           } else{
+                             data = frag_leg_pf %>% 
+                               dplyr::filter(`Nome do município2` == input$MUN1 & 
+                                               Cargo == input$DESCRICAO_CARGO1) %>% 
+                               select(`Ano da eleição`,
+                                      UF,
+                                      `Nome do município`,
+                                      Cargo,
+                                      `Número efetivo de partidos eleitoral`) %>% 
+                               unique()
+                           }
                        }
                      })
   })
@@ -4359,6 +4963,127 @@ server <- function(input, output, session){
   ### Fragmentacao legislativa (Intervalo de eleitores aptos)
   
   
+  nepelmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Número efetivo de partidos eleitoral" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$nepel_med)
+    } else{
+      return()
+    }
+  })
+  
+  output$nepel_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    nepel_med()
+  })
+  
+  nepel_med <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(cargo == "Vereador" &
+                          indicador == "Número efetivo de partidos eleitoral" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional do número efetivo de partidos eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional do número efetivo de partidos eleitoral`) %>% 
+                             mutate("media" = "Média nacional do número efetivo de partidos eleitoral") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- frag_leg_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média do número efetivo de partidos eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média do número efetivo de partidos eleitoral`) %>% 
+                             mutate("media" = "Média do número efetivo de partidos eleitoral") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Número efetivo de partidos eleitoral" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- frag_leg_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           Turno,
+                                           `Média nacional do número efetivo de partidos eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional do número efetivo de partidos eleitoral`) %>% 
+                             mutate("media" = "Média nacional do número efetivo de partidos eleitoral") 
+                           
+                           media1 <- media1 %>% 
+                             mutate("media" = ifelse(media1$Turno == 2,
+                                                     "Média nacional do número efetivo de partidos eleitoral.",
+                                                     media1$media)) %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- frag_leg_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           Turno,
+                                           `Média do número efetivo de partidos eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média do número efetivo de partidos eleitoral`) %>% 
+                             mutate("media" = "Média do número efetivo de partidos eleitoral") 
+                           
+                           media2 <- media2 %>% 
+                             mutate("media" = ifelse(media2$Turno == 2,
+                                                     "Média do número efetivo de partidos eleitoral.",
+                                                     media2$media)) %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       }
+                     })
+  })
+  
+  
   nepelint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL1
@@ -4366,6 +5091,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$nepel_int)
+    } else{
+      return()
     }
   })
   
@@ -4394,10 +5121,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        intervalo <- req(input$INT1)
-                       if(indicador == "Número efetivo de partidos eleitoral" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Número efetivo de partidos eleitoral" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -4413,7 +5142,23 @@ server <- function(input, output, session){
                              spread(`Ano da eleição`,
                                     `Número efetivo de partidos eleitoral`)
                            
-                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Número efetivo de partidos eleitoral" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           frag_leg_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                            Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Número efetivo de partidos eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Número efetivo de partidos eleitoral`)
                          }
                        }
                      })
@@ -4421,7 +5166,7 @@ server <- function(input, output, session){
   
   ## Dados desagregados
   
-  ### Fragmentacao legislativa (MUN)  
+  ### Fragmentacao legislativa (INT)  
   
   ag_nepel_int <- reactive({
     indicador <- input$INDICADORES_FRAG
@@ -4429,6 +5174,8 @@ server <- function(input, output, session){
     if(indicador == "Número efetivo de partidos eleitoral" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$agreg_nepel_int)
+    } else{
+      return()
     }
   })
   
@@ -4465,10 +5212,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        intervalo <- req(input$INT1)
-                       if(indicador == "Número efetivo de partidos eleitoral" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Número efetivo de partidos eleitoral" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -4488,9 +5237,26 @@ server <- function(input, output, session){
                                     Desproporcionalidade) %>% 
                              unique()
                          }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Número efetivo de partidos eleitoral" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = frag_leg_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 & 
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             select(`Ano da eleição`,
+                                    UF,
+                                    `Nome do município`,
+                                    Cargo,
+                                    `Número efetivo de partidos eleitoral`) %>% 
+                             unique()
+                         }
                        }
                      })
   })
+
 
 # 1.1.7. Quociente eleitoral -----------------------------------------------
   
@@ -4505,6 +5271,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente eleitoral" & 
        cargo == "Deputado Federal"){
       return(input$quoce_br)
+    } else{
+      return()
     }
   })
   
@@ -4516,8 +5284,7 @@ server <- function(input, output, session){
   
   bquoce_br <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4532,20 +5299,10 @@ server <- function(input, output, session){
         extend = 'csv',
         title = 'quoc_elei_br',
         bom = TRUE)
-        #list(
-        #extend = 'collection',
-        #text = 'Plot',
-        #action =  DT::JS("function ( e, dt, node, config ) {
-        #                           }
-        
-        #               ")) 
       )),
       class = "display",
-      #selection = list(mode = 'multiple',
-      #                target = 'row+column'),
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -4568,8 +5325,10 @@ server <- function(input, output, session){
                                     `Quociente eleitoral`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Quociente eleitoral`)}
-                         
+                                    `Quociente eleitoral`)
+                           }
+                       } else{
+                         return()
                        }
                      })
     
@@ -4588,6 +5347,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente eleitoral" &
        cargo == "Deputado Federal"){
       return(input$agreg_quoce_br) 
+    } else{
+      return()
     }
   })
   
@@ -4599,7 +5360,6 @@ server <- function(input, output, session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4623,7 +5383,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -4638,7 +5397,10 @@ server <- function(input, output, session){
                            data = distcad_br %>% 
                              dplyr::filter(UF == input$UF1) %>% 
                              unique()
-                         }}
+                         }
+                       } else{
+                         return()
+                       }
                      })
   })  
   
@@ -4653,6 +5415,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente eleitoral" & 
        cargo == "Deputado Estadual"){
       return(input$quoce_uf)
+    } else{
+      return()
     }
   })
   
@@ -4663,8 +5427,7 @@ server <- function(input, output, session){
   
   bquoce_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4682,7 +5445,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -4706,7 +5468,10 @@ server <- function(input, output, session){
                                     `Quociente eleitoral`) %>% 
                              unique %>% 
                              spread(`Ano da eleição`, 
-                                    `Quociente eleitoral`)}
+                                    `Quociente eleitoral`)
+                           }
+                       } else{
+                         return()
                        }
                      })
   }) 
@@ -4721,6 +5486,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente eleitoral" & 
        cargo == "Deputado Estadual"){
       return(input$agreg_quoce_uf) 
+    } else{
+      return()
     }
   })
   
@@ -4732,7 +5499,6 @@ server <- function(input, output, session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -4756,7 +5522,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -4770,8 +5535,10 @@ server <- function(input, output, session){
                            expr = distcad_uf %>% 
                              dplyr::filter(UF == input$UF1) %>% 
                              unique()
-                           
-                         }}
+                         }
+                       } else{
+                         return()
+                       }
                      })
   })  
   
@@ -4788,6 +5555,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente eleitoral" & 
        agregacao == "Município"){
       return(input$quoce_mun)
+    } else{
+      return()
     }
   })
   
@@ -4798,7 +5567,6 @@ server <- function(input, output, session){
   bquoce_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -4816,12 +5584,13 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        municipio <- req(input$MUN1)
-                       if(indicador == "Quociente eleitoral" & 
+                       if(cargo == "Vereador" &
+                         indicador == "Quociente eleitoral" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -4846,9 +5615,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Quociente eleitoral`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                        
                      })
@@ -4864,6 +5633,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente eleitoral" & 
        agregacao == "Município"){
       return(input$agreg_quoce_mun)
+    } else{
+      return()
     }
   })
   
@@ -4900,13 +5671,15 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
-                       municipio <- req(input$MUN1)
-                       if(indicador == "Quociente eleitoral" & 
+                       municipio <- input$MUN1
+                       if(cargo == "Vereador" &
+                          indicador == "Quociente eleitoral" & 
                           agregacao == "Município"){
                          if(municipio == ""){
-                           return()
+                           return(NULL)
                          } else if(municipio == "Todos os municípios"){
                            data = distcad_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
@@ -4916,9 +5689,15 @@ server <- function(input, output, session){
                            data = distcad_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média do quociente eleitoral`,
+                                    -`Média do quociente partidário`,
+                                    -`Média nacional do quociente eleitoral`,
+                                    -`Média nacional do quociente partidário`) %>% 
                              unique()
                          }
+                       } else {
+                         return(NULL)
                        }
                      })
   })
@@ -4928,6 +5707,82 @@ server <- function(input, output, session){
   ### Vereador - Eleitores aptos
   
   
+  quocemed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Quociente eleitoral" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$quoce_med)
+    } else{
+      return()
+    }
+  })
+  
+  output$quoce_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bquoce_med()
+  })
+  
+  bquoce_med <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(cargo == "Vereador" &
+                          indicador == "Quociente eleitoral" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- distcad_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional do quociente eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional do quociente eleitoral`) %>% 
+                             mutate("media" = "Média nacional do quociente eleitoral") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- distcad_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média do quociente eleitoral`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média do quociente eleitoral`) %>% 
+                             mutate("media" = "Média do quociente eleitoral") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                         }
+                       } else{
+                         return()
+                       }
+                       
+                     })
+  }) 
+  
+  
   quoceint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL1
@@ -4935,6 +5790,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente eleitoral" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$quoce_int)
+    } else{
+      return()
     }
   })
   
@@ -4963,10 +5820,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons', 
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        intervalo <- req(input$INT1)
-                       if(indicador == "Quociente eleitoral" & 
+                       if(cargo == "Vereador" &
+                         indicador == "Quociente eleitoral" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -4981,9 +5840,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Quociente eleitoral`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                        
                      })
@@ -4999,10 +5858,12 @@ server <- function(input, output, session){
     if(indicador == "Quociente eleitoral" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$agreg_quoce_int)
+    } else{
+      return()
     }
   })
   
-  output$agreg_quoce_int <- DT::renderDataTable(server = FALSE,{
+  output$agreg_quoce_int <- DT::renderDataTable(server = TRUE,{
     bagreg_quoce_int()
   })
   
@@ -5035,10 +5896,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO1
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        intervalo <- req(input$INT1)
-                       if(indicador == "Quociente eleitoral" & 
+                       if(cargo == "Vereador" &
+                         indicador == "Quociente eleitoral" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -5046,9 +5909,15 @@ server <- function(input, output, session){
                            data = distcad_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média do quociente eleitoral`,
+                                    -`Média do quociente partidário`,
+                                    -`Média nacional do quociente eleitoral`,
+                                    -`Média nacional do quociente partidário`) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -5065,6 +5934,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Federal"){
       return(input$quocp_br)
+    } else{
+      return()
     }
   })
   
@@ -5076,7 +5947,6 @@ server <- function(input, output, session){
     datatable(options = list(
      autoWidth = FALSE,
       ordering = TRUE,
-      
       searching = FALSE,
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -5093,7 +5963,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -5106,7 +5975,6 @@ server <- function(input, output, session){
                                     UF, 
                                     `Sigla do partido`, 
                                     `Quociente partidário`)
-                           
                          }else{
                            expr = distcad_br %>% 
                              dplyr::filter(UF == input$UF1) %>% 
@@ -5115,7 +5983,8 @@ server <- function(input, output, session){
                                     `Sigla do partido`, 
                                     `Quociente partidário`)
                          }
-                         
+                       } else{
+                         return()
                        }
                      })
   })
@@ -5130,6 +5999,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Federal"){
       return(input$agreg_quocp_br)
+    } else{
+      return()
     }
   })
   
@@ -5141,7 +6012,6 @@ server <- function(input, output, session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -5165,7 +6035,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -5175,11 +6044,13 @@ server <- function(input, output, session){
                          if(input$UF1 == "Todas UFs"){
                            expr = distcad_br %>% 
                              unique()
-                           
                          }else{
                            expr = distcad_br %>% 
                              dplyr::filter(UF == input$UF1) %>% 
-                             unique()}
+                             unique()
+                           }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -5194,6 +6065,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Estadual"){
       return(input$quocp_uf)
+    } else{
+      return()
     }
   })
   
@@ -5203,8 +6076,7 @@ server <- function(input, output, session){
   
   bquocp_uf <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -5222,7 +6094,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -5243,7 +6114,10 @@ server <- function(input, output, session){
                                     UF,
                                     `Sigla do partido`, 
                                     `Quociente partidário`)
-                         }}
+                         }
+                       } else{
+                         return()
+                       }
                      })
   })
   
@@ -5257,6 +6131,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente partidário" & 
        cargo == "Deputado Estadual"){
       return(input$agreg_quocp_uf)
+    } else{
+      return()
     }
   })
   
@@ -5268,7 +6144,6 @@ server <- function(input, output, session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -5292,7 +6167,6 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        cargo <- input$DESCRICAO_CARGO1
@@ -5305,7 +6179,10 @@ server <- function(input, output, session){
                          }else{          
                            expr = distcad_uf %>% 
                              dplyr::filter(UF == input$UF1) %>% 
-                             unique()}
+                             unique()
+                           }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -5324,6 +6201,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente partidário" & 
        agregacao == "Município"){
       return(input$quocp_mun)
+    } else{
+      return()
     }
   })
   
@@ -5334,7 +6213,6 @@ server <- function(input, output, session){
   bquocp_mun <- eventReactive(input$BCALC1, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -5384,6 +6262,8 @@ server <- function(input, output, session){
                              spread(`Ano da eleição`,
                                     `Quociente partidário`)
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -5398,6 +6278,8 @@ server <- function(input, output, session){
     if(indicador == "Quociente partidário" & 
        agregacao == "Município"){
       return(input$agreg_quocp_mun)
+    } else{
+      return()
     }
   })
   
@@ -5433,7 +6315,7 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    'FixedColumns'),{
+                     'FixedColumns'),{
                        indicador <- input$INDICADORES_FRAG
                        agregacao <- input$AGREGACAO_REGIONAL1
                        municipio <- req(input$MUN1)
@@ -5450,9 +6332,15 @@ server <- function(input, output, session){
                            data = distcad_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média do quociente eleitoral`,
+                                    -`Média do quociente partidário`,
+                                    -`Média nacional do quociente eleitoral`,
+                                    -`Média nacional do quociente partidário`) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })
@@ -5462,6 +6350,80 @@ server <- function(input, output, session){
   ### Vereador - Eleitores aptos
   
   
+  quocpmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_FRAG
+    agregacao <- input$AGREGACAO_REGIONAL1
+    uf <- input$UF1
+    if(indicador == "Quociente partidário" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$quocp_med)
+    } else{
+      return()
+    }
+  })
+  
+  output$quocp_med <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
+    bquocp_med()
+  })
+  
+  bquocp_med <- eventReactive(input$BCALC1, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+                       indicador <- input$INDICADORES_FRAG
+                       agregacao <- input$AGREGACAO_REGIONAL1
+                       intervalo <- req(input$INT1)
+                       if(indicador == "Quociente partidário" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- distcad_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional do quociente partidário`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional do quociente partidário`) %>% 
+                             mutate("media" = "Média nacional do quociente partidário") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- distcad_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT1 &
+                                             Cargo == input$DESCRICAO_CARGO1) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média do quociente partidário`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média do quociente partidário`) %>% 
+                             mutate("media" = "Média do quociente partidário") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                         }
+                       } else{
+                         return()
+                       }
+                       
+                     })
+  }) 
+  
+  
   quocpint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_FRAG
     agregacao <- input$AGREGACAO_REGIONAL1
@@ -5469,10 +6431,12 @@ server <- function(input, output, session){
     if(indicador == "Quociente partidário" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$quocp_int)
+    } else{
+      return()
     }
   })
   
-  output$quocp_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  output$quocp_int <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
     bquocp_int()
   })
   
@@ -5515,9 +6479,9 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Quociente partidário`)
-                           
-                           
                          }
+                       } else{
+                         return()
                        }
                        
                      })
@@ -5533,10 +6497,12 @@ server <- function(input, output, session){
     if(indicador == "Quociente partidário" & 
        agregacao == "Quantidade de eleitores aptos"){
       return(input$agreg_quocp_int)
+    } else{
+      return()
     }
   })
   
-  output$agreg_quocp_int <- DT::renderDataTable(server = FALSE,{
+  output$agreg_quocp_int <- DT::renderDataTable(server = TRUE,{
     bagreg_quocp_int()
   })
   
@@ -5580,9 +6546,15 @@ server <- function(input, output, session){
                            data = distcad_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT1 & 
                                              Cargo == input$DESCRICAO_CARGO1) %>% 
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média do quociente eleitoral`,
+                                    -`Média do quociente partidário`,
+                                    -`Média nacional do quociente eleitoral`,
+                                    -`Média nacional do quociente partidário`) %>% 
                              unique()
                          }
+                       } else{
+                         return()
                        }
                      })
   })  
@@ -5595,9 +6567,9 @@ server <- function(input, output, session){
   
   observeEvent(input$modal_renovp,{
     showModal(modalDialog(
-                          title = tags$h4(align = "center",
-                                          "Ajuda"),
-                          footer = modalButton("Fechar"), 
+                          title = h4(class = "h4 titulo",
+                            "AJUDA"),
+                          footer = modalButton("FECHAR"), 
                           size = "m",
                           htmlOutput("def_renovp"),
                           easyClose = TRUE,
@@ -5618,9 +6590,9 @@ server <- function(input, output, session){
   
   observeEvent(input$modal_renovp_ag,{
     showModal(modalDialog(
-                          title = tags$h4(align = "center",
-                                          "Ajuda"),
-                          footer = modalButton("Fechar"), 
+                          title = h4(class = "h4 titulo",
+                                          "AJUDA"),
+                          footer = modalButton("FECHAR"), 
                           size = "m",
                           htmlOutput("def_renovp"),
                           easyClose = TRUE,
@@ -5957,7 +6929,6 @@ server <- function(input, output, session){
   bconserv_mun <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -5975,12 +6946,13 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        municipio <- req(input$MUN2)
-                       if(indicador == "Conservação" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Conservação" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -6005,8 +6977,33 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Conservação`)
-                           
-                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Conservação" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           renov_parl_pf %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Conservação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Conservação`)
+                         } else{
+                           renov_parl_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Conservação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Conservação`)
                          }
                        }
                      })
@@ -6033,7 +7030,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -6058,12 +7054,13 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        municipio <- req(input$MUN2)
-                       if(indicador == "Conservação" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Conservação" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -6076,7 +7073,42 @@ server <- function(input, output, session){
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
+                             unique()
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Conservação" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           data = renov_parl_pf %>%
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
+                             unique()
+                         } else{
+                           data = renov_parl_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
                              unique()
                          }
                        }
@@ -6087,6 +7119,131 @@ server <- function(input, output, session){
   ## Resumo
   
   ### Vereador
+  
+  
+  conservmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Conservação" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$conserv_med)
+    }
+  })
+  
+  output$conserv_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    bconserv_med()
+  })
+  
+  bconserv_med <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(cargo == "Vereador" &
+                          indicador == "Conservação" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional da conservação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da conservação`) %>% 
+                             mutate("media" = "Média nacional da conservação") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média da conservação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da conservação`) %>% 
+                             mutate("media" = "Média da conservação") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Conservação" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           #Turno,
+                                           `Média nacional da conservação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da conservação`) %>% 
+                             mutate("media" = "Média nacional da conservação") %>% 
+                             column_to_rownames("media") 
+                           
+                           #media1 <- media1 %>% 
+                            # mutate("media" = ifelse(media1$Turno == 2,
+                             #                        "Média nacional da conservação.",
+                              #                       media1$media)) %>% 
+                             #column_to_rownames("media")
+                           
+                           media2 <- renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           #Turno,
+                                           `Média da conservação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da conservação`) %>% 
+                             mutate("media" = "Média da conservação") %>% 
+                             column_to_rownames("media")
+                           
+                           #media2 <- media2 %>% 
+                            # mutate("media" = ifelse(media2$Turno == 2,
+                             #                        "Média da conservação.",
+                              #                       media2$media)) %>% 
+                          #   column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       }
+                     })
+  })
+  
+  
+  
+  
   
   conservint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_RENOV
@@ -6123,10 +7280,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
-                       if(indicador == "Conservação" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Conservação" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -6142,7 +7301,23 @@ server <- function(input, output, session){
                              spread(`Ano da eleição`,
                                     `Conservação`)
                            
-                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Conservação" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Conservação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Conservação`)
                          }
                        }
                      })
@@ -6194,10 +7369,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
-                       if(indicador == "Conservação" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Conservação" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -6205,7 +7382,31 @@ server <- function(input, output, session){
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`,-`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
+                             unique()
+                         }
+                       } else if (cargo == "Prefeito" &
+                                  indicador == "Conservação" & 
+                                  agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
                              unique()
                          }
                        }
@@ -6514,10 +7715,12 @@ server <- function(input, output, session){
       extensions = c('Buttons', 
                     
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        municipio <- req(input$MUN2)
-                       if(indicador == "Renovação bruta" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação bruta" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -6542,8 +7745,33 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Renovação bruta`)
-                           
-                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação bruta" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           renov_parl_pf %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação bruta`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação bruta`)
+                         } else{
+                           renov_parl_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação bruta`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação bruta`)
                          }
                        }
                      })
@@ -6570,7 +7798,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -6595,12 +7822,13 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        municipio <- req(input$MUN2)
-                       if(indicador == "Renovação bruta" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação bruta" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -6613,7 +7841,42 @@ server <- function(input, output, session){
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
+                             unique()
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação bruta" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           data = renov_parl_pf %>%
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
+                             unique()
+                         } else{
+                           data = renov_parl_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 & 
+                                            Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
                              unique()
                          }
                        }
@@ -6624,6 +7887,128 @@ server <- function(input, output, session){
   ## Resumo
   
   ### Vereador
+  
+  
+  renovbtmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Renovação bruta" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$renov_bt_med)
+    }
+  })
+  
+  output$renov_bt_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_bt_med()
+  })
+  
+  brenov_bt_med <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação bruta" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional da renovação bruta`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da renovação bruta`)%>% 
+                             mutate("media" = "Média nacional da renovação bruta") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média da renovação bruta`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da renovação bruta`)%>% 
+                             mutate("media" = "Média da renovação bruta") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação bruta" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           #Turno,
+                                           `Média nacional da renovação bruta`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da renovação bruta`)%>% 
+                             mutate("media" = "Média nacional da renovação bruta") %>% 
+                             column_to_rownames("media") 
+                           
+                           #media1 <- media1 %>% 
+                            # mutate("media" = ifelse(media1$Turno == 2,
+                             #                        "Média nacional da renovação bruta.",
+                              #                       media1$media)) %>% 
+                             #column_to_rownames("media")
+                           
+                           media2 <- renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           #Turno,
+                                           `Média da renovação bruta`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da renovação bruta`)%>% 
+                             mutate("media" = "Média da renovação bruta") %>% 
+                             column_to_rownames("media")
+                           
+                           #media2 <- media2 %>% 
+                            # mutate("media" = ifelse(media2$Turno == 2,
+                             #                        "Média da renovação bruta.",
+                              #                       media2$media)) %>% 
+                             #column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  
   
   renovbtint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_RENOV
@@ -6660,10 +8045,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
-                       if(indicador == "Renovação bruta" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação bruta" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -6678,8 +8065,23 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Renovação bruta`)
-                           
-                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação bruta" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação bruta`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação bruta`)
                          }
                        }
                      })
@@ -6731,10 +8133,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
-                       if(indicador == "Renovação bruta" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação bruta" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -6742,7 +8146,31 @@ server <- function(input, output, session){
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`,-`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
+                             unique()
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação bruta" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 & 
+                                            Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
                              unique()
                          }
                        }
@@ -7034,7 +8462,6 @@ server <- function(input, output, session){
   brenov_liq_mun <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       lengthChange = FALSE,
       lengthMenu = FALSE,
@@ -7052,12 +8479,13 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        municipio <- req(input$MUN2)
-                       if(indicador == "Renovação líquida" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação líquida" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -7082,8 +8510,33 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Renovação líquida`)
-                           
-                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação líquida" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           renov_parl_pf %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação líquida`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação líquida`)
+                         } else{
+                           renov_parl_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 &
+                                            Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação líquida`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação líquida`)
                          }
                        }
                      })
@@ -7110,7 +8563,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -7135,12 +8587,13 @@ server <- function(input, output, session){
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        municipio <- req(input$MUN2)
-                       if(indicador == "Renovação líquida" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação líquida" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -7153,7 +8606,42 @@ server <- function(input, output, session){
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
+                             unique()
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação líquida" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           data = renov_parl_pf %>%
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
+                             unique()
+                         } else{
+                           data = renov_parl_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 & 
+                                            Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
                              unique()
                          }
                        }
@@ -7164,6 +8652,130 @@ server <- function(input, output, session){
   ## Resumo
   
   ### Vereador
+  
+  
+  renovliqmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Renovação líquida" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$renov_liq_med)
+    }
+  })
+  
+  output$renov_liq_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_liq_med()
+  })
+  
+  brenov_liq_med <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação líquida" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional da renovação líquida`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da renovação líquida`)%>% 
+                             mutate("media" = "Média nacional da renovação líquida") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média da renovação líquida`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da renovação líquida`)%>% 
+                             mutate("media" = "Média da renovação líquida") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação líquida" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           #Turno,
+                                           `Média nacional da renovação líquida`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da renovação líquida`)%>% 
+                             mutate("media" = "Média nacional da renovação líquida")  %>% 
+                             column_to_rownames("media")
+                           
+                           #media1 <- media1 %>% 
+                            # mutate("media" = ifelse(media1$Turno == 2,
+                             #                        "Média nacional da renovação líquida.",
+                              #                       media1$media)) %>% 
+                             #column_to_rownames("media")
+                           
+                           
+                           media2 <- renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           #Turno,
+                                           `Média da renovação líquida`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da renovação líquida`)%>% 
+                             mutate("media" = "Média da renovação líquida") %>% 
+                             column_to_rownames("media") 
+                           
+                           #media2 <- media2 %>% 
+                            # mutate("media" = ifelse(media2$Turno == 2,
+                             #                        "Média da renovação líquida.",
+                              #                       media2$media)) %>% 
+                             # column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  
   
   renovliqint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_RENOV
@@ -7200,10 +8812,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
-                       if(indicador == "Renovação líquida" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação líquida" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -7218,8 +8832,23 @@ server <- function(input, output, session){
                              unique() %>% 
                              spread(`Ano da eleição`,
                                     `Renovação líquida`)
-                           
-                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação líquida" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                            Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação líquida`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação líquida`)
                          }
                        }
                      })
@@ -7271,10 +8900,12 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
                        indicador <- input$INDICADORES_RENOV
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
-                       if(indicador == "Renovação líquida" & 
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação líquida" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -7282,7 +8913,31 @@ server <- function(input, output, session){
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`,-`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
+                             unique()
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação líquida" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 & 
+                                            Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`,-`Eleitores aptos`,
+                                    -`Média da renovação bruta`,
+                                    -`Média da renovação líquida`,
+                                    -`Média da conservação`,
+                                    -`Média nacional da renovação bruta`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional da conservação`) %>% 
                              unique()
                          }
                        }
@@ -7300,9 +8955,9 @@ server <- function(input, output, session){
   
   observeEvent(input$modal_alien,{
     showModal(modalDialog(
-                         title = tags$h4(align = "center",
-                                        "Ajuda"),
-                          footer = modalButton("Fechar"), 
+                         title = h4(class = "h4 titulo",
+                                        "AJUDA"),
+                          footer = modalButton("FECHAR"), 
                           size = "m",
                           htmlOutput("def_alien"),
                           easyClose = TRUE,
@@ -7323,9 +8978,9 @@ server <- function(input, output, session){
   
   observeEvent(input$modal_alien_ag,{
     showModal(modalDialog(
-                          title = tags$h4(align = "center",
-                                         "Ajuda"),
-                          footer = modalButton("Fechar"), 
+                          title = h4(class = "h4 titulo",
+                                         "AJUDA"),
+                          footer = modalButton("FECHAR"), 
                           size = "m",
                           htmlOutput("def_alien"),
                           easyClose = TRUE,
@@ -7809,7 +9464,23 @@ server <- function(input, output, session){
                            data = alien_mun %>% 
                              dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
                                              `Nome do município2` == input$MUN3)%>% 
-                             select(-`Nome do município2`, -`Eleitores aptos`)
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da quantidade de abstenções`,
+                                    -`Média do percentual de abstenções`,
+                                    -`Média da quantidade de votos brancos`,
+                                    -`Média do percentual de votos brancos`,
+                                    -`Média da quantidade de votos nulos`,
+                                    -`Média do percentual de votos nulos`,
+                                    -`Média da alienação absoluta`,
+                                    -`Média da alienação percentual`,
+                                    -`Média nacional da quantidade de abstenções`,
+                                    -`Média nacional do percentual de abstenções`,
+                                    -`Média nacional da quantidade de votos brancos`,
+                                    -`Média nacional do percentual de votos brancos`,
+                                    -`Média nacional da quantidade de votos nulos`,
+                                    -`Média nacional do percentual de votos nulos`,
+                                    -`Média nacional da alienação absoluta`,
+                                    -`Média nacional da alienação percentual`)
                          }}
                      })
   })
@@ -7818,6 +9489,124 @@ server <- function(input, output, session){
   ## Resumo
   
   ### Eleitores aptos
+  
+  
+  alienabsmed <- reactive({ ## Atributos das tabelas de alienacao absoluta 
+    indicador <- input$INDICADORES_ALIE
+    cargo <- input$DESCRICAO_CARGO3
+    agregacao <- input$DESCRICAO_CARGO3
+    uf <- input$UF3
+    if(indicador == "Alienação absoluta" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$alien_abs_med)
+    }    
+  })
+  
+  output$alien_abs_med <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao absoluta que devera ser chamada na ui
+    balien_abs_med()
+  })
+  
+  balien_abs_med <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 2
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+                       indicador <- input$INDICADORES_ALIE
+                       cargo <- input$DESCRICAO_CARGO3
+                       agregacao <- input$AGREGACAO_REGIONAL3
+                       intervalo <- input$INT3
+                       if(indicador == "Alienação absoluta" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return() 
+                         } else if(cargo == "Prefeito" &
+                                   intervalo == "Acima de 200 mil eleitores"){
+                           
+                           media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo == input$DESCRICAO_CARGO3) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           Turno,
+                                           `Média nacional da alienação absoluta`) %>%
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da alienação absoluta`) %>% 
+                             mutate("media" = "Média nacional da alienação absoluta") 
+                           
+                           media1 <- media1 %>% 
+                             mutate("media" = ifelse(media1$Turno == 2,
+                                                     "Média nacional da alienação absoluta.",
+                                                     media1$media)) %>% 
+                             column_to_rownames("media")
+                           
+                           
+                           media2 <- alien_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                             Cargo == input$DESCRICAO_CARGO3) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           Turno,
+                                           `Média da alienação absoluta`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da alienação absoluta`) %>% 
+                             mutate("media" = "Média da alienação absoluta")
+                           
+                           media2 <- media2 %>% 
+                             mutate("media" = ifelse(media2$Turno == 2,
+                                                     "Média da alienação absoluta.",
+                                                     media2$media)) %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         } else{
+                           
+                           media1 <- alien_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                             Cargo == input$DESCRICAO_CARGO3) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           Turno,
+                                           `Média nacional da alienação absoluta`) %>%
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da alienação absoluta`) %>% 
+                             mutate("media" = "Média nacional da alienação absoluta") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- alien_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                             Cargo == input$DESCRICAO_CARGO3) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           Turno,
+                                           `Média da alienação absoluta`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da alienação absoluta`) %>% 
+                             mutate("media" = "Média da alienação absoluta") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                           }
+                       }
+                     })
+  })  
+  
+  
   
   alienabsint <- reactive({ ## Atributos das tabelas de alienacao absoluta 
     indicador <- input$INDICADORES_ALIE
@@ -7938,7 +9727,23 @@ server <- function(input, output, session){
                            data = alien_mun %>% 
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO3 & 
                                            `Eleitores aptos` == input$INT3)%>% 
-                             select(-`Nome do município2`, -`Eleitores aptos`)
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da quantidade de abstenções`,
+                                    -`Média do percentual de abstenções`,
+                                    -`Média da quantidade de votos brancos`,
+                                    -`Média do percentual de votos brancos`,
+                                    -`Média da quantidade de votos nulos`,
+                                    -`Média do percentual de votos nulos`,
+                                    -`Média da alienação absoluta`,
+                                    -`Média da alienação percentual`,
+                                    -`Média nacional da quantidade de abstenções`,
+                                    -`Média nacional do percentual de abstenções`,
+                                    -`Média nacional da quantidade de votos brancos`,
+                                    -`Média nacional do percentual de votos brancos`,
+                                    -`Média nacional da quantidade de votos nulos`,
+                                    -`Média nacional do percentual de votos nulos`,
+                                    -`Média nacional da alienação absoluta`,
+                                    -`Média nacional da alienação percentual`)
                          }}
                      })
   })
@@ -8350,7 +10155,23 @@ bagreg_alien_perc_mun <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
                                            `Nome do município2` == input$MUN3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`)
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`)
                        }}
                    })
 })
@@ -8359,6 +10180,124 @@ bagreg_alien_perc_mun <- eventReactive(input$BCALC3, {
 ## Resumo
 
 ### Eleitores aptos
+
+
+
+alienpercmed <- reactive({ ## Atributos das tabelas de alienacao absoluta 
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Alienação percentual" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$alien_perc_med)
+  }    
+})
+
+output$alien_perc_med <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao absoluta que devera ser chamada na ui
+  balien_perc_med()
+})
+
+balien_perc_med <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao absoluta
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', 
+      targets = '_all')),
+    dom = 't'), 
+    class = "display",
+    extensions = c('FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Alienação percentual" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                         return()
+                       } else if(cargo == "Prefeito" &
+                                 intervalo == "Acima de 200 mil eleitores"){
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional da alienação percentual`) %>%
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional da alienação percentual`) %>% 
+                           mutate("media" = "Média nacional da alienação percentual") 
+                         
+                         media1 <- media1 %>% 
+                           mutate("media" = ifelse(media1$Turno == 2,
+                                                   "Média nacional da alienação percentual.",
+                                                   media1$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média da alienação percentual`) %>%
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média da alienação percentual`) %>% 
+                           mutate("media" = "Média da alienação percentual")
+                         
+                         media2 <- media2 %>% 
+                           mutate("media" = ifelse(media2$Turno == 2,
+                                                   "Média da alienação percentual.",
+                                                   media2$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                       
+                         } else{
+                           
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo == input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional da alienação percentual`) %>%
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional da alienação percentual`) %>% 
+                           mutate("media" = "Média nacional da alienação percentual") %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo == input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média da alienação percentual`) %>%
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média da alienação percentual`) %>% 
+                           mutate("media" = "Média da alienação percentual") %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                         }
+                     }
+                   })
+})
+
 
 alienpercint <- reactive({ ## Atributos das tabelas de alienacao absoluta 
   indicador <- input$INDICADORES_ALIE
@@ -8479,7 +10418,23 @@ bagreg_alien_perc_int <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
                                          `Eleitores aptos` == input$INT3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`)
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`)
                        }}
                    })
 })
@@ -8898,7 +10853,23 @@ bagreg_abst_abs_mun <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -8908,6 +10879,133 @@ bagreg_abst_abs_mun <- eventReactive(input$BCALC3, {
 ## Tabela para visualizacao
 
 ### Eleitores aptos
+
+
+abstabsmed <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Abstenção absoluta" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$abst_abs_med)
+  }
+})
+
+
+output$abst_abs_med <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  babst_abs_med()
+})
+
+babst_abs_med <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 't'), 
+    class = "display",
+    extensions = c('FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Abstenção absoluta" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                         return()
+                       } else if(cargo == "Prefeito" &
+                                 intervalo == "Acima de 200 mil eleitores"){
+                         alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo == input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média da quantidade de abstenções`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Média da quantidade de abstenções`)
+                       } else if(cargo == "Prefeito" &
+                                 intervalo == "Acima de 200 mil eleitores"){ 
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo == input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional da quantidade de abstenções`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional da quantidade de abstenções`) %>% 
+                           mutate("media" = "Média nacional da quantidade de abstenções") 
+                         
+                         media1 <- media1 %>% 
+                           mutate("media" = ifelse(media1$Turno == 2,
+                                                   "Média nacional da quantidade de abstenções.",
+                                                   media1$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo == input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média da quantidade de abstenções`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média da quantidade de abstenções`) %>% 
+                           mutate("media" = "Média da quantidade de abstenções") 
+                         
+                         media2 <- media2 %>% 
+                           mutate("media" = ifelse(media2$Turno == 2,
+                                                   "Média da quantidade de abstenções.",
+                                                   media2$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                       } else{
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo == input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional da quantidade de abstenções`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional da quantidade de abstenções`) %>% 
+                           mutate("media" = "Média nacional da quantidade de abstenções") %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo == input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média da quantidade de abstenções`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média da quantidade de abstenções`) %>% 
+                           mutate("media" = "Média da quantidade de abstenções") %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                         }
+                     }
+                   })
+})
+
 
 abstabsint <- reactive({
   indicador <- input$INDICADORES_ALIE
@@ -9030,7 +11128,23 @@ bagreg_abst_abs_int <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Eleitores aptos` == input$INT3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -9446,7 +11560,23 @@ bagreg_abst_perc_mun <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -9457,6 +11587,123 @@ bagreg_abst_perc_mun <- eventReactive(input$BCALC3, {
 ## Tabela para visualizacao
 
 ### Eleitores aptos
+
+abstpercmed <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Abstenção percentual" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$abst_perc_med)
+  }
+})
+
+
+output$abst_perc_med <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  babst_perc_med()
+})
+
+babst_perc_med <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 't'), 
+    class = "display",
+    extensions = c('FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Abstenção percentual" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                         return()
+                       } else if(cargo == "Prefeito" &
+                                 intervalo == "Acima de 200 mil eleitores"){ 
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional do percentual de abstenções`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional do percentual de abstenções`) %>% 
+                           mutate("media" = "Média nacional do percentual de abstenções")
+                         
+                         media1 <- media1 %>% 
+                           mutate("media" = ifelse(media1$Turno == 2,
+                                                   "Média nacional do percentual de abstenções.",
+                                                   media1$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média do percentual de abstenções`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média do percentual de abstenções`) %>% 
+                           mutate("media" = "Média do percentual de abstenções")
+                         
+                         media2 <- media2 %>% 
+                           mutate("media" = ifelse(media2$Turno == 2,
+                                                   "Média do percentual de abstenções.",
+                                                   media2$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                       } else{
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional do percentual de abstenções`) %>%
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional do percentual de abstenções`) %>% 
+                           mutate("media" = "Média nacional do percentual de abstenções") %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média do percentual de abstenções`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média do percentual de abstenções`) %>% 
+                           mutate("media" = "Média do percentual de abstenções") %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                         }
+                     }
+                   })
+})
+
+
 
 abstpercint <- reactive({
   indicador <- input$INDICADORES_ALIE
@@ -9579,7 +11826,23 @@ bagreg_abst_perc_int <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Eleitores aptos` == input$INT3 &
                                           Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -9992,7 +12255,23 @@ bagreg_vtbr_abs_mun <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -10003,6 +12282,124 @@ bagreg_vtbr_abs_mun <- eventReactive(input$BCALC3, {
 ## Tabela para visualizacao
 
 ### Eleitores aptos
+
+
+vtbrabsmed <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Votos brancos absolutos" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vtbr_abs_med)
+  }
+})
+
+
+output$vtbr_abs_med <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  bvtbr_abs_med()
+})
+
+bvtbr_abs_med <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 't'), 
+    class = "display",
+    rownames = FALSE,
+    extensions = c('FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos brancos absolutos" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                         return()
+                       } else if(cargo == "Prefeito" &
+                                 intervalo == "Acima de 200 mil eleitores"){ 
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional da quantidade de votos brancos`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional da quantidade de votos brancos`) %>% 
+                           mutate("media" = "Média nacional da quantidade de votos brancos") 
+                         
+                         media1 <- media1 %>% 
+                           mutate("media" = ifelse(media1$Turno == 2,
+                                                   "Média nacional da quantidade de votos brancos.",
+                                                   media1$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média da quantidade de votos brancos`) %>%
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média da quantidade de votos brancos`) %>% 
+                           mutate("media" = "Média da quantidade de votos brancos")
+                         
+                         media2 <- media2 %>% 
+                           mutate("media" = ifelse(media2$Turno == 2,
+                                                   "Média da quantidade de votos brancos.",
+                                                   media2$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                       } else{
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional da quantidade de votos brancos`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional da quantidade de votos brancos`) %>% 
+                           mutate("media" = "Média nacional da quantidade de votos brancos") %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média da quantidade de votos brancos`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média da quantidade de votos brancos`) %>% 
+                           mutate("media" = "Média da quantidade de votos brancos") %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                         }
+                     }
+                   })
+})
+
 
 vtbrabsint <- reactive({
   indicador <- input$INDICADORES_ALIE
@@ -10068,7 +12465,7 @@ bvtbr_abs_int <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao per
 
 ## Dados desagregados
 
-### Cargos MUN
+### Cargos INT
 
 ag_vtbrabs_int <- reactive({
   indicador <- input$INDICADORES_ALIE
@@ -10125,7 +12522,23 @@ bagreg_vtbr_abs_int <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Eleitores aptos` == input$INT3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -10542,7 +12955,23 @@ bagreg_vtbr_perc_mun <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -10552,6 +12981,125 @@ bagreg_vtbr_perc_mun <- eventReactive(input$BCALC3, {
 ## Tabela para visualizacao
 
 ### Eleitores aptos
+
+
+vtbrpercmed <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Votos brancos percentuais" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vtbr_perc_med)
+  }
+})
+
+
+output$vtbr_perc_med <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  bvtbr_perc_med()
+})
+
+bvtbr_perc_med <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 't'), 
+    class = "display",
+    extensions = c('FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos brancos percentuais" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else if(cargo == "Prefeito" &
+                                 intervalo == "Acima de 200 mil eleitores"){ 
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional do percentual de votos brancos`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional do percentual de votos brancos`) %>% 
+                           mutate("media" = "Média nacional do percentual de votos brancos") 
+                         
+                         media1 <- media1 %>% 
+                           mutate("media" = ifelse(media1$Turno == 2,
+                                                   "Média nacional do percentual de votos brancos.",
+                                                   media1$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média do percentual de votos brancos`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média do percentual de votos brancos`) %>% 
+                           mutate("media" = "Média do percentual de votos brancos") 
+                         
+                         media2 <- media2 %>% 
+                           mutate("media" = ifelse(media2$Turno == 2,
+                                                   "Média do percentual de votos brancos.",
+                                                   media2$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                         
+                       } else{
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional do percentual de votos brancos`) %>%
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional do percentual de votos brancos`) %>% 
+                           mutate("media" = "Média nacional do percentual de votos brancos") %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média do percentual de votos brancos`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média do percentual de votos brancos`) %>% 
+                           mutate("media" = "Média do percentual de votos brancos") %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                         }
+                     }
+                   })
+})
+
+
 
 vtbrpercint <- reactive({
   indicador <- input$INDICADORES_ALIE
@@ -10674,7 +13222,23 @@ bagreg_vtbr_perc_int <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Eleitores aptos` == input$INT3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -11089,7 +13653,23 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                           Cargo==input$DESCRICAO_CARGO3) %>%
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -11099,6 +13679,123 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
 ## Tabela para visualizacao
 
 ### Eleitores aptos
+
+vtnlabsmed <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Votos nulos absolutos" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vtnl_abs_med)
+  }
+})
+
+
+output$vtnl_abs_med <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  bvtnl_abs_med()
+})
+
+bvtnl_abs_med <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 't'), 
+    class = "display",
+    extensions = c('FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos nulos absolutos" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                         return()
+                       } else if(cargo == "Prefeito" &
+                                 intervalo == "Acima de 200 mil eleitores"){ 
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional da quantidade de votos nulos`) %>%
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional da quantidade de votos nulos`) %>% 
+                           mutate("media" = "Média nacional da quantidade de votos nulos") 
+                         
+                         media1 <- media1 %>% 
+                           mutate("media" = ifelse(media1$Turno == 2,
+                                                   "Média nacional da quantidade de votos nulos.",
+                                                   media1$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média da quantidade de votos nulos`) %>% 
+                           unique()
+                           spread(`Ano da eleição`,
+                                  `Média da quantidade de votos nulos`) %>% 
+                           mutate("media" = "Média da quantidade de votos nulos") 
+                         
+                         media2 <- media2 %>% 
+                           mutate("media" = ifelse(media2$Turno == 2,
+                                                   "Média da quantidade de votos nulos.",
+                                                   media2$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                         
+                       } else{
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional da quantidade de votos nulos`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional da quantidade de votos nulos`) %>% 
+                           mutate("media" = "Média nacional da quantidade de votos nulos") %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média da quantidade de votos nulos`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média da quantidade de votos nulos`) %>% 
+                           mutate("media" = "Média da quantidade de votos nulos") %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                         }
+                     }
+                   })
+})
+
 
 vtnlabsint <- reactive({
   indicador <- input$INDICADORES_ALIE
@@ -11220,7 +13917,23 @@ bagreg_vtnl_abs_int <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Eleitores aptos` == input$INT3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>%
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -11636,7 +14349,23 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Nome do município2` == input$MUN3 &
                                          Cargo==input$DESCRICAO_CARGO3) %>%
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -11646,6 +14375,123 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
 ## Tabela para visualizacao
 
 ### Eleitores aptos
+
+vtnlpercmed <- reactive({
+  indicador <- input$INDICADORES_ALIE
+  cargo <- input$DESCRICAO_CARGO3
+  agregacao <- input$DESCRICAO_CARGO3
+  uf <- input$UF3
+  if(indicador == "Votos nulos percentuais" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vtnl_perc_med)
+  }
+})
+
+
+output$vtnl_perc_med <- DT::renderDataTable(server = FALSE,{ ## Tabela da alienacao percentual que devera ser chamada na ui
+  bvtnl_perc_med()
+})
+
+bvtnl_perc_med <- eventReactive(input$BCALC3, { ## Botao de acao da alienacao percentual
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 2
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 't'), 
+    class = "display",
+    extensions = c('FixedColumns'),{
+                     indicador <- input$INDICADORES_ALIE
+                     cargo <- input$DESCRICAO_CARGO3
+                     agregacao <- input$AGREGACAO_REGIONAL3
+                     intervalo <- input$INT3
+                     if(indicador == "Votos nulos percentuais" & 
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo ==""){
+                         return()
+                       } else if(cargo == "Prefeito" &
+                                intervalo == "Acima de 200 mil eleitores"){
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional do percentual de votos nulos`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional do percentual de votos nulos`) %>% 
+                           mutate("media" = "Média nacional do percentual de votos nulos")
+                         
+                         media1 <- media1 %>% 
+                           mutate("media" = ifelse(media1$Turno == 2,
+                                                   "Média nacional do percentual de votos nulos.",
+                                                   media1$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média do percentual de votos nulos`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média do percentual de votos nulos`) %>% 
+                           mutate("media" = "Média do percentual de votos nulos")
+                         
+                         media2 <- media2 %>% 
+                           mutate("media" = ifelse(media2$Turno == 2,
+                                                   "Média do percentual de votos nulos.",
+                                                   media2$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                       } else{
+                         
+                         media1 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional do percentual de votos nulos`) %>%
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional do percentual de votos nulos`) %>% 
+                           mutate("media" = "Média nacional do percentual de votos nulos") %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- alien_mun %>% 
+                           dplyr::filter(`Eleitores aptos` == input$INT3 & 
+                                           Cargo==input$DESCRICAO_CARGO3) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média do percentual de votos nulos`) %>%
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média do percentual de votos nulos`) %>% 
+                           mutate("media" = "Média do percentual de votos nulos") %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                         }
+                     }
+                   })
+})
+
 
 vtnlpercint <- reactive({
   indicador <- input$INDICADORES_ALIE
@@ -11768,7 +14614,23 @@ bagreg_vtnl_perc_int <- eventReactive(input$BCALC3, {
                          data = alien_mun %>% 
                            dplyr::filter(`Eleitores aptos` == input$INT3 &
                                            Cargo==input$DESCRICAO_CARGO3) %>%
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        }}
                    })
@@ -11786,9 +14648,9 @@ bagreg_vtnl_perc_int <- eventReactive(input$BCALC3, {
 
 observeEvent(input$modal_vol,{
   showModal(modalDialog(
-    title = tags$h4(align = "center",
-                    "Ajuda"),
-    footer = modalButton("Fechar"), 
+    title = h4(class = "h4 titulo",
+                    "AJUDA"),
+    footer = modalButton("FECHAR"), 
     size = "m",
     htmlOutput("def_vol"),
     easyClose = TRUE,
@@ -11809,9 +14671,9 @@ observeEvent(input$modal_vol,{
   
   observeEvent(input$modal_vol_ag,{
     showModal(modalDialog(
-                          title = tags$h4(align = 'center',
-                                          "Ajuda"),
-                          footer = modalButton("Fechar"), 
+                          title = h4(class = "h4 titulo",
+                                          "AJUDA"),
+                          footer = modalButton("FECHAR"), 
                           size = "m",
                           htmlOutput("def_vol"),
                           easyClose = TRUE,
@@ -11843,13 +14705,13 @@ observeEvent(input$modal_vol,{
                    <strong>Fórmula: </strong>
                    <p>
                    <p><i>Volatilidade eleitoral </i></p>
-                   V = &sum;(Vt1 - (Vt2-1))/2,
-                   <p>onde Vt1 = proporção de votos obtidos pelos partidos em uma eleição e 
-                   Vt2 = proporção de votos obtidos pelos partidos na eleição seguinte.</p>
+                   V = &sum;|(%Vp (t) - %Vp (t-1))|/2,
+                   <p>onde Vp = proporções de votos obtidos por cada partido entre as eleições 't' e
+                   't-1'.</p>
                    <p><i>Volatilidade parlamentar </i></p>
-                   V = &sum;(Ct1 - (Ct2-1))/2,
-                   <p>onde Ct1 = proporção de cadeiras obtidas pelos partidos em uma eleição e 
-                   Ct2 = proporção de cadeiras obtidas pelos partidos na eleição seguinte.</p>
+                   V = &sum;|(%Cp (t) - %Cp (t-1))|/2,
+                   <p>onde Cp = proporções de cadeiras obtidas por cada partido entre as eleições
+                   't' e 't-1'.</p>
                    <p><br /></h5>
                    <strong>Fonte:</strong> 
                    <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
@@ -12164,10 +15026,12 @@ bvol_ele_mun <- eventReactive(input$BCALC4, { ## Botao de acao
     rownames = FALSE,
     extensions = c('Buttons',
                    'FixedColumns'),{
+                     cargo <- input$DESCRICAO_CARGO4
                      indicador <- req(input$INDICADORES_VOL)
                      agregacao <- req(input$AGREGACAO_REGIONAL4)
                      municipio <- req(input$MUN4)
-                     if(indicador == "Volatilidade eleitoral" &
+                     if(cargo == "Vereador" &
+                        indicador == "Volatilidade eleitoral" &
                         agregacao == "Município"){
                        if(municipio == ""){
                          return()
@@ -12183,6 +15047,33 @@ bvol_ele_mun <- eventReactive(input$BCALC4, { ## Botao de acao
                            unique()
                        } else{
                          vol_mun %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                         `Nome do município2` == req(input$MUN4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         `Volatilidade eleitoral`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Volatilidade eleitoral`) %>% 
+                           unique()
+                       }
+                     } else if(cargo == "Prefeito" &
+                               indicador == "Volatilidade eleitoral" &
+                               agregacao == "Município"){
+                       if(municipio == ""){
+                         return()
+                       } else if(municipio == "Todos os municípios"){
+                         vol_pf %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         `Volatilidade eleitoral`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Volatilidade eleitoral`) %>% 
+                           unique()
+                       } else{
+                         vol_pf %>% 
                            dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
                                          `Nome do município2` == req(input$MUN4)) %>%
                            dplyr::select(`Ano da eleição`,
@@ -12218,7 +15109,6 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
   datatable(options = list(
     autoWidth = FALSE,
     scrollX = TRUE,
-    
     ordering = TRUE, 
     searching = FALSE,
     lengthChange = FALSE,
@@ -12243,10 +15133,12 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
     rownames = FALSE,
     extensions = c('Buttons',
                    'FixedColumns'),{
+                     cargo <- input$DESCRICAO_CARGO4
                      indicador <- req(input$INDICADORES_VOL)
                      agregacao <- req(input$AGREGACAO_REGIONAL4)
                      municipio <- req(input$MUN4)
-                     if(indicador == "Volatilidade eleitoral" & 
+                     if(cargo == "Vereador" &
+                        indicador == "Volatilidade eleitoral" & 
                         agregacao == "Município"){
                        if(municipio == ""){
                          return()
@@ -12259,7 +15151,30 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4) &
                                   `Nome do município2` == req(input$MUN4)) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da volatilidade eleitoral`,
+                                  -`Média da volatilidade parlamentar`,
+                                  -`Média nacional da volatilidade eleitoral`,
+                                  -`Média nacional da volatilidade parlamentar`) %>% 
+                           unique()
+                       }
+                     } else if(cargo == "Prefeito" &
+                               indicador == "Volatilidade eleitoral" & 
+                               agregacao == "Município"){
+                       if(municipio == ""){
+                         return()
+                       } else if(municipio == "Todos os municípios"){
+                         data = vol_pf %>% 
+                           filter(Cargo == req(input$DESCRICAO_CARGO4)) %>% 
                            select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           unique()
+                       } else{
+                         data = vol_pf %>% 
+                           filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                    `Nome do município2` == req(input$MUN4)) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da volatilidade eleitoral`,
+                                  -`Média nacional da volatilidade eleitoral`) %>% 
                            unique()
                        }
                      }
@@ -12271,6 +15186,128 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
 ## Resumo
 
 ### Volatilidade (Eleitores aptos) 
+
+
+volelemed <- reactive({ ## Atributos das tabelas 
+  indicador <- req(input$INDICADORES_VOL)
+  agregacao <- req(input$DESCRICAO_CARGO4)
+  if(indicador == "Volatilidade eleitoral" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vol_ele_med)
+  }
+})
+
+
+output$vol_ele_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  bvol_ele_med()
+})
+
+bvol_ele_med <- eventReactive(input$BCALC4, { ## Botao de acao
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 1
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 't'), 
+    class = "display",
+    extensions = c('FixedColumns'),{
+                     cargo <- input$DESCRICAO_CARGO4
+                     indicador <- req(input$INDICADORES_VOL)
+                     agregacao <- req(input$AGREGACAO_REGIONAL4)
+                     intervalo <- req(input$INT4)
+                     if(cargo == "Vereador" &
+                        indicador == "Volatilidade eleitoral" &
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{
+                         
+                         media1 <- vol_mun %>% 
+                           ungroup() %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                           `Eleitores aptos` == req(input$INT4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         `Média nacional da volatilidade eleitoral`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional da volatilidade eleitoral`) %>% 
+                           mutate("media" = "Média nacional da volatilidade eleitoral") %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- vol_mun %>% 
+                           ungroup() %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                           `Eleitores aptos` == req(input$INT4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         `Média da volatilidade eleitoral`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média da volatilidade eleitoral`) %>% 
+                           mutate("media" = "Média da volatilidade eleitoral") %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                       }
+                     } else if(cargo == "Prefeito" &
+                               indicador == "Volatilidade eleitoral" &
+                               agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{
+                         
+                         media1 <- vol_pf %>% 
+                           ungroup() %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                         `Eleitores aptos` == req(input$INT4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média nacional da volatilidade eleitoral`) %>% 
+                           unique() %>%
+                           spread(`Ano da eleição`,
+                                  `Média nacional da volatilidade eleitoral`) %>% 
+                           mutate("media" = "Média nacional da volatilidade eleitoral")
+                         
+                         media1 <- media1 %>% 
+                           mutate("media" = ifelse(media1$Turno == 2,
+                                                   "Média nacional da volatilidade eleitoral.",
+                                                   media1$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- vol_pf %>% 
+                           ungroup() %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                           `Eleitores aptos` == req(input$INT4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
+                                         `Média da volatilidade eleitoral`) %>% 
+                           unique() %>%
+                           spread(`Ano da eleição`,
+                                  `Média da volatilidade eleitoral`) %>% 
+                           mutate("media" = "Média da volatilidade eleitoral") 
+                         
+                         media2 <- media2 %>% 
+                           mutate("media" = ifelse(media2$Turno == 2,
+                                                   "Média da volatilidade eleitoral.",
+                                                   media2$media)) %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                       }
+                     }
+                   })
+}) 
 
 voleleint <- reactive({ ## Atributos das tabelas 
   indicador <- req(input$INDICADORES_VOL)
@@ -12307,10 +15344,12 @@ bvol_ele_int <- eventReactive(input$BCALC4, { ## Botao de acao
     rownames = FALSE,
     extensions = c('Buttons',
                    'FixedColumns'),{
+                     cargo <- input$DESCRICAO_CARGO4
                      indicador <- req(input$INDICADORES_VOL)
                      agregacao <- req(input$AGREGACAO_REGIONAL4)
                      intervalo <- req(input$INT4)
-                     if(indicador == "Volatilidade eleitoral" &
+                     if(cargo == "Vereador" &
+                        indicador == "Volatilidade eleitoral" &
                         agregacao == "Quantidade de eleitores aptos"){
                        if(intervalo == ""){
                          return()
@@ -12319,6 +15358,24 @@ bvol_ele_int <- eventReactive(input$BCALC4, { ## Botao de acao
                            dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
                                            `Eleitores aptos` == req(input$INT4)) %>%
                            dplyr::select(`Ano da eleição`,
+                                         UF,
+                                         `Nome do município`,
+                                         `Volatilidade eleitoral`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Volatilidade eleitoral`) %>% 
+                           unique()
+                       }
+                     } else if(cargo == "Prefeito" &
+                               indicador == "Volatilidade eleitoral" &
+                               agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{
+                         vol_pf %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                           `Eleitores aptos` == req(input$INT4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         Turno,
                                          UF,
                                          `Nome do município`,
                                          `Volatilidade eleitoral`) %>% 
@@ -12375,10 +15432,12 @@ bagreg_vol_ele_int <- eventReactive(input$BCALC4, {
     rownames = FALSE,
     extensions = c('Buttons',
                    'FixedColumns'),{
+                     cargo <- input$DESCRICAO_CARGO4
                      indicador <- req(input$INDICADORES_VOL)
                      agregacao <- req(input$AGREGACAO_REGIONAL4)
                      intervalo <- req(input$INT4)
-                     if(indicador == "Volatilidade eleitoral" & 
+                     if(cargo == "Vereador" &
+                        indicador == "Volatilidade eleitoral" & 
                         agregacao == "Quantidade de eleitores aptos"){
                        if(intervalo == ""){
                          return()
@@ -12387,6 +15446,20 @@ bagreg_vol_ele_int <- eventReactive(input$BCALC4, {
                            filter(Cargo == req(input$DESCRICAO_CARGO4) &
                                     `Eleitores aptos` == req(input$INT4)) %>% 
                            select(-`Nome do município2`,`Eleitores aptos`) %>% 
+                           unique()
+                       }
+                     } else if(cargo == "Prefeito" &
+                               indicador == "Volatilidade eleitoral" & 
+                               agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{
+                         data = vol_pf %>% 
+                           filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                    `Eleitores aptos` == req(input$INT4)) %>% 
+                           select(-`Nome do município2`,`Eleitores aptos`,
+                                  -`Média da volatilidade eleitoral`,
+                                  -`Média nacional da volatilidade eleitoral`) %>% 
                            unique()
                        }
                      }
@@ -12793,7 +15866,11 @@ bagreg_vol_parl_mun <- eventReactive(input$BCALC4, {
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4) &
                                     `Nome do município2` == req(input$MUN4)) %>%
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da volatilidade eleitoral`,
+                                  -`Média da volatilidade parlamentar`,
+                                  -`Média nacional da volatilidade eleitoral`,
+                                  -`Média nacional da volatilidade parlamentar`) %>% 
                            unique()
                        }
                      }
@@ -12803,6 +15880,78 @@ bagreg_vol_parl_mun <- eventReactive(input$BCALC4, {
 ## Resumo
 
 ### Volatilidade (Eleitores aptos) 
+
+
+volparlmed <- reactive({ ## Atributos das tabelas 
+  indicador <- req(input$INDICADORES_VOL)
+  agregacao <- req(input$DESCRICAO_CARGO4)
+  if(indicador == "Volatilidade parlamentar" & 
+     agregacao == "Quantidade de eleitores aptos"){
+    return(input$vol_parl_med)
+  }
+})
+
+
+output$vol_parl_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+  bvol_parl_med()
+})
+
+bvol_parl_med <- eventReactive(input$BCALC4, { ## Botao de acao
+  datatable(options = list(
+    autoWidth = FALSE,
+    ordering = TRUE, 
+    searching = FALSE,
+    lengthChange = FALSE,
+    lengthMenu = FALSE,
+    fixedColumns = list(
+      leftColumns = 1
+    ),
+    columnDefs = list(list(
+      className = 'dt-center', targets = '_all')),
+    dom = 't'), 
+    class = "display",
+    extensions = c('FixedColumns'),{
+                     indicador <- req(input$INDICADORES_VOL)
+                     agregacao <- req(input$AGREGACAO_REGIONAL4)
+                     intervalo <- req(input$INT4)
+                     if(indicador == "Volatilidade parlamentar" &
+                        agregacao == "Quantidade de eleitores aptos"){
+                       if(intervalo == ""){
+                         return()
+                       } else{
+                         
+                         media1 <- vol_mun %>% 
+                           ungroup() %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                           `Eleitores aptos` == req(input$INT4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         `Média nacional da volatilidade parlamentar`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média nacional da volatilidade parlamentar`) %>% 
+                           mutate("media" = "Média nacional da volatilidade parlamentar") %>% 
+                           column_to_rownames("media")
+                         
+                         media2 <- vol_mun %>% 
+                           ungroup() %>% 
+                           dplyr::filter(Cargo == req(input$DESCRICAO_CARGO4) &
+                                           `Eleitores aptos` == req(input$INT4)) %>%
+                           dplyr::select(`Ano da eleição`,
+                                         `Média da volatilidade parlamentar`) %>% 
+                           unique() %>% 
+                           spread(`Ano da eleição`,
+                                  `Média da volatilidade parlamentar`) %>% 
+                           mutate("media" = "Média da volatilidade parlamentar") %>% 
+                           column_to_rownames("media")
+                         
+                         media1 <- rbind(media1, media2)
+                         
+                         media1
+                         
+                       }
+                     }
+                   })
+}) 
 
 volparlint <- reactive({ ## Atributos das tabelas 
   indicador <- req(input$INDICADORES_VOL)
@@ -12918,7 +16067,11 @@ bagreg_vol_parl_int <- eventReactive(input$BCALC4, {
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4) &
                                   `Eleitores aptos` == req(input$INT4)) %>%
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`, 
+                                  -`Média da volatilidade eleitoral`,
+                                  -`Média da volatilidade parlamentar`,
+                                  -`Média nacional da volatilidade eleitoral`,
+                                  -`Média nacional da volatilidade parlamentar`) %>% 
                            unique()
                        }
                      }

@@ -7,8 +7,6 @@ library(plyr)
 library(tidyverse)
 library(shiny)
 library(shinyBS)
-library(readr)
-library(shinythemes)
 library(magrittr)
 library(shinydashboard)
 library(shinyWidgets)
@@ -43,5 +41,4 @@ for(i in files){
 }
 
 rm(df,i,files)
-
 
