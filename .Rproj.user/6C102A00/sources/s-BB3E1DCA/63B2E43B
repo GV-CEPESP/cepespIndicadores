@@ -1,0 +1,24 @@
+{
+    "id": "63B2E43B",
+    "path": "~/Cepesp/cepespIndicadores/global.R",
+    "project_path": "global.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1597852934400.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "cursorPosition": "43,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1595336393,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1595336393,
+    "read_only": false,
+    "read_only_alternatives": []
+}
