@@ -314,8 +314,8 @@ server <- function(input, output, session){
     if(length(cargo) > 0){
       selectizeInput(inputId = "INDICADORES_RENOV",
                      label = NULL, 
-                     choices = c("","Conservação", "Renovação bruta",
-                                 "Renovação líquida"), ## Indicadores disponiveis
+                     choices = c("","Reeleição", "Reeleição líquida",
+                                 "Renovação", "Renovação líquida"), ## Indicadores disponiveis
                      selected = NULL,
                      options = list(placeholder = 'Escolha um indicador'))
     }
@@ -904,8 +904,10 @@ server <- function(input, output, session){
   selected <- eventReactive(input$BCALC1, {
     
     s <- input$dpg_br_rows_selected
+    
+    ind <- frag_leg_br[s,1]
    
-    texto <- paste("Testando os valores", )
+    texto <- paste("Testando os valores", ind[[1,1]])
       
   })
   
@@ -1114,7 +1116,7 @@ server <- function(input, output, session){
       extensions = c('Buttons',
                      'FixedColumns'),
       #selection = list(mode = 'single', 
-       #                selected = c(1))
+       #                selected = c(1)), 
       {
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
@@ -5701,7 +5703,11 @@ server <- function(input, output, session){
                          } else if(municipio == "Todos os municípios"){
                            data = distcad_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>% 
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média do quociente eleitoral`,
+                                    -`Média do quociente partidário`,
+                                    -`Média nacional do quociente eleitoral`,
+                                    -`Média nacional do quociente partidário`) %>% 
                              unique()
                          } else{
                            data = distcad_mun %>% 
@@ -6344,7 +6350,11 @@ server <- function(input, output, session){
                          } else if(municipio == "Todos os municípios"){
                            data = distcad_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO1) %>%
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média do quociente eleitoral`,
+                                    -`Média do quociente partidário`,
+                                    -`Média nacional do quociente eleitoral`,
+                                    -`Média nacional do quociente partidário`) %>% 
                              unique()
                          } else{
                            data = distcad_mun %>% 
@@ -6577,7 +6587,7 @@ server <- function(input, output, session){
                      })
   })  
   
-# 2.2. Renovacao parlamentar ---------------------------------------------- 
+# 2.2. Reeleicao ---------------------------------------------- 
   
   ## Modal para ajuda
   
@@ -6633,30 +6643,39 @@ server <- function(input, output, session){
   output$def_renovp <- renderUI({
     note <- paste0("
                    <font color = 'black'>
-                   <h4> Conservação </h4>
+                   <h4> Reeleição </h4>
                    <h5 align = 'justify'><br />
-                   Exprime a percentagem dos reeleitos em relação ao total de recandidatos.</h5>
+                   Exprime a percentagem dos reeleitos em relação ao total de vagas em disputa.</h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
-                   CS = (REELEIT)/(DERROT +  REELEIT) * 100
+                   REEL = (REELEITOS / TOTAL DE VAGAS) * 100
                    <p>
-                   <h4><br /> Renovação bruta </h4>
+                   <h4><br /> Reeleição líquida </h4>
                    <h5 align = 'justify'><br />
-                   <p style='line-height:150%'>Esta fórmula computa o número total de representantes novos em uma legislatura,
-                   comparado à composição da legislatura anterior.</p></h5>
+                   <p style='line-height:150%'>Exprime a percentagem dos reeleitos em relação ao 
+                   total de recandidatos.</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
-                   RN = (DESIST + DERROT)/(TOT) * 100
+                   REEL LIQ = (REELEITOS / (DERROTADOS + REELEITOS)) * 100
+                    <h4><br /> Renovação </h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'> Esta fórmula computa o número total de 
+                   representantes novos em uma legislatura, comparado à composição da 
+                   legislatura anterior.</p></h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   RENOV = (1 - INDICADOR DE REELEIÇÃO) * 100
+                  <p>
                    <h4><br /> Renovação líquida </h4>
                    <h5 align = 'justify'><br />
-                   <p style='line-height:150%'>A 'renovação líquida' é composta pelo número de candidatos à reeleição que foram
-                   derrotados divido pelo total de recandidatos (derrotados e reeleitos).</p></h5>
+                   <p style='line-height:150%'>A 'Renovação líquida' .</p></h5>
                    <p>
                    <strong>Fórmula: </strong>
                    <p>
-                   RL = (DERROT)/(REELEIT + DERROT) * 100
+                   RENOV LIQ = (1 - INDICADOR DE REELEIÇÃO LÍQUIDA) * 100
                   <p><br /> 
                   <strong>Fonte:</strong> 
                   <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
@@ -6667,27 +6686,27 @@ server <- function(input, output, session){
     HTML(note)
   }) 
   
-# 2.2.1. Conservacao ------------------------------------------------------
+# 2.2.1. Reeleicao ------------------------------------------------------
   
   ## Resumo
   
   ### Renovacao parlamentar (Brasil) 
   
-  conservbr <- reactive({ ## Atributos das tabelas 
+  reelbr <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$DESCRICAO_CARGO2
-    if(indicador == "Conservação" &
+    if(indicador == "Reeleição" &
        agregacao == "Brasil"){
-      return(input$conserv_br)
+      return(input$reel_br)
     }
   })
   
   
-  output$conserv_br <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    bconserv_br()
+  output$reel_br <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    breel_br()
   })
   
-  bconserv_br <- eventReactive(input$BCALC2, { ## Botao de acao
+  breel_br <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       
@@ -6700,7 +6719,7 @@ server <- function(input, output, session){
       dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
-        title = 'conserv_br',
+        title = 'reel_br',
         bom = TRUE))), 
        class = "display",
       rownames = FALSE,
@@ -6709,15 +6728,15 @@ server <- function(input, output, session){
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
-        if(indicador == "Conservação" &
+        if(indicador == "Reeleição" &
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
           renov_parl_br %>% 
             dplyr::filter(Cargo ==input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
-                          `Conservação`) %>% 
+                          `Reeleição`) %>% 
             spread(`Ano da eleição`,
-                   `Conservação`)
+                   `Reeleição`)
           
         }
       })
@@ -6727,20 +6746,20 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (Brasil) 
   
-  ag_conserv_br<- reactive({
+  ag_reel_br<- reactive({
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Conservação" & 
+    if(indicador == "Reeleição" & 
        agregacao == "Brasil"){
-      return(input$agreg_conserv_br)
+      return(input$agreg_reel_br)
     }
   })
   
-  output$agreg_conserv_br <- DT::renderDataTable(server = FALSE,{
-    bagreg_conserv_br()
+  output$agreg_reel_br <- DT::renderDataTable(server = FALSE,{
+    bagreg_reel_br()
   })
   
-  bagreg_conserv_br <- eventReactive(input$BCALC2, {
+  bagreg_reel_br <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
      autoWidth = FALSE,
@@ -6760,7 +6779,7 @@ server <- function(input, output, session){
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
-        title = 'conserv_br_agreg',
+        title = 'reel_br_agreg',
         bom = TRUE),
         list(                     
           extend = 'colvis',                     
@@ -6774,7 +6793,7 @@ server <- function(input, output, session){
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
-        if(indicador == "Conservação" &
+        if(indicador == "Reeleição" &
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
           data = renov_parl_br %>%
@@ -6788,21 +6807,21 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (UF)  
   
-  conservuf <- reactive({ ## Atributos das tabelas 
+  reeluf <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$DESCRICAO_CARGO2
-    if(indicador == "Conservação" & 
+    if(indicador == "Reeleição" & 
        agregacao == "UF"){
-      return(input$conserv_uf)
+      return(input$reel_uf)
     }
   })
   
   
-  output$conserv_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    bconserv_uf()
+  output$reel_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    breel_uf()
   })
   
-  bconserv_uf <- eventReactive(input$BCALC2, { ## Botao de acao
+  breel_uf <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
       
@@ -6818,7 +6837,7 @@ server <- function(input, output, session){
       dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
-        title = 'conserv_uf',
+        title = 'reel_uf',
         bom = TRUE))), 
        class = "display",
       rownames = FALSE,
@@ -6829,7 +6848,7 @@ server <- function(input, output, session){
         cargo <- input$DESCRICAO_CARGO2
         uf <- req(input$UF2)
         agregacao <- input$AGREGACAO_REGIONAL2
-        if(indicador == "Conservação" & 
+        if(indicador == "Reeleição" & 
            agregacao == "UF")
           if(uf == ""){
             return()
@@ -6838,9 +6857,9 @@ server <- function(input, output, session){
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
-                          `Conservação`) %>% 
+                          `Reeleição`) %>% 
             spread(`Ano da eleição`,
-                  `Conservação`)
+                  `Reeleição`)
           
           } else{
             renov_parl_uf %>% 
@@ -6848,9 +6867,9 @@ server <- function(input, output, session){
                             UF == input$UF2) %>% 
               dplyr::select(`Ano da eleição`,
                             UF,
-                            `Conservação`) %>% 
+                            `Reeleição`) %>% 
               spread(`Ano da eleição`,
-                     `Conservação`)
+                     `Reeleição`)
         }
       })
   }) 
@@ -6859,20 +6878,20 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (UF)
   
-  ag_conserv_uf<- reactive({
+  ag_reel_uf<- reactive({
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Conservação" &
+    if(indicador == "Reeleição" &
        agregacao == "UF"){
-      return(input$agreg_conserv_uf)
+      return(input$agreg_reel_uf)
     }
   })
   
-  output$agreg_conserv_uf <- DT::renderDataTable(server = FALSE,{
-    bagreg_conserv_uf()
+  output$agreg_reel_uf <- DT::renderDataTable(server = FALSE,{
+    bagreg_reel_uf()
   })
   
-  bagreg_conserv_uf <- eventReactive(input$BCALC2, {
+  bagreg_reel_uf <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
      autoWidth = FALSE,
@@ -6892,22 +6911,19 @@ server <- function(input, output, session){
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
-        title = 'conserv_uf_agreg',
+        title = 'reel_uf_agreg',
         bom = TRUE),
         list(                     
           extend = 'colvis',                    
           text = 'Colunas'))), 
        class = "display",
-     
-      
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
-        if(indicador == "Conservação" & 
+        if(indicador == "Reeleição" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
@@ -6930,21 +6946,21 @@ server <- function(input, output, session){
   
   ### Vereador
   
-  conservmun <- reactive({ ## Atributos da tabela
+  reelmun <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
-    if(indicador == "Conservação" & 
+    if(indicador == "Reeleição" & 
        agregacao == "Município"){
-      return(input$conserv_mun)
+      return(input$reel_mun)
     }
   })
   
-  output$conserv_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
-    bconserv_mun()
+  output$reel_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
+    breel_mun()
   })
   
-  bconserv_mun <- eventReactive(input$BCALC2, { ## Botao de acao
+  breel_mun <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
       ordering = TRUE, 
@@ -6959,7 +6975,7 @@ server <- function(input, output, session){
       dom = 'Bfrtip',
       buttons = list(list(
         extend = 'csv',
-        title = 'conserv_mun',
+        title = 'reel_mun',
         bom = TRUE))), 
       class = "display",
       rownames = FALSE,
@@ -6970,7 +6986,7 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        municipio <- req(input$MUN2)
                        if(cargo == "Vereador" &
-                          indicador == "Conservação" & 
+                          indicador == "Reeleição" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -6980,10 +6996,10 @@ server <- function(input, output, session){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Conservação`) %>% 
+                                           `Reeleição`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Conservação`)
+                                    `Reeleição`)
                          } else{
                            renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 &
@@ -6991,13 +7007,13 @@ server <- function(input, output, session){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Conservação`) %>% 
+                                           `Reeleição`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Conservação`)
+                                    `Reeleição`)
                          }
                        } else if(cargo == "Prefeito" &
-                                 indicador == "Conservação" & 
+                                 indicador == "Reeleição" & 
                                  agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -7007,10 +7023,10 @@ server <- function(input, output, session){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Conservação`) %>% 
+                                           `Reeleição`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Conservação`)
+                                    `Reeleição`)
                          } else{
                            renov_parl_pf %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 &
@@ -7018,10 +7034,10 @@ server <- function(input, output, session){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Conservação`) %>% 
+                                           `Reeleição`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Conservação`)
+                                    `Reeleição`)
                          }
                        }
                      })
@@ -7031,20 +7047,20 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (MUN)  
   
-  ag_conserv_mun <- reactive({
+  ag_reel_mun <- reactive({
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Conservação" & 
+    if(indicador == "Reeleição" & 
        agregacao == "Município"){
-      return(input$agreg_conserv_mun)
+      return(input$agreg_reel_mun)
     }
   })
   
-  output$agreg_conserv_mun <- DT::renderDataTable(server = TRUE,{
-    bagreg_conserv_mun()
+  output$agreg_reel_mun <- DT::renderDataTable(server = TRUE,{
+    bagreg_reel_mun()
   })
   
-  bagreg_conserv_mun <- eventReactive(input$BCALC2, {
+  bagreg_reel_mun <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
@@ -7064,7 +7080,7 @@ server <- function(input, output, session){
           extend = 'csv',
           exportOptions = list(
             columns = ':visible'),
-          title = 'conserv_mun_agreg',
+          title = 'reel_mun_agreg',
           bom = TRUE),
         list(                     
           extend = 'colvis',                     
@@ -7078,55 +7094,69 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        municipio <- req(input$MUN2)
                        if(cargo == "Vereador" &
-                          indicador == "Conservação" & 
+                          indicador == "Reeleição" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              select(-`Nome do município2`, -`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
-                                 indicador == "Conservação" & 
+                                 indicador == "Reeleição" & 
                                  agregacao == "Município"){
                          if(municipio == ""){
                            return()
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_pf %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          } else{
                            data = renov_parl_pf %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        }
@@ -7139,21 +7169,21 @@ server <- function(input, output, session){
   ### Vereador
   
   
-  conservmed <- reactive({ ## Atributos da tabela
+  reelmed <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
-    if(indicador == "Conservação" & 
+    if(indicador == "Reeleição" & 
        agregacao == "Quantidade de eleitores aptos"){
-      return(input$conserv_med)
+      return(input$reel_med)
     }
   })
   
-  output$conserv_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    bconserv_med()
+  output$reel_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    breel_med()
   })
   
-  bconserv_med <- eventReactive(input$BCALC2, { ## Botao de acao
+  breel_med <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
       ordering = TRUE, 
@@ -7174,7 +7204,7 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
                        if(cargo == "Vereador" &
-                          indicador == "Conservação" & 
+                          indicador == "Reeleição" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -7184,22 +7214,22 @@ server <- function(input, output, session){
                              dplyr::filter(`Eleitores aptos` == input$INT2 &
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
-                                           `Média nacional da conservação`) %>% 
+                                           `Média nacional da reeleição`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Média nacional da conservação`) %>% 
-                             mutate("media" = "Média nacional da conservação") %>% 
+                                    `Média nacional da reeleição`) %>% 
+                             mutate("media" = "Média nacional da reeleição") %>% 
                              column_to_rownames("media")
                            
                            media2 <- renov_parl_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 &
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
-                                           `Média da conservação`) %>% 
+                                           `Média da reeleição`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Média da conservação`) %>% 
-                             mutate("media" = "Média da conservação do grupo") %>% 
+                                    `Média da reeleição`) %>% 
+                             mutate("media" = "Média da reeleição do grupo") %>% 
                              column_to_rownames("media")
                            
                            media1 <- rbind(media1, media2)
@@ -7208,7 +7238,7 @@ server <- function(input, output, session){
                            
                          }
                        } else if(cargo == "Prefeito" &
-                                 indicador == "Conservação" & 
+                                 indicador == "Reeleição" & 
                                  agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -7219,16 +7249,16 @@ server <- function(input, output, session){
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
                                            #Turno,
-                                           `Média nacional da conservação`) %>% 
+                                           `Média nacional da reeleição`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Média nacional da conservação`) %>% 
-                             mutate("media" = "Média nacional da conservação") %>% 
+                                    `Média nacional da reeleição`) %>% 
+                             mutate("media" = "Média nacional da reeleição") %>% 
                              column_to_rownames("media") 
                            
                            #media1 <- media1 %>% 
                             # mutate("media" = ifelse(media1$Turno == 2,
-                             #                        "Média nacional da conservação.",
+                             #                        "Média nacional da Reeleição.",
                               #                       media1$media)) %>% 
                              #column_to_rownames("media")
                            
@@ -7237,16 +7267,16 @@ server <- function(input, output, session){
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
                                            #Turno,
-                                           `Média da conservação`) %>% 
+                                           `Média da reeleição`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Média da conservação`) %>% 
-                             mutate("media" = "Média da conservação do grupo") %>% 
+                                    `Média da reeleição`) %>% 
+                             mutate("media" = "Média da reeleição do grupo") %>% 
                              column_to_rownames("media")
                            
                            #media2 <- media2 %>% 
                             # mutate("media" = ifelse(media2$Turno == 2,
-                             #                        "Média da conservação.",
+                             #                        "Média da Reeleição.",
                               #                       media2$media)) %>% 
                           #   column_to_rownames("media")
                            
@@ -7263,21 +7293,21 @@ server <- function(input, output, session){
   
   
   
-  conservint <- reactive({ ## Atributos da tabela
+  reelint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
-    if(indicador == "Conservação" & 
+    if(indicador == "Reeleição" & 
        agregacao == "Quantidade de eleitores aptos"){
-      return(input$conserv_int)
+      return(input$reel_int)
     }
   })
   
-  output$conserv_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    bconserv_int()
+  output$reel_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    breel_int()
   })
   
-  bconserv_int <- eventReactive(input$BCALC2, { ## Botao de acao
+  breel_int <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
       ordering = TRUE, 
@@ -7292,7 +7322,7 @@ server <- function(input, output, session){
       dom = 'Bfrtip',
       buttons = list(list(
         extend = 'csv',
-        title = 'conserv_int',
+        title = 'reel_int',
         bom = TRUE))), 
       class = "display",
       rownames = FALSE,
@@ -7303,7 +7333,7 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
                        if(cargo == "Vereador" &
-                          indicador == "Conservação" & 
+                          indicador == "Reeleição" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -7314,14 +7344,14 @@ server <- function(input, output, session){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Conservação`) %>% 
+                                           `Reeleição`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Conservação`)
+                                    `Reeleição`)
                            
                          }
                        } else if(cargo == "Prefeito" &
-                                 indicador == "Conservação" & 
+                                 indicador == "Reeleição" & 
                                  agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -7332,10 +7362,10 @@ server <- function(input, output, session){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Conservação`) %>% 
+                                           `Reeleição`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Conservação`)
+                                    `Reeleição`)
                          }
                        }
                      })
@@ -7345,20 +7375,20 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (Eleitores aptos)  
   
-  ag_conserv_int <- reactive({
+  ag_reel_int <- reactive({
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Conservação" & 
+    if(indicador == "Reeleição" & 
        agregacao == "Quantidade de eleitores aptos"){
-      return(input$agreg_conserv_int)
+      return(input$agreg_reel_int)
     }
   })
   
-  output$agreg_conserv_int <- DT::renderDataTable(server = FALSE,{
-    bagreg_conserv_int()
+  output$agreg_reel_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_reel_int()
   })
   
-  bagreg_conserv_int <- eventReactive(input$BCALC2, {
+  bagreg_reel_int <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
@@ -7378,7 +7408,7 @@ server <- function(input, output, session){
           extend = 'csv',
           exportOptions = list(
             columns = ':visible'),
-          title = 'conserv_int_agreg',
+          title = 'reel_int_agreg',
           bom = TRUE),
         list(                     
           extend = 'colvis',                     
@@ -7392,7 +7422,7 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
                        if(cargo == "Vereador" &
-                          indicador == "Conservação" & 
+                          indicador == "Reeleição" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -7400,17 +7430,19 @@ server <- function(input, output, session){
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        } else if (cargo == "Prefeito" &
-                                  indicador == "Conservação" & 
+                                  indicador == "Reeleição" & 
                                   agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -7418,13 +7450,15 @@ server <- function(input, output, session){
                            data = renov_parl_pf %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        }
@@ -7432,31 +7466,30 @@ server <- function(input, output, session){
   })
   
   
-# 2.2.2. Renovacao bruta --------------------------------------------------
+# 2.2.2. Reeleicao liquida --------------------------------------------------
   
   ## Resumo
   
   ### Renovacao parlamentar (Brasil)  
   
-  renovbtbr <- reactive({ ## Atributos das tabelas 
+  reeliqbr <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$DESCRICAO_CARGO2
-    if(indicador == "Renovação bruta" & 
+    if(indicador == "Reeleição líquida" & 
        cargo == "Deputado Federal" &
        agregacao == "Brasil"){
-      return(input$renov_bt_br)
+      return(input$reel_liq_br)
     }
   })
   
   
-  output$renov_bt_br <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    brenov_bt_br()
+  output$reel_liq_br <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    breel_liq_br()
   })
   
-  brenov_bt_br <- eventReactive(input$BCALC2, { ## Botao de acao
+  breel_liq_br <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -7466,25 +7499,24 @@ server <- function(input, output, session){
       dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
-        title = 'renov_bt_br',
+        title = 'reel_liq_br',
         bom = TRUE))), 
        class = "display",
       rownames = FALSE,
-      extensions = c('Buttons', 
-                    
+      extensions = c('Buttons',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
-        if(indicador == "Renovação bruta" & 
+        if(indicador == "Reeleição líquida" & 
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
           renov_parl_br %>% 
             dplyr::filter(Cargo ==input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
-                          `Renovação bruta`) %>% 
+                          `Reeleição líquida`) %>% 
             spread(`Ano da eleição`,
-                   `Renovação bruta`) %>% 
+                   `Reeleição líquida`) %>% 
             unique()
           
         }
@@ -7495,26 +7527,25 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (Brasil)  
   
-  ag_renovbt_br <- reactive({
+  ag_reeliq_br <- reactive({
     indicador <- input$INDICADORES_RENOV
     cargo <- input$DESCRICAO_CARGO2
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Renovação bruta" & 
+    if(indicador == "Reeleição líquida" & 
        cargo == "Deputado Federal" &
        agregacao == "Brasil"){
-      return(input$agreg_renov_bt_br)
+      return(input$agreg_reel_liq_br)
     }
   })
   
-  output$agreg_renov_bt_br <- DT::renderDataTable(server = FALSE,{
-    bagreg_renov_bt_br()
+  output$agreg_reel_liq_br <- DT::renderDataTable(server = FALSE,{
+    bagreg_reel_liq_br()
   })
   
-  bagreg_renov_bt_br <- eventReactive(input$BCALC2, {
+  bagreg_reel_liq_br <- eventReactive(input$BCALC2, {
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -7529,7 +7560,7 @@ server <- function(input, output, session){
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
-        title = 'renov_bt_br_agreg',
+        title = 'reel_liq_br_agreg',
         bom = TRUE),
         list(                    
           extend = 'colvis',                   
@@ -7537,13 +7568,12 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
-        if(indicador == "Renovação bruta" & 
+        if(indicador == "Reeleição líquida" & 
            cargo == "Deputado Federal" &
            agregacao == "Brasil"){
             data = renov_parl_br %>%
@@ -7556,24 +7586,23 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (UF) 
   
-  renovbtuf <- reactive({ ## Atributos das tabelas 
+  reeliquf <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$DESCRICAO_CARGO2
-    if(indicador == "Renovação bruta" & 
+    if(indicador == "Reeleição líquida" & 
        agregacao == "UF"){
-      return(input$renov_bt_uf)
+      return(input$reel_liq_uf)
     }
   })
   
   
-  output$renov_bt_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    brenov_bt_uf()
+  output$reel_liq_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    breel_liq_uf()
   })
   
-  brenov_bt_uf <- eventReactive(input$BCALC2, { ## Botao de acao
+  breel_liq_uf <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -7586,18 +7615,17 @@ server <- function(input, output, session){
       dom = 'Bflrtip',
       buttons = list(list(
         extend = 'csv',
-        title = 'renov_bt_uf',
+        title = 'reel_liq_uf',
         bom = TRUE))), 
        class = "display",
       rownames = FALSE,
-      extensions = c('Buttons',     
-                    
+      extensions = c('Buttons',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
         cargo <- input$DESCRICAO_CARGO2
-        if(indicador == "Renovação bruta" & 
+        if(indicador == "Reeleição líquida" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
@@ -7606,9 +7634,9 @@ server <- function(input, output, session){
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
-                          `Renovação bruta`) %>% 
+                          `Reeleição líquida`) %>% 
             spread(`Ano da eleição`,
-                   `Renovação bruta`) %>% 
+                   `Reeleição líquida`) %>% 
             unique()
           } else{
             renov_parl_uf %>% 
@@ -7616,9 +7644,9 @@ server <- function(input, output, session){
                           UF == input$UF2) %>% 
             dplyr::select(`Ano da eleição`,
                           UF,
-                          `Renovação bruta`) %>% 
+                          `Reeleição líquida`) %>% 
             spread(`Ano da eleição`,
-                   `Renovação bruta`) %>% 
+                   `Reeleição líquida`) %>% 
             unique()
           }
         }
@@ -7629,20 +7657,20 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (UF) 
   
-  ag_renovbt_uf <- reactive({
+  ag_reeliq_uf <- reactive({
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Renovação bruta" & 
+    if(indicador == "Reeleição líquida" & 
        agregacao == "UF"){
-      return(input$agreg_renov_bt_uf)
+      return(input$agreg_reel_liq_uf)
     }
   })
   
-  output$agreg_renov_bt_uf <- DT::renderDataTable(server = FALSE,{
-    bagreg_renov_bt_uf()
+  output$agreg_reel_liq_uf <- DT::renderDataTable(server = FALSE,{
+    bagreg_reel_liq_uf()
   })
   
-  bagreg_renov_bt_uf <- eventReactive(input$BCALC2, {
+  bagreg_reel_liq_uf <- eventReactive(input$BCALC2, {
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
@@ -7662,20 +7690,19 @@ server <- function(input, output, session){
         extend = 'csv',
         exportOptions = list(
           columns = ':visible'),
-        title = 'renov_bt_uf_agreg',
+        title = 'reel_liq_uf_agreg',
         bom = TRUE),
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
        class = "display",
       rownames = FALSE,
-      extensions = c('Buttons', 
-                    
+      extensions = c('Buttons',
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
-        if(indicador == "Renovação bruta" & 
+        if(indicador == "Reeleição líquida" & 
            agregacao == "UF"){
           if(uf == ""){
             return()
@@ -7696,21 +7723,21 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (MUN)
   
-  renovbtmun <- reactive({ ## Atributos da tabela
+  reeliqmun <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
-    if(indicador == "Renovação bruta" & 
+    if(indicador == "Reeleição líquida" & 
        agregacao == "Município"){
-      return(input$renov_bt_mun)
+      return(input$reel_liq_mun)
     }
   })
   
-  output$renov_bt_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
-    brenov_bt_mun()
+  output$reel_liq_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
+    breel_liq_mun()
   })
   
-  brenov_bt_mun <- eventReactive(input$BCALC2, { ## Botao de acao
+  breel_liq_mun <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
       
@@ -7726,7 +7753,7 @@ server <- function(input, output, session){
       dom = 'Bfrtip',
       buttons = list(list(
         extend = 'csv',
-        title = 'renov_bt_mun',
+        title = 'reel_liq_mun',
         bom = TRUE))), 
       class = "display",
       rownames = FALSE,
@@ -7738,7 +7765,7 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        municipio <- req(input$MUN2)
                        if(cargo == "Vereador" &
-                          indicador == "Renovação bruta" & 
+                          indicador == "Reeleição líquida" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -7748,10 +7775,10 @@ server <- function(input, output, session){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Renovação bruta`) %>% 
+                                           `Reeleição líquida`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Renovação bruta`)
+                                    `Reeleição líquida`)
                          } else{
                            renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 &
@@ -7759,13 +7786,13 @@ server <- function(input, output, session){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Renovação bruta`) %>% 
+                                           `Reeleição líquida`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Renovação bruta`)
+                                    `Reeleição líquida`)
                          }
                        } else if(cargo == "Prefeito" &
-                                 indicador == "Renovação bruta" & 
+                                 indicador == "Reeleição líquida" & 
                                  agregacao == "Município"){
                          if(municipio == ""){
                            return()
@@ -7775,10 +7802,10 @@ server <- function(input, output, session){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Renovação bruta`) %>% 
+                                           `Reeleição líquida`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Renovação bruta`)
+                                    `Reeleição líquida`)
                          } else{
                            renov_parl_pf %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 &
@@ -7786,10 +7813,10 @@ server <- function(input, output, session){
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Renovação bruta`) %>% 
+                                           `Reeleição líquida`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Renovação bruta`)
+                                    `Reeleição líquida`)
                          }
                        }
                      })
@@ -7799,20 +7826,20 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (MUN)  
   
-  ag_renovbt_mun <- reactive({
+  ag_reeliq_mun <- reactive({
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Renovação bruta" & 
+    if(indicador == "Reeleição líquida" & 
        agregacao == "Município"){
-      return(input$agreg_renov_bt_mun)
+      return(input$agreg_reel_liq_mun)
     }
   })
   
-  output$agreg_renov_bt_mun <- DT::renderDataTable(server = TRUE,{
-    bagreg_renov_bt_mun()
+  output$agreg_reel_liq_mun <- DT::renderDataTable(server = TRUE,{
+    bagreg_reel_liq_mun()
   })
   
-  bagreg_renov_bt_mun <- eventReactive(input$BCALC2, {
+  bagreg_reel_liq_mun <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
@@ -7832,7 +7859,7 @@ server <- function(input, output, session){
           extend = 'csv',
           exportOptions = list(
             columns = ':visible'),
-          title = 'renov_bt_mun_agreg',
+          title = 'reel_liq_mun_agreg',
           bom = TRUE),
         list(                     
           extend = 'colvis',                     
@@ -7846,55 +7873,69 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        municipio <- req(input$MUN2)
                        if(cargo == "Vereador" &
-                          indicador == "Renovação bruta" & 
+                          indicador == "Reeleição líquida" & 
                           agregacao == "Município"){
                          if(municipio == ""){
                            return()
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>%
                              select(-`Nome do município2`, -`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
-                                 indicador == "Renovação bruta" & 
+                                 indicador == "Reeleição líquida" & 
                                  agregacao == "Município"){
                          if(municipio == ""){
                            return()
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_pf %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          } else{
                            data = renov_parl_pf %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                             Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        }
@@ -7907,21 +7948,21 @@ server <- function(input, output, session){
   ### Vereador
   
   
-  renovbtmed <- reactive({ ## Atributos da tabela
+  reeliqmed <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
-    if(indicador == "Renovação bruta" & 
+    if(indicador == "Reeleição líquida" & 
        agregacao == "Quantidade de eleitores aptos"){
-      return(input$renov_bt_med)
+      return(input$reel_liq_med)
     }
   })
   
-  output$renov_bt_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    brenov_bt_med()
+  output$reel_liq_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    breel_liq_med()
   })
   
-  brenov_bt_med <- eventReactive(input$BCALC2, { ## Botao de acao
+  breel_liq_med <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
       ordering = TRUE, 
@@ -7941,7 +7982,7 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
                        if(cargo == "Vereador" &
-                          indicador == "Renovação bruta" & 
+                          indicador == "Reeleição líquida" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -7951,22 +7992,22 @@ server <- function(input, output, session){
                              dplyr::filter(`Eleitores aptos` == input$INT2 &
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
-                                           `Média nacional da renovação bruta`) %>% 
+                                           `Média nacional da reeleição líquida`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Média nacional da renovação bruta`)%>% 
-                             mutate("media" = "Média nacional da renovação bruta") %>% 
+                                    `Média nacional da reeleição líquida`)%>% 
+                             mutate("media" = "Média nacional da reeleição líquida") %>% 
                              column_to_rownames("media")
                            
                            media2 <- renov_parl_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 &
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
-                                           `Média da renovação bruta`) %>% 
+                                           `Média da reeleição líquida`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Média da renovação bruta`)%>% 
-                             mutate("media" = "Média da renovação bruta do grupo") %>% 
+                                    `Média da reeleição líquida`)%>% 
+                             mutate("media" = "Média da reeleição líquida do grupo") %>% 
                              column_to_rownames("media")
                            
                            media1 <- rbind(media1, media2)
@@ -7975,7 +8016,7 @@ server <- function(input, output, session){
                            
                          }
                        } else if(cargo == "Prefeito" &
-                                 indicador == "Renovação bruta" & 
+                                 indicador == "Reeleição líquida" & 
                                  agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -7986,16 +8027,16 @@ server <- function(input, output, session){
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
                                            #Turno,
-                                           `Média nacional da renovação bruta`) %>% 
+                                           `Média nacional da reeleição líquida`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Média nacional da renovação bruta`)%>% 
-                             mutate("media" = "Média nacional da renovação bruta") %>% 
+                                    `Média nacional da reeleição líquida`)%>% 
+                             mutate("media" = "Média nacional da reeleição líquida") %>% 
                              column_to_rownames("media") 
                            
                            #media1 <- media1 %>% 
                             # mutate("media" = ifelse(media1$Turno == 2,
-                             #                        "Média nacional da renovação bruta.",
+                             #                        "Média nacional da Reeleição líquida.",
                               #                       media1$media)) %>% 
                              #column_to_rownames("media")
                            
@@ -8004,16 +8045,16 @@ server <- function(input, output, session){
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
                                            #Turno,
-                                           `Média da renovação bruta`) %>% 
+                                           `Média da reeleição líquida`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Média da renovação bruta`)%>% 
-                             mutate("media" = "Média da renovação bruta do grupo") %>% 
+                                    `Média da reeleição líquida`)%>% 
+                             mutate("media" = "Média da reeleição líquida do grupo") %>% 
                              column_to_rownames("media")
                            
                            #media2 <- media2 %>% 
                             # mutate("media" = ifelse(media2$Turno == 2,
-                             #                        "Média da renovação bruta.",
+                             #                        "Média da Reeleição líquida.",
                               #                       media2$media)) %>% 
                              #column_to_rownames("media")
                            
@@ -8028,21 +8069,21 @@ server <- function(input, output, session){
   
   
   
-  renovbtint <- reactive({ ## Atributos da tabela
+  reeliqint <- reactive({ ## Atributos da tabela
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
     uf <- input$UF2
-    if(indicador == "Renovação bruta" & 
+    if(indicador == "Reeleição líquida" & 
        agregacao == "Quantidade de eleitores aptos"){
-      return(input$renov_bt_int)
+      return(input$reel_liq_int)
     }
   })
   
-  output$renov_bt_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
-    brenov_bt_int()
+  output$reel_liq_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    breel_liq_int()
   })
   
-  brenov_bt_int <- eventReactive(input$BCALC2, { ## Botao de acao
+  breel_liq_int <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
       autoWidth = FALSE,
       ordering = TRUE, 
@@ -8057,7 +8098,7 @@ server <- function(input, output, session){
       dom = 'Bfrtip',
       buttons = list(list(
         extend = 'csv',
-        title = 'renov_bt_int',
+        title = 'reel_liq_int',
         bom = TRUE))), 
       class = "display",
       rownames = FALSE,
@@ -8068,38 +8109,38 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
                        if(cargo == "Vereador" &
-                          indicador == "Renovação bruta" & 
+                          indicador == "Reeleição líquida" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
                          } else{
-                           renov_parl_mun %>% 
+                           reel_parl_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 &
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Renovação bruta`) %>% 
+                                           `Reeleição líquida`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Renovação bruta`)
+                                    `Reeleição líquida`)
                          }
                        } else if(cargo == "Prefeito" &
-                                 indicador == "Renovação bruta" & 
+                                 indicador == "Reeleição líquida" & 
                                  agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
                          } else{
-                           renov_parl_pf %>% 
+                           reel_parl_pf %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 &
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
-                                           `Renovação bruta`) %>% 
+                                           `Reeleição líquida`) %>% 
                              unique() %>% 
                              spread(`Ano da eleição`,
-                                    `Renovação bruta`)
+                                    `Reeleição líquida`)
                          }
                        }
                      })
@@ -8107,22 +8148,22 @@ server <- function(input, output, session){
   
   ## Dados desagregados
   
-  ### Renovacao parlamentar (Eleitores aptos)  
+  ### reelacao parlamentar (Eleitores aptos)  
   
-  ag_renov_bt_int <- reactive({
+  ag_reel_liq_int <- reactive({
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$AGREGACAO_REGIONAL2
-    if(indicador == "Conservação" & 
+    if(indicador == "Reeleição" & 
        agregacao == "Quantidade de eleitores aptos"){
-      return(input$agreg_renov_bt_int)
+      return(input$agreg_reel_liq_int)
     }
   })
   
-  output$agreg_renov_bt_int <- DT::renderDataTable(server = FALSE,{
-    bagreg_renov_bt_int()
+  output$agreg_reel_liq_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_reel_liq_int()
   })
   
-  bagreg_renov_bt_int <- eventReactive(input$BCALC2, {
+  bagreg_reel_liq_int <- eventReactive(input$BCALC2, {
     datatable(options = list(
       scrollX = TRUE,
       autoWidth = FALSE,
@@ -8142,7 +8183,7 @@ server <- function(input, output, session){
           extend = 'csv',
           exportOptions = list(
             columns = ':visible'),
-          title = 'renov_bt_int_agreg',
+          title = 'reel_liq_int_agreg',
           bom = TRUE),
         list(                     
           extend = 'colvis',                     
@@ -8156,7 +8197,7 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        intervalo <- req(input$INT2)
                        if(cargo == "Vereador" &
-                          indicador == "Renovação bruta" & 
+                          indicador == "Reeleição líquida" & 
                           agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -8164,17 +8205,19 @@ server <- function(input, output, session){
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
-                                 indicador == "Renovação bruta" & 
+                                 indicador == "Reeleição líquida" & 
                                  agregacao == "Quantidade de eleitores aptos"){
                          if(intervalo == ""){
                            return()
@@ -8183,12 +8226,14 @@ server <- function(input, output, session){
                              dplyr::filter(`Eleitores aptos` == input$INT2 & 
                                             Cargo == input$DESCRICAO_CARGO2) %>% 
                              select(-`Nome do município2`, -`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        }
@@ -8196,7 +8241,784 @@ server <- function(input, output, session){
   })
   
   
-# 2.2.2. Renovacao liquida ------------------------------------------------
+# 2.2.3. Renovacao ------------------------------------------------
+  
+  ## Resumo
+  
+  ### Renovacao parlamentar (Brasil)  
+  
+  renovbr <- reactive({ ## Atributos das tabelas 
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$DESCRICAO_CARGO2
+    if(indicador == "Renovação" &
+       cargo == "Deputado Federal" &
+       agregacao == "Brasil"){
+      return(input$renov_br)
+    }
+  })
+  
+  
+  output$renov_br <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_br()
+  })
+  
+  brenov_br <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+     autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'renov_br',
+        bom = TRUE))), 
+       class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+        indicador <- input$INDICADORES_RENOV
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
+        if(indicador == "Renovação" &
+           cargo == "Deputado Federal" &
+           agregacao == "Brasil"){
+          renov_parl_br %>% 
+            dplyr::select(`Ano da eleição`,
+                          `Renovação`) %>% 
+            spread(`Ano da eleição`,
+                   `Renovação`)
+          
+        }
+      })
+  }) 
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (Brasil)  
+  
+  ag_renov_br <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Renovação" & 
+       cargo == "Deputado Federal" &
+       agregacao == "Brasil"){
+      return(input$agreg_renov_br)
+    }
+  })
+  
+  output$agreg_renov_br <- DT::renderDataTable(server = FALSE,{
+    bagreg_renov_br()
+  })
+  
+  bagreg_renov_br <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+     autoWidth = FALSE,
+      scrollX = TRUE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 2
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+                     list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'renov_br_agreg',
+        bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+       class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+        indicador <- input$INDICADORES_RENOV
+        cargo <- input$DESCRICAO_CARGO2
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- input$UF2
+        if(indicador == "Renovação" & 
+           cargo == "Deputado Federal" &
+           agregacao == "Brasil"){
+          data = renov_parl_br  
+          
+        }
+      })
+  })
+  
+  ## Resumo
+  
+  ### Renovacao parlamentar (UF) 
+  
+  renovuf <- reactive({ ## Atributos das tabelas 
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$DESCRICAO_CARGO2
+    if(indicador == "Renovação" &
+       agregacao == "UF"){
+      return(input$renov_uf)
+    }
+  })
+  
+  
+  output$renov_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_uf()
+  })
+  
+  brenov_uf <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+     autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'renov_uf',
+        bom = TRUE))), 
+       class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+        indicador <- input$INDICADORES_RENOV
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
+        cargo <- input$DESCRICAO_CARGO2
+        if(indicador == "Renovação" &
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else if (uf == "Todas UFs"){
+            renov_parl_uf %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+            dplyr::select(`Ano da eleição`,
+                          UF,
+                          `Renovação`) %>% 
+            spread(`Ano da eleição`,
+                  `Renovação`) %>% 
+            unique()
+          
+          } else{
+            renov_parl_uf %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                          UF == input$UF2) %>%
+            dplyr::select(`Ano da eleição`,
+                          UF,
+                          `Renovação`) %>% 
+            spread(`Ano da eleição`,
+                   `Renovação`) %>% 
+            unique()
+          }
+        }
+      })
+  }) 
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (UF) 
+  
+  ag_renov_uf <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Renovação" & 
+       agregacao == "UF"){
+      return(input$agreg_renov_uf)
+    }
+  })
+  
+  output$agreg_renov_uf <- DT::renderDataTable(server = FALSE,{
+    bagreg_renov_uf()
+  })
+  
+  bagreg_renov_uf <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+     autoWidth = FALSE,
+      scrollX = TRUE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 2
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+                     list(
+        extend = 'csv',
+        exportOptions = list(
+          columns = ':visible'),
+        title = 'renov_uf_agreg',
+        bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+       class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+        indicador <- input$INDICADORES_RENOV
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
+        if(indicador == "Renovação" & 
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            data = renov_parl_uf %>% 
+            filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            unique()
+          } else{
+            data = renov_parl_uf %>% 
+            filter(Cargo == input$DESCRICAO_CARGO2 &
+                   UF == input$UF2) %>% 
+            unique()
+          }
+        }
+      })
+  })
+  
+  
+  ## Resumo
+  
+  ### Renovacao parlamentar (MUN)
+  
+  renovmun <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Renovação" & 
+       agregacao == "Município"){
+      return(input$renov_mun)
+    }
+  })
+  
+  output$renov_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
+    brenov_mun()
+  })
+  
+  brenov_mun <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'renov_mun',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons', 
+                     'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       municipio <- req(input$MUN2)
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação" & 
+                          agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           renov_parl_mun %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação`)
+                         } else{
+                           renov_parl_mun %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação`)
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           renov_parl_pf %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação`)
+                         } else{
+                           renov_parl_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 &
+                                            Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação`)
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (MUN)  
+  
+  ag_renov_mun <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Renovação" & 
+       agregacao == "Município"){
+      return(input$agreg_renov_mun)
+    }
+  })
+  
+  output$agreg_renov_mun <- DT::renderDataTable(server = TRUE,{
+    bagreg_renov_mun()
+  })
+  
+  bagreg_renov_mun <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'renov_mun_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       municipio <- req(input$MUN2)
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação" & 
+                          agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           data = renov_parl_mun %>%
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
+                             unique()
+                         } else{
+                           data = renov_parl_mun %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
+                             unique()
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           data = renov_parl_pf %>%
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
+                             unique()
+                         } else{
+                           data = renov_parl_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 & 
+                                            Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
+  
+  ## Resumo
+  
+  ### Vereador
+  
+  
+  renovmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Renovação" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$renov_med)
+    }
+  })
+  
+  output$renov_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_med()
+  })
+  
+  brenov_med <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional da renovação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da renovação`)%>% 
+                             mutate("media" = "Média nacional da renovação") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média da renovação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da renovação`)%>% 
+                             mutate("media" = "Média da renovação do grupo") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           #Turno,
+                                           `Média nacional da renovação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional da renovação`)%>% 
+                             mutate("media" = "Média nacional da renovação")  %>% 
+                             column_to_rownames("media")
+                           
+                           #media1 <- media1 %>% 
+                            # mutate("media" = ifelse(media1$Turno == 2,
+                             #                        "Média nacional da renovação líquida.",
+                              #                       media1$media)) %>% 
+                             #column_to_rownames("media")
+                           
+                           
+                           media2 <- renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           #Turno,
+                                           `Média da renovação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média da renovação`)%>% 
+                             mutate("media" = "Média da renovação do grupo") %>% 
+                             column_to_rownames("media") 
+                           
+                           #media2 <- media2 %>% 
+                            # mutate("media" = ifelse(media2$Turno == 2,
+                             #                        "Média da Renovação.",
+                              #                       media2$media)) %>% 
+                             # column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  
+  
+  renovint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Renovação" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$renov_int)
+    }
+  })
+  
+  output$renov_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_int()
+  })
+  
+  brenov_int <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'renov_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação`)
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                            Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           `Renovação`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação`)
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (Eleitores aptos)  
+  
+  ag_renov_int <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Renovação" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_renov_int)
+    }
+  })
+  
+  output$agreg_renov_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_renov_int()
+  })
+  
+  bagreg_renov_int <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'renov_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       if(cargo == "Vereador" &
+                          indicador == "Renovação" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
+                             unique()
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Renovação" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 & 
+                                            Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
+ 
+  # 2.2.4. Renovacao liquida ------------------------------------------------
   
   ## Resumo
   
@@ -8220,8 +9042,7 @@ server <- function(input, output, session){
   
   brenov_liq_br <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -8233,25 +9054,24 @@ server <- function(input, output, session){
         extend = 'csv',
         title = 'renov_liq_br',
         bom = TRUE))), 
-       class = "display",
+      class = "display",
       rownames = FALSE,
-      extensions = c('Buttons',  
-                    
+      extensions = c('Buttons',
                      'FixedColumns'),{
-        indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO2
-        agregacao <- input$AGREGACAO_REGIONAL2
-        if(indicador == "Renovação líquida" &
-           cargo == "Deputado Federal" &
-           agregacao == "Brasil"){
-          renov_parl_br %>% 
-            dplyr::select(`Ano da eleição`,
-                          `Renovação líquida`) %>% 
-            spread(`Ano da eleição`,
-                   `Renovação líquida`)
-          
-        }
-      })
+                       indicador <- input$INDICADORES_RENOV
+                       cargo <- input$DESCRICAO_CARGO2
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       if(indicador == "Renovação líquida" &
+                          cargo == "Deputado Federal" &
+                          agregacao == "Brasil"){
+                         renov_parl_br %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         `Renovação líquida`) %>% 
+                           spread(`Ano da eleição`,
+                                  `Renovação líquida`)
+                         
+                       }
+                     })
   }) 
   
   ## Dados desagregados
@@ -8275,9 +9095,8 @@ server <- function(input, output, session){
   
   bagreg_renov_liq_br <- eventReactive(input$BCALC2, {
     datatable(options = list(
-     autoWidth = FALSE,
+      autoWidth = FALSE,
       scrollX = TRUE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -8289,31 +9108,30 @@ server <- function(input, output, session){
         className = 'dt-center', targets = '_all')),
       dom = 'Bflrtip',
       buttons = list(
-                     list(
-        extend = 'csv',
-        exportOptions = list(
-          columns = ':visible'),
-        title = 'renov_liq_br_agreg',
-        bom = TRUE),
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'renov_liq_br_agreg',
+          bom = TRUE),
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-       class = "display",
+      class = "display",
       rownames = FALSE,
-      extensions = c('Buttons', 
-                    
+      extensions = c('Buttons',
                      'FixedColumns'),{
-        indicador <- input$INDICADORES_RENOV
-        cargo <- input$DESCRICAO_CARGO2
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- input$UF2
-        if(indicador == "Renovação líquida" & 
-           cargo == "Deputado Federal" &
-           agregacao == "Brasil"){
-          data = renov_parl_br  
-          
-        }
-      })
+                       indicador <- input$INDICADORES_RENOV
+                       cargo <- input$DESCRICAO_CARGO2
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       uf <- input$UF2
+                       if(indicador == "Renovação líquida" & 
+                          cargo == "Deputado Federal" &
+                          agregacao == "Brasil"){
+                         data = renov_parl_br  
+                         
+                       }
+                     })
   })
   
   ## Resumo
@@ -8336,8 +9154,7 @@ server <- function(input, output, session){
   
   brenov_liq_uf <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -8352,42 +9169,41 @@ server <- function(input, output, session){
         extend = 'csv',
         title = 'renov_liq_uf',
         bom = TRUE))), 
-       class = "display",
+      class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
-        indicador <- input$INDICADORES_RENOV
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
-        cargo <- input$DESCRICAO_CARGO2
-        if(indicador == "Renovação líquida" &
-           agregacao == "UF"){
-          if(uf == ""){
-            return()
-          } else if (uf == "Todas UFs"){
-            renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
-            dplyr::select(`Ano da eleição`,
-                          UF,
-                          `Renovação líquida`) %>% 
-            spread(`Ano da eleição`,
-                  `Renovação líquida`) %>% 
-            unique()
-          
-          } else{
-            renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
-                          UF == input$UF2) %>%
-            dplyr::select(`Ano da eleição`,
-                          UF,
-                          `Renovação líquida`) %>% 
-            spread(`Ano da eleição`,
-                   `Renovação líquida`) %>% 
-            unique()
-          }
-        }
-      })
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       uf <- req(input$UF2)
+                       cargo <- input$DESCRICAO_CARGO2
+                       if(indicador == "Renovação líquida" &
+                          agregacao == "UF"){
+                         if(uf == ""){
+                           return()
+                         } else if (uf == "Todas UFs"){
+                           renov_parl_uf %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Renovação líquida`) %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação líquida`) %>% 
+                             unique()
+                           
+                         } else{
+                           renov_parl_uf %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                                             UF == input$UF2) %>%
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Renovação líquida`) %>% 
+                             spread(`Ano da eleição`,
+                                    `Renovação líquida`) %>% 
+                             unique()
+                         }
+                       }
+                     })
   }) 
   
   ## Dados desagregados
@@ -8409,8 +9225,7 @@ server <- function(input, output, session){
   
   bagreg_renov_liq_uf <- eventReactive(input$BCALC2, {
     datatable(options = list(
-     autoWidth = FALSE,
-      
+      autoWidth = FALSE,
       scrollX = TRUE,
       ordering = TRUE, 
       searching = FALSE,
@@ -8423,39 +9238,38 @@ server <- function(input, output, session){
         className = 'dt-center', targets = '_all')),
       dom = 'Bflrtip',
       buttons = list(
-                     list(
-        extend = 'csv',
-        exportOptions = list(
-          columns = ':visible'),
-        title = 'renov_liq_uf_agreg',
-        bom = TRUE),
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'renov_liq_uf_agreg',
+          bom = TRUE),
         list(                     
           extend = 'colvis',                     
           text = 'Colunas'))), 
-       class = "display",
+      class = "display",
       rownames = FALSE,
-      extensions = c('Buttons', 
-                    
+      extensions = c('Buttons',
                      'FixedColumns'),{
-        indicador <- input$INDICADORES_RENOV
-        agregacao <- input$AGREGACAO_REGIONAL2
-        uf <- req(input$UF2)
-        if(indicador == "Renovação líquida" & 
-           agregacao == "UF"){
-          if(uf == ""){
-            return()
-          } else if(uf == "Todas UFs"){
-            data = renov_parl_uf %>% 
-            filter(Cargo == input$DESCRICAO_CARGO2) %>% 
-            unique()
-          } else{
-            data = renov_parl_uf %>% 
-            filter(Cargo == input$DESCRICAO_CARGO2 &
-                   UF == input$UF2) %>% 
-            unique()
-          }
-        }
-      })
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       uf <- req(input$UF2)
+                       if(indicador == "Renovação líquida" & 
+                          agregacao == "UF"){
+                         if(uf == ""){
+                           return()
+                         } else if(uf == "Todas UFs"){
+                           data = renov_parl_uf %>% 
+                             filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             unique()
+                         } else{
+                           data = renov_parl_uf %>% 
+                             filter(Cargo == input$DESCRICAO_CARGO2 &
+                                      UF == input$UF2) %>% 
+                             unique()
+                         }
+                       }
+                     })
   })
   
   
@@ -8547,7 +9361,7 @@ server <- function(input, output, session){
                          } else{
                            renov_parl_pf %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 &
-                                            Cargo == input$DESCRICAO_CARGO2) %>% 
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
@@ -8618,19 +9432,29 @@ server <- function(input, output, session){
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_mun %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>%
                              select(-`Nome do município2`, -`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
@@ -8641,25 +9465,29 @@ server <- function(input, output, session){
                          } else if(municipio == "Todos os municípios"){
                            data = renov_parl_pf %>%
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          } else{
                            data = renov_parl_pf %>% 
                              dplyr::filter(`Nome do município2` == input$MUN2 & 
-                                            Cargo == input$DESCRICAO_CARGO2) %>%
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                                             Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        }
@@ -8760,10 +9588,10 @@ server <- function(input, output, session){
                              column_to_rownames("media")
                            
                            #media1 <- media1 %>% 
-                            # mutate("media" = ifelse(media1$Turno == 2,
-                             #                        "Média nacional da renovação líquida.",
-                              #                       media1$media)) %>% 
-                             #column_to_rownames("media")
+                           # mutate("media" = ifelse(media1$Turno == 2,
+                           #                        "Média nacional da renovação líquida.",
+                           #                       media1$media)) %>% 
+                           #column_to_rownames("media")
                            
                            
                            media2 <- renov_parl_pf %>% 
@@ -8779,10 +9607,10 @@ server <- function(input, output, session){
                              column_to_rownames("media") 
                            
                            #media2 <- media2 %>% 
-                            # mutate("media" = ifelse(media2$Turno == 2,
-                             #                        "Média da renovação líquida.",
-                              #                       media2$media)) %>% 
-                             # column_to_rownames("media")
+                           # mutate("media" = ifelse(media2$Turno == 2,
+                           #                        "Média da renovação líquida.",
+                           #                       media2$media)) %>% 
+                           # column_to_rownames("media")
                            
                            media1 <- rbind(media1, media2)
                            
@@ -8859,7 +9687,7 @@ server <- function(input, output, session){
                          } else{
                            renov_parl_pf %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 &
-                                            Cargo == input$DESCRICAO_CARGO2) %>% 
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
                              dplyr::select(`Ano da eleição`,
                                            UF,
                                            `Nome do município`,
@@ -8931,13 +9759,15 @@ server <- function(input, output, session){
                            data = renov_parl_mun %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 & 
                                              Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
@@ -8948,20 +9778,21 @@ server <- function(input, output, session){
                          } else{
                            data = renov_parl_pf %>% 
                              dplyr::filter(`Eleitores aptos` == input$INT2 & 
-                                            Cargo == input$DESCRICAO_CARGO2) %>% 
-                             select(-`Nome do município2`,-`Eleitores aptos`,
-                                    -`Média da renovação bruta`,
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
                                     -`Média da renovação líquida`,
-                                    -`Média da conservação`,
-                                    -`Média nacional da renovação bruta`,
-                                    -`Média nacional da renovação líquida`,
-                                    -`Média nacional da conservação`) %>% 
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        }
                      })
   })
-  
   
   
 # 2.3. Alienacao ----------------------------------------------------------  
@@ -9477,7 +10308,23 @@ server <- function(input, output, session){
                          if(municipio == "Todos os municípios"){
                            data = alien_mun %>% 
                              dplyr::filter(Cargo == input$DESCRICAO_CARGO3) %>% 
-                             select(-`Nome do município2`, -`Eleitores aptos`)
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da quantidade de abstenções`,
+                                    -`Média do percentual de abstenções`,
+                                    -`Média da quantidade de votos brancos`,
+                                    -`Média do percentual de votos brancos`,
+                                    -`Média da quantidade de votos nulos`,
+                                    -`Média do percentual de votos nulos`,
+                                    -`Média da alienação absoluta`,
+                                    -`Média da alienação percentual`,
+                                    -`Média nacional da quantidade de abstenções`,
+                                    -`Média nacional do percentual de abstenções`,
+                                    -`Média nacional da quantidade de votos brancos`,
+                                    -`Média nacional do percentual de votos brancos`,
+                                    -`Média nacional da quantidade de votos nulos`,
+                                    -`Média nacional do percentual de votos nulos`,
+                                    -`Média nacional da alienação absoluta`,
+                                    -`Média nacional da alienação percentual`)
                          } else{ 
                            data = alien_mun %>% 
                              dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
@@ -10168,7 +11015,23 @@ bagreg_alien_perc_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`)
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`)
                        } else{ 
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3 & 
@@ -10865,7 +11728,23 @@ bagreg_abst_abs_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
@@ -11572,7 +12451,23 @@ bagreg_abst_perc_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
@@ -12267,7 +13162,23 @@ bagreg_vtbr_abs_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
@@ -12967,7 +13878,23 @@ bagreg_vtbr_perc_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          data = alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
@@ -13665,7 +14592,23 @@ bagreg_vtnl_abs_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
@@ -14361,7 +15304,23 @@ bagreg_vtnl_perc_mun <- eventReactive(input$BCALC3, {
                        if(municipio == "Todos os municípios"){
                          alien_mun %>% 
                            dplyr::filter(Cargo==input$DESCRICAO_CARGO3) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da quantidade de abstenções`,
+                                  -`Média do percentual de abstenções`,
+                                  -`Média da quantidade de votos brancos`,
+                                  -`Média do percentual de votos brancos`,
+                                  -`Média da quantidade de votos nulos`,
+                                  -`Média do percentual de votos nulos`,
+                                  -`Média da alienação absoluta`,
+                                  -`Média da alienação percentual`,
+                                  -`Média nacional da quantidade de abstenções`,
+                                  -`Média nacional do percentual de abstenções`,
+                                  -`Média nacional da quantidade de votos brancos`,
+                                  -`Média nacional do percentual de votos brancos`,
+                                  -`Média nacional da quantidade de votos nulos`,
+                                  -`Média nacional do percentual de votos nulos`,
+                                  -`Média nacional da alienação absoluta`,
+                                  -`Média nacional da alienação percentual`) %>% 
                            unique()
                        } else{ 
                          data = alien_mun %>% 
@@ -15163,7 +16122,11 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
                        } else if(municipio == "Todos os municípios"){
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4)) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da volatilidade eleitoral`,
+                                  -`Média da volatilidade parlamentar`,
+                                  -`Média nacional da volatilidade eleitoral`,
+                                  -`Média nacional da volatilidade parlamentar`) %>% 
                            unique()
                        } else{
                          data = vol_mun %>% 
@@ -15184,7 +16147,10 @@ bagreg_vol_ele_mun <- eventReactive(input$BCALC4, {
                        } else if(municipio == "Todos os municípios"){
                          data = vol_pf %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4)) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da volatilidade eleitoral`,
+                                  -`Média da volatilidade parlamentar`,
+                                  -`Média nacional da volatilidade eleitoral`) %>% 
                            unique()
                        } else{
                          data = vol_pf %>% 
@@ -15878,7 +16844,11 @@ bagreg_vol_parl_mun <- eventReactive(input$BCALC4, {
                        } else if(municipio == "Todos os municípios"){
                          data = vol_mun %>% 
                            filter(Cargo == req(input$DESCRICAO_CARGO4)) %>% 
-                           select(-`Nome do município2`, -`Eleitores aptos`) %>% 
+                           select(-`Nome do município2`, -`Eleitores aptos`,
+                                  -`Média da volatilidade eleitoral`,
+                                  -`Média da volatilidade parlamentar`,
+                                  -`Média nacional da volatilidade eleitoral`,
+                                  -`Média nacional da volatilidade parlamentar`) %>% 
                            unique()
                        } else{
                          data = vol_mun %>% 
