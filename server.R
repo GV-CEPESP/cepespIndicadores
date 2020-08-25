@@ -899,23 +899,6 @@ server <- function(input, output, session){
   
 # 2.1. Fragmentacao legislativa -------------------------------------------- 
   
-  ## Interpretacao do indicador
-  
-  selected <- eventReactive(input$BCALC1, {
-    
-    s <- input$dpg_br_rows_selected
-    
-    ind <- frag_leg_br[s,1]
-   
-    texto <- paste("Testando os valores", ind[[1,1]])
-      
-  })
-  
-  
-  output$info <- renderText({
-    selected()
-  })
-
   ## Modal para ajuda
   
   ### Resumo
@@ -1115,8 +1098,10 @@ server <- function(input, output, session){
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),
-      #selection = list(mode = 'single', 
-       #                selected = c(1)), 
+      #selection = list(mode = 'single',target="cell", 
+       #                selected = matrix(c(1, 1), 
+        #                                 nrow = 1, 
+         #                                ncol = 2)),
       {
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1

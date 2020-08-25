@@ -37,7 +37,8 @@ ui <-
     navbarPage(title = div(tags$a(href = "http://www.cepesp.io/",
                              img(src="logo_cepesp.png",
                                style="width: 220px;
-                                      height: 48px;"))),
+                                      height: 48px;"),
+                             h6("VERSÃO BETA"))),
                
                collapsible= TRUE,
                fluid = TRUE,
@@ -513,7 +514,7 @@ ui <-
 
           
              
-             tabPanel(div("REELEIÇÃO", h6("(VERSÃO BETA)")),  ## Definicao das ferramentas de selecao para a guia
+             tabPanel("REELEIÇÃO",  ## Definicao das ferramentas de selecao para a guia
                       ## "Renovação parlamentar"
                       
 
