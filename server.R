@@ -6859,6 +6859,20 @@ server <- function(input, output, session){
            agregacao == "UF"){
           if(uf == ""){
             return()
+          } else if(uf == "Todas UFs"){
+            
+            media1 <- renov_parl_uf %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+              dplyr::select(`Ano da eleição`,
+                            `Média nacional da reeleição`) %>% 
+              unique() %>% 
+              spread(`Ano da eleição`,
+                     `Média nacional da reeleição`) %>% 
+              mutate("media" = "Média nacional da reeleição") %>% 
+              column_to_rownames("media")
+            
+            media1
+            
           } else{
             
             media1 <- renov_parl_uf %>% 
@@ -7696,6 +7710,20 @@ server <- function(input, output, session){
            agregacao == "UF"){
           if(uf == ""){
             return()
+          } else if(uf == "Todas UFs"){
+            
+            media1 <- renov_parl_uf %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+              dplyr::select(`Ano da eleição`,
+                            `Média nacional da reeleição líquida`) %>% 
+              unique() %>% 
+              spread(`Ano da eleição`,
+                     `Média nacional da reeleição líquida`) %>% 
+              mutate("media" = "Média nacional da reeleição líquida") %>% 
+              column_to_rownames("media")
+            
+            media1
+            
           } else{
             
             media1 <- renov_parl_uf %>% 
@@ -8533,6 +8561,20 @@ server <- function(input, output, session){
            agregacao == "UF"){
           if(uf == ""){
             return()
+          } else if(uf == "Todas UFs"){
+            
+            media1 <- renov_parl_uf %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+              dplyr::select(`Ano da eleição`,
+                            `Média nacional da renovação`) %>% 
+              unique() %>% 
+              spread(`Ano da eleição`,
+                     `Média nacional da renovação`) %>% 
+              mutate("media" = "Média nacional da renovação") %>% 
+              column_to_rownames("media")
+            
+            media1
+            
           } else{
             
             media1 <- renov_parl_uf %>% 
@@ -9373,6 +9415,20 @@ server <- function(input, output, session){
            agregacao == "UF"){
           if(uf == ""){
             return()
+          } else if(uf == "Todas UFs"){
+            
+            media1 <- renov_parl_uf %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+              dplyr::select(`Ano da eleição`,
+                            `Média nacional da renovação líquida`) %>% 
+              unique() %>% 
+              spread(`Ano da eleição`,
+                     `Média nacional da renovação líquida`) %>% 
+              mutate("media" = "Média nacional da renovação líquida") %>% 
+              column_to_rownames("media")
+            
+            media1
+            
           } else{
             
             media1 <- renov_parl_uf %>% 
