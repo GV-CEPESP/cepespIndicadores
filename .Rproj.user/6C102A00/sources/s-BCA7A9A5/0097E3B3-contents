@@ -1,0 +1,208 @@
+
+
+.btn-header {
+  margin-right: 55px;
+  font-weight: 400;
+  text-align: right;
+  vertical-align: middle;
+  color: #1897d5;
+  background-color: #fff;
+  border-color: #1897d5;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: .25rem;
+}
+
+.cepesp {
+  padding-right: 45px;
+  padding-left: 45px;
+  margin-top: -1px;
+  margin-right: 55px;
+  color: #1897d5;
+  background-color: #fff;
+  border-color: #1897d5;
+}
+
+.btn-primary.hover, .btn-primary:active, .btn-primary:hover{
+  color: #fff;
+  background-color: #1897d5;
+  border-color: #1897d5;
+}
+
+.btn-primary.focus, .btn-primary:focus{
+  box-shadow: 0 0 0 0.2rem rgba(24,151,213,.5);
+  color: #fff;
+  background-color: #1897d5;
+  border-color: #1897d5;
+
+}
+
+.container-fluid{
+  height: 70px;
+  right: 0;
+  left: 15px;
+  z-index: 1030;
+  background-color: #fff;
+  color: #1f366a;
+}
+
+.navbar-default{
+   background-color: #fff;
+   border-color: #d7e0e7;
+   
+}
+
+
+.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand{
+  margin-top: -15px;
+  margin-left: 80px;
+  margin-right: 80px;
+  margin-bottom: 5px;
+}
+
+.navbar-nav > li > a, .navbar-brand {
+  height: 70px;
+}
+
+
+.navbar .navbar-nav  {
+  float: right;
+  margin-right: 80px;
+}
+
+
+.img {
+  vertical-align: middle;
+}
+
+
+.navbar-default .navbar-nav>li>a{
+  color: #000;
+  font-weight: bolder;
+  vertical-align: middle;
+}
+
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover{
+   background-color: #fff;
+   color: #1897d5;
+   font-weight: bolder;
+   vertical-align: middle;
+}
+
+.nav-pills>li>a{
+  color: #000;
+  font-weight: bolder;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover{
+  background-color: #fff;
+  color: #1897d5;
+  font-weight: bolder;
+  border-top-color: #fff;
+}
+
+
+.nav>li>a:focus, .nav>li>a:hover{
+  background-color: #fff;
+}
+
+
+.btn-default.active, .btn-default:active, .open>.dropdown-toggle.btn-default {
+  background-color: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+.btn-default{
+  color: #1897d5;
+  background-color: #fff;
+  border-color: #fff;
+  font-weight: bolder;
+}
+
+.btn-default.active.focus, .btn-default.active:focus, .btn-default.active:hover, .btn-default:active.focus, .btn-default:active:focus, .btn-default:active:hover, .open>.dropdown-toggle.btn-default.focus, .open>.dropdown-toggle.btn-default:focus, .open>.dropdown-toggle.btn-default:hover{
+   background-color: #fff;
+   border-color: #fff;
+}
+
+.btn-default.focus, .btn-default:focus{
+   background-color: #fff;
+   border-color: #fff;
+}
+
+.btn-default.hover, .btn-default:active, .btn-default:hover{
+   background-color: #fff;
+   border-color: #fff;
+}
+
+.bttn-material-circle.bttn-default{
+  color: #1897d5;
+}
+
+.well{
+  background-color: #d7e0e7;
+}
+  
+
+.consulta {
+   font-weight: bolder;
+   font-size: 14px;
+   color: #000;
+   text-align: center;
+   
+}
+
+
+.p-4 {
+    max-width: 100%;
+    margin-top: 90em;
+    padding-left: 80px;
+    padding: 1.5rem;
+    border-top: 1px solid #d7e0e7;
+}
+
+
+.rodape{
+  max-width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #fff;
+  color: #6c757d;
+  font-family: 'Segoe UI';
+  font-size: 14px;
+  border-top: 1px solid #dee2e6;
+  display: block;
+  z-index: 999999;
+  text-align: left;
+}
+
+
+.rodape-container{
+  max-width: 960px;
+  margin-left: 80px;
+  position: relative;
+  display: block;
+  flex-wrap: wrap;
+  padding: 0;
+}
+
+.rodape-texto{
+  max-width: 50%;
+  text-align: left;
+  flex: 1 1 200px;
+  display: block;
+  padding-left: 5%;
+  padding-top: 10px;
+  font-size: .9em;
+  margin: 0;
+  padding: 0;
+}
+
+
+.titulo {
+  font-weight: bolder;
+  font-size: 18px;
+  color: #000;
+  text-align: center;
+}
+

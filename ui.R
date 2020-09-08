@@ -263,10 +263,14 @@ ui <-
                                                                                   left = 15,
                                                                                   DT::dataTableOutput("dpg_br", width = "100%"))),
                                                              #column(12,
-                                                              #     absolutePanel(top = 250, 
-                                                               #                  right = 0 ,  
+                                                              #    absolutePanel(top = 250, 
+                                                               #                 right = 0 ,  
                                                                 #                 left = 15,
-                                                                 #textOutput('info'))),
+                                                                                
+                                                              #box(title = h4("Como devo interpretar este indicador?", align = "center"),
+                                                               #  width = 10,
+                                                                # background = 'navy',
+                                                                # textOutput('info')))),
                                                              
                                                                  column(12,
                                                                     absolutePanel(top = 0, 

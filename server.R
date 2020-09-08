@@ -343,7 +343,7 @@ server <- function(input, output, session){
       selectizeInput("AGREGACAO_REGIONAL2",
                      label = NULL,
                      choices = 
-                       c("","UF"),
+                       c("", "Brasil", "UF"),
                      selected = NULL,
                      options = list(placeholder = 'Escolha uma agregação regional'))
     } else if(cargo == "Prefeito" |
@@ -369,7 +369,8 @@ server <- function(input, output, session){
   output$UF2 <- renderUI({
     agregacao <- req(input$AGREGACAO_REGIONAL2)
     cargo <- req(input$DESCRICAO_CARGO2)
-    if(cargo == "Deputado Federal" & 
+    if((cargo == "Deputado Federal" |
+        cargo == "Deputado Estadual") & 
        agregacao == "Brasil"){
       return()
     }else if(cargo == "Deputado Estadual" | 
@@ -413,8 +414,9 @@ server <- function(input, output, session){
     indicador <- req(input$INDICADORES_RENOV)
     cargo <- req(input$DESCRICAO_CARGO2)
     agregacao <- req(input$AGREGACAO_REGIONAL2)
-    if(cargo == "Deputado Federal" & 
-       agregacao == "Brasil"){
+    if((cargo == "Deputado Federal" |
+        cargo == "Deputado Estadual") & 
+        agregacao == "Brasil"){
       return()
     } else if((cargo == "Prefeito" |
                cargo == "Vereador") &
@@ -450,7 +452,8 @@ server <- function(input, output, session){
     indicador <- req(input$INDICADORES_RENOV)
     cargo <- req(input$DESCRICAO_CARGO2)
     agregacao <- req(input$AGREGACAO_REGIONAL2)
-    if(cargo == "Deputado Federal" & 
+    if((cargo == "Deputado Federal" |
+        cargo == "Deputado Estadual") & 
        agregacao == "Brasil"){
       return()
     } else if((cargo == "Prefeito" |
@@ -899,6 +902,34 @@ server <- function(input, output, session){
   
 # 2.1. Fragmentacao legislativa -------------------------------------------- 
   
+  ## Interpretacao do indicador
+  
+ selected <-  reactive({
+    
+    indicador <- input$INDICADORES_FRAG
+    
+    ano <- input[["column_clicked"]]
+    
+    cargo <- input$DESCRICAO_CARGO1
+   
+    cell <- input$dpg_br_cell_clicked
+    
+    value <- cell$value
+    
+    if(length(ano) > 0){
+    
+    texto <- paste0("A ", indicador,
+                   " existente entre os votos recebidos pelos partidos e 
+                   as cadeiras conquistadas pelos mesmos no ano de ", ano, 
+                   " para o cargo de ", cargo, ", foi igual a ", value, ".")
+    }   
+  })
+  
+  output$info <- renderText({
+    selected()
+  })
+ 
+
   ## Modal para ajuda
   
   ### Resumo
@@ -1094,13 +1125,14 @@ server <- function(input, output, session){
         extend = 'csv',
         title = 'dpg_br',
         bom = TRUE))), 
-        class = "display",
+      callback = JS(js),
+      class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
                      'FixedColumns'),
       #selection = list(mode = 'single',target="cell", 
-       #                selected = matrix(c(1, 1), 
-        #                                 nrow = 1, 
+       #                selected = matrix(c(1, 0), 
+        ##                                 nrow = 1, 
          #                                ncol = 2)),
       {
         indicador <- input$INDICADORES_FRAG
@@ -6694,7 +6726,6 @@ server <- function(input, output, session){
   breel_br <- eventReactive(input$BCALC2, { ## Botao de acao
     datatable(options = list(
      autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -6714,10 +6745,9 @@ server <- function(input, output, session){
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Reeleição" &
-           cargo == "Deputado Federal" &
            agregacao == "Brasil"){
           renov_parl_br %>% 
-            dplyr::filter(Cargo ==input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           `Reeleição`) %>% 
             spread(`Ano da eleição`,
@@ -6748,7 +6778,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
      autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -6772,14 +6801,12 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons', 
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Reeleição" &
-           cargo == "Deputado Federal" &
            agregacao == "Brasil"){
           data = renov_parl_br %>%
             dplyr::filter(Cargo==input$DESCRICAO_CARGO2) 
@@ -6827,7 +6854,6 @@ server <- function(input, output, session){
        class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                    
                      'FixedColumns'),{
         indicador <- input$INDICADORES_RENOV
         cargo <- input$DESCRICAO_CARGO2
@@ -7461,7 +7487,6 @@ server <- function(input, output, session){
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$DESCRICAO_CARGO2
     if(indicador == "Reeleição líquida" & 
-       cargo == "Deputado Federal" &
        agregacao == "Brasil"){
       return(input$reel_liq_br)
     }
@@ -7494,10 +7519,9 @@ server <- function(input, output, session){
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Reeleição líquida" & 
-           cargo == "Deputado Federal" &
            agregacao == "Brasil"){
           renov_parl_br %>% 
-            dplyr::filter(Cargo ==input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           `Reeleição líquida`) %>% 
             spread(`Ano da eleição`,
@@ -7517,7 +7541,6 @@ server <- function(input, output, session){
     cargo <- input$DESCRICAO_CARGO2
     agregacao <- input$AGREGACAO_REGIONAL2
     if(indicador == "Reeleição líquida" & 
-       cargo == "Deputado Federal" &
        agregacao == "Brasil"){
       return(input$agreg_reel_liq_br)
     }
@@ -7559,7 +7582,6 @@ server <- function(input, output, session){
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Reeleição líquida" & 
-           cargo == "Deputado Federal" &
            agregacao == "Brasil"){
             data = renov_parl_br %>%
             dplyr::filter(Cargo==input$DESCRICAO_CARGO2)
@@ -8237,7 +8259,6 @@ server <- function(input, output, session){
     cargo <- input$DESCRICAO_CARGO2
     agregacao <- input$DESCRICAO_CARGO2
     if(indicador == "Renovação" &
-       cargo == "Deputado Federal" &
        agregacao == "Brasil"){
       return(input$renov_br)
     }
@@ -8270,9 +8291,9 @@ server <- function(input, output, session){
         cargo <- input$DESCRICAO_CARGO2
         agregacao <- input$AGREGACAO_REGIONAL2
         if(indicador == "Renovação" &
-           cargo == "Deputado Federal" &
            agregacao == "Brasil"){
           renov_parl_br %>% 
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO2) %>% 
             dplyr::select(`Ano da eleição`,
                           `Renovação`) %>% 
             spread(`Ano da eleição`,
@@ -8291,7 +8312,6 @@ server <- function(input, output, session){
     cargo <- input$DESCRICAO_CARGO2
     agregacao <- input$AGREGACAO_REGIONAL2
     if(indicador == "Renovação" & 
-       cargo == "Deputado Federal" &
        agregacao == "Brasil"){
       return(input$agreg_renov_br)
     }
@@ -8334,9 +8354,9 @@ server <- function(input, output, session){
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- input$UF2
         if(indicador == "Renovação" & 
-           cargo == "Deputado Federal" &
            agregacao == "Brasil"){
-          data = renov_parl_br  
+          data = renov_parl_br %>% 
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO2)
           
         }
       })
@@ -9047,9 +9067,9 @@ server <- function(input, output, session){
                        cargo <- input$DESCRICAO_CARGO2
                        agregacao <- input$AGREGACAO_REGIONAL2
                        if(indicador == "Renovação líquida" &
-                          cargo == "Deputado Federal" &
                           agregacao == "Brasil"){
                          renov_parl_br %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO2) %>% 
                            dplyr::select(`Ano da eleição`,
                                          `Renovação líquida`) %>% 
                            spread(`Ano da eleição`,
@@ -9111,9 +9131,9 @@ server <- function(input, output, session){
                        agregacao <- input$AGREGACAO_REGIONAL2
                        uf <- input$UF2
                        if(indicador == "Renovação líquida" & 
-                          cargo == "Deputado Federal" &
                           agregacao == "Brasil"){
-                         data = renov_parl_br  
+                         data = renov_parl_br %>% 
+                           dplyr::filter(Cargo==input$DESCRICAO_CARGO2) 
                          
                        }
                      })
