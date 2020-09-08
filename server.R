@@ -6819,6 +6819,66 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (UF)  
   
+  
+  reelmed_uf <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Reeleição" & 
+       agregacao == "UF"){
+      return(input$reel_med_uf)
+    }
+  })
+  
+  output$reel_med_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    breel_med_uf()
+  })
+  
+  breel_med_uf <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+        cargo <- input$DESCRICAO_CARGO2
+        indicador <- input$INDICADORES_RENOV
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
+        if(cargo == "Deputado Estadual" &
+           indicador == "Reeleição" & 
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else{
+            
+            media1 <- renov_parl_uf %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                            UF == input$UF2) %>% 
+              dplyr::select(`Ano da eleição`,
+                            `Média nacional da reeleição`) %>% 
+              unique() %>% 
+              spread(`Ano da eleição`,
+                     `Média nacional da reeleição`) %>% 
+              mutate("media" = "Média nacional da reeleição") %>% 
+              column_to_rownames("media")
+            
+            media1
+            
+          }
+        } 
+      })
+  })
+  
   reeluf <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$DESCRICAO_CARGO2
@@ -6906,7 +6966,6 @@ server <- function(input, output, session){
     datatable(options = list(
       scrollX = TRUE,
      autoWidth = FALSE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -6946,6 +7005,10 @@ server <- function(input, output, session){
             data = renov_parl_uf %>% 
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
                      UF == input$UF2) %>% 
+              select( -`Média nacional da reeleição`,
+                      -`Média nacional da reeleição líquida`,
+                      -`Média nacional da renovação`,
+                      -`Média nacional da renovação líquida`) %>% 
             unique()
           }
         }
@@ -7593,6 +7656,66 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (UF) 
   
+  
+  reeliqmed_uf <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Reeleição líquida" & 
+       agregacao == "UF"){
+      return(input$reel_liq_med_uf)
+    }
+  })
+  
+  output$reel_liq_med_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    breel_liq_med_uf()
+  })
+  
+  breel_liq_med_uf <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+        cargo <- input$DESCRICAO_CARGO2
+        indicador <- input$INDICADORES_RENOV
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
+        if(cargo == "Deputado Estadual" &
+           indicador == "Reeleição líquida" & 
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else{
+            
+            media1 <- renov_parl_uf %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                              UF == input$UF2) %>% 
+              dplyr::select(`Ano da eleição`,
+                            `Média nacional da reeleição líquida`) %>% 
+              unique() %>% 
+              spread(`Ano da eleição`,
+                     `Média nacional da reeleição líquida`) %>% 
+              mutate("media" = "Média nacional da reeleição líquida") %>% 
+              column_to_rownames("media")
+            
+            media1
+            
+          }
+        } 
+      })
+  })
+  
   reeliquf <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$DESCRICAO_CARGO2
@@ -7681,7 +7804,6 @@ server <- function(input, output, session){
     datatable(options = list(
      autoWidth = FALSE,
       scrollX = TRUE,
-      
       ordering = TRUE, 
       searching = FALSE,
       lengthChange = FALSE,
@@ -7719,7 +7841,12 @@ server <- function(input, output, session){
           } else{
             data = renov_parl_uf %>%
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
-                            UF == input$UF2)
+                            UF == input$UF2) %>% 
+              select( -`Média nacional da reeleição`,
+                      -`Média nacional da reeleição líquida`,
+                      -`Média nacional da renovação`,
+                      -`Média nacional da renovação líquida`) %>% 
+              unique()
           }
         }
       })
@@ -8366,6 +8493,66 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (UF) 
   
+  
+  renovmed_uf <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Renovação" & 
+       agregacao == "UF"){
+      return(input$renov_med_uf)
+    }
+  })
+  
+  output$renov_med_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_med_uf()
+  })
+  
+  brenov_med_uf <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+        cargo <- input$DESCRICAO_CARGO2
+        indicador <- input$INDICADORES_RENOV
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
+        if(cargo == "Deputado Estadual" &
+           indicador == "Renovação" & 
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else{
+            
+            media1 <- renov_parl_uf %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                              UF == input$UF2) %>% 
+              dplyr::select(`Ano da eleição`,
+                            `Média nacional da renovação`) %>% 
+              unique() %>% 
+              spread(`Ano da eleição`,
+                     `Média nacional da renovação`) %>% 
+              mutate("media" = "Média nacional da renovação") %>% 
+              column_to_rownames("media")
+            
+            media1
+            
+          }
+        } 
+      })
+  })
+  
   renovuf <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$DESCRICAO_CARGO2
@@ -8494,6 +8681,10 @@ server <- function(input, output, session){
             data = renov_parl_uf %>% 
             filter(Cargo == input$DESCRICAO_CARGO2 &
                    UF == input$UF2) %>% 
+              select( -`Média nacional da reeleição`,
+                      -`Média nacional da reeleição líquida`,
+                      -`Média nacional da renovação`,
+                      -`Média nacional da renovação líquida`) %>% 
             unique()
           }
         }
@@ -9143,6 +9334,65 @@ server <- function(input, output, session){
   
   ### Renovacao parlamentar (UF) 
   
+  renovliqmed_uf <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Renovação" & 
+       agregacao == "UF"){
+      return(input$renov_liq_med_uf)
+    }
+  })
+  
+  output$renov_liq_med_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brenov_liq_med_uf()
+  })
+  
+  brenov_liq_med_uf <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+        cargo <- input$DESCRICAO_CARGO2
+        indicador <- input$INDICADORES_RENOV
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
+        if(cargo == "Deputado Estadual" &
+           indicador == "Renovação líquida" & 
+           agregacao == "UF"){
+          if(uf == ""){
+            return()
+          } else{
+            
+            media1 <- renov_parl_uf %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                              UF == input$UF2) %>% 
+              dplyr::select(`Ano da eleição`,
+                            `Média nacional da renovação líquida`) %>% 
+              unique() %>% 
+              spread(`Ano da eleição`,
+                     `Média nacional da renovação líquida`) %>% 
+              mutate("media" = "Média nacional da renovação líquida") %>% 
+              column_to_rownames("media")
+            
+            media1
+            
+          }
+        } 
+      })
+  })
+  
   renovliquf <- reactive({ ## Atributos das tabelas 
     indicador <- input$INDICADORES_RENOV
     agregacao <- input$DESCRICAO_CARGO2
@@ -9271,6 +9521,10 @@ server <- function(input, output, session){
                            data = renov_parl_uf %>% 
                              filter(Cargo == input$DESCRICAO_CARGO2 &
                                       UF == input$UF2) %>% 
+                             select( -`Média nacional da reeleição`,
+                                     -`Média nacional da reeleição líquida`,
+                                     -`Média nacional da renovação`,
+                                     -`Média nacional da renovação líquida`) %>% 
                              unique()
                          }
                        }
