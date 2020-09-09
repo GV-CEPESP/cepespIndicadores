@@ -6854,7 +6854,8 @@ server <- function(input, output, session){
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
-        if(cargo == "Deputado Estadual" &
+        if((cargo == "Deputado Federal" |
+            cargo == "Deputado Estadual") &
            indicador == "Reeleição" & 
            agregacao == "UF"){
           if(uf == ""){
@@ -7705,7 +7706,8 @@ server <- function(input, output, session){
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
-        if(cargo == "Deputado Estadual" &
+        if((cargo == "Deputado Federal" |
+            cargo == "Deputado Estadual") &
            indicador == "Reeleição líquida" & 
            agregacao == "UF"){
           if(uf == ""){
@@ -8556,7 +8558,8 @@ server <- function(input, output, session){
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
-        if(cargo == "Deputado Estadual" &
+        if((cargo == "Deputado Federal" |
+            cargo == "Deputado Estadual") &
            indicador == "Renovação" & 
            agregacao == "UF"){
           if(uf == ""){
@@ -9410,7 +9413,8 @@ server <- function(input, output, session){
         indicador <- input$INDICADORES_RENOV
         agregacao <- input$AGREGACAO_REGIONAL2
         uf <- req(input$UF2)
-        if(cargo == "Deputado Estadual" &
+        if((cargo == "Deputado Federal" |
+            cargo == "Deputado Estadual") &
            indicador == "Renovação líquida" & 
            agregacao == "UF"){
           if(uf == ""){
