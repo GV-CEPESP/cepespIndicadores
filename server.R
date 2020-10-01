@@ -1125,16 +1125,10 @@ server <- function(input, output, session){
         extend = 'csv',
         title = 'dpg_br',
         bom = TRUE))), 
-      callback = JS(js),
       class = "display",
       rownames = FALSE,
       extensions = c('Buttons',
-                     'FixedColumns'),
-      #selection = list(mode = 'single',target="cell", 
-       #                selected = matrix(c(1, 0), 
-        ##                                 nrow = 1, 
-         #                                ncol = 2)),
-      {
+                     'FixedColumns'),{
         indicador <- input$INDICADORES_FRAG
         agregacao <- input$AGREGACAO_REGIONAL1
         if(indicador == "Desproporcionalidade" & 
