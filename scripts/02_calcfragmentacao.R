@@ -1,1250 +1,376 @@
 
+## OBJETIVOS
 
-# Objetivo
-#'        - Calcular os indicadores de fragmentacao legislativa:
-#'        - Numero efetivo de partidos eleitoral,Numero efetivo de partidos legislativo,
-#'        - Fracionalizacao, Fragmentacao máxima, Fragmentacao, 
-#'        - Desproporcionalidade, Quociente eleitoral e Quociente partidário
-#'        - Limpeza e padronizacao dos dados.             
+#'        - Calcular os indicadores de Fragmentação:
         
+#'        - 1. Número Efetivo de Partidos Eleitoral;
+#'        - 2. Número Efetivo de Partidos Legislativo,
+#'        - 3. Fracionalização;
+#'        - 4. Fragmentação Máxima, 
+#'        - 5. Fragmentação; 
+#'        - 6. Desproporcionalidade; 
+#'        - 7. Quociente Eleitoral; e 
+#'        - 8. Quociente Partidário.
 
-# 1. Formulas ------------------------------------------------------
+#'        - Limpeza e padronização dos dados gerados.             
 
-## Funcao para o calculo do numero efetivo de partidos 
+# 1. Distribuição de Cadeiras ---------------------------------------------
 
-nep <- function(pe){
-  1/sum(pe*pe)
-}
+## 1.1. Quociente Eleitoral ------------------------------------------------
 
+### 1.1.1. Eleições Gerais --------------------------------------------------
 
-## Funcao para o calculo da fracionalizacao
+#### 1.1.1.1. Deputado Federal -----------------------------------------------
 
-fracio <- function(x){
-  
-  1-(sum(x^2))
-}
+distcad_df <- df_uf_cand %>% 
+  mutate(QUOCIENTE_ELEITORAL = quoc_eleitoral(QT_VOTOS_VALIDOS,
+                                              QT_VAGAS))
 
-## Funcao para o calculo da fracionalizacao maxima
+#### 1.1.1.2. Deputado Estadual ----------------------------------------------
 
-fracio_max <- function(N, n){
-  
-  (N*(n-1))/(n*(N-1))
-  
-}
+distcad_de <- de_uf_cand %>% 
+  mutate(QUOCIENTE_ELEITORAL = quoc_eleitoral(QT_VOTOS_VALIDOS,
+                                              QT_VAGAS))
 
-## Funcao para o calculo da fragmentacao
+### 1.1.2. Eleições Municipais ----------------------------------------------
 
-frag <- function(fracio, fracio_max){
-  
-  fracio/fracio_max
-}
+#### 1.1.2.1. Vereador -------------------------------------------------------
 
-## Funcao para o calculo da desproporcionalidade de Gallagher
+distcad_vr <- vr_mun_cand %>% 
+  mutate(QUOCIENTE_ELEITORAL = quoc_eleitoral(QT_VOTOS_VALIDOS,
+                                              QT_VAGAS))
 
-desp_gallag <- function(V,C){
-  idx <- sqrt(sum((V*100 - C*100) ^ 2, na.rm = TRUE) / 2)
-}
+## 1.2. Quociente Partidário -----------------------------------------------
 
+### 1.2.1. Eleições Gerais --------------------------------------------------
 
-# 2. Calculo dos indicadores de distribuicao de cadeiras ------------------
+#### 1.2.1.1. Deputado Federal -----------------------------------------------
 
+distcad_df <- distcad_df %>% 
+  mutate(QUOCIENTE_PARTIDARIO = quoc_eleitoral(VOT_PART_UF,
+                                               QUOCIENTE_ELEITORAL))
 
-# 2.1. Quociente eleitoral --------------------------------------------------
+#### 1.2.1.2. Deputado Estadual ----------------------------------------------
 
-## Calculo do quociente eleitoral
+distcad_de <- distcad_de %>% 
+  mutate(QUOCIENTE_PARTIDARIO = quoc_eleitoral(VOT_PART_UF,
+                                               QUOCIENTE_ELEITORAL))
 
-### Deputado Federal
+### 1.2.2. Eleições Municipais ----------------------------------------------
 
+#### 1.2.2.1. Vereador -------------------------------------------------------
 
-vags_fed$QUOCIENTE_ELEITORAL <- as.numeric(vags_fed$VOTOS_VALIDOS_UF)/
-  as.numeric(vags_fed$VAGAS)
+distcad_vr <- distcad_vr %>% 
+  mutate(QUOCIENTE_PARTIDARIO = quoc_eleitoral(VOT_PART_MUN,
+                                               QUOCIENTE_ELEITORAL))
 
+# 2. Cadeiras e Votos -----------------------------------------------------
 
+## 2.1. Eleições Gerais ----------------------------------------------------
 
-### Deputado Estadual
+### 2.1.1. Brasil -----------------------------------------------------------
 
+#### 2.1.1.1. Senador --------------------------------------------------------
 
-vags_est$QUOCIENTE_ELEITORAL <- as.numeric(vags_est$VOTOS_VALIDOS_UF)/
-  as.numeric(vags_est$VAGAS)
+## Calcula o percentual de votos e cadeiras conquistadas pelos 
+## partidos
 
-### Vereador
+sen_br_eleitos <- cadeiras_conq_br(sen_uf_cand)
 
-vags_ver$QUOCIENTE_ELEITORAL <- as.numeric(vags_ver$VOTOS_VALIDOS_MUN)/
-  as.numeric(vags_ver$VAGAS)
+#### 2.1.1.2. Deputado Federal -----------------------------------------------
 
-# 2.2. Quociente partidario -------------------------------------------------
+## Calcula o percentual de votos e cadeiras conquistadas pelos 
+## partidos
 
-## Calculo do quociente partidario
+df_br_eleitos <- cadeiras_conq_br(df_uf_cand)
 
-### Deputado Federal
+#### 2.1.1.3. Deputado Estadual ----------------------------------------------
 
-vags_fed$QUOCIENTE_PARTIDARIO <- as.numeric(vags_fed$VOT_PART_UF)/
-  as.numeric(vags_fed$QUOCIENTE_ELEITORAL)
+de_br_eleitos <- cadeiras_conq_br(de_uf_cand)
 
-### Deputado Estadual
+### 2.1.2. Estado -----------------------------------------------------------
 
-vags_est$QUOCIENTE_PARTIDARIO <- as.numeric(vags_est$VOT_PART_UF)/
-  as.numeric(vags_est$QUOCIENTE_ELEITORAL)
+#### 2.1.2.1. Deputado Federal -----------------------------------------------
 
-### Vereador
+df_uf_eleitos <- cadeiras_conq_uf(df_uf_cand)
 
-vags_ver$QUOCIENTE_PARTIDARIO <- as.numeric(vags_ver$VOT_PART_MUN)/
-  as.numeric(vags_ver$QUOCIENTE_ELEITORAL)
+#### 2.1.2.2. Deputado Estadual ----------------------------------------------
 
-# 2.3. Padronizacao dos dados -----------------------------------------------
+de_uf_eleitos <- cadeiras_conq_uf(de_uf_cand)
 
-## Aplicacao da funcao 'pont_virg' e arredondamento dos valores dos indicadores calculados
+## 2.2. Eleições Municipais ------------------------------------------------
 
-options(OutDec= ",")
+### 2.2.1. Município --------------------------------------------------------
 
-### Deputado federal
+#### 2.2.1.1. Prefeito -------------------------------------------------------
 
+pf_mun_eleitos <- cadeiras_conq_mun(pf_mun_cand)
 
-vags_fed$QUOCIENTE_ELEITORAL<- round(vags_fed$QUOCIENTE_ELEITORAL, digits = 0)
+#### 2.2.1.2. Vereador -------------------------------------------------------
 
-vags_fed$QUOCIENTE_PARTIDARIO <- round(vags_fed$QUOCIENTE_PARTIDARIO, digits = 2)
+vr_mun_eleitos <- cadeiras_conq_mun(vr_mun_cand)
 
-vags_fed$QUOCIENTE_ELEITORAL <- pont_virg(vags_fed$QUOCIENTE_ELEITORAL)
+# 3. Indicadores ----------------------------------------------------------
 
-vags_fed$VOTOS_VALIDOS_UF <- pont_virg(vags_fed$VOTOS_VALIDOS_UF)
+## 3.1. Eleições Gerais ----------------------------------------------------
 
-vags_fed$VOT_PART_UF <- pont_virg(vags_fed$VOT_PART_UF)
+### 3.1.1. Brasil -----------------------------------------------------------
 
-vags_fed$`Quociente partidário` <- gsub("\\,", ".", vags_fed$`Quociente partidário`)
+#### 3.1.1.1. Senador --------------------------------------------------------
 
-vags_fed$`Quociente partidário` <- as.numeric(vags_fed$`Quociente partidário`)
+frag_leg_sen_br <- frag_leg_br(sen_br_eleitos)
 
-vags_fed$`Quociente partidário` <- format(round(vags_fed$`Quociente partidário`,
-                                                   digits = 2),
-                                             nsmall = 2)
+#### 3.1.1.2. Deputado Federal -----------------------------------------------
 
+frag_leg_df_br <- frag_leg_br(df_br_eleitos)
 
-### Deputado estadual
+### 3.1.2. Estado -----------------------------------------------------------
 
-vags_est$QUOCIENTE_PARTIDARIO <- round(vags_est$QUOCIENTE_PARTIDARIO, 
-                                       digits = 2)
+#### 3.1.2.1. Deputado Federal -----------------------------------------------
 
-vags_est$QUOCIENTE_ELEITORAL <-pont_virg(vags_est$QUOCIENTE_ELEITORAL)
+frag_leg_df_uf <- frag_leg_uf(df_uf_eleitos)
 
-vags_est$VOTOS_VALIDOS_UF <- pont_virg(vags_est$VOTOS_VALIDOS_UF)
+#### 3.1.2.2. Deputado Estadual ----------------------------------------------
 
-vags_est$VOT_PART_UF <- pont_virg(vags_est$VOT_PART_UF)
+frag_leg_de_uf <- frag_leg_uf(de_uf_eleitos)
 
-vags_est$`Quociente partidário` <- gsub("\\,", ".", vags_est$`Quociente partidário`)
+## 3.2. Eleições Municipais ------------------------------------------------
 
-vags_est$`Quociente partidário` <- as.numeric(vags_est$`Quociente partidário`)
+### 3.2.1. Município --------------------------------------------------------
 
-vags_est$`Quociente partidário` <- format(round(vags_est$`Quociente partidário`,
-                                                digits = 2),
-                                          nsmall = 2)
+## Cria uma lista com os códigos dos municípios brasileiros
 
+mun <- unique(pf_mun_eleitos$COD_MUN_TSE)
 
-### Vereador
+#### 3.2.1.1. Prefeito -------------------------------------------------------
 
-vags_ver$QUOCIENTE_ELEITORAL <- round(as.numeric(vags_ver$QUOCIENTE_ELEITORAL), 
-                                       digits = 0)
+## Cria uma lista vazia onde os dados serão armazenados
 
-vags_ver$QUOCIENTE_PARTIDARIO <- round(vags_ver$QUOCIENTE_PARTIDARIO, 
-                                       digits = 2)
+frag_leg_pf_mun <- list()
 
-vags_ver$VOTOS_VALIDOS_MUN <- pont_virg(vags_ver$VOTOS_VALIDOS_MUN)
+## For loop que calcula os indicadores de fragmentacao 
+## partidaria para cada ano
 
-vags_ver$VOT_PART_MUN <- pont_virg(vags_ver$VOT_PART_MUN)
-
-vags_ver$`Votos válidos` <- pont_virg(vags_ver$`Votos válidos`)
-
-vags_ver$`Votos do partido` <- pont_virg(vags_ver$`Votos do partido`)
-
-vags_ver$`Quociente eleitoral` <- pont_virg(vags_ver$`Quociente eleitoral`)
-
-vags_ver$`Quociente partidário` <- gsub("\\,", ".", vags_ver$`Quociente partidário`)
-
-vags_ver$`Quociente partidário` <- as.numeric(vags_ver$`Quociente partidário`)
-
-vags_ver$`Quociente partidário` <- format(round(vags_ver$`Quociente partidário`,
-                                                   digits = 2),
-                                             nsmall = 2)
-
-## Descarta as colunas desnecessarias, padroniza e renomeia as restantes
-
-### Deputado Federal 
-
-vags_fed <-  vags_fed %>% 
-  dplyr::select(ANO_ELEICAO, 
-                UF,
-                CARGO, 
-                VAGAS,
-                VOTOS_VALIDOS_UF,
-                SIGLA_PARTIDO,
-                VOT_PART_UF,
-                QUOCIENTE_ELEITORAL,
-                QUOCIENTE_PARTIDARIO) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO",
-                "Cargo" = "CARGO",
-                "Cadeiras oferecidas" = "VAGAS",
-                "Votos válidos" = "VOTOS_VALIDOS_UF",
-                "Sigla do partido" = "SIGLA_PARTIDO",
-                "Votos do partido" = "VOT_PART_UF",
-                "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
-                "Quociente partidário" = "QUOCIENTE_PARTIDARIO")
-
-vags_fed$Cargo <- str_to_title(vags_fed$Cargo) ## Transforma a primeira letra de cada palavra
-## em maiuscula
-
-vags_fed$`Quociente partidário` <- as.character(vags_fed$`Quociente partidário`) 
-
-
-### Deputado Estadual
-
-vags_est <-  vags_est %>% 
-  dplyr::select(ANO_ELEICAO, 
-                UF,
-                CARGO, 
-                VAGAS,
-                VOTOS_VALIDOS_UF,
-                SIGLA_PARTIDO,
-                VOT_PART_UF,
-                QUOCIENTE_ELEITORAL,
-                QUOCIENTE_PARTIDARIO) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO",
-                "Cargo" = "CARGO",
-                "Cadeiras oferecidas" = "VAGAS",
-                "Votos válidos" = "VOTOS_VALIDOS_UF",
-                "Sigla do partido" = "SIGLA_PARTIDO",
-                "Votos do partido" = "VOT_PART_UF",
-                "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
-                "Quociente partidário" = "QUOCIENTE_PARTIDARIO")
-
-vags_est$Cargo <- str_to_title(vags_est$Cargo) ## Transforma a primeira letra de cada palavra
-## em maiuscula
-
-vags_est$`Quociente partidário` <- as.character(vags_est$`Quociente partidário`)
-
-
-### Vereador
-
-vags_ver <-  vags_ver %>% 
-  dplyr::select(ANO_ELEICAO, 
-                UF,
-                COD_MUN_TSE,
-                NOME_MUNICIPIO,
-                CARGO, 
-                VAGAS,
-                VOTOS_VALIDOS_MUN,
-                SIGLA_PARTIDO,
-                VOT_PART_MUN,
-                QUOCIENTE_ELEITORAL,
-                QUOCIENTE_PARTIDARIO) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO",
-                "Código do município" = "COD_MUN_TSE",
-                "Nome do município" = "NOME_MUNICIPIO",
-                "Cargo" = "CARGO",
-                "Cadeiras oferecidas" = "VAGAS",
-                "Votos válidos" = "VOTOS_VALIDOS_MUN",
-                "Sigla do partido" = "SIGLA_PARTIDO",
-                "Votos do partido" = "VOT_PART_MUN",
-                "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
-                "Quociente partidário" = "QUOCIENTE_PARTIDARIO")
-
-vags_ver$Cargo <- str_to_title(vags_ver$Cargo) ## Transforma a primeira letra de cada palavra
-## em maiuscula
-
-vags_ver$`Nome do município` <- str_to_title(vags_ver$`Nome do município`)
-
-
-vags_ver <- unique(vags_ver)
-
-vags_ver <- na.omit(vags_ver)
-
-# 3. Numero de cadeiras ---------------------------------------------------------
-
-
-## Filtra os candidatos que foram eleitos
-
-### Deputado Federal (Brasil)
-
-dft_br <- df %>% 
-  filter(DESC_SIT_TOT_TURNO == "ELEITO"|
-         DESC_SIT_TOT_TURNO == "ELEITO POR QP"|
-         DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA")
-
-
-### Deputado Federal (UF)
-
-dft_uf <- df %>% 
-  filter(DESC_SIT_TOT_TURNO == "ELEITO"|
-           DESC_SIT_TOT_TURNO == "ELEITO POR QP"|
-           DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA")
-
-
-### Deputado Estadual
-
-det <- de %>% 
-  filter(DESC_SIT_TOT_TURNO == "ELEITO"|
-         DESC_SIT_TOT_TURNO == "ELEITO POR QP"|
-         DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA")
-
-### Senador (Brasil)
-
-sen_br <- sen_uf %>% 
-  filter(DESC_SIT_TOT_TURNO == "ELEITO")
-
-### Vereador
-
-vrm <- vr %>% 
-    filter(DESC_SIT_TOT_TURNO == "ELEITO"|
-           DESC_SIT_TOT_TURNO == "ELEITO POR QP"|
-           DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA")
-
-
-
-## Soma as cadeiras conquistadas pelos partidos em cada UF
-
-### Deputado Federal (Brasil)
-
-dft_br <- dft_br %>% 
-  dplyr::group_by(ANO_ELEICAO,
-                  DESCRICAO_CARGO, 
-                  SIGLA_PARTIDO, 
-                  UF) %>% 
-  dplyr::summarise("Cadeiras conquistadas por UF" = n())
-
-### Deputado Federal (UF)
-
-dft_uf <- dft_uf %>% 
-  dplyr::group_by(ANO_ELEICAO,
-                  UF,
-                  DESCRICAO_CARGO, 
-                  SIGLA_PARTIDO) %>% 
-  dplyr::summarise("Total de cadeiras conquistadas" = n())
-
-
-### Deputado Estadual
-
-det <- det %>% 
-  dplyr::group_by(ANO_ELEICAO, 
-                  DESCRICAO_CARGO, 
-                  SIGLA_PARTIDO, 
-                  UF) %>% 
-  dplyr::summarise("Cadeiras conquistadas por UF" = n())
-
-det <- det %>% 
-  rename("CARGO" = "DESCRICAO_CARGO")
-
-### Vereador
-
-vrm <- vrm %>% 
-  dplyr::group_by(ANO_ELEICAO,
-                  UF,
-                  COD_MUN_TSE,
-                  DESCRICAO_CARGO, 
-                  SIGLA_PARTIDO) %>% 
-  dplyr::summarise("Cadeiras conquistadas por município" = n())
-
-vrm <- vrm %>% 
-  rename("CARGO" = "DESCRICAO_CARGO")
-
-
-
-## Soma o total de cadeiras conquistadas pelos partidos em cada eleicao
-
-### Deputado Federal (Brasil)
-
-df1_br <- dft_br %>% 
-  dplyr::group_by(ANO_ELEICAO,
-                  DESCRICAO_CARGO,
-                  SIGLA_PARTIDO) %>% 
-  dplyr::summarise(
-    "Total de cadeiras conquistadas" = 
-      sum(`Cadeiras conquistadas por UF`))
-
-
-### Senador (Brasil)
-
-sen_br <- sen_br %>% 
-  dplyr::group_by(ANO_ELEICAO,
-                  DESCRICAO_CARGO,
-                  Vagas,
-                  SIGLA_PARTIDO) %>% 
-  dplyr::summarise(
-    "Total de cadeiras conquistadas" = n())
-
-
-## Junta os bancos de cadeiras conquistadas por UF com o total de cadeiras conquistadas
-
-### Deputado Federal (Brasil)
-
-dfp_br <- dfp %>% 
-  dplyr::group_by(ANO_ELEICAO, SIGLA_PARTIDO) %>% 
-  summarise(
-    "Total de votos conquistados" = sum(VOT_PART_UF)
-  )
-
-df1_br <- left_join(dfp_br,df1_br, by = c("ANO_ELEICAO", 
-                                 "SIGLA_PARTIDO"))
-
-df1_br <- left_join(df1_br, dfc2, by = c("ANO_ELEICAO"))
-
-
-### Deputado Federal (UF)
-
-dfp_uf <- dfp %>% 
-  dplyr::group_by(ANO_ELEICAO, UF, SIGLA_PARTIDO) %>% 
-  summarise(
-    "Total de votos conquistados" = sum(VOT_PART_UF)
-  )
-
-df1_uf <- left_join(dfp_uf,dft_uf, by = c("ANO_ELEICAO",
-                                          "UF",
-                                          "SIGLA_PARTIDO"))
-
-df1_uf <- rename(df1_uf, 
-                 "CARGO" = "DESCRICAO_CARGO")
-
-df1_uf$CARGO <- "DEPUTADO FEDERAL"
-
-fed <- rename(fed, 
-                 "Total de votos conquistados" = "VOT_PART_UF")
-
-
-df1_uf <- left_join(df1_uf, fed, by = c("ANO_ELEICAO", 
-                                        "CARGO",
-                                        "UF",
-                                        "SIGLA_PARTIDO",
-                                        "Total de votos conquistados"))
-
-
-### Deputado Estadual
-
-
-de1 <- left_join(est,det, by = c("ANO_ELEICAO", 
-                                 "CARGO",
-                                 "UF",
-                                 "SIGLA_PARTIDO"))
-
-### Senador (Brasil)
-
-
-sen_uft1 <- sen_uft %>% 
-  dplyr::group_by(ANO_ELEICAO, SIGLA_PARTIDO) %>% 
-  summarise(
-    "Total de votos conquistados" = sum(QTDE_VOTOS)
-  )
-
-sen_uf2 <- sen_uf1 %>% 
-  group_by(ANO_ELEICAO) %>% 
-  summarise(
-    "Votos válidos" = sum(QT_VOTOS_NOMINAIS)
-  )
-
-
-sen_uft1$ANO_ELEICAO <- as.character(sen_uft1$ANO_ELEICAO)
-
-sen_uf2$ANO_ELEICAO <- as.character(sen_uf2$ANO_ELEICAO)
-
-sen_br <- left_join(sen_br, sen_uft1, by = c("ANO_ELEICAO", 
-                                          "SIGLA_PARTIDO"))
-
-sen_br <- left_join(sen_br, sen_uf2, by = c("ANO_ELEICAO"))
-
-### Vereador
-
-
-vr1 <- left_join(ver,vrm)
-
-
-vr1$`Cadeiras conquistadas por município`[is.na(vr1$`Cadeiras conquistadas por município`)] <- 0
-
-## Calcula o percentual de votos conquistados por cada partido
-
-### Deputado Federal (Brasil)
-
-df1_br$`Percentual de votos conquistados` <- df1_br$`Total de votos conquistados`/df1_br$VOTOS_VALIDOS
-
-### Deputado Federal (UF)
-
-df1_uf$`Percentual de votos conquistados` <- df1_uf$`Total de votos conquistados`/df1_uf$VOTOS_VALIDOS_UF
-
-### Deputado Estadual
-
-de1$`Percentual de votos conquistados` <- de1$VOT_PART_UF/de1$VOTOS_VALIDOS_UF
-
-
-### Senador (Brasil)
-
-sen_br$`Percentual de votos conquistados` <- sen_br$`Total de votos conquistados`/sen_br$`Votos válidos`
-
-### Vereador
-
-vr1$`Percentual de votos conquistados` <- vr1$VOT_PART_MUN/vr1$VOTOS_VALIDOS_MUN
-
-
-## Percentual de cadeiras conquistas pelos partidos
-
-### Deputado Federal (Brasil)
-
-df1_br$`Percentual de cadeiras conquistadas` <- df1_br$`Total de cadeiras conquistadas`/513
-
-### Deputado Federal (UF)
-
-df1_uf$`Percentual de cadeiras conquistadas` <- df1_uf$`Total de cadeiras conquistadas`/df1_uf$VAGAS
-
-### Deputado Estadual
-
-de1$`Percentual de cadeiras conquistadas` <- de1$`Cadeiras conquistadas por UF`/de1$VAGAS
-
-### Senador (Brasil)
-
-sen_br$`Percentual de cadeiras conquistadas` <- sen_br$`Total de cadeiras conquistadas`/sen_br$Vagas
-
-### Vereador
-
-vr1$`Percentual de cadeiras conquistadas` <- vr1$`Cadeiras conquistadas por município`/vr1$VAGAS 
-
-
-## Elimina colunas desnecessarias, renomeia as colunas restantes e padroniza-as
-
-### Deputado Federal (Brasil)
-
-df1_br <- df1_br %>% 
-  dplyr::select(ANO_ELEICAO,
-                DESCRICAO_CARGO,
-                VOTOS_VALIDOS,
-                SIGLA_PARTIDO,
-                `Total de votos conquistados`,
-                `Total de cadeiras conquistadas`,
-                `Percentual de votos conquistados`,
-                `Percentual de cadeiras conquistadas`) %>% 
-   dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
-                 "Cargo" = "DESCRICAO_CARGO",
-                "Votos válidos" = "VOTOS_VALIDOS", 
-                "Sigla do partido" = "SIGLA_PARTIDO")
-
-df1_br$Cargo <- str_to_title(df1_br$Cargo)
-
-df1_br$Cargo <- "Deputado Federal"
-
-df1_br[is.na(df1_br)] <- 0
-
-### Deputado Federal (UF)
-
-df1_uf <- df1_uf %>% 
-  dplyr::select(ANO_ELEICAO,
-                UF,
-                CARGO,
-                VAGAS,
-                VOTOS_VALIDOS_UF,
-                SIGLA_PARTIDO,
-                `Total de votos conquistados`,
-                `Total de cadeiras conquistadas`,
-                `Percentual de votos conquistados`,
-                `Percentual de cadeiras conquistadas`) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
-                "Cargo" = "CARGO",
-                "Vagas" = "VAGAS",
-                "Votos válidos" = "VOTOS_VALIDOS_UF", 
-                "Sigla do partido" = "SIGLA_PARTIDO")
-
-df1_uf$Cargo <- str_to_title(df1_uf$Cargo)
-
-df1_uf[is.na(df1_uf)] <- 0
-
-
-### Deputado Estadual
-
-de1 <- de1 %>% 
-  dplyr::select(ANO_ELEICAO,
-                UF,
-                CARGO,
-                VAGAS,
-                VOTOS_VALIDOS_UF,
-                SIGLA_PARTIDO,
-                VOT_PART_UF,
-                `Cadeiras conquistadas por UF`,
-                `Percentual de votos conquistados`,
-                `Percentual de cadeiras conquistadas`) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
-                "Cargo" = "CARGO",
-                "Vagas" = "VAGAS",
-                "Votos válidos" = "VOTOS_VALIDOS_UF",
-                "Sigla do partido" = "SIGLA_PARTIDO",
-                "Total de votos conquistados" = "VOT_PART_UF",
-                "Total de cadeiras conquistadas" = "Cadeiras conquistadas por UF")
-
-de1$Cargo <- str_to_title(de1$Cargo)
-
-de1[is.na(de1)] <- 0
-
-
-### Senador (Brasil)
-
-sen_br <- sen_br %>% 
-  dplyr::select(ANO_ELEICAO,
-                DESCRICAO_CARGO,
-                Vagas,
-                `Votos válidos`,
-                SIGLA_PARTIDO,
-                `Total de votos conquistados`,
-                `Total de cadeiras conquistadas`,
-                `Percentual de votos conquistados`,
-                `Percentual de cadeiras conquistadas`) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
-                "Cargo" = "DESCRICAO_CARGO",
-                "Sigla do partido" = "SIGLA_PARTIDO")
-
-sen_br$Cargo <- str_to_title(sen_br$Cargo)
-
-### Vereador
-
-vr1 <- vr1 %>% 
-  dplyr::select(ANO_ELEICAO,
-                UF,
-                COD_MUN_TSE,
-                NOME_MUNICIPIO,
-                CARGO,
-                VAGAS,
-                VOTOS_VALIDOS_MUN,
-                SIGLA_PARTIDO,
-                VOT_PART_MUN,
-                `Cadeiras conquistadas por município`,
-                `Percentual de votos conquistados`,
-                `Percentual de cadeiras conquistadas`) %>% 
-  dplyr::rename("Ano da eleição" = "ANO_ELEICAO", 
-                "Código do município" = "COD_MUN_TSE",
-                "Nome do município" = "NOME_MUNICIPIO",
-                "Cargo" = "CARGO",
-                "Vagas" = "VAGAS",
-                "Votos válidos" = "VOTOS_VALIDOS_MUN",
-                "Sigla do partido" = "SIGLA_PARTIDO",
-                "Total de votos conquistados" = "VOT_PART_MUN",
-                "Total de cadeiras conquistadas" = "Cadeiras conquistadas por município")
-
-vr1$Cargo <- str_to_title(vr1$Cargo)
-
-vr1$`Nome do município` <- str_to_title(vr1$`Nome do município`)
-
-cidades_faltando <- vr1 %>% 
-  filter(is.na(`Votos válidos`))
-
-vr1 <- vr1 %>% 
-  filter(!is.na(`Votos válidos`))
-
-vr1 <- unique(vr1)
-
-## Calcula o numero de partidos parlamentares para cada eleicao
-
-### Deputado Federal (Brasil)
-
-
-dfr_br <- df1_br %>% 
-  group_by(`Ano da eleição`) %>% 
-  summarise(
-    `Número de partidos parlamentares` = n()
-  )
-
-df1_br <- left_join(df1_br,dfr_br, 
-                 by = "Ano da eleição")
-
-### Deputado Federal (UF)
-
-
-dfr_uf <- df1_uf %>% 
-  group_by(`Ano da eleição`, UF) %>% 
-  summarise(
-    `Número de partidos parlamentares` = n()
-  )
-
-df1_uf <- left_join(df1_uf,dfr_uf, 
-                    by = c("Ano da eleição", "UF"))
-
-### Deputado Estadual
-
-
-dfr <- de1 %>% 
-  group_by(`Ano da eleição`, UF) %>% 
-  summarise(
-    `Número de partidos parlamentares` = n()
-  )
-
-de1 <- left_join(de1,dfr, 
-                 by = c("Ano da eleição", "UF"))
-
-
-### Senador (Brasil)
-
-senr <- sen_br %>% 
-  group_by(`Ano da eleição`) %>% 
-  summarise(
-    `Número de partidos parlamentares` = n()
-  )
-
-sen_br <- left_join(sen_br,senr, 
-                 by = "Ano da eleição")
-
-### Vereador
-
-
-vrr <- vr1 %>% 
-  group_by(`Ano da eleição`, 
-           UF,
-           `Código do município`) %>% 
-  summarise(
-    `Número de partidos parlamentares` = n()
-  )
-
-vr1 <- left_join(vr1,vrr)
-
-
-
-rm(sen_uf1,sen_uf2,sen_uft,sen_uft1,senr)
-
-
-# 4. Calculo dos indicadores ----------------------------------------------
-
-## Calculo dos indicadores de framentacao partidaria
-
-### Deputado Federal (Brasil)
-
-frag_leg_fed_br <- list()
-
-
-for(ano in sort(unique(df1_br$`Ano da eleição`))){
-  cat("Lendo",ano,"\n")
-  t <- filter(df1_br,
-              `Ano da eleição` == ano)
-  NEPV <- NA
-  t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
-  t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
-  t$`Fracionalização` <- fracio(t$`Percentual de cadeiras conquistadas`)
-  t$`Fracionalização máxima` <- fracio_max(513,t$`Número de partidos parlamentares`)
-  t$`Fragmentação` <- frag(t$`Fracionalização`, 
-                           t$`Fracionalização máxima`)
-  t$`Desproporcionalidade` <- desp_gallag(t$`Percentual de votos conquistados`,
-                                          t$`Percentual de cadeiras conquistadas`)
-  frag_leg_fed_br <- bind_rows(frag_leg_fed_br,t)
-}
-
-### Deputado Federal (UF)
-
-frag_leg_fed_uf <- list()
-
-
-for(ano in sort(unique(df1_uf$`Ano da eleição`))){
-  for(uf in sort(unique(df1_uf$UF))){
-  cat("Lendo",ano,uf,"\n")
-  t <- filter(df1_uf,
-              `Ano da eleição` == ano,
-              UF == uf)
-  NEPV <- NA
-  t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
-  t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
-  t$`Fracionalização` <- fracio(t$`Percentual de cadeiras conquistadas`)
-  t$`Fracionalização máxima` <- fracio_max(t$Vagas,t$`Número de partidos parlamentares`)
-  t$`Fragmentação` <- frag(t$`Fracionalização`, 
-                           t$`Fracionalização máxima`)
-  t$`Desproporcionalidade` <- desp_gallag(t$`Percentual de votos conquistados`,
-                                          t$`Percentual de cadeiras conquistadas`)
-  frag_leg_fed_uf <- bind_rows(frag_leg_fed_uf,t)
-}
-}
-
-### Deputado Estadual
-
-
-frag_leg_est <- list()
-
-for(ano in sort(unique(de1$`Ano da eleição`))){
-  for(uf in sort(unique(de1$UF))){
-    cat(ano,uf, "\n")
-    t <- filter(de1,
-                `Ano da eleição` == ano & 
-                  UF == uf)
-    NEPV <- NA
-    t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
-    t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
-    t$`Fracionalização` <- fracio(t$`Percentual de cadeiras conquistadas`)
-    t$`Fracionalização máxima` <- fracio_max(t$Vagas,t$`Número de partidos parlamentares`)
-    t$`Fragmentação` <- frag(t$Fracionalização,
-                             t$`Fracionalização máxima`)
-    t$`Desproporcionalidade` <- desp_gallag(t$`Percentual de votos conquistados`,
-                                            t$`Percentual de cadeiras conquistadas`)
-    frag_leg_est <- bind_rows(frag_leg_est,t)
+for(ano in seq(2000, 2020, by = 4)){
+  for(municipio in mun){
+    
+    cat("Lendo", ano, municipio, "\n")
+    
+    ## Cria um arquivo temporario onde os dados da eleicao 
+    ## corrente serao armazenados
+    
+    temp <- pf_mun_eleitos %>% 
+      filter(ANO_ELEICAO == ano &
+             COD_MUN_TSE == municipio)
+    
+    for(turno in unique(temp$NUM_TURNO)){
+      
+      cat("Turno", turno, "\n")
+      
+      temp <- temp %>% 
+        filter(NUM_TURNO == turno)
+      
+      ## Calcula o indicador 'Número Efetivo de Partidos Eleitoral'
+      
+      temp$`Número efetivo de partidos eleitoral` <- num_efetivo_part(temp$PERC_VOTOS)
+      
+      ## Empilha os indicadores calculados no banco criado
+      
+      frag_leg_pf_mun <- bind_rows(frag_leg_pf_mun,
+                                   temp)
+      
+    }
   }
 }
 
+#### 3.2.1.2. Vereador -------------------------------------------------------
 
-### Senador (Brasil)
+## Cria uma lista vazia onde os dados serão armazenados
 
-frag_leg_sen_br <- list()
+frag_leg_vr_mun <- list()
 
+## For loop que calcula os indicadores de fragmentação 
+## partidaria para cada ano
 
-for(ano in sort(unique(sen_br$`Ano da eleição`))){
-  cat("Lendo",ano,"\n")
-  t <- filter(sen_br,
-              `Ano da eleição` == ano)
-  NEPV <- NA
-  t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
-  t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
-  t$`Fracionalização` <- fracio(t$`Percentual de cadeiras conquistadas`)
-  t$`Fracionalização máxima` <- fracio_max(t$Vagas,t$`Número de partidos parlamentares`)
-  t$`Fragmentação` <- frag(t$`Fracionalização`, 
-                           t$`Fracionalização máxima`)
-  t$`Desproporcionalidade` <- desp_gallag(t$`Percentual de votos conquistados`,
-                                          t$`Percentual de cadeiras conquistadas`)
-  frag_leg_sen_br <- bind_rows(frag_leg_sen_br,t)
-}
-
-### Vereador
-
-frag_leg_vr <- list()
-
-for(ano in sort(unique(vr1$`Ano da eleição`))){
-  for(municipio in sort(unique(vr1$`Código do município`))){
-  cat("Lendo",ano,municipio,"\n")
-  t <- filter(vr1,
-              `Ano da eleição` == ano &
-               `Código do município` == municipio
-               )
-  NEPV <- NA
-  t$`Número efetivo de partidos eleitoral` <- nep(t$`Percentual de votos conquistados`)
-  t$`Número efetivo de partidos legislativo` <- nep(t$`Percentual de cadeiras conquistadas`)
-  t$`Fracionalização` <- fracio(t$`Percentual de cadeiras conquistadas`)
-  t$`Fracionalização máxima` <- fracio_max(t$Vagas,t$`Número de partidos parlamentares`)
-  t$`Fragmentação` <- frag(t$`Fracionalização`, 
-                           t$`Fracionalização máxima`)
-  t$`Desproporcionalidade` <- desp_gallag(t$`Percentual de votos conquistados`,
-                                          t$`Percentual de cadeiras conquistadas`)
-  frag_leg_vr <- bind_rows(frag_leg_vr,t)
+for(ano in seq(2000, 2020, by = 4)){
+  for(municipio in mun){
+    
+    cat("Lendo", ano, municipio, "\n")
+    
+    ## Cria um arquivo temporario onde os dados da eleicao 
+    ## corrente serao armazenados
+    
+    temp <- vr_mun_eleitos %>% 
+      filter(ANO_ELEICAO == ano &
+             COD_MUN_TSE == municipio)
+    
+    ## Calcula o indicador 'Número Efetivo de Partidos Eleitoral'
+    
+    temp$`Número efetivo de partidos eleitoral` <- num_efetivo_part(temp$PERC_VOTOS)
+    
+    ## Calcula o indicador 'Numero efetivo de partidos legislativo'
+    
+    temp$`Número efetivo de partidos legislativo` <- num_efetivo_part(temp$PERC_CADEIRAS)
+    
+    ## Calcula o indicador 'Fracionalização'
+    
+    temp$`Fracionalização` <- fracionalizacao(temp$PERC_CADEIRAS)
+    
+    ## Calcula o indicador 'Fracionalização máxima'
+    
+    temp$`Fracionalização máxima` <- fracionalizacao_max(temp$QT_VAGAS, 
+                                                         temp$NUM_PART_PARLAMENT)
+    
+    ## Calcula o indicador 'Fragmentação'
+    
+    temp$`Fragmentação` <- fragmentaco(temp$`Fracionalização`, 
+                                       temp$`Fracionalização máxima`)
+    
+    ## Calcula o indicador 'Desproporcionalide'
+    
+    temp$`Desproporcionalidade` <- desp_gallagher(temp$PERC_VOTOS,
+                                                  temp$PERC_CADEIRAS)
+    
+    ## Empilha os indicadores calculados no banco criado
+    
+    frag_leg_vr_mun <- bind_rows(frag_leg_vr_mun,
+                                 temp)
+    
   }
 }
 
-casos_estranhos <- frag_leg_vr %>% 
-  filter(`Fracionalização máxima` == 0)
+# 4. Padronização ---------------------------------------------------------
 
-frag_leg_vr <- frag_leg_vr %>% 
-  filter(`Fracionalização máxima` != 0)
+## 4.1. Eleições Gerais ----------------------------------------------------
 
-problemas <- frag_leg_vr %>% 
-  filter(`Número efetivo de partidos legislativo` == Inf)
+### 4.1.1. Brasil -----------------------------------------------------------
 
-problemas2 <- frag_leg_vr %>% 
-  filter(Fracionalização == 0.0000000)
+#### 4.1.1.1. Senador --------------------------------------------------------
 
-probleas3 <- frag_leg_vr %>% 
-  filter(Fragmentação > 1)
+## Organiza as variáveis e arredonda em duas casas decimais 
+## os índices calculados
 
-frag_leg_vr <- frag_leg_vr %>% 
-  filter(`Número efetivo de partidos legislativo`!= Inf)
+frag_leg_sen_br <- padroniz_frag_br(frag_leg_sen_br)
+  
+#### 4.1.1.2. Deputado Federal -----------------------------------------------
 
-frag_leg_vr <- frag_leg_vr %>% 
-  filter(`Fracionalização`!= 0.0000000)
+## Organiza as variáveis e arredonda em duas casas decimais 
+## os índices calculados
 
-frag_leg_vr <- frag_leg_vr %>% 
-  filter(`Fragmentação`< 1)
+frag_leg_df_br <- padroniz_frag_br(frag_leg_df_br)
+  
+### 4.1.2. Estado -----------------------------------------------------------
 
-problemas <- rbind(problemas, 
-                   problemas2, 
-                   probleas3, 
-                   casos_estranhos)
+#### 4.1.2.1. Deputado Federal -----------------------------------------------
 
-rm(problemas2, probleas3, casos_estranhos)
+## Organiza as variáveis e arredonda em duas casas decimais 
+## os índices calculados
 
-# 5. Padronizacao dos dados -----------------------------------------------
+frag_leg_df_uf <- padroniz_frag_uf(frag_leg_df_uf)
+ 
+#### 4.1.2.2. Deputado Estadual ----------------------------------------------
 
+## Organiza as variáveis e arredonda em duas casas decimais 
+## os índices calculados
 
-## Remove as colunas desnecessarias e arredonda em duas casas decimais os indices calculados
+frag_leg_de_uf <- padroniz_frag_uf(frag_leg_de_uf)
+  
+## 4.2. Eleições Municipais ------------------------------------------------
 
+### 4.2.1. Município --------------------------------------------------------
 
-### Deputado Federal (Brasil)
+#### 4.2.1.1. Prefeito -------------------------------------------------------
 
-options(OutDec= ",")
+## Organiza as variáveis e arredonda em duas casas decimais 
+## os índices calculados
 
-frag_leg_fed_br <- frag_leg_fed_br %>% 
-  select(`Ano da eleição`, 
-         Cargo,
-         `Votos válidos`,
-         `Sigla do partido`,
-         `Total de votos conquistados`,
-         `Total de cadeiras conquistadas`,
-         `Percentual de votos conquistados`,
-         `Percentual de cadeiras conquistadas`,
-         `Número efetivo de partidos eleitoral`,
-         `Número efetivo de partidos legislativo`,
-         Fracionalização,
-         `Fracionalização máxima`,
-         Fragmentação,
-         `Desproporcionalidade`)
-
-frag_leg_fed_br$`Ano da eleição` <- as.character(frag_leg_fed_br$`Ano da eleição`)
-
-frag_leg_fed_br$`Número efetivo de partidos eleitoral` <- 
-  format(round(frag_leg_fed_br$`Número efetivo de partidos eleitoral`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_fed_br$`Número efetivo de partidos legislativo` <- 
-  format(round(frag_leg_fed_br$`Número efetivo de partidos legislativo`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_fed_br$`Percentual de votos conquistados`<- 
-  format(round(frag_leg_fed_br$`Percentual de votos conquistados`, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_fed_br$`Percentual de cadeiras conquistadas` <- 
-  format(round(frag_leg_fed_br$`Percentual de cadeiras conquistadas`, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_fed_br$Fracionalização <- 
-  format(round(frag_leg_fed_br$Fracionalização, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_fed_br$`Fracionalização máxima` <- 
-  format(round(frag_leg_fed_br$`Fracionalização máxima`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_fed_br$Fragmentação <- 
-  format(round(frag_leg_fed_br$Fragmentação, 
-               digits = 2),
-         nsmall = 2)
-
-frag_leg_fed_br$`Desproporcionalidade` <- 
-  format(round(frag_leg_fed_br$`Desproporcionalidade`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_fed_br$`Votos válidos` <- pont_virg(frag_leg_fed_br$`Votos válidos`)
-
-frag_leg_fed_br$`Total de votos conquistados` <- pont_virg(frag_leg_fed_br$`Total de votos conquistados`)
-
-### Deputado Federal (UF)
-
-frag_leg_fed_uf <- frag_leg_fed_uf %>% 
+frag_leg_pf_mun <- frag_leg_pf_mun %>% 
+  ungroup() %>% 
+  rename("Ano da eleição" = "ANO_ELEICAO",
+         "Código do município" = "COD_MUN_TSE",
+         "Cargo" = "DESCRICAO_CARGO",
+         "Votos válidos" = "QT_VOTOS_VALIDOS",
+         "Sigla do partido" = "SIGLA_PARTIDO",
+         "Total de votos conquistados" = "VOT_PART_MUN",
+         "Percentual de votos conquistados" = "PERC_VOTOS") %>% 
   select(`Ano da eleição`,
          UF,
-         Cargo, 
-         Vagas,
-         `Votos válidos`,
-         `Sigla do partido`,
-         `Total de votos conquistados`,
-         `Total de cadeiras conquistadas`,
-         `Percentual de votos conquistados`,
-         `Percentual de cadeiras conquistadas`,
-         `Número efetivo de partidos eleitoral`,
-         `Número efetivo de partidos legislativo`,
-         Fracionalização,
-         `Fracionalização máxima`,
-         Fragmentação,
-         `Desproporcionalidade`)
-
-frag_leg_fed_uf$`Número efetivo de partidos eleitoral` <- 
-  format(round(frag_leg_fed_uf$`Número efetivo de partidos eleitoral`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_fed_uf$`Número efetivo de partidos legislativo` <- 
-  format(round(frag_leg_fed_uf$`Número efetivo de partidos legislativo`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_fed_uf$`Percentual de votos conquistados`<- 
-  format(round(frag_leg_fed_uf$`Percentual de votos conquistados`, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_fed_uf$`Percentual de cadeiras conquistadas` <- 
-  format(round(frag_leg_fed_uf$`Percentual de cadeiras conquistadas`, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_fed_uf$Fracionalização <- 
-  format(round(frag_leg_fed_uf$Fracionalização, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_fed_uf$`Fracionalização máxima` <- 
-  format(round(frag_leg_fed_uf$`Fracionalização máxima`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_fed_uf$Fragmentação <- 
-  format(round(frag_leg_fed_uf$Fragmentação, 
-               digits = 2),
-         nsmall = 2)
-
-frag_leg_fed_uf$`Desproporcionalidade` <- 
-  format(round(frag_leg_fed_uf$`Desproporcionalidade`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_fed_uf$`Votos válidos` <- pont_virg(frag_leg_fed_uf$`Votos válidos`)
-
-frag_leg_fed_uf$`Total de votos conquistados` <- pont_virg(frag_leg_fed_uf$`Total de votos conquistados`)
-
-### Deputado Estadual
-
-frag_leg_est<- frag_leg_est %>% 
-  select(`Ano da eleição`,
-         UF,
-         Cargo,
-         Vagas,
-         `Votos válidos`,
-         `Sigla do partido`,
-         `Total de votos conquistados`,
-         `Total de cadeiras conquistadas`,
-         `Percentual de votos conquistados`,
-         `Percentual de cadeiras conquistadas`,
-         `Número efetivo de partidos eleitoral`,
-         `Número efetivo de partidos legislativo`,
-         Fracionalização,
-         `Fracionalização máxima`,
-         Fragmentação,
-         `Desproporcionalidade`)
-
-frag_leg_est$`Número efetivo de partidos eleitoral` <- 
-  format(round(frag_leg_est$`Número efetivo de partidos eleitoral`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_est$`Número efetivo de partidos legislativo` <- 
-  format(round(frag_leg_est$`Número efetivo de partidos legislativo`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_est$`Percentual de votos conquistados`<- 
-  format(round(frag_leg_est$`Percentual de votos conquistados`, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_est$`Percentual de cadeiras conquistadas` <- 
-  format(round(frag_leg_est$`Percentual de cadeiras conquistadas`, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_est$Fracionalização <- 
-  format(round(frag_leg_est$Fracionalização, 
-               digits = 2),  
-         nsmall = 2)
-
-
-frag_leg_est$`Fracionalização máxima` <- 
-  format(round(frag_leg_est$`Fracionalização máxima`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_est$Fragmentação <- 
-  format(round(frag_leg_est$Fragmentação, 
-               digits = 2),
-         nsmall = 2)
-
-frag_leg_est$`Desproporcionalidade` <- 
-  format(round(frag_leg_est$`Desproporcionalidade`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_est$`Votos válidos` <- pont_virg(frag_leg_est$`Votos válidos`)
-
-frag_leg_est$`Total de votos conquistados` <- pont_virg(frag_leg_est$`Total de votos conquistados`)
-
-
-### Senador (Brasil)
-
-
-frag_leg_sen_br <- frag_leg_sen_br %>% 
-  ungroup() %>% 
-  select(`Ano da eleição`,
-         Cargo,
-         `Votos válidos`,
-         `Sigla do partido`,
-         `Total de votos conquistados`,
-         `Total de cadeiras conquistadas`,
-         `Percentual de votos conquistados`,
-         `Percentual de cadeiras conquistadas`,
-         `Número efetivo de partidos eleitoral`,
-         `Número efetivo de partidos legislativo`,
-         Fracionalização,
-         `Fracionalização máxima`,
-         Fragmentação,
-         `Desproporcionalidade`) 
-
-frag_leg_sen_br$`Número efetivo de partidos eleitoral` <- 
-  format(round(frag_leg_sen_br$`Número efetivo de partidos eleitoral`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_sen_br$`Número efetivo de partidos legislativo` <- 
-  format(round(frag_leg_sen_br$`Número efetivo de partidos legislativo`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_sen_br$`Percentual de votos conquistados`<- 
-  format(round(frag_leg_sen_br$`Percentual de votos conquistados`, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_sen_br$`Percentual de cadeiras conquistadas` <- 
-  format(round(frag_leg_sen_br$`Percentual de cadeiras conquistadas`, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_sen_br$Fracionalização <- 
-  format(round(frag_leg_sen_br$Fracionalização, 
-               digits = 2),  
-         nsmall = 2)
-
-frag_leg_sen_br$`Fracionalização máxima` <- 
-  format(round(frag_leg_sen_br$`Fracionalização máxima`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_sen_br$Fragmentação <- 
-  format(round(frag_leg_sen_br$Fragmentação, 
-               digits = 2),
-         nsmall = 2)
-
-frag_leg_sen_br$`Desproporcionalidade` <- 
-  format(round(frag_leg_sen_br$`Desproporcionalidade`, 
-               digits = 2), 
-         nsmall = 2)
-
-frag_leg_sen_br$`Votos válidos` <- pont_virg(frag_leg_sen_br$`Votos válidos`)
-
-frag_leg_sen_br$`Total de votos conquistados` <- pont_virg(frag_leg_sen_br$`Total de votos conquistados`)
-
-### Vereador
-
-frag_leg_vr <- frag_leg_vr %>% 
-  ungroup() %>% 
-  select(`Ano da eleição`,
-         UF, 
          `Código do município`,
-         `Nome do município`,
-          Cargo,
-          `Vagas`,
+         Cargo,
          `Votos válidos`,
          `Sigla do partido`,
          `Total de votos conquistados`,
-         `Total de cadeiras conquistadas`,
          `Percentual de votos conquistados`,
-         `Percentual de cadeiras conquistadas`,
-         `Número efetivo de partidos eleitoral`,
-         `Número efetivo de partidos legislativo`,
-         Fracionalização,
-         `Fracionalização máxima`,
-         Fragmentação,
-         `Desproporcionalidade`) 
+         `Número efetivo de partidos eleitoral`) %>% 
+  mutate(`Percentual de votos conquistados` = format(round(`Percentual de votos conquistados`,
+                                                           digits = 2),
+                                                     nsmall = 2),
+         `Número efetivo de partidos eleitoral` = format(round(`Número efetivo de partidos eleitoral`,
+                                                               digits = 2),
+                                                         nsmall = 2),
+         `Votos válidos` = pont_virg(`Votos válidos`),
+         `Total de votos conquistados` = pont_virg(`Total de votos conquistados`)) %>% 
+  arrange(`Ano da eleição`,
+          UF,
+          `Código do município`)
 
-frag_leg_vr$`Número efetivo de partidos eleitoral` <- 
-  format(round(frag_leg_vr$`Número efetivo de partidos eleitoral`, 
-               digits = 2), 
-         nsmall = 2)
+#### 4.2.1.2. Vereador -------------------------------------------------------
 
-frag_leg_vr$`Número efetivo de partidos legislativo` <- 
-  format(round(frag_leg_vr$`Número efetivo de partidos legislativo`, 
-               digits = 2), 
-         nsmall = 2)
+## Organiza as variáveis e arredonda em duas casas decimais 
+## os índices calculados
 
-frag_leg_vr$`Percentual de votos conquistados`<- 
-  format(round(frag_leg_vr$`Percentual de votos conquistados`, 
-               digits = 2),  
-         nsmall = 2)
+frag_leg_vr_mun <- padroniz_frag_mun(frag_leg_vr_mun)
 
-frag_leg_vr$`Percentual de cadeiras conquistadas` <- 
-  format(round(frag_leg_vr$`Percentual de cadeiras conquistadas`, 
-               digits = 2),  
-         nsmall = 2)
+# 5. Rbind ----------------------------------------------------------------
 
-frag_leg_vr$Fracionalização <- 
-  format(round(frag_leg_vr$Fracionalização, 
-               digits = 2),  
-         nsmall = 2)
+## 5.1. Brasil -------------------------------------------------------------
 
-frag_leg_vr$`Fracionalização máxima` <- 
-  format(round(frag_leg_vr$`Fracionalização máxima`, 
-               digits = 2), 
-         nsmall = 2)
+## Junta os bancos de acordo com seu nível de agregação regional
 
-frag_leg_vr$Fragmentação <- 
-  format(round(frag_leg_vr$Fragmentação, 
-               digits = 2),
-         nsmall = 2)
+frag_leg_br <- bind_rows(frag_leg_sen_br, 
+                         frag_leg_fed_br)
 
-frag_leg_vr$`Desproporcionalidade` <- 
-  format(round(frag_leg_vr$`Desproporcionalidade`, 
-               digits = 2), 
-         nsmall = 2)
+## 5.2. Estado -------------------------------------------------------------
 
-frag_leg_vr$`Votos válidos` <- pont_virg(frag_leg_vr$`Votos válidos`)
+## Junta os bancos de acordo com seu nível de agregação regional
 
-frag_leg_vr$`Total de votos conquistados` <- pont_virg(frag_leg_vr$`Total de votos conquistados`)
+frag_leg_uf <- bind_rows(frag_leg_fed_uf, 
+                         frag_leg_est_uf)
 
-### Junta os bancos de acordo com seu nivel de agregacao regional
+# 6. Exporta --------------------------------------------------------------
 
-## Brasil
+## Exporta os arquivos no formato .rds
 
-frag_leg_br <- bind_rows(frag_leg_fed_br, frag_leg_sen_br)
+## 6.1. Distribuição de Cadeiras -------------------------------------------
 
-frag_leg_br$`Número efetivo de partidos legislativo` <- as.character(frag_leg_br$`Número efetivo de partidos legislativo`)
-frag_leg_br$Desproporcionalidade <- as.character(frag_leg_br$Desproporcionalidade)
+saveRDS(distcad_df, 
+        "data/output/distcad_df.rds")
 
-## UF
+saveRDS(distcad_de, 
+        "data/output/distcad_de.rds")
 
-frag_leg_uf <- bind_rows(frag_leg_fed_uf, frag_leg_est)
+saveRDS(distcad_vr, 
+        "data/output/distcad_vr.rds")
 
-frag_leg_uf$`Número efetivo de partidos legislativo` <- as.character(frag_leg_uf$`Número efetivo de partidos legislativo`)
-frag_leg_uf$Desproporcionalidade <- as.character(frag_leg_uf$Desproporcionalidade)
+## 6.2. Fragmentação -------------------------------------------------------
 
-## Municipio
+saveRDS(frag_leg_br, 
+        "data/output/frag_leg_br.rds")
 
-frag_leg_vr$`Número efetivo de partidos legislativo` <- as.character(frag_leg_vr$`Número efetivo de partidos legislativo`)
-frag_leg_vr$Desproporcionalidade <- as.character(frag_leg_vr$Desproporcionalidade)
+saveRDS(frag_leg_uf, 
+        "data/output/frag_leg_uf.rds")
 
+saveRDS(frag_leg_vr_mun, 
+        "data/output/frag_leg_mun.rds")
 
+saveRDS(frag_leg_pf_mun, 
+        "data/output/frag_leg_pf.rds")
 
-# 6. Salva os arquivos ------------------------------------------------------
-
-## Salva os arquivos referentes aos indicadores de fragmentacao
-## legislativa em .csv
-
-### Fragmentacao legislativa (Brasil)
-
-write.csv(frag_leg_br, "data/output/frag_leg_br.csv")
-
-### Fragmentacao legislativa (UF)
-
-write.csv(frag_leg_uf, "data/output/frag_leg_uf.csv")
-
-### Fragmentcao legislativa (Municipio)
-
-saveRDS(frag_leg_mun, "data/output/frag_leg_mun.rds")
-
-###  Distribuicao de cadeiras (Deputado Federal)
-
-write.csv(vags_fed, "data/output/distcad_fed.csv")
-
-### Distribuicao de cadeiras (Deputado Estadual)
-
-write.csv(vags_est, "data/output/distcad_est.csv")
-
-### Distribuicao de cadeiras (Vereador)
-
-saveRDS(vags_ver, "data/output/distcad_mun.rds")
-
-### Problemas e cidades faltando
-
-write.csv(problemas, "data/output/problemas.csv")
-
-write.csv(cidades_faltando, "data/output/cidades_faltando.csv")
-
-## Remove da area de trabalho os bancos que nao serao mais utilizados
+## Remove da área de trabalho os bancos que 
+## não serão mais utilizados
 
 rm(frag_leg_fed_br,frag_leg_fed_uf,frag_leg_est,frag_leg_sen_br,
-   frag_leg_vr,frag_leg_br, frag_leg_uf,dft_br,dft_uf,det,dfc2,dfp_br,dfp_uf,
-   dfr_br,dfr_uf,t,est,fed, sen_br, sen_uf,vags_est,vags_fed,vags_ver,
-   ver,vrr,cidades_faltando,problemas)
-
-
+   frag_leg_vr,frag_leg_br, frag_leg_uf,sen_br_eleitos,df_br_eleitos,
+   df_uf_eleitos, de_uf_eleitos,vr_mun_eleitos,pf_mun_eleitos, df_br_votos, 
+   df_uf_votos, df_br_part_parl,df_uf_part_parl, vr_mun_part_parl,
+   sen_br_cand)

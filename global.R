@@ -18,8 +18,6 @@ library(jsonlite)
 library(shinybusy)
 
 
-
-
 # Objetivo
 #'        - Carregar os arquivos usados no app;
 #'        - Rodar o app.
@@ -28,10 +26,12 @@ library(shinybusy)
 
 # 1. Data -----------------------------------------------------------------
 
-## Carrega os arquivos com os indicadores pré-calculados
+## Cria uma lista com os nomes dos arquivos a serem carregados
 
 files <- list.files(file.path(getwd(),"/data/output"), 
                     pattern = ".rds")
+
+## Carrega os arquivos com os indicadores pré-calculados
 
 for(i in files){
   df <- readRDS(paste0("data/output/",i))
@@ -40,6 +40,7 @@ for(i in files){
   
 }
 
-rm(df,i,files)
+## Remove os arquivos desnecessários
 
+rm(df,i,files)
 

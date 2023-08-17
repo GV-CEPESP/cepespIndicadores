@@ -315,7 +315,8 @@ server <- function(input, output, session){
       selectizeInput(inputId = "INDICADORES_RENOV",
                      label = NULL, 
                      choices = c("","Reeleição", "Reeleição líquida",
-                                 "Renovação", "Renovação líquida"), ## Indicadores disponiveis
+                                 "Renovação", "Renovação líquida",
+                                 "Recandidaturas"), ## Indicadores disponiveis
                      selected = NULL,
                      options = list(placeholder = 'Escolha um indicador'))
     }
@@ -6687,6 +6688,14 @@ server <- function(input, output, session){
                    <strong>Fórmula: </strong>
                    <p>
                    RENOV LIQ = (1 - INDICADOR DE REELEIÇÃO LÍQUIDA) * 100
+                   <h4><br /> Recandidaturas </h4>
+                   <h5 align = 'justify'><br />
+                   <p style='line-height:150%'>O indicador de 'Recandidaturas' calcula o percentual de candidatos 
+                   que se recandidataram em função dos candidatos eleitos no pleito anterior.</p></h5>
+                   <p>
+                   <strong>Fórmula: </strong>
+                   <p>
+                   RECAND = (RECANDIDATOS/ELEITOS NA ELEIÇÃO PASSADA) * 100
                   <p><br /> 
                   <strong>Fonte:</strong> 
                   <p>1. Votos e partidos: almanaque de dados eleitorais: Brasil e outros 
@@ -7008,7 +7017,12 @@ server <- function(input, output, session){
             return()
           } else if(uf == "Todas UFs"){
             data = renov_parl_uf %>% 
-            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+            dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+              select( -`Média nacional da reeleição`,
+                      -`Média nacional da reeleição líquida`,
+                      -`Média nacional da renovação`,
+                      -`Média nacional da renovação líquida`,
+                      -`Média nacional das recandidaturas`) %>% 
             unique()
           } else{
             data = renov_parl_uf %>% 
@@ -7017,7 +7031,8 @@ server <- function(input, output, session){
               select( -`Média nacional da reeleição`,
                       -`Média nacional da reeleição líquida`,
                       -`Média nacional da renovação`,
-                      -`Média nacional da renovação líquida`) %>% 
+                      -`Média nacional da renovação líquida`,
+                      -`Média nacional das recandidaturas`) %>% 
             unique()
           }
         }
@@ -7189,10 +7204,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
@@ -7203,10 +7220,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
@@ -7222,10 +7241,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          } else{
                            data = renov_parl_pf %>% 
@@ -7236,10 +7257,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        }
@@ -7518,10 +7541,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        } else if (cargo == "Prefeito" &
@@ -7538,10 +7563,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        }
@@ -7861,7 +7888,12 @@ server <- function(input, output, session){
             return()
           } else if(uf == "Todas UFs"){
             data = renov_parl_uf %>%
-            dplyr::filter(Cargo==input$DESCRICAO_CARGO2)
+            dplyr::filter(Cargo==input$DESCRICAO_CARGO2) %>% 
+              select( -`Média nacional da reeleição`,
+                      -`Média nacional da reeleição líquida`,
+                      -`Média nacional da renovação`,
+                      -`Média nacional da renovação líquida`,
+                      -`Média nacional das recandidaturas`) 
           } else{
             data = renov_parl_uf %>%
             dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
@@ -7869,7 +7901,8 @@ server <- function(input, output, session){
               select( -`Média nacional da reeleição`,
                       -`Média nacional da reeleição líquida`,
                       -`Média nacional da renovação`,
-                      -`Média nacional da renovação líquida`) %>% 
+                      -`Média nacional da renovação líquida`,
+                      -`Média nacional das recandidaturas`) %>% 
               unique()
           }
         }
@@ -8043,10 +8076,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
@@ -8057,10 +8092,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
@@ -8076,10 +8113,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          } else{
                            data = renov_parl_pf %>% 
@@ -8090,10 +8129,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        }
@@ -8368,10 +8409,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
@@ -8388,10 +8431,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        }
@@ -8715,6 +8760,11 @@ server <- function(input, output, session){
           } else if(uf == "Todas UFs"){
             data = renov_parl_uf %>% 
             filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+              select( -`Média nacional da reeleição`,
+                      -`Média nacional da reeleição líquida`,
+                      -`Média nacional da renovação`,
+                      -`Média nacional da renovação líquida`,
+                      -`Média nacional das recandidaturas`) %>%  
             unique()
           } else{
             data = renov_parl_uf %>% 
@@ -8723,7 +8773,8 @@ server <- function(input, output, session){
               select( -`Média nacional da reeleição`,
                       -`Média nacional da reeleição líquida`,
                       -`Média nacional da renovação`,
-                      -`Média nacional da renovação líquida`) %>% 
+                      -`Média nacional da renovação líquida`,
+                      -`Média nacional das recandidaturas`) %>% 
             unique()
           }
         }
@@ -8895,10 +8946,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
@@ -8909,10 +8962,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
@@ -8928,10 +8983,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          } else{
                            data = renov_parl_pf %>% 
@@ -8942,10 +8999,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        }
@@ -9222,10 +9281,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
@@ -9242,10 +9303,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        }
@@ -9570,6 +9633,11 @@ server <- function(input, output, session){
                          } else if(uf == "Todas UFs"){
                            data = renov_parl_uf %>% 
                              filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select( -`Média nacional da reeleição`,
+                                     -`Média nacional da reeleição líquida`,
+                                     -`Média nacional da renovação`,
+                                     -`Média nacional da renovação líquida`,
+                                     -`Média nacional das recandidaturas`) %>% 
                              unique()
                          } else{
                            data = renov_parl_uf %>% 
@@ -9578,7 +9646,8 @@ server <- function(input, output, session){
                              select( -`Média nacional da reeleição`,
                                      -`Média nacional da reeleição líquida`,
                                      -`Média nacional da renovação`,
-                                     -`Média nacional da renovação líquida`) %>% 
+                                     -`Média nacional da renovação líquida`,
+                                     -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        }
@@ -9750,10 +9819,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          } else{
                            data = renov_parl_mun %>% 
@@ -9764,10 +9835,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
@@ -9783,10 +9856,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          } else{
                            data = renov_parl_pf %>% 
@@ -9797,10 +9872,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        }
@@ -10077,10 +10154,12 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        } else if(cargo == "Prefeito" &
@@ -10097,10 +10176,911 @@ server <- function(input, output, session){
                                     -`Média da reeleição líquida`,
                                     -`Média da renovação`,
                                     -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
                                     -`Média nacional da reeleição`,
                                     -`Média nacional da reeleição líquida`,
                                     -`Média nacional da renovação`,
-                                    -`Média nacional da renovação líquida`) %>% 
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
+  
+
+# 2.2.5. Recandidaturas ---------------------------------------------------
+
+
+  ## Resumo
+  
+  ### Renovacao parlamentar (Brasil)  
+  
+  recandbr <- reactive({ ## Atributos das tabelas 
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$DESCRICAO_CARGO2
+    if(indicador == "Recandidaturas" &
+       cargo == "Deputado Federal" &
+       agregacao == "Brasil"){
+      return(input$recand_br)
+    }
+  })
+  
+  
+  output$recand_br <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brecand_br()
+  })
+  
+  brecand_br <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'recand_br',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       
+                       indicador <- input$INDICADORES_RENOV
+                       cargo <- input$DESCRICAO_CARGO2
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       
+                       if(indicador == "Recandidaturas" &
+                          agregacao == "Brasil"){
+                         
+                         renov_parl_br %>% 
+                           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                           dplyr::select(`Ano da eleição`,
+                                         Recandidaturas) %>% 
+                           spread(`Ano da eleição`,
+                                  Recandidaturas)
+                         
+                       }
+                     })
+  }) 
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (Brasil)  
+  
+  ag_recand_br <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    cargo <- input$DESCRICAO_CARGO2
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Recandidaturas" & 
+       cargo == "Deputado Federal" &
+       agregacao == "Brasil"){
+      return(input$agreg_recand_br)
+    }
+  })
+  
+  output$agreg_recand_br <- DT::renderDataTable(server = FALSE,{
+    bagreg_recand_br()
+  })
+  
+  bagreg_recand_br <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      autoWidth = FALSE,
+      scrollX = TRUE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 2
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'recand_br_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       
+                       indicador <- input$INDICADORES_RENOV
+                       cargo <- input$DESCRICAO_CARGO2
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       uf <- input$UF2
+                       
+                       if(indicador == "Recandidaturas" & 
+                          agregacao == "Brasil"){
+                         
+                         data = renov_parl_br %>% 
+                           dplyr::filter(Cargo == input$DESCRICAO_CARGO2) 
+                         
+                       }
+                     })
+  })
+  
+  ## Resumo
+  
+  ### Renovacao parlamentar (UF) 
+  
+  recandmed_uf <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Recandidaturas" & 
+       agregacao == "UF"){
+      return(input$recand_med_uf)
+    }
+  })
+  
+  output$recand_med_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brecand_med_uf()
+  })
+  
+  brecand_med_uf <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('FixedColumns'),{
+        
+        cargo <- input$DESCRICAO_CARGO2
+        indicador <- input$INDICADORES_RENOV
+        agregacao <- input$AGREGACAO_REGIONAL2
+        uf <- req(input$UF2)
+        
+        if((cargo == "Deputado Federal" |
+            cargo == "Deputado Estadual") &
+           indicador == "Recandidaturas" & 
+           agregacao == "UF"){
+          
+          if(uf == ""){
+            return()
+          } else if(uf == "Todas UFs"){
+            
+            media1 <- renov_parl_uf %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+              dplyr::select(`Ano da eleição`,
+                            `Média nacional das recandidaturas`) %>% 
+              unique() %>% 
+              spread(`Ano da eleição`,
+                     `Média nacional das recandidaturas`) %>% 
+              mutate("media" = "Média nacional das recandidaturas") %>% 
+              column_to_rownames("media")
+            
+            media1
+            
+          } else{
+            
+            media1 <- renov_parl_uf %>% 
+              dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                              UF == input$UF2) %>% 
+              dplyr::select(`Ano da eleição`,
+                            `Média nacional das recandidaturas`) %>% 
+              unique() %>% 
+              spread(`Ano da eleição`,
+                     `Média nacional das recandidaturas`) %>% 
+              mutate("media" = "Média nacional das recandidaturas") %>% 
+              column_to_rownames("media")
+            
+            media1
+            
+          }
+        } 
+      })
+  })
+  
+  recanduf <- reactive({ ## Atributos das tabelas 
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$DESCRICAO_CARGO2
+    if(indicador == "Recandidaturas" &
+       agregacao == "UF"){
+      return(input$recand_uf)
+    }
+  })
+  
+  
+  output$recand_uf <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brecand_uf()
+  })
+  
+  brecand_uf <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'recand_uf',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       uf <- req(input$UF2)
+                       cargo <- input$DESCRICAO_CARGO2
+                       
+                       if(indicador == "Recandidaturas" &
+                          agregacao == "UF"){
+                         if(uf == ""){
+                           return()
+                         } else if (uf == "Todas UFs"){
+                           renov_parl_uf %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           Recandidaturas) %>% 
+                             spread(`Ano da eleição`,
+                                    Recandidaturas) %>% 
+                             unique()
+                           
+                         } else{
+                           
+                           renov_parl_uf %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2 &
+                                             UF == input$UF2) %>%
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           Recandidaturas) %>% 
+                             spread(`Ano da eleição`,
+                                    Recandidaturas) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  }) 
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (UF) 
+  
+  ag_recand_uf <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Recandidaturas" & 
+       agregacao == "UF"){
+      return(input$agreg_recand_uf)
+    }
+  })
+  
+  output$agreg_recand_uf <- DT::renderDataTable(server = FALSE,{
+    bagreg_recand_uf()
+  })
+  
+  bagreg_recand_uf <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      autoWidth = FALSE,
+      scrollX = TRUE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 2
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'recand_uf_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       uf <- req(input$UF2)
+                       
+                       if(indicador == "Recandidaturas" & 
+                          agregacao == "UF"){
+                         if(uf == ""){
+                           return()
+                         } else if(uf == "Todas UFs"){
+                           data = renov_parl_uf %>% 
+                             filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select( -`Média nacional da reeleição`,
+                                     -`Média nacional da reeleição líquida`,
+                                     -`Média nacional da renovação`,
+                                     -`Média nacional da renovação líquida`,
+                                     -`Média nacional das recandidaturas`) %>% 
+                             unique()
+                         } else{
+                           data = renov_parl_uf %>% 
+                             filter(Cargo == input$DESCRICAO_CARGO2 &
+                                      UF == input$UF2) %>% 
+                             select( -`Média nacional da reeleição`,
+                                     -`Média nacional da reeleição líquida`,
+                                     -`Média nacional da renovação`,
+                                     -`Média nacional da renovação líquida`,
+                                     -`Média nacional das recandidaturas`) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
+  
+  ## Resumo
+  
+  ### Renovacao parlamentar (MUN)
+  
+  recandmun <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Recandidaturas" & 
+       agregacao == "Município"){
+      return(input$recand_mun)
+    }
+  })
+  
+  output$recand_mun <- DT::renderDataTable(server = TRUE,{ ## Tabela que devera ser chamada na ui
+    brecand_mun()
+  })
+  
+  brecand_mun <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'recand_mun',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons', 
+                     'FixedColumns'),{
+                       
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       municipio <- req(input$MUN2)
+                       
+                       if(cargo == "Vereador" &
+                          indicador == "Recandidaturas" & 
+                          agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           renov_parl_mun %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           Recandidaturas) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    Recandidaturas)
+                         } else{
+                           renov_parl_mun %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           Recandidaturas) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    Recandidaturas)
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Recandidaturas" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           renov_parl_pf %>% 
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           Recandidaturas) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    Recandidaturas)
+                         } else{
+                           renov_parl_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           Recandidaturas) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    Recandidaturas)
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (MUN)  
+  
+  ag_recand_mun <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Recandidaturas" & 
+       agregacao == "Município"){
+      return(input$agreg_recand_mun)
+    }
+  })
+  
+  output$agreg_recand_mun <- DT::renderDataTable(server = TRUE,{
+    bagreg_recand_mun()
+  })
+  
+  bagreg_recand_mun <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'recand_mun_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       municipio <- req(input$MUN2)
+                       
+                       if(cargo == "Vereador" &
+                          indicador == "Recandidaturas" & 
+                          agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           data = renov_parl_mun %>%
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
+                             unique()
+                         } else{
+                           data = renov_parl_mun %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
+                             unique()
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Recandidaturas" & 
+                                 agregacao == "Município"){
+                         if(municipio == ""){
+                           return()
+                         } else if(municipio == "Todos os municípios"){
+                           data = renov_parl_pf %>%
+                             dplyr::filter(Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
+                             unique()
+                         } else{
+                           data = renov_parl_pf %>% 
+                             dplyr::filter(`Nome do município2` == input$MUN2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>%
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
+                             unique()
+                         }
+                       }
+                     })
+  })
+  
+  
+  ## Resumo
+  
+  ### Vereador
+  
+  
+  recandmed <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Recandidaturas" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$recand_med)
+    }
+  })
+  
+  output$recand_med <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brecand_med()
+  })
+  
+  brecand_med <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 't'), 
+      class = "display",
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       
+                       if(cargo == "Vereador" &
+                          indicador == "Recandidaturas" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média nacional das recandidaturas`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional das recandidaturas`)%>% 
+                             mutate("media" = "Média nacional das recandidaturas") %>% 
+                             column_to_rownames("media")
+                           
+                           media2 <- renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           `Média das recandidaturas`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média das recandidaturas`)%>% 
+                             mutate("media" = "Média das recandidaturas do grupo") %>% 
+                             column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Recandidaturas" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           
+                           media1 <- renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           #Turno,
+                                           `Média nacional das recandidaturas`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média nacional das recandidaturas`)%>% 
+                             mutate("media" = "Média nacional das recandidaturas")  %>% 
+                             column_to_rownames("media")
+                           
+                           #media1 <- media1 %>% 
+                           # mutate("media" = ifelse(media1$Turno == 2,
+                           #                        "Média nacional da renovação líquida.",
+                           #                       media1$media)) %>% 
+                           #column_to_rownames("media")
+                           
+                           
+                           media2 <- renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           #Turno,
+                                           `Média das recandidaturas`) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    `Média das recandidaturas`)%>% 
+                             mutate("media" = "Média das recandidaturas do grupo") %>% 
+                             column_to_rownames("media") 
+                           
+                           #media2 <- media2 %>% 
+                           # mutate("media" = ifelse(media2$Turno == 2,
+                           #                        "Média da renovação líquida.",
+                           #                       media2$media)) %>% 
+                           # column_to_rownames("media")
+                           
+                           media1 <- rbind(media1, media2)
+                           
+                           media1
+                           
+                         }
+                       }
+                     })
+  })  
+  
+  
+  
+  recandint <- reactive({ ## Atributos da tabela
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    uf <- input$UF2
+    if(indicador == "Recandidaturas" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$recand_int)
+    }
+  })
+  
+  output$recand_int <- DT::renderDataTable(server = FALSE,{ ## Tabela que devera ser chamada na ui
+    brecand_int()
+  })
+  
+  brecand_int <- eventReactive(input$BCALC2, { ## Botao de acao
+    datatable(options = list(
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(
+        leftColumns = 1
+      ),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bfrtip',
+      buttons = list(list(
+        extend = 'csv',
+        title = 'recand_int',
+        bom = TRUE))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       
+                       if(cargo == "Vereador" &
+                          indicador == "Recandidaturas" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           Recandidaturas) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    Recandidaturas)
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Recandidaturas" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 &
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             dplyr::select(`Ano da eleição`,
+                                           UF,
+                                           `Nome do município`,
+                                           Recandidaturas) %>% 
+                             unique() %>% 
+                             spread(`Ano da eleição`,
+                                    Recandidaturas)
+                         }
+                       }
+                     })
+  })  
+  
+  ## Dados desagregados
+  
+  ### Renovacao parlamentar (Eleitores aptos)  
+  
+  ag_recand_int <- reactive({
+    indicador <- input$INDICADORES_RENOV
+    agregacao <- input$AGREGACAO_REGIONAL2
+    if(indicador == "Recandidaturas" & 
+       agregacao == "Quantidade de eleitores aptos"){
+      return(input$agreg_recand_int)
+    }
+  })
+  
+  output$agreg_recand_int <- DT::renderDataTable(server = FALSE,{
+    bagreg_recand_int()
+  })
+  
+  bagreg_recand_int <- eventReactive(input$BCALC2, {
+    datatable(options = list(
+      scrollX = TRUE,
+      autoWidth = FALSE,
+      ordering = TRUE, 
+      searching = FALSE,
+      lengthChange = FALSE,
+      lengthMenu = FALSE,
+      fixedColumns = list(list(
+        leftColumns = 3
+      )),
+      columnDefs = list(list(
+        className = 'dt-center', 
+        targets = '_all')),
+      dom = 'Bflrtip',
+      buttons = list(
+        list(
+          extend = 'csv',
+          exportOptions = list(
+            columns = ':visible'),
+          title = 'recand_int_agreg',
+          bom = TRUE),
+        list(                     
+          extend = 'colvis',                     
+          text = 'Colunas'))), 
+      class = "display",
+      rownames = FALSE,
+      extensions = c('Buttons',
+                     'FixedColumns'),{
+                       
+                       cargo <- input$DESCRICAO_CARGO2
+                       indicador <- input$INDICADORES_RENOV
+                       agregacao <- input$AGREGACAO_REGIONAL2
+                       intervalo <- req(input$INT2)
+                       
+                       if(cargo == "Vereador" &
+                          indicador == "Recandidaturas" & 
+                          agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = renov_parl_mun %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
+                             unique()
+                         }
+                       } else if(cargo == "Prefeito" &
+                                 indicador == "Recandidaturas" & 
+                                 agregacao == "Quantidade de eleitores aptos"){
+                         if(intervalo == ""){
+                           return()
+                         } else{
+                           data = renov_parl_pf %>% 
+                             dplyr::filter(`Eleitores aptos` == input$INT2 & 
+                                             Cargo == input$DESCRICAO_CARGO2) %>% 
+                             select(-`Nome do município2`, -`Eleitores aptos`,
+                                    -`Média da reeleição`,
+                                    -`Média da reeleição líquida`,
+                                    -`Média da renovação`,
+                                    -`Média da renovação líquida`,
+                                    -`Média das recandidaturas`,
+                                    -`Média nacional da reeleição`,
+                                    -`Média nacional da reeleição líquida`,
+                                    -`Média nacional da renovação`,
+                                    -`Média nacional da renovação líquida`,
+                                    -`Média nacional das recandidaturas`) %>% 
                              unique()
                          }
                        }
