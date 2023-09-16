@@ -1,24 +1,35 @@
 
+## OBJETIVOS
 
-# Objetivo
-#'        - Calcular os indicadores de volatilidade:
-#'        - Volatilidade eleitoral, Volatilidade parlamentar;
-#'        - Limpeza e padronizacao dos dados.
+#'        - Calcular os indicadores de Volatilidade:
+#'        
+#'        - 1. Volatilidade Eleitoral; e
+#'        - 2. Volatilidade Parlamentar.
+
+#'        - Limpeza e padronização dos dados gerados.
+
+# 1. Indicadores ----------------------------------------------------------
+
+## 1.1. Eleições Gerais ----------------------------------------------------
+
+### 1.1.1. Brasil -----------------------------------------------------------
+
+#### 1.1.1.1. Deputado Federal -----------------------------------------------
 
 
-# 1. Formula -------------------------------------------------------------
+#### 1.1.1.2. Deputado Estadual ----------------------------------------------
 
 
-# 1.1. Volatilidade -------------------------------------------------------
-
-## Formula para o calculo da volatilidade
-
-volat_elet <- function(vt1,vt2) {
-  sum(abs((vt2*100) - (vt1*100)))/2 
-}
+### 1.1.2. Estado -----------------------------------------------------------
 
 
-# 2. Calculo dos indicadores ----------------------------------------------------------
+#### 1.1.2.1. Deputado Federal -----------------------------------------------
+
+
+
+#### 1.1.2.2. Deputado Estadual ----------------------------------------------
+
+
 
 
 # 2.1. Deputado Federal ---------------------------------------------------

@@ -11,14 +11,15 @@ library(fansi)
 ## AMBIENTE
 
 options(timeout = 999999)
-options(scipen = 999)
+options(scipen = 99999)
 
-## Calcula os indicadores eleitorais
+## Realiza o cálculo, padronização e exportação dos 
+## indicadores eleitorais em formato .rds
 
 source("scripts/funcoes.R", 
        encoding = "UTF-8")
 
-source("scripts/01_join.R", 
+source("scripts/01_data.R", 
        encoding = "UTF-8")
 
 source("scripts/02_calcfragmentacao.R", 

@@ -29,8 +29,6 @@ library(abjutils)
 #'              7. Acima de 500 mil habitantes (0,62% dos municípios e 29,28% da população total);
       
 
-
-
 # 1. Data -----------------------------------------------------------------
 
 ## Faz o download do banco que contem o numero de eleitores aptos por ano, uf e municipio
@@ -62,14 +60,18 @@ aptos <- vrcm %>%
   select("ANO_ELEICAO",
          "UF",
          "COD_MUN_TSE",
+         "COD_MUN_IBGE",
          "QTD_APTOS") %>% 
   rename("Ano da eleição" = "ANO_ELEICAO",
          "Código do município" = "COD_MUN_TSE",
+         "Código IBGE do município" = "COD_MUN_IBGE",
          "Eleitores aptos" = "QTD_APTOS")
+
 
 ### Transforma a coluna ano da eleição em caracter
 
 aptos$`Ano da eleição` <- as.character(aptos$`Ano da eleição`)
+
 
 # 2. Join ------------------------------------------------------
 
@@ -99,7 +101,7 @@ pretty_breaks <- c(0,5000,10000,20000,50000,100000,200000)
 
 ## Cria uma variavel com o maior numero de eleitores aptos
 
-max <- max(frag_leg_mun$`Eleitores aptos`)
+max <- max(vol_mun$`Eleitores aptos`)
 
 ## Cria as quebras e as legendas 
 
@@ -245,9 +247,10 @@ frag_leg_mun <- frag_leg_mun %>%
   dplyr::select(`Ano da eleição`,
                 UF, 
                 `Código do município`,
+                `Código IBGE do município`,
                 `Nome do município`,
                 Cargo,
-                `Vagas`,
+                Vagas,
                 `Votos válidos`,
                 `Sigla do partido`,
                 `Total de votos conquistados`,
@@ -261,7 +264,8 @@ frag_leg_mun <- frag_leg_mun %>%
                 Fragmentação,
                 `Desproporcionalidade`,
                 `Eleitores aptos`) %>% 
-  dplyr::rename("Cadeiras disponíveis" = "Vagas")
+  dplyr::rename("Código TSE do município" = "Código do município",
+                "Cadeiras disponíveis" = "Vagas")
 
 
 ### Distribuicao de cadeiras
@@ -270,6 +274,7 @@ distcad_mun <- distcad_mun %>%
   select(`Ano da eleição`,
          UF,
          `Código do município`,
+         `Código IBGE do município`,
          `Nome do município`,
          Cargo,
          `Cadeiras oferecidas`,
@@ -279,7 +284,8 @@ distcad_mun <- distcad_mun %>%
          `Quociente eleitoral`,
          `Quociente partidário`,
          `Eleitores aptos`) %>% 
-  rename("Cadeiras disponíveis" = "Cadeiras oferecidas")
+  rename("Código TSE do município" = "Código do município",
+         "Cadeiras disponíveis" = "Cadeiras oferecidas")
 
 ### Renovacao parlamentar
 
@@ -287,6 +293,7 @@ renov_parl_mun <- renov_parl_mun %>%
   select(`Ano da eleição`,
          UF,
          `Código do município`,
+         `Código IBGE do município`,
          `Nome do município`,
          Cargo,
          `Cadeiras disponíveis`,
@@ -296,7 +303,8 @@ renov_parl_mun <- renov_parl_mun %>%
          `Renovação bruta`,
          `Renovação líquida`,
          `Eleitores aptos`
-         )
+         ) %>% 
+  rename("Código TSE do município" = "Código do município")
 
 ### Alienacao
 
@@ -304,6 +312,7 @@ alien_mun <- alien_mun %>%
   select(`Ano da eleição`,
          UF,
          `Código do município`,
+         `Código IBGE do município`,
          `Nome do município`,
          Cargo,
          Turno,
@@ -316,7 +325,8 @@ alien_mun <- alien_mun %>%
          `Percentual de votos nulos`,
          `Alienação absoluta`,
          `Alienação percentual`,
-         `Eleitores aptos`)
+         `Eleitores aptos`) %>% 
+  rename("Código TSE do município" = "Código do município")
 
 ### Volatilidade eleitoral
 
@@ -324,11 +334,26 @@ vol_mun <- vol_mun %>%
   select(`Ano da eleição`,
          UF,
          `Código do município`,
+         `Código IBGE do município`,
          `Nome do município`,
          Cargo,
          `Volatilidade eleitoral`,
          `Volatilidade parlamentar`,
-         `Eleitores aptos`)
+         `Eleitores aptos`,
+         `Média da volatilidade eleitoral`,
+         `Média da volatilidade parlamentar`,
+         `Média nacional da volatilidade eleitoral`,
+         `Média nacional da volatilidade parlamentar`) %>% 
+  rename("Código TSE do município" = "Código do município")
+
+vol_mun <- vol_mun %>% 
+  arrange(`Ano da eleição`, UF, `Nome do município`)
+
+vol_mun$`Volatilidade eleitoral` <- trimws(vol_mun$`Volatilidade eleitoral`)
+vol_mun$`Volatilidade parlamentar` <- trimws(vol_mun$`Volatilidade parlamentar`)
+
+vol_mun <- vol_mun %>% 
+  filter(`Volatilidade eleitoral` != "100,01")
 
 
 # 5. Salva os arquivos ----------------------------------------------------

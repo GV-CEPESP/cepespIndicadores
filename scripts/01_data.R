@@ -21,179 +21,188 @@ vagas_dep <- readRDS("data/input/vagas_deputados_fed_est_1998_2022.rds")
 
 vagas_ver <- readRDS("data/input/vagas_vereadores_2000_2020.rds")
 
+## Carregando os arquivos pré-processados contendo os códigos TSE e IBGE, 
+## bem como os respectivos nomes dos municípios padronizados
+
+municipios <- readRDS("data/input/codigo_municipio_ibge_tse.rds")
+
 ### 1.1.1. Resumo da Eleição ------------------------------------------------
 
 #### 1.1.1.1. Eleições Gerais ------------------------------------------------
 
 ## URL dos dados 
 
-url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/detalhe_votacao_munzona/detalhe_votacao_munzona_ANO.zip"
-
-## Lista com os anos das eleições gerais faltantes
-
-anos <- seq(1998, 2022, by = 4)
-
-## Loop que faz o download dos dados
-
-for(i in anos){
-
-  cat("Lendo", i, "\n")
-
-  resumo_gr <- stringr::str_replace_all(url,
-                                     "ANO",
-                                     as.character(i))
-
-  download.file(resumo_gr,
-                str_c("resumo_gr",
-                      i,
-                      ".zip"))
-
-  }
-
-## Cria uma lista com os nomes dos arquivos baixados
-
-list_dados <- list.files(pattern = "resumo_gr")
-
-## Loop que unzipa os dados
-
-for(i in seq_along(list_dados)){
-
-  cat("Lendo", list_dados[i], "\n")
-
-  unzip(list_dados[i],
-        exdir = "data/input/Resumo da Eleição/Eleições Gerais")
-
-  file.remove(list_dados[i])
-
-}
-
-## Cria uma lista com os nomes dos arquivos extraídos
-
-list_dados <- list.files(path = "data/input/Resumo da Eleição/Eleições Gerais",
-                         pattern = "detalhe_votacao_munzona")
-
-## Remove o arquivo 'BRASIL'
-
-for(i in seq_along(list_dados)){
-
-  br_files_vagas <- list.files(path = "data/input/Resumo da Eleição/Eleições Gerais",
-                               pattern = "BRASIL",
-                               full.names = TRUE)
-
-  file.remove(br_files_vagas)
-
-}
-
-## Atualiza a lista de arquivos extraídos
-
-list_dados <- list.files(path = "data/input/Resumo da Eleição/Eleições Gerais",
-                         pattern = "detalhe_votacao_munzona")
-
-## Cria uma lista vazia onde os dados serão armazenados
-
-resumo_gr <- list()
-
-## For loop que lê os arquivos
-
-for (i in seq_along(list_dados)) {
-
-  cat("lendo", list_dados[i], "\n")
-
-    temp <- read.table(file = paste0("data/input/Resumo da Eleição/Eleições Gerais/",
-                                     list_dados[i]),
-                       header = TRUE,
-                       sep = ";",
-                       stringsAsFactors = FALSE,
-                       fileEncoding = "latin1")
-    
-    if(grepl("2022|2018", list_dados[i])){
-
-      temp <- temp %>%
-        mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>% 
-        filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
-                 NM_TIPO_ELEICAO == "ELEICAO ORDINARIA") %>% 
-        rename("QT_VOTOS_NOMINAIS" = "QT_VOTOS_NOMINAIS_VALIDOS",
-               "QT_VOTOS_LEGENDA" = "QT_VOTOS_LEGENDA_VALIDOS",
-               "QT_VOTOS_ANULADOS" = "QT_TOTAL_VOTOS_ANULADOS") %>%
-        select(ANO_ELEICAO,
-               NR_TURNO,
-               SG_UF,
-               CD_CARGO,
-               DS_CARGO,
-               QT_APTOS,
-               QT_COMPARECIMENTO,
-               QT_ABSTENCOES,
-               QT_VOTOS_VALIDOS,
-               QT_VOTOS_NOMINAIS,
-               QT_VOTOS_LEGENDA,
-               QT_VOTOS_BRANCOS,
-               QT_VOTOS_NULOS,
-               QT_VOTOS_ANULADOS) %>%
-        group_by(ANO_ELEICAO,
-                 NR_TURNO,
-                 SG_UF,
-                 CD_CARGO,
-                 DS_CARGO) %>%
-        summarise(QT_APTOS = sum(QT_APTOS),
-                  QT_COMPARECIMENTO = sum(QT_COMPARECIMENTO),
-                  QT_ABSTENCOES = sum(QT_ABSTENCOES),
-                  QT_VOTOS_VALIDOS = sum(QT_VOTOS_VALIDOS),
-                  QT_VOTOS_NOMINAIS = sum(QT_VOTOS_NOMINAIS),
-                  QT_VOTOS_LEGENDA = sum(QT_VOTOS_LEGENDA),
-                  QT_VOTOS_BRANCOS = sum(QT_VOTOS_BRANCOS),
-                  QT_VOTOS_NULOS = sum(QT_VOTOS_NULOS),
-                  QT_VOTOS_ANULADOS = sum(QT_VOTOS_ANULADOS))
-      
-    } else {
-     
-      temp <- temp %>%
-        mutate(QT_VOTOS_VALIDOS = QT_VOTOS_NOMINAIS + QT_VOTOS_LEGENDA,
-               NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>%
-        filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
-               NM_TIPO_ELEICAO == "ELEICAO ORDINARIA") %>% 
-        select(ANO_ELEICAO,
-               NR_TURNO,
-               SG_UF,
-               CD_CARGO,
-               DS_CARGO,
-               QT_APTOS,
-               QT_COMPARECIMENTO,
-               QT_ABSTENCOES,
-               QT_VOTOS_VALIDOS,
-               QT_VOTOS_NOMINAIS,
-               QT_VOTOS_LEGENDA,
-               QT_VOTOS_BRANCOS,
-               QT_VOTOS_NULOS,
-               QT_VOTOS_ANULADOS) %>%
-        group_by(ANO_ELEICAO,
-                 NR_TURNO,
-                 SG_UF,
-                 CD_CARGO,
-                 DS_CARGO) %>%
-        summarise(QT_APTOS = sum(QT_APTOS),
-                  QT_COMPARECIMENTO = sum(QT_COMPARECIMENTO),
-                  QT_ABSTENCOES = sum(QT_ABSTENCOES),
-                  QT_VOTOS_VALIDOS = sum(QT_VOTOS_VALIDOS),
-                  QT_VOTOS_NOMINAIS = sum(QT_VOTOS_NOMINAIS),
-                  QT_VOTOS_LEGENDA = sum(QT_VOTOS_LEGENDA),
-                  QT_VOTOS_BRANCOS = sum(QT_VOTOS_BRANCOS),
-                  QT_VOTOS_NULOS = sum(QT_VOTOS_NULOS),
-                  QT_VOTOS_ANULADOS = sum(QT_VOTOS_ANULADOS)) 
-      
-    }
-
-      resumo_gr[[i]] <- temp
-
-}
-
-## Empilhando os bancos
-
-resumo_gr <- rbind.fill(resumo_gr)
-
-## Salvando os dados já agregados
-
-saveRDS(resumo_gr,
-        "data/input/Resumo da Eleição/Eleições Gerais/resumo_gr.rds")
+# url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/detalhe_votacao_munzona/detalhe_votacao_munzona_ANO.zip"
+# 
+# ## Lista com os anos das eleições gerais faltantes
+# 
+# anos <- seq(1998, 2022, by = 4)
+# 
+# ## Loop que faz o download dos dados
+# 
+# for(i in anos){
+# 
+#   cat("Lendo", i, "\n")
+# 
+#   resumo_gr <- stringr::str_replace_all(url,
+#                                      "ANO",
+#                                      as.character(i))
+# 
+#   download.file(resumo_gr,
+#                 str_c("resumo_gr",
+#                       i,
+#                       ".zip"))
+# 
+#   }
+# 
+# ## Cria uma lista com os nomes dos arquivos baixados
+# 
+# list_dados <- list.files(pattern = "resumo_gr")
+# 
+# ## Loop que unzipa os dados
+# 
+# for(i in seq_along(list_dados)){
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#   unzip(list_dados[i],
+#         exdir = "data/input/Resumo da Eleição/Eleições Gerais")
+# 
+#   file.remove(list_dados[i])
+# 
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos extraídos
+# 
+# list_dados <- list.files(path = "data/input/Resumo da Eleição/Eleições Gerais",
+#                          pattern = "detalhe_votacao_munzona")
+# 
+# ## Remove o arquivo 'BRASIL'
+# 
+# for(i in seq_along(list_dados)){
+# 
+#   br_files_vagas <- list.files(path = "data/input/Resumo da Eleição/Eleições Gerais",
+#                                pattern = "BRASIL",
+#                                full.names = TRUE)
+# 
+#   file.remove(br_files_vagas)
+# 
+# }
+# 
+# ## Atualiza a lista de arquivos extraídos
+# 
+# list_dados <- list.files(path = "data/input/Resumo da Eleição/Eleições Gerais",
+#                          pattern = "detalhe_votacao_munzona")
+# 
+# ## Cria uma lista vazia onde os dados serão armazenados
+# 
+# resumo_gr <- list()
+# 
+# ## For loop que lê os arquivos
+# 
+# for (i in seq_along(list_dados)) {
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#     temp <- read.table(file = paste0("data/input/Resumo da Eleição/Eleições Gerais/",
+#                                      list_dados[i]),
+#                        header = TRUE,
+#                        sep = ";",
+#                        stringsAsFactors = FALSE,
+#                        fileEncoding = "latin1")
+# 
+#     if(grepl("2022|2018", list_dados[i])){
+# 
+#       temp <- temp %>%
+#         mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>%
+#         filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
+#                NM_TIPO_ELEICAO == "ELEICAO ORDINARIA" |
+#                NM_TIPO_ELEICAO == "ORDINÁRIA" |
+#                NM_TIPO_ELEICAO == "ORDINARIA") %>%
+#         rename("QT_VOTOS_NOMINAIS" = "QT_VOTOS_NOMINAIS_VALIDOS",
+#                "QT_VOTOS_LEGENDA" = "QT_VOTOS_LEGENDA_VALIDOS",
+#                "QT_VOTOS_ANULADOS" = "QT_TOTAL_VOTOS_ANULADOS") %>%
+#         select(ANO_ELEICAO,
+#                NR_TURNO,
+#                SG_UF,
+#                CD_CARGO,
+#                DS_CARGO,
+#                QT_APTOS,
+#                QT_COMPARECIMENTO,
+#                QT_ABSTENCOES,
+#                QT_VOTOS_VALIDOS,
+#                QT_VOTOS_NOMINAIS,
+#                QT_VOTOS_LEGENDA,
+#                QT_VOTOS_BRANCOS,
+#                QT_VOTOS_NULOS,
+#                QT_VOTOS_ANULADOS) %>%
+#         group_by(ANO_ELEICAO,
+#                  NR_TURNO,
+#                  SG_UF,
+#                  CD_CARGO,
+#                  DS_CARGO) %>%
+#         summarise(QT_APTOS = sum(QT_APTOS),
+#                   QT_COMPARECIMENTO = sum(QT_COMPARECIMENTO),
+#                   QT_ABSTENCOES = sum(QT_ABSTENCOES),
+#                   QT_VOTOS_VALIDOS = sum(QT_VOTOS_VALIDOS),
+#                   QT_VOTOS_NOMINAIS = sum(QT_VOTOS_NOMINAIS),
+#                   QT_VOTOS_LEGENDA = sum(QT_VOTOS_LEGENDA),
+#                   QT_VOTOS_BRANCOS = sum(QT_VOTOS_BRANCOS),
+#                   QT_VOTOS_NULOS = sum(QT_VOTOS_NULOS),
+#                   QT_VOTOS_ANULADOS = sum(QT_VOTOS_ANULADOS))
+# 
+#     } else {
+# 
+#       temp <- temp %>%
+#         mutate(QT_VOTOS_VALIDOS = QT_VOTOS_NOMINAIS + QT_VOTOS_LEGENDA,
+#                NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>%
+#         filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
+#                NM_TIPO_ELEICAO == "ELEICAO ORDINARIA" |
+#                NM_TIPO_ELEICAO == "ORDINÁRIA" |
+#                NM_TIPO_ELEICAO == "ORDINARIA") %>%
+#         select(ANO_ELEICAO,
+#                NR_TURNO,
+#                SG_UF,
+#                CD_CARGO,
+#                DS_CARGO,
+#                QT_APTOS,
+#                QT_COMPARECIMENTO,
+#                QT_ABSTENCOES,
+#                QT_VOTOS_VALIDOS,
+#                QT_VOTOS_NOMINAIS,
+#                QT_VOTOS_LEGENDA,
+#                QT_VOTOS_BRANCOS,
+#                QT_VOTOS_NULOS,
+#                QT_VOTOS_ANULADOS) %>%
+#         group_by(ANO_ELEICAO,
+#                  NR_TURNO,
+#                  SG_UF,
+#                  CD_CARGO,
+#                  DS_CARGO) %>%
+#         summarise(QT_APTOS = sum(QT_APTOS),
+#                   QT_COMPARECIMENTO = sum(QT_COMPARECIMENTO),
+#                   QT_ABSTENCOES = sum(QT_ABSTENCOES),
+#                   QT_VOTOS_VALIDOS = sum(QT_VOTOS_VALIDOS),
+#                   QT_VOTOS_NOMINAIS = sum(QT_VOTOS_NOMINAIS),
+#                   QT_VOTOS_LEGENDA = sum(QT_VOTOS_LEGENDA),
+#                   QT_VOTOS_BRANCOS = sum(QT_VOTOS_BRANCOS),
+#                   QT_VOTOS_NULOS = sum(QT_VOTOS_NULOS),
+#                   QT_VOTOS_ANULADOS = sum(QT_VOTOS_ANULADOS))
+# 
+#     }
+# 
+#       resumo_gr[[i]] <- temp
+# 
+# }
+# 
+# ## Empilhando os bancos
+# 
+# resumo_gr <- rbind.fill(resumo_gr)
+# 
+# ## Salvando os dados já agregados
+# 
+# saveRDS(resumo_gr,
+#         "data/input/Resumo da Eleição/Eleições Gerais/resumo_gr.rds")
 
 ## Lendo arquivo já compilado
 
@@ -203,177 +212,181 @@ resumo_gr <- readRDS("data/input/Resumo da Eleição/Eleições Gerais/resumo_gr
 
 ## URL dos dados
 
-url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/detalhe_votacao_munzona/detalhe_votacao_munzona_ANO.zip"
-
-## Lista com os anos das eleições municipais faltantes
-
-anos <- seq(2000, 2020, by = 4)
-
-## Loop que faz o download dos dados
-
-for(i in anos){
-
-  cat("Lendo", i, "\n")
-
-  resumo_mun <- stringr::str_replace_all(url,
-                                         "ANO",
-                                         as.character(i))
-
-  download.file(resumo_mun,
-                str_c("resumo_mun",
-                      i,
-                      ".zip"))
-}
-
-## Cria uma lista com os nomes dos arquivos baixados
-
-list_dados <- list.files(pattern = "resumo_mun")
-
-## Loop que unzipa os dados
-
-for(i in seq_along(list_dados)){
-
-  cat("Lendo", list_dados[i], "\n")
-
-  unzip(list_dados[i],
-        exdir = "data/input/Resumo da Eleição/Eleições Municipais")
-
-  file.remove(list_dados[i])
-
-}
-
-## Cria uma lista com os nomes dos arquivos extraídos
-
-list_dados <- list.files(path = "data/input/Resumo da Eleição/Eleições Municipais",
-                         pattern = "detalhe_votacao_munzona")
-
-## Remove o arquivo 'BRASIL'
-
-for(i in seq_along(list_dados)){
-
-  br_files_vagas <- list.files(path = "data/input/Resumo da Eleição/Eleições Municipais",
-                               pattern = "BRASIL",
-                               full.names = TRUE)
-
-  file.remove(br_files_vagas)
-
- }
-
-## Atualiza a lista de arquivos extraídos
-
-list_dados <- list.files(path = "data/input/Resumo da Eleição/Eleições Municipais",
-                         pattern = "detalhe_votacao_munzona")
-
-## Cria uma lista vazia onde os dados serão armazenados
-
-resumo_mun <- list()
-
-## For loop que lê os arquivos
-
-for (i in seq_along(list_dados)) {
-
-  cat("lendo", list_dados[i], "\n")
-
-    temp <- read.table(file = paste0("data/input/Resumo da Eleição/Eleições Municipais/",
-                                     list_dados[i]),
-                       header = TRUE,
-                       sep = ";",
-                       stringsAsFactors = FALSE,
-                       fileEncoding = "latin1")
-    
-    if(grepl("2020", list_dados[i])){
-
-    temp <- temp %>%
-      mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>% 
-      filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
-             NM_TIPO_ELEICAO == "ELEICAO ORDINARIA") %>% 
-      rename("QT_VOTOS_NOMINAIS" = "QT_VOTOS_NOMINAIS_VALIDOS",
-             "QT_VOTOS_LEGENDA" = "QT_VOTOS_LEGENDA_VALIDOS",
-             "QT_VOTOS_ANULADOS" = "QT_TOTAL_VOTOS_ANULADOS") %>%
-      select(ANO_ELEICAO,
-             NR_TURNO,
-             SG_UF,
-             CD_MUNICIPIO,
-             CD_CARGO,
-             DS_CARGO,
-             QT_APTOS,
-             QT_COMPARECIMENTO,
-             QT_ABSTENCOES,
-             QT_VOTOS_VALIDOS,
-             QT_VOTOS_NOMINAIS,
-             QT_VOTOS_LEGENDA,
-             QT_VOTOS_BRANCOS,
-             QT_VOTOS_NULOS,
-             QT_VOTOS_ANULADOS) %>%
-      group_by(ANO_ELEICAO,
-               NR_TURNO,
-               SG_UF,
-               CD_MUNICIPIO,
-               CD_CARGO,
-               DS_CARGO) %>%
-      summarise(QT_APTOS = sum(QT_APTOS),
-                QT_COMPARECIMENTO = sum(QT_COMPARECIMENTO),
-                QT_ABSTENCOES = sum(QT_ABSTENCOES),
-                QT_VOTOS_VALIDOS = sum(QT_VOTOS_VALIDOS),
-                QT_VOTOS_NOMINAIS = sum(QT_VOTOS_NOMINAIS),
-                QT_VOTOS_LEGENDA = sum(QT_VOTOS_LEGENDA),
-                QT_VOTOS_BRANCOS = sum(QT_VOTOS_BRANCOS),
-                QT_VOTOS_NULOS = sum(QT_VOTOS_NULOS),
-                QT_VOTOS_ANULADOS = sum(QT_VOTOS_ANULADOS))
-    
-    } else {
-      
-      temp <- temp %>%
-        mutate(QT_VOTOS_VALIDOS = QT_VOTOS_NOMINAIS + QT_VOTOS_LEGENDA,
-               NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>% 
-        filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
-               NM_TIPO_ELEICAO == "ELEICAO ORDINARIA") %>% 
-        select(ANO_ELEICAO,
-               NR_TURNO,
-               SG_UF,
-               CD_MUNICIPIO,
-               CD_CARGO,
-               DS_CARGO,
-               QT_APTOS,
-               QT_COMPARECIMENTO,
-               QT_ABSTENCOES,
-               QT_VOTOS_VALIDOS,
-               QT_VOTOS_NOMINAIS,
-               QT_VOTOS_LEGENDA,
-               QT_VOTOS_BRANCOS,
-               QT_VOTOS_NULOS,
-               QT_VOTOS_ANULADOS) %>%
-        group_by(ANO_ELEICAO,
-                 NR_TURNO,
-                 SG_UF,
-                 CD_MUNICIPIO,
-                 CD_CARGO,
-                 DS_CARGO) %>%
-        summarise(QT_APTOS = sum(QT_APTOS),
-                  QT_COMPARECIMENTO = sum(QT_COMPARECIMENTO),
-                  QT_ABSTENCOES = sum(QT_ABSTENCOES),
-                  QT_VOTOS_VALIDOS = sum(QT_VOTOS_VALIDOS),
-                  QT_VOTOS_NOMINAIS = sum(QT_VOTOS_NOMINAIS),
-                  QT_VOTOS_LEGENDA = sum(QT_VOTOS_LEGENDA),
-                  QT_VOTOS_BRANCOS = sum(QT_VOTOS_BRANCOS),
-                  QT_VOTOS_NULOS = sum(QT_VOTOS_NULOS),
-                  QT_VOTOS_ANULADOS = sum(QT_VOTOS_ANULADOS))
-      
-    }
-
-    resumo_mun[[i]] <- temp
-
-    }
-
-## Empilhando os bancos
-
-resumo_mun <- rbind.fill(resumo_mun)
-
-## Salvando os dados já agregados
-
-saveRDS(resumo_mun,
-        "data/input/Resumo da Eleição/Eleições Municipais/resumo_mun.rds")
-
+# url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/detalhe_votacao_munzona/detalhe_votacao_munzona_ANO.zip"
+# 
+# ## Lista com os anos das eleições municipais faltantes
+# 
+# anos <- seq(2000, 2020, by = 4)
+# 
+# ## Loop que faz o download dos dados
+# 
+# for(i in anos){
+# 
+#   cat("Lendo", i, "\n")
+# 
+#   resumo_mun <- stringr::str_replace_all(url,
+#                                          "ANO",
+#                                          as.character(i))
+# 
+#   download.file(resumo_mun,
+#                 str_c("resumo_mun",
+#                       i,
+#                       ".zip"))
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos baixados
+# 
+# list_dados <- list.files(pattern = "resumo_mun")
+# 
+# ## Loop que unzipa os dados
+# 
+# for(i in seq_along(list_dados)){
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#   unzip(list_dados[i],
+#         exdir = "data/input/Resumo da Eleição/Eleições Municipais")
+# 
+#   file.remove(list_dados[i])
+# 
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos extraídos
+# 
+# list_dados <- list.files(path = "data/input/Resumo da Eleição/Eleições Municipais",
+#                          pattern = "detalhe_votacao_munzona")
+# 
+# ## Remove o arquivo 'BRASIL'
+# 
+# for(i in seq_along(list_dados)){
+# 
+#   br_files_vagas <- list.files(path = "data/input/Resumo da Eleição/Eleições Municipais",
+#                                pattern = "BRASIL",
+#                                full.names = TRUE)
+# 
+#   file.remove(br_files_vagas)
+# 
+#  }
+# 
+# ## Atualiza a lista de arquivos extraídos
+# 
+# list_dados <- list.files(path = "data/input/Resumo da Eleição/Eleições Municipais",
+#                          pattern = "detalhe_votacao_munzona")
+# 
+# ## Cria uma lista vazia onde os dados serão armazenados
+# 
+# resumo_mun <- list()
+# 
+# ## For loop que lê os arquivos
+# 
+# for (i in seq_along(list_dados)) {
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#     temp <- read.table(file = paste0("data/input/Resumo da Eleição/Eleições Municipais/",
+#                                      list_dados[i]),
+#                        header = TRUE,
+#                        sep = ";",
+#                        stringsAsFactors = FALSE,
+#                        fileEncoding = "latin1")
+# 
+#     if(grepl("2020", list_dados[i])){
+# 
+#     temp <- temp %>%
+#       mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>%
+#       filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
+#              NM_TIPO_ELEICAO == "ELEICAO ORDINARIA" |
+#              NM_TIPO_ELEICAO == "ORDINÁRIA" |
+#              NM_TIPO_ELEICAO == "ORDINARIA") %>%
+#       rename("QT_VOTOS_NOMINAIS" = "QT_VOTOS_NOMINAIS_VALIDOS",
+#              "QT_VOTOS_LEGENDA" = "QT_VOTOS_LEGENDA_VALIDOS",
+#              "QT_VOTOS_ANULADOS" = "QT_TOTAL_VOTOS_ANULADOS") %>%
+#       select(ANO_ELEICAO,
+#              NR_TURNO,
+#              SG_UF,
+#              CD_MUNICIPIO,
+#              CD_CARGO,
+#              DS_CARGO,
+#              QT_APTOS,
+#              QT_COMPARECIMENTO,
+#              QT_ABSTENCOES,
+#              QT_VOTOS_VALIDOS,
+#              QT_VOTOS_NOMINAIS,
+#              QT_VOTOS_LEGENDA,
+#              QT_VOTOS_BRANCOS,
+#              QT_VOTOS_NULOS,
+#              QT_VOTOS_ANULADOS) %>%
+#       group_by(ANO_ELEICAO,
+#                NR_TURNO,
+#                SG_UF,
+#                CD_MUNICIPIO,
+#                CD_CARGO,
+#                DS_CARGO) %>%
+#       summarise(QT_APTOS = sum(QT_APTOS),
+#                 QT_COMPARECIMENTO = sum(QT_COMPARECIMENTO),
+#                 QT_ABSTENCOES = sum(QT_ABSTENCOES),
+#                 QT_VOTOS_VALIDOS = sum(QT_VOTOS_VALIDOS),
+#                 QT_VOTOS_NOMINAIS = sum(QT_VOTOS_NOMINAIS),
+#                 QT_VOTOS_LEGENDA = sum(QT_VOTOS_LEGENDA),
+#                 QT_VOTOS_BRANCOS = sum(QT_VOTOS_BRANCOS),
+#                 QT_VOTOS_NULOS = sum(QT_VOTOS_NULOS),
+#                 QT_VOTOS_ANULADOS = sum(QT_VOTOS_ANULADOS))
+# 
+#     } else {
+# 
+#       temp <- temp %>%
+#         mutate(QT_VOTOS_VALIDOS = QT_VOTOS_NOMINAIS + QT_VOTOS_LEGENDA,
+#                NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>%
+#         filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
+#                NM_TIPO_ELEICAO == "ELEICAO ORDINARIA" |
+#                NM_TIPO_ELEICAO == "ORDINÁRIA" |
+#                NM_TIPO_ELEICAO == "ORDINARIA") %>%
+#         select(ANO_ELEICAO,
+#                NR_TURNO,
+#                SG_UF,
+#                CD_MUNICIPIO,
+#                CD_CARGO,
+#                DS_CARGO,
+#                QT_APTOS,
+#                QT_COMPARECIMENTO,
+#                QT_ABSTENCOES,
+#                QT_VOTOS_VALIDOS,
+#                QT_VOTOS_NOMINAIS,
+#                QT_VOTOS_LEGENDA,
+#                QT_VOTOS_BRANCOS,
+#                QT_VOTOS_NULOS,
+#                QT_VOTOS_ANULADOS) %>%
+#         group_by(ANO_ELEICAO,
+#                  NR_TURNO,
+#                  SG_UF,
+#                  CD_MUNICIPIO,
+#                  CD_CARGO,
+#                  DS_CARGO) %>%
+#         summarise(QT_APTOS = sum(QT_APTOS),
+#                   QT_COMPARECIMENTO = sum(QT_COMPARECIMENTO),
+#                   QT_ABSTENCOES = sum(QT_ABSTENCOES),
+#                   QT_VOTOS_VALIDOS = sum(QT_VOTOS_VALIDOS),
+#                   QT_VOTOS_NOMINAIS = sum(QT_VOTOS_NOMINAIS),
+#                   QT_VOTOS_LEGENDA = sum(QT_VOTOS_LEGENDA),
+#                   QT_VOTOS_BRANCOS = sum(QT_VOTOS_BRANCOS),
+#                   QT_VOTOS_NULOS = sum(QT_VOTOS_NULOS),
+#                   QT_VOTOS_ANULADOS = sum(QT_VOTOS_ANULADOS))
+# 
+#     }
+# 
+#     resumo_mun[[i]] <- temp
+# 
+#     }
+# 
+# ## Empilhando os bancos
+# 
+# resumo_mun <- rbind.fill(resumo_mun)
+# 
+# ## Salvando os dados já agregados
+# 
+# saveRDS(resumo_mun,
+#         "data/input/Resumo da Eleição/Eleições Municipais/resumo_mun.rds")
+# 
 ## Lendo arquivo já compilado
 
 resumo_mun <- readRDS("data/input/Resumo da Eleição/Eleições Municipais/resumo_mun.rds")
@@ -384,127 +397,129 @@ resumo_mun <- readRDS("data/input/Resumo da Eleição/Eleições Municipais/resu
 
 ## URL dos dados
 
-url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_ANO.zip"
-
-## Lista com os anos das eleições gerais faltantes
-
-anos <- seq(1998, 2022, by = 4)
-
-## Loop que faz o download dos dados
-
-for(i in anos){
-
-  cat("Lendo", i, "\n")
-
-  candidatos <- stringr::str_replace(url,
-                                     "ANO",
-                                     as.character(i))
-
-  download.file(candidatos,
-                str_c("candidatos_gr_",
-                      i,
-                      ".zip"))
-
-}
-
-## Cria uma lista com os nomes dos arquivos baixados
-
-list_dados <- list.files(pattern = "candidatos_gr")
-
-## Loop que unzipa os dados
-
-for(i in seq_along(list_dados)){
-
-  cat("Lendo", list_dados[i], "\n")
-
-  unzip(list_dados[i],
-        exdir = "data/input/Candidatos/Eleições Gerais")
-
-  file.remove(list_dados[i])
-
-}
-
-## Cria uma lista com os nomes dos arquivos extraídos
-
-list_dados <- list.files(path = "data/input/Candidatos/Eleições Gerais",
-                         pattern = "consulta_cand")
-
-## Remove o arquivo 'BRASIL' e 'BR'
-
-for(i in seq_along(list_dados)){
-
-  br_files_vagas <- list.files(path = "data/input/Candidatos/Eleições Gerais",
-                               pattern = "BRASIL|BR",
-                               full.names = TRUE)
-
-  file.remove(br_files_vagas)
-
-}
-
-## Atualiza a lista de arquivos extraídos
-
-list_dados <- list.files(path = "data/input/Candidatos/Eleições Gerais",
-                         pattern = "consulta_cand")
-
-## Cria uma lista vazia onde os dados serão armazenados
-
-candidatos_gr <- list()
-
-## For loop que lê os arquivos
-
-for (i in seq_along(list_dados)) {
-
-  cat("lendo", list_dados[i], "\n")
-
-  temp <- read.table(file = paste0("data/input/Candidatos/Eleições Gerais/",
-                                   list_dados[i]),
-                     header = TRUE,
-                     sep = ";",
-                     stringsAsFactors = FALSE,
-                     fileEncoding = "latin1")
-
-  temp <- temp %>%
-    mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>% 
-    filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
-           NM_TIPO_ELEICAO == "ELEICAO ORDINARIA") %>% 
-    select(ANO_ELEICAO,
-           NR_TURNO,
-           SG_UF,
-           CD_CARGO,
-           DS_CARGO,
-           NR_CANDIDATO,
-           NM_CANDIDATO,
-           NM_URNA_CANDIDATO,
-           NR_CPF_CANDIDATO,
-           NR_TITULO_ELEITORAL_CANDIDATO,
-           DS_DETALHE_SITUACAO_CAND,
-           TP_AGREMIACAO,
-           NR_PARTIDO,
-           SG_PARTIDO,
-           SQ_COLIGACAO,
-           NM_COLIGACAO,
-           DS_COMPOSICAO_COLIGACAO,
-           SG_UF_NASCIMENTO,
-           NM_MUNICIPIO_NASCIMENTO,
-           DT_NASCIMENTO,
-           DS_GENERO,
-           DS_COR_RACA,
-           DS_GRAU_INSTRUCAO,
-           DS_OCUPACAO,
-           DS_SIT_TOT_TURNO)
-
-  candidatos_gr[[i]] <- temp
-
-}
-
-## Juntando os arquivos
-
-candidatos_gr <- rbind.fill(candidatos_gr)
-
-## Salvando os dados já agregados
-
-saveRDS(candidatos_gr,
-        "data/input/Candidatos/Eleições Gerais/candidatos_gr.rds")
+# url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_ANO.zip"
+# 
+# ## Lista com os anos das eleições gerais faltantes
+# 
+# anos <- seq(1998, 2022, by = 4)
+# 
+# ## Loop que faz o download dos dados
+# 
+# for(i in anos){
+# 
+#   cat("Lendo", i, "\n")
+# 
+#   candidatos <- stringr::str_replace(url,
+#                                      "ANO",
+#                                      as.character(i))
+# 
+#   download.file(candidatos,
+#                 str_c("candidatos_gr_",
+#                       i,
+#                       ".zip"))
+# 
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos baixados
+# 
+# list_dados <- list.files(pattern = "candidatos_gr")
+# 
+# ## Loop que unzipa os dados
+# 
+# for(i in seq_along(list_dados)){
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#   unzip(list_dados[i],
+#         exdir = "data/input/Candidatos/Eleições Gerais")
+# 
+#   file.remove(list_dados[i])
+# 
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos extraídos
+# 
+# list_dados <- list.files(path = "data/input/Candidatos/Eleições Gerais",
+#                          pattern = "consulta_cand")
+# 
+# ## Remove o arquivo 'BRASIL' e 'BR'
+# 
+# for(i in seq_along(list_dados)){
+# 
+#   br_files_vagas <- list.files(path = "data/input/Candidatos/Eleições Gerais",
+#                                pattern = "BRASIL|BR",
+#                                full.names = TRUE)
+# 
+#   file.remove(br_files_vagas)
+# 
+# }
+# 
+# ## Atualiza a lista de arquivos extraídos
+# 
+# list_dados <- list.files(path = "data/input/Candidatos/Eleições Gerais",
+#                          pattern = "consulta_cand")
+# 
+# ## Cria uma lista vazia onde os dados serão armazenados
+# 
+# candidatos_gr <- list()
+# 
+# ## For loop que lê os arquivos
+# 
+# for (i in seq_along(list_dados)) {
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#   temp <- read.table(file = paste0("data/input/Candidatos/Eleições Gerais/",
+#                                    list_dados[i]),
+#                      header = TRUE,
+#                      sep = ";",
+#                      stringsAsFactors = FALSE,
+#                      fileEncoding = "latin1")
+# 
+#   temp <- temp %>%
+#     mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>%
+#     filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
+#            NM_TIPO_ELEICAO == "ELEICAO ORDINARIA" |
+#            NM_TIPO_ELEICAO == "ORDINÁRIA" |
+#            NM_TIPO_ELEICAO == "ORDINARIA") %>%
+#     select(ANO_ELEICAO,
+#            NR_TURNO,
+#            SG_UF,
+#            CD_CARGO,
+#            DS_CARGO,
+#            NR_CANDIDATO,
+#            NM_CANDIDATO,
+#            NM_URNA_CANDIDATO,
+#            NR_CPF_CANDIDATO,
+#            NR_TITULO_ELEITORAL_CANDIDATO,
+#            DS_DETALHE_SITUACAO_CAND,
+#            TP_AGREMIACAO,
+#            NR_PARTIDO,
+#            SG_PARTIDO,
+#            SQ_COLIGACAO,
+#            NM_COLIGACAO,
+#            DS_COMPOSICAO_COLIGACAO,
+#            SG_UF_NASCIMENTO,
+#            NM_MUNICIPIO_NASCIMENTO,
+#            DT_NASCIMENTO,
+#            DS_GENERO,
+#            DS_COR_RACA,
+#            DS_GRAU_INSTRUCAO,
+#            DS_OCUPACAO,
+#            DS_SIT_TOT_TURNO)
+# 
+#   candidatos_gr[[i]] <- temp
+# 
+# }
+# 
+# ## Juntando os arquivos
+# 
+# candidatos_gr <- rbind.fill(candidatos_gr)
+# 
+# ## Salvando os dados já agregados
+# 
+# saveRDS(candidatos_gr,
+#         "data/input/Candidatos/Eleições Gerais/candidatos_gr.rds")
 
 ## Lendo arquivo já compilado
 
@@ -514,129 +529,131 @@ candidatos_gr <- readRDS("data/input/Candidatos/Eleições Gerais/candidatos_gr.
 
 ## URL dos dados 
 
-url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_ANO.zip"
-
-## Lista com os anos das eleições municipais faltantes
-
-anos <- seq(2000, 2020, by = 4)
-
-## Loop que faz o download dos dados
-
-for(i in anos){
-
-  cat("Lendo", i, "\n")
-
-  candidatos <- stringr::str_replace(url,
-                                     "ANO",
-                                     as.character(i))
-
-  download.file(candidatos,
-                str_c("candidatos_mun_",
-                      i,
-                      ".zip"))
-
-}
-
-## Cria uma lista com os nomes dos arquivos baixados
-
-list_dados <- list.files(pattern = "candidatos_mun")
-
-## Loop que unzipa os dados
-
-for(i in seq_along(list_dados)){
-
-  cat("Lendo", list_dados[i], "\n")
-
-  unzip(list_dados[i],
-        exdir = "data/input/Candidatos/Eleições Municipais")
-
- file.remove(list_dados[i])
-
-}
-
-## Cria uma lista com os nomes dos arquivos extraídos
-
-list_dados <- list.files(path = "data/input/Candidatos/Eleições Municipais",
-                         pattern = "consulta_cand")
-
-## Remove o arquivo 'BRASIL'
-
-for(i in seq_along(list_dados)){
-
-  br_files_vagas <- list.files(path = "data/input/Candidatos/Eleições Municipais",
-                               pattern = "BRASIL",
-                               full.names = TRUE)
-
-  file.remove(br_files_vagas)
-
-}
-
-## Atualiza a lista de arquivos extraídos
-
-list_dados <- list.files(path = "data/input/Candidatos/Eleições Municipais",
-                         pattern = "consulta_cand")
-
-## Cria uma lista vazia onde os dados serão armazenados
-
-candidatos_mun <- list()
-
-## For loop que lê os arquivos
-
-for (i in seq_along(list_dados)) {
-
-  cat("lendo", list_dados[i], "\n")
-
-  temp <- read.table(file = paste0("data/input/Candidatos/Eleições Municipais/",
-                                   list_dados[i]),
-                     header = TRUE,
-                     sep = ";",
-                     stringsAsFactors = FALSE,
-                     fileEncoding = "latin1")
-
-  temp <- temp %>%
-    mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>% 
-    filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
-           NM_TIPO_ELEICAO == "ELEICAO ORDINARIA") %>% 
-    select(ANO_ELEICAO,
-           NR_TURNO,
-           SG_UF,
-           SG_UE,
-           CD_CARGO,
-           DS_CARGO,
-           NR_CANDIDATO,
-           NM_CANDIDATO,
-           NM_URNA_CANDIDATO,
-           NR_CPF_CANDIDATO,
-           NR_TITULO_ELEITORAL_CANDIDATO,
-           DS_SITUACAO_CANDIDATURA,
-           DS_DETALHE_SITUACAO_CAND,
-           TP_AGREMIACAO,
-           NR_PARTIDO,
-           SG_PARTIDO,
-           SQ_COLIGACAO,
-           NM_COLIGACAO,
-           DS_COMPOSICAO_COLIGACAO,
-           SG_UF_NASCIMENTO,
-           NM_MUNICIPIO_NASCIMENTO,
-           DT_NASCIMENTO,
-           DS_GENERO,
-           DS_COR_RACA,
-           DS_GRAU_INSTRUCAO,
-           DS_OCUPACAO,
-           DS_SIT_TOT_TURNO)
-
-  candidatos_mun[[i]] <- temp
-
-}
-
-## Juntando os arquivos
-
-candidatos_mun <- rbind.fill(candidatos_mun)
-
-## Salvando os dados já agregados
-
-saveRDS(candidatos_mun,
-        "data/input/Candidatos/Eleições Municipais/candidatos_mun.rds")
+# url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_ANO.zip"
+# 
+# ## Lista com os anos das eleições municipais faltantes
+# 
+# anos <- seq(2000, 2020, by = 4)
+# 
+# ## Loop que faz o download dos dados
+# 
+# for(i in anos){
+# 
+#   cat("Lendo", i, "\n")
+# 
+#   candidatos <- stringr::str_replace(url,
+#                                      "ANO",
+#                                      as.character(i))
+# 
+#   download.file(candidatos,
+#                 str_c("candidatos_mun_",
+#                       i,
+#                       ".zip"))
+# 
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos baixados
+# 
+# list_dados <- list.files(pattern = "candidatos_mun")
+# 
+# ## Loop que unzipa os dados
+# 
+# for(i in seq_along(list_dados)){
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#   unzip(list_dados[i],
+#         exdir = "data/input/Candidatos/Eleições Municipais")
+# 
+#  file.remove(list_dados[i])
+# 
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos extraídos
+# 
+# list_dados <- list.files(path = "data/input/Candidatos/Eleições Municipais",
+#                          pattern = "consulta_cand")
+# 
+# ## Remove o arquivo 'BRASIL'
+# 
+# for(i in seq_along(list_dados)){
+# 
+#   br_files_vagas <- list.files(path = "data/input/Candidatos/Eleições Municipais",
+#                                pattern = "BRASIL",
+#                                full.names = TRUE)
+# 
+#   file.remove(br_files_vagas)
+# 
+# }
+# 
+# ## Atualiza a lista de arquivos extraídos
+# 
+# list_dados <- list.files(path = "data/input/Candidatos/Eleições Municipais",
+#                          pattern = "consulta_cand")
+# 
+# ## Cria uma lista vazia onde os dados serão armazenados
+# 
+# candidatos_mun <- list()
+# 
+# ## For loop que lê os arquivos
+# 
+# for (i in seq_along(list_dados)) {
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#   temp <- read.table(file = paste0("data/input/Candidatos/Eleições Municipais/",
+#                                    list_dados[i]),
+#                      header = TRUE,
+#                      sep = ";",
+#                      stringsAsFactors = FALSE,
+#                      fileEncoding = "latin1")
+# 
+#   temp <- temp %>%
+#     mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>%
+#     filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
+#            NM_TIPO_ELEICAO == "ELEICAO ORDINARIA" |
+#            NM_TIPO_ELEICAO == "ORDINÁRIA" |
+#            NM_TIPO_ELEICAO == "ORDINARIA") %>%
+#     select(ANO_ELEICAO,
+#            NR_TURNO,
+#            SG_UF,
+#            SG_UE,
+#            CD_CARGO,
+#            DS_CARGO,
+#            NR_CANDIDATO,
+#            NM_CANDIDATO,
+#            NM_URNA_CANDIDATO,
+#            NR_CPF_CANDIDATO,
+#            NR_TITULO_ELEITORAL_CANDIDATO,
+#            DS_SITUACAO_CANDIDATURA,
+#            DS_DETALHE_SITUACAO_CAND,
+#            TP_AGREMIACAO,
+#            NR_PARTIDO,
+#            SG_PARTIDO,
+#            SQ_COLIGACAO,
+#            NM_COLIGACAO,
+#            DS_COMPOSICAO_COLIGACAO,
+#            SG_UF_NASCIMENTO,
+#            NM_MUNICIPIO_NASCIMENTO,
+#            DT_NASCIMENTO,
+#            DS_GENERO,
+#            DS_COR_RACA,
+#            DS_GRAU_INSTRUCAO,
+#            DS_OCUPACAO,
+#            DS_SIT_TOT_TURNO)
+# 
+#   candidatos_mun[[i]] <- temp
+# 
+# }
+# 
+# ## Juntando os arquivos
+# 
+# candidatos_mun <- rbind.fill(candidatos_mun)
+# 
+# ## Salvando os dados já agregados
+# 
+# saveRDS(candidatos_mun,
+#         "data/input/Candidatos/Eleições Municipais/candidatos_mun.rds")
 
 ## Lendo arquivo já compilado
 
@@ -648,112 +665,114 @@ candidatos_mun <- readRDS("data/input/Candidatos/Eleições Municipais/candidato
 
 ## URL de referência
 
-url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_ANO_UF.zip"
-
-## Lista com os anos das eleições gerais faltantes
-
-anos <- seq(1998, 2022, by = 4)
-
-## Lista com as siglas dos estados brasileiros
-
-ufs <- c("AC", "AL", "AM", "AP", "BA",
-         "CE", "DF", "ES","GO", "MA", "MG",
-         "MS", "MT", "PA", "PB", "PE", "PI",
-         "PR", "RJ", "RN", "RO", "RR","RS",
-         "SC", "SE", "SP", "TO")
-
-## Loop que faz o download dos dados
-
-for(i in anos){
-  for(j in ufs){
-
-    cat("Lendo", i, "\n")
-
-    votacao_secao <- stringr::str_replace_all(url,
-                                              c(ANO = i,
-                                                UF = j))
-
-    download.file(votacao_secao,
-                  str_c("votacao_secao_gr_",
-                        i,
-                        "_",
-                        j,
-                        ".zip"))
-  }
-}
-
-## Cria uma lista com os nomes dos arquivos baixados
-
-list_dados <- list.files(pattern = "votacao_secao_gr")
-
-## Loop que unzipa os dados
-
-for(i in seq_along(list_dados)){
-
-  cat("Lendo", list_dados[i], "\n")
-
-  unzip(list_dados[i],
-        exdir = "data/input/Votos/Eleições Gerais")
-
-  file.remove(list_dados[i])
-
-}
-
-## Cria uma lista com os nomes dos arquivos extraídos
-
-list_dados <- list.files(path = "data/input/Votos/Eleições Gerais",
-                         pattern = "votacao_secao_")
-
-## Cria uma lista vazia onde os dados serão armazenados
-
-votos_gr <- list()
-
-## For loop que lê os arquivos
-
-for (i in seq_along(list_dados)) {
-
-  cat("lendo", list_dados[i], "\n")
-
-    temp <- read.table(file = paste0("data/input/Votos/Eleições Gerais/",
-                                     list_dados[i]),
-                       header = TRUE,
-                       sep = ";",
-                       stringsAsFactors = FALSE,
-                       fileEncoding = "latin1")
-
-    temp <- temp %>%
-      mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>% 
-      filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
-             NM_TIPO_ELEICAO == "ELEICAO ORDINARIA") %>% 
-      select(ANO_ELEICAO,
-             NR_TURNO,
-             SG_UF,
-             CD_MUNICIPIO,
-             CD_CARGO,
-             DS_CARGO,
-             NR_VOTAVEL,
-             QT_VOTOS) %>%
-      group_by(ANO_ELEICAO,
-               NR_TURNO,
-               SG_UF,
-               CD_MUNICIPIO,
-               CD_CARGO,
-               DS_CARGO,
-               NR_VOTAVEL) %>%
-      summarise(QT_VOTOS = sum(QT_VOTOS))
-
-    votos_gr[[i]] <- temp
-
-    }
-
-## Empilhando os bancos
-
-votos_gr <- rbind.fill(votos_gr)
-
-## Salvando os dados já agregados
-
-saveRDS(votos_gr,
-        "data/input/Votos/Eleições Gerais/votacao_secao_nom_part_gr.rds")
+# url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_ANO_UF.zip"
+# 
+# ## Lista com os anos das eleições gerais faltantes
+# 
+# anos <- seq(1998, 2022, by = 4)
+# 
+# ## Lista com as siglas dos estados brasileiros
+# 
+# ufs <- c("AC", "AL", "AM", "AP", "BA",
+#          "CE", "DF", "ES","GO", "MA", "MG",
+#          "MS", "MT", "PA", "PB", "PE", "PI",
+#          "PR", "RJ", "RN", "RO", "RR","RS",
+#          "SC", "SE", "SP", "TO")
+# 
+# ## Loop que faz o download dos dados
+# 
+# for(i in anos){
+#   for(j in ufs){
+# 
+#     cat("Lendo", i, "\n")
+# 
+#     votacao_secao <- stringr::str_replace_all(url,
+#                                               c(ANO = i,
+#                                                 UF = j))
+# 
+#     download.file(votacao_secao,
+#                   str_c("votacao_secao_gr_",
+#                         i,
+#                         "_",
+#                         j,
+#                         ".zip"))
+#   }
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos baixados
+# 
+# list_dados <- list.files(pattern = "votacao_secao_gr")
+# 
+# ## Loop que unzipa os dados
+# 
+# for(i in seq_along(list_dados)){
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#   unzip(list_dados[i],
+#         exdir = "data/input/Votos/Eleições Gerais")
+# 
+#   file.remove(list_dados[i])
+# 
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos extraídos
+# 
+# list_dados <- list.files(path = "data/input/Votos/Eleições Gerais",
+#                          pattern = "votacao_secao_")
+# 
+# ## Cria uma lista vazia onde os dados serão armazenados
+# 
+# votos_gr <- list()
+# 
+# ## For loop que lê os arquivos
+# 
+# for (i in seq_along(list_dados)) {
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#     temp <- read.table(file = paste0("data/input/Votos/Eleições Gerais/",
+#                                      list_dados[i]),
+#                        header = TRUE,
+#                        sep = ";",
+#                        stringsAsFactors = FALSE,
+#                        fileEncoding = "latin1")
+# 
+#     temp <- temp %>%
+#       mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>%
+#       filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
+#              NM_TIPO_ELEICAO == "ELEICAO ORDINARIA" |
+#              NM_TIPO_ELEICAO == "ORDINÁRIA" |
+#              NM_TIPO_ELEICAO == "ORDINARIA") %>%
+#       select(ANO_ELEICAO,
+#              NR_TURNO,
+#              SG_UF,
+#              CD_MUNICIPIO,
+#              CD_CARGO,
+#              DS_CARGO,
+#              NR_VOTAVEL,
+#              QT_VOTOS) %>%
+#       group_by(ANO_ELEICAO,
+#                NR_TURNO,
+#                SG_UF,
+#                CD_MUNICIPIO,
+#                CD_CARGO,
+#                DS_CARGO,
+#                NR_VOTAVEL) %>%
+#       summarise(QT_VOTOS = sum(QT_VOTOS))
+# 
+#     votos_gr[[i]] <- temp
+# 
+#     }
+# 
+# ## Empilhando os bancos
+# 
+# votos_gr <- rbind.fill(votos_gr)
+# 
+# ## Salvando os dados já agregados
+# 
+# saveRDS(votos_gr,
+#         "data/input/Votos/Eleições Gerais/votacao_secao_nom_part_gr.rds")
 
 ## Lendo os arquivos pré-processados
 
@@ -763,119 +782,121 @@ votos_gr <- readRDS("data/input/Votos/Eleições Gerais/votacao_secao_nom_part_g
 
 ## URL de referência
 
-url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_ANO_UF.zip"
-
-## Lista com os anos das eleições gerais
-
-anos <- seq(2000, 2020, by = 4)
-
-anos <- 2008
-
-## Lista com os estados brasileiros
-
-ufs <- c("AC", "AL", "AM", "AP", "BA",
-         "CE", "ES","GO", "MA", "MG",
-         "MS", "MT", "PA", "PB", "PE", "PI",
-         "PR", "RJ", "RN", "RO", "RR","RS",
-         "SC", "SE", "SP", "TO")
-
-ufs <- c("SP", "TO")
-
-## Loop que faz o download dos dados
-
-for(i in anos){
-  for(j in ufs){
-
-    cat("Lendo", i, "\n")
-
-    votacao_secao <- stringr::str_replace_all(url,
-                                              c(ANO = i,
-                                                UF = j))
-
-    download.file(votacao_secao,
-                  str_c("votacao_secao_mun_",
-                        i,
-                        "_",
-                        j,
-                        ".zip"))
-  }
-}
-
-## Cria uma lista com os nomes dos arquivos baixados
-
-list_dados <- list.files(pattern = "votacao_secao_mun")
-
-## Loop que unzipa os dados
-
-for(i in seq_along(list_dados)){
-
-  cat("Lendo", list_dados[i], "\n")
-
-  unzip(list_dados[i],
-        exdir = "data/input/Votos/Eleições Municipais")
-
-  file.remove(list_dados[i])
-
-}
-
-## Cria uma lista com os nomes dos arquivos extraídos
-
-list_dados <- list.files(path = "data/input/Votos/Eleições Municipais",
-                         pattern = "votacao_secao_")
-
-## Cria uma lista vazia onde os dados serão armazenados
-
-votos_mun <- list()
-
-## For loop que lê os arquivos
-
-for (i in seq_along(list_dados)) {
-
-  cat("lendo", list_dados[i], "\n")
-
-    temp <- read.table(file = paste0("data/input/Votos/Eleições Municipais/",
-                                     list_dados[i]),
-                       header = TRUE,
-                       sep = ";",
-                       stringsAsFactors = FALSE,
-                       fileEncoding = "latin1")
-
-
-    temp <- temp %>%
-      mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>% 
-      filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
-             NM_TIPO_ELEICAO == "ELEICAO ORDINARIA" |
-             NM_TIPO_ELEICAO == "ELEIÇÕES 2008") %>% 
-      select(ANO_ELEICAO,
-             NR_TURNO,
-             SG_UF,
-             CD_MUNICIPIO,
-             CD_CARGO,
-             DS_CARGO,
-             NR_VOTAVEL,
-             QT_VOTOS) %>%
-      group_by(ANO_ELEICAO,
-               NR_TURNO,
-               SG_UF,
-               CD_MUNICIPIO,
-               CD_CARGO,
-               DS_CARGO,
-               NR_VOTAVEL) %>%
-      summarise(QT_VOTOS = sum(QT_VOTOS))
-
-    votos_mun[[i]] <- temp
-
-}
-
-## Empilhando os dados
-
-votos_mun <- rbind.fill(votos_mun)
-
-## Salvando os dados já agregados
-
-saveRDS(votos_mun,
-        "data/input/Votos/Eleições Municipais/votacao_secao_nom_part_mun.rds")
-
+# url <- "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_ANO_UF.zip"
+# 
+# ## Lista com os anos das eleições gerais
+# 
+# anos <- seq(2000, 2020, by = 4)
+# 
+# anos <- 2008
+# 
+# ## Lista com os estados brasileiros
+# 
+# ufs <- c("AC", "AL", "AM", "AP", "BA",
+#          "CE", "ES","GO", "MA", "MG",
+#          "MS", "MT", "PA", "PB", "PE", "PI",
+#          "PR", "RJ", "RN", "RO", "RR","RS",
+#          "SC", "SE", "SP", "TO")
+# 
+# ufs <- c("SP", "TO")
+# 
+# ## Loop que faz o download dos dados
+# 
+# for(i in anos){
+#   for(j in ufs){
+# 
+#     cat("Lendo", i, "\n")
+# 
+#     votacao_secao <- stringr::str_replace_all(url,
+#                                               c(ANO = i,
+#                                                 UF = j))
+# 
+#     download.file(votacao_secao,
+#                   str_c("votacao_secao_mun_",
+#                         i,
+#                         "_",
+#                         j,
+#                         ".zip"))
+#   }
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos baixados
+# 
+# list_dados <- list.files(pattern = "votacao_secao_mun")
+# 
+# ## Loop que unzipa os dados
+# 
+# for(i in seq_along(list_dados)){
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#   unzip(list_dados[i],
+#         exdir = "data/input/Votos/Eleições Municipais")
+# 
+#   file.remove(list_dados[i])
+# 
+# }
+# 
+# ## Cria uma lista com os nomes dos arquivos extraídos
+# 
+# list_dados <- list.files(path = "data/input/Votos/Eleições Municipais",
+#                          pattern = "votacao_secao_")
+# 
+# ## Cria uma lista vazia onde os dados serão armazenados
+# 
+# votos_mun <- list()
+# 
+# ## For loop que lê os arquivos
+# 
+# for (i in seq_along(list_dados)) {
+# 
+#   cat("Lendo", list_dados[i], "\n")
+# 
+#     temp <- read.table(file = paste0("data/input/Votos/Eleições Municipais/",
+#                                      list_dados[i]),
+#                        header = TRUE,
+#                        sep = ";",
+#                        stringsAsFactors = FALSE,
+#                        fileEncoding = "latin1")
+# 
+# 
+#     temp <- temp %>%
+#       mutate(NM_TIPO_ELEICAO = str_to_upper(NM_TIPO_ELEICAO)) %>%
+#       filter(NM_TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA" |
+#              NM_TIPO_ELEICAO == "ELEICAO ORDINARIA" |
+#              NM_TIPO_ELEICAO == "ORDINÁRIA" |
+#              NM_TIPO_ELEICAO == "ORDINARIA" |
+#              NM_TIPO_ELEICAO == "ELEIÇÕES 2008") %>%
+#       select(ANO_ELEICAO,
+#              NR_TURNO,
+#              SG_UF,
+#              CD_MUNICIPIO,
+#              CD_CARGO,
+#              DS_CARGO,
+#              NR_VOTAVEL,
+#              QT_VOTOS) %>%
+#       group_by(ANO_ELEICAO,
+#                NR_TURNO,
+#                SG_UF,
+#                CD_MUNICIPIO,
+#                CD_CARGO,
+#                DS_CARGO,
+#                NR_VOTAVEL) %>%
+#       summarise(QT_VOTOS = sum(QT_VOTOS))
+# 
+#     votos_mun[[i]] <- temp
+# 
+# }
+# 
+# ## Empilhando os dados
+# 
+# votos_mun <- rbind.fill(votos_mun)
+# 
+# ## Salvando os dados já agregados
+# 
+# saveRDS(votos_mun,
+#         "data/input/Votos/Eleições Municipais/votacao_secao_nom_part_mun.rds")
+# 
 ## Lendo os arquivos pré-processados
 
 votos_mun <- readRDS("data/input/Votos/Eleições Municipais/votacao_secao_nom_part_mun.rds")
@@ -1072,8 +1093,18 @@ resumo_mun <- resumo_mun %>%
          "QTD_APTOS" = "QT_APTOS",
          "QTD_COMPARECIMENTO" = "QT_COMPARECIMENTO",
          "QTD_ABSTENCOES" = "QT_ABSTENCOES") %>% 
-  mutate(DESCRICAO_CARGO = str_to_upper(DESCRICAO_CARGO)) %>% 
+  mutate(DESCRICAO_CARGO = str_to_upper(DESCRICAO_CARGO),
+         COD_MUN_TSE = str_pad(COD_MUN_TSE, 
+                               width = 5,
+                               side = "left",
+                               pad = "0")) %>% 
+  left_join(municipios) %>% 
+  select(ANO_ELEICAO:COD_MUN_TSE,
+         COD_MUN_IBGE,
+         NOME_MUNICIPIO,
+         CODIGO_CARGO:QT_VOTOS_ANULADOS) %>% 
   arrange(UF,
+          NOME_MUNICIPIO,
           CODIGO_CARGO)
 
 ## Separando os dados em bases por cargo e agregação regional
@@ -1081,17 +1112,15 @@ resumo_mun <- resumo_mun %>%
 ### PREFEITO ###
 
 pf_mun_cons <- resumo_mun %>% 
-  mutate(COD_MUN_TSE = str_pad(COD_MUN_TSE, 
-                               width = 5,
-                               side = "left",
-                               pad = "0")) %>% 
   filter(DESCRICAO_CARGO == "PREFEITO") %>% 
   group_by(ANO_ELEICAO,
            NUM_TURNO,
-           CODIGO_CARGO,
-           DESCRICAO_CARGO,
            UF,
-           COD_MUN_TSE) %>% 
+           COD_MUN_TSE,
+           COD_MUN_IBGE,
+           NOME_MUNICIPIO,
+           CODIGO_CARGO,
+           DESCRICAO_CARGO) %>% 
   summarise(QTD_APTOS = sum(QTD_APTOS,
                             na.rm = TRUE),
             QTD_COMPARECIMENTO = sum(QTD_COMPARECIMENTO,
@@ -1114,17 +1143,15 @@ pf_mun_cons <- resumo_mun %>%
 ### VEREADOR ###
 
 vr_mun_cons <- resumo_mun %>% 
-  mutate(COD_MUN_TSE = str_pad(COD_MUN_TSE, 
-                               width = 5,
-                               side = "left",
-                               pad = "0")) %>% 
   filter(DESCRICAO_CARGO == "VEREADOR") %>% 
   group_by(ANO_ELEICAO,
            NUM_TURNO,
-           CODIGO_CARGO,
-           DESCRICAO_CARGO,
            UF,
-           COD_MUN_TSE) %>% 
+           COD_MUN_TSE,
+           COD_MUN_IBGE,
+           NOME_MUNICIPIO,
+           CODIGO_CARGO,
+           DESCRICAO_CARGO) %>% 
   summarise(QTD_APTOS = sum(QTD_APTOS,
                             na.rm = TRUE),
             QTD_COMPARECIMENTO = sum(QTD_COMPARECIMENTO,
@@ -1351,9 +1378,14 @@ candidatos_mun <- candidatos_mun %>%
                                width = 5,
                                side = "left",
                                pad = "0")) %>% 
+  left_join(municipios) %>% 
+  select(ANO_ELEICAO:COD_MUN_TSE,
+         COD_MUN_IBGE,
+         NOME_MUNICIPIO,
+         CODIGO_CARGO:DESC_SIT_TOT_TURNO) %>% 
   arrange(ANO_ELEICAO,
           UF,
-          COD_MUN_TSE,
+          NOME_MUNICIPIO,
           CODIGO_CARGO) 
 
 votos_mun <- votos_mun %>%
@@ -1391,8 +1423,8 @@ votos_mun <- votos_mun %>%
 candidatos_mun <- right_join(candidatos_mun,
                              votos_mun) %>% 
   filter((is.na(NOME_CANDIDATO) &
-           nchar(NUMERO_CANDIDATO) == 2) |
-           !is.na(NOME_CANDIDATO)) %>% 
+          nchar(NUMERO_CANDIDATO) == 2) |
+          !is.na(NOME_CANDIDATO)) %>% 
   mutate(NUMERO_PARTIDO = str_sub(NUMERO_CANDIDATO,
                                   start = 1,
                                   end = 2),
@@ -1423,6 +1455,8 @@ pf_mun_part <- candidatos_mun %>%
            DESCRICAO_CARGO,
            UF,
            COD_MUN_TSE,
+           COD_MUN_IBGE,
+           NOME_MUNICIPIO,
            NUMERO_PARTIDO) %>% 
   summarise(VOT_PART_MUN = sum(QTDE_VOTOS,
                                na.rm = FALSE))
@@ -1441,6 +1475,8 @@ vr_mun_part <- candidatos_mun %>%
            DESCRICAO_CARGO,
            UF,
            COD_MUN_TSE,
+           COD_MUN_IBGE,
+           NOME_MUNICIPIO,
            NUMERO_PARTIDO) %>% 
   summarise(VOT_PART_MUN = sum(QTDE_VOTOS,
                                na.rm = FALSE))
@@ -1584,12 +1620,16 @@ vagas_ver <- vagas_ver %>%
 vr_mun_cons <- left_join(vr_mun_cons,
                          vagas_ver) %>% 
   ungroup() %>% 
-  select(ANO_ELEICAO:COD_MUN_TSE,
+  select(ANO_ELEICAO,
+         NUM_TURNO,
+         UF:NOME_MUNICIPIO,
+         CODIGO_CARGO,
+         DESCRICAO_CARGO,
          QT_VAGAS,
          QTD_APTOS:QT_VOTOS_ANULADOS) %>% 
   arrange(ANO_ELEICAO,
           UF,
-          COD_MUN_TSE,
+          NOME_MUNICIPIO,
           CODIGO_CARGO)
 
 ## 3.3. Candidatos ---------------------------------------------------------
