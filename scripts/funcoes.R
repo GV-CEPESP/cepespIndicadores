@@ -34,9 +34,9 @@ fracionalizacao <- function(perc_cadeiras_part){
 
 fracionalizacao_max <- function(num_cadeiras, num_partidos_repres){
   
-  (num_cadeiras * (num_partidos_repres - 1)) / 
+  ((num_cadeiras * (num_partidos_repres - 1)) / 
     
-    (num_partidos_repres * (num_cadeiras - 1))
+    (num_partidos_repres * (num_cadeiras - 1)))
   
 }
 
@@ -44,7 +44,7 @@ fracionalizacao_max <- function(num_cadeiras, num_partidos_repres){
 
 ## Função para o cálculo da 'Fragmentação'
 
-fragmentaco <- function(fracionalizacao, fracionalizacao_max){
+fragmentacao <- function(fracionalizacao, fracionalizacao_max){
   
   fracionalizacao/fracionalizacao_max
   
@@ -194,11 +194,11 @@ alienacao_percentual <- function(quant_abstencoes, quant_votosnulos,
 
 ## Função para o cálculo da 'Volatilidade'
 
-volatilidade <- function(prop_votos_cadeirasT, prop_votos_cadeiras_T1) {
+volatilidade <- function(prop_votos_cadeiras_T, prop_votos_cadeiras_T1) {
   
   sum(abs((prop_votos_cadeiras_T * 100) - (prop_votos_cadeiras_T1 * 100))) / 2 
-
-  }
+  
+}
 
 # 2. Indicadores ----------------------------------------------------------
 
@@ -220,7 +220,14 @@ indic_disticad <- function(data,
       mutate(QUOCIENTE_ELEITORAL = quoc_eleitoral(QT_VOTOS_VALIDOS,
                                                   QT_VAGAS),
              QUOCIENTE_PARTIDARIO = quoc_eleitoral(VOT_PART_UF,
-                                                   QUOCIENTE_ELEITORAL))
+                                                   QUOCIENTE_ELEITORAL)) %>% 
+      select(ANO_ELEICAO,
+             UF,
+             DESCRICAO_CARGO,
+             SIGLA_PARTIDO,
+             QUOCIENTE_ELEITORAL,
+             QUOCIENTE_PARTIDARIO) %>% 
+      unique()
     
   } else if(cargo == "VR"){
     
@@ -231,7 +238,15 @@ indic_disticad <- function(data,
       mutate(QUOCIENTE_ELEITORAL = quoc_eleitoral(QT_VOTOS_VALIDOS,
                                                   QT_VAGAS),
              QUOCIENTE_PARTIDARIO = quoc_eleitoral(VOT_PART_MUN,
-                                                   QUOCIENTE_ELEITORAL))
+                                                   QUOCIENTE_ELEITORAL)) %>% 
+      select(ANO_ELEICAO,
+             UF,
+             COD_MUN_TSE,
+             DESCRICAO_CARGO,
+             SIGLA_PARTIDO,
+             QUOCIENTE_ELEITORAL,
+             QUOCIENTE_PARTIDARIO) %>% 
+      unique()
     
   }
   
@@ -257,7 +272,14 @@ indic_cadeiras_conq <- function(data,
            DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" |
            DESC_SIT_TOT_TURNO == "ELEITO POR MÉDIA" |
            DESC_SIT_TOT_TURNO == "MÉDIA" |
-           DESC_SIT_TOT_TURNO == "MEDIA")
+           DESC_SIT_TOT_TURNO == "MEDIA") %>% 
+    filter(!(ANO_ELEICAO == 1998 &
+           NOME_CANDIDATO %in% c("ARLINDO MELLO",
+                                 "MAURÍCIO ROSLINDO FRUET",
+                                 "MAURO CLAUDIO TEMOCHKO"))) %>% 
+    filter(!(ANO_ELEICAO == 1998 &
+               NOME_CANDIDATO %in% c("ANA CARLA DE CASTRO MENEZES",
+                                     "ALFREDO JOSÉ PENHA")))
   
   ## Soma o total de cadeiras conquistadas pelos partidos em cada eleição e
   ## organiza os dados
@@ -265,12 +287,13 @@ indic_cadeiras_conq <- function(data,
   data <- data %>% 
     group_by(ANO_ELEICAO,
              DESCRICAO_CARGO,
-             QT_VOTOS_VALIDOS,
+             NUMERO_PARTIDO,
              SIGLA_PARTIDO) %>% 
     mutate(TOT_CADEIRAS = n()) %>% 
     select(ANO_ELEICAO,
            DESCRICAO_CARGO,
-           QT_VOTOS_VALIDOS,
+           QT_VOTOS_VALIDOS_BR,
+           NUMERO_PARTIDO,
            SIGLA_PARTIDO,
            VOT_PART_BR,
            TOT_CADEIRAS) %>%
@@ -281,7 +304,8 @@ indic_cadeiras_conq <- function(data,
     select(ANO_ELEICAO,
            DESCRICAO_CARGO,
            QT_VAGAS,
-           QT_VOTOS_VALIDOS,
+           QT_VOTOS_VALIDOS_BR,
+           NUMERO_PARTIDO,
            SIGLA_PARTIDO,
            VOT_PART_BR,
            TOT_CADEIRAS) %>% 
@@ -291,7 +315,7 @@ indic_cadeiras_conq <- function(data,
   ## o número de partidos parlamentares em cada eleição
   
   data <- data %>% 
-    mutate(PERC_VOTOS = VOT_PART_BR/QT_VOTOS_VALIDOS,
+    mutate(PERC_VOTOS = VOT_PART_BR/QT_VOTOS_VALIDOS_BR,
            PERC_CADEIRAS = TOT_CADEIRAS/QT_VAGAS) %>% 
     group_by(ANO_ELEICAO) %>% 
     mutate(NUM_PART_PARLAMENT = n())
@@ -304,7 +328,14 @@ indic_cadeiras_conq <- function(data,
                DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" |
                DESC_SIT_TOT_TURNO == "ELEITO POR MÉDIA" |
                DESC_SIT_TOT_TURNO == "MÉDIA" |
-               DESC_SIT_TOT_TURNO == "MEDIA")
+               DESC_SIT_TOT_TURNO == "MEDIA") %>% 
+      filter(!(ANO_ELEICAO == 1998 &
+               NOME_CANDIDATO %in% c("ARLINDO MELLO",
+                                       "MAURÍCIO ROSLINDO FRUET",
+                                       "MAURO CLAUDIO TEMOCHKO"))) %>% 
+      filter(!(ANO_ELEICAO == 1998 &
+                 NOME_CANDIDATO %in% c("ANA CARLA DE CASTRO MENEZES",
+                                       "ALFREDO JOSÉ PENHA")))
     
     ## Soma o total de cadeiras conquistadas pelos partidos em cada ano e uf e
     ## organiza os dados
@@ -313,13 +344,14 @@ indic_cadeiras_conq <- function(data,
       group_by(ANO_ELEICAO,
                UF,
                DESCRICAO_CARGO,
-               QT_VOTOS_VALIDOS,
+               NUMERO_PARTIDO,
                SIGLA_PARTIDO) %>% 
       mutate(TOT_CADEIRAS = n()) %>% 
       select(ANO_ELEICAO,
              UF,
              DESCRICAO_CARGO,
              QT_VOTOS_VALIDOS,
+             NUMERO_PARTIDO,
              SIGLA_PARTIDO,
              VOT_PART_UF,
              TOT_CADEIRAS) %>%
@@ -333,6 +365,7 @@ indic_cadeiras_conq <- function(data,
              DESCRICAO_CARGO,
              QT_VAGAS,
              QT_VOTOS_VALIDOS,
+             NUMERO_PARTIDO,
              SIGLA_PARTIDO,
              VOT_PART_UF,
              TOT_CADEIRAS) %>% 
@@ -370,7 +403,7 @@ indic_cadeiras_conq <- function(data,
                COD_MUN_TSE,
                NOME_MUNICIPIO,
                DESCRICAO_CARGO,
-               QT_VOTOS_VALIDOS,
+               NUMERO_PARTIDO,
                SIGLA_PARTIDO) %>% 
       mutate(TOT_CADEIRAS = n()) %>% 
       select(ANO_ELEICAO,
@@ -380,6 +413,7 @@ indic_cadeiras_conq <- function(data,
              NOME_MUNICIPIO,
              DESCRICAO_CARGO,
              QT_VOTOS_VALIDOS,
+             NUMERO_PARTIDO,
              SIGLA_PARTIDO,
              VOT_PART_MUN,
              TOT_CADEIRAS) %>%
@@ -397,6 +431,7 @@ indic_cadeiras_conq <- function(data,
              DESCRICAO_CARGO,
              QT_VAGAS,
              QT_VOTOS_VALIDOS,
+             NUMERO_PARTIDO,
              SIGLA_PARTIDO,
              VOT_PART_MUN,
              TOT_CADEIRAS) %>% 
@@ -419,11 +454,11 @@ indic_cadeiras_conq <- function(data,
 ## 2.2. Fragmentação -------------------------------------------------------
 
 indic_frag <- function(data, 
-                     agregacao = c("BR", "UF", "PF", "VR")){
+                       agregacao = c("BR", "UF", "PF", "VR")){
   
   if(agregacao == "BR"){
     
-    ## Calcula os indicadores de fragmentação em cada ano e município
+    ## Calcula os indicadores de fragmentação em cada ano
     
     data <- data %>% 
       group_by(ANO_ELEICAO) %>% 
@@ -432,14 +467,14 @@ indic_frag <- function(data,
              `Fracionalização` = fracionalizacao(PERC_CADEIRAS),
              `Fracionalização máxima` = fracionalizacao_max(QT_VAGAS, 
                                                             NUM_PART_PARLAMENT),
-             `Fragmentação` = fragmentaco(`Fracionalização`,
+             `Fragmentação` = fragmentacao(`Fracionalização`,
                                           `Fracionalização máxima`),
              `Desproporcionalidade` = desp_gallagher(PERC_VOTOS,
                                                      PERC_CADEIRAS))
     
   } else if(agregacao == "UF"){
     
-    ## Calcula os indicadores de fragmentação em cada ano e município
+    ## Calcula os indicadores de fragmentação em cada ano e UF
       
       data <- data %>% 
       group_by(ANO_ELEICAO,
@@ -449,7 +484,7 @@ indic_frag <- function(data,
              `Fracionalização` = fracionalizacao(PERC_CADEIRAS),
              `Fracionalização máxima` = fracionalizacao_max(QT_VAGAS, 
                                                             NUM_PART_PARLAMENT),
-             `Fragmentação` = fragmentaco(`Fracionalização`,
+             `Fragmentação` = fragmentacao(`Fracionalização`,
                                           `Fracionalização máxima`),
              `Desproporcionalidade` = desp_gallagher(PERC_VOTOS,
                                                      PERC_CADEIRAS))
@@ -478,19 +513,26 @@ indic_frag <- function(data,
              `Fracionalização` = fracionalizacao(PERC_CADEIRAS),
              `Fracionalização máxima` = fracionalizacao_max(QT_VAGAS, 
                                                             NUM_PART_PARLAMENT),
-             `Fragmentação` = fragmentaco(`Fracionalização`,
+             `Fragmentação` = fragmentacao(`Fracionalização`,
                                           `Fracionalização máxima`),
              `Desproporcionalidade` = desp_gallagher(PERC_VOTOS,
                                                      PERC_CADEIRAS))
   }
   
   return(data)
-}
+
+  }
 
 ## 2.3. Eleitos ------------------------------------------------------------
 
+## Calcula o total de eleitos em cargos proporcionais por
+## ano e agregação regional
+
 eleitos <- function(data,
                     agregacao = c("UF", "MUN")){
+  
+  ## Calcula o total de eleitos em cargos proporcionais por
+  ## ano e UF
   
   if(agregacao == "UF"){
     
@@ -511,7 +553,14 @@ eleitos <- function(data,
              DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" |
              DESC_SIT_TOT_TURNO == "ELEITO POR MÉDIA" |
              DESC_SIT_TOT_TURNO == "MÉDIA" |
-             DESC_SIT_TOT_TURNO == "MEDIA")
+             DESC_SIT_TOT_TURNO == "MEDIA") %>% 
+      filter(!(ANO_ELEICAO == 1998 &
+                 NOME_CANDIDATO %in% c("ARLINDO MELLO",
+                                       "MAURÍCIO ROSLINDO FRUET",
+                                       "MAURO CLAUDIO TEMOCHKO")))
+    
+    ## Calcula o total de eleitos em cargos proporcionais por
+    ## ano e município
     
     } else if(agregacao == "MUN"){
       
@@ -618,7 +667,7 @@ indic_reel <- function(candidatos,
       suppressMessages(
       indicadores1 <- candidatos_ano2 %>% 
         filter(NUM_TITULO_ELEITORAL_CANDIDATO %in% 
-                 eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO) %>% 
+               eleitos_ano1$NUM_TITULO_ELEITORAL_CANDIDATO) %>% 
         mutate(REAPRESENTACAO = n()) %>% 
         select(ANO_ELEICAO,
                UF,
@@ -874,31 +923,369 @@ indic_reel <- function(candidatos,
 
 ## 2.5. Participação e Alienação -------------------------------------------
 
+## Função para calcular os indicadores de 'Participação e Alienação'
+
 indic_particip_alien <- function(data){
     
     data <- data %>% 
       mutate(DESCRICAO_CARGO = ifelse(DESCRICAO_CARGO == "DEPUTADO DISTRITAL",
                                       "DEPUTADO ESTADUAL",
                                       DESCRICAO_CARGO),
-             ABSTENCAO_PERCENTUAL = abstencao_percent(QTD_ABSTENCOES,
-                                                      QTD_APTOS),
+             ABSTENCAO_PERCENTUAL = abstencao_percent(QT_ABSTENCOES,
+                                                      QT_APTOS),
              VOTOS_BRANCOS_PERCENTUAIS = votosbrancos_percent(QT_VOTOS_BRANCOS,
-                                                              QTD_APTOS),
+                                                              QT_APTOS),
              VOTOS_NULOS_PERCENTUAIS = votosnulos_percent(QT_VOTOS_NULOS,
-                                                          QTD_APTOS),
-             ALIENACAO_ABSOLUTA = alienacao_absoluta(QTD_ABSTENCOES,
+                                                          QT_APTOS),
+             ALIENACAO_ABSOLUTA = alienacao_absoluta(QT_ABSTENCOES,
                                                      QT_VOTOS_NULOS,
                                                      QT_VOTOS_BRANCOS),
-             ALIENACAO_PERCENTUAL = alienacao_percentual(QTD_ABSTENCOES,
+             ALIENACAO_PERCENTUAL = alienacao_percentual(QT_ABSTENCOES,
                                                          QT_VOTOS_NULOS,
                                                          QT_VOTOS_BRANCOS,
-                                                         QTD_APTOS))
+                                                         QT_APTOS))
   
 }
 
 ## 2.6. Volatilidade -------------------------------------------------------
 
+## Função para calcular os indicadores de 'Volatilidade'
 
+indic_volat <- function(data,
+                        agregacao = c("BR", "UF", "MUN")){
+  
+  ## Desabilitando as mensagens do 'dplyr'
+  
+  options(dplyr.summarise.inform = FALSE)
+  
+  ## Lista temporária onde os dados serão armazenados
+  
+  temp <- list()
+  
+  if(agregacao == "BR"){
+    
+    ## For loop que calcula os indicadores de 'Volatilidade'
+    ## para cada ano
+    
+    for(ano in seq(1998, 2018, by = 4)){
+      
+      cat("Lendo", ano, "\n")
+      
+      ## Cria um data frame com as informações da
+      ## eleição corrente
+      
+      indicadores_ano1 <- data %>% 
+        filter(ANO_ELEICAO == ano) %>% 
+        select(-SIGLA_PARTIDO) %>% 
+        arrange(ANO_ELEICAO,
+                NUMERO_PARTIDO)
+      
+      ## Cria um data frame com as informações da próxima
+      ## eleição em relação ao ano corrente
+      
+      indicadores_ano2 <- data %>% 
+        filter(ANO_ELEICAO == ano + 4) %>% 
+        select(-SIGLA_PARTIDO) %>% 
+        rename("PERC_VOTOS2" = "PERC_VOTOS",
+               "PERC_CADEIRAS2" = "PERC_CADEIRAS") %>% 
+        arrange(ANO_ELEICAO,
+                NUMERO_PARTIDO)
+      
+      ## Condição para que se comece a calcular os indicadores
+      
+      if(nrow(indicadores_ano1) > 0 |
+         nrow(indicadores_ano2) > 0){
+        
+        ## Verificando se existem partidos ausentes em uma das eleições
+        
+        partido_falt_ano2 <- anti_join(indicadores_ano1,
+                                       indicadores_ano2, 
+                                       by = "NUMERO_PARTIDO")
+        
+        partido_falt_ano1 <- anti_join(indicadores_ano2,
+                                       indicadores_ano1, 
+                                       by = "NUMERO_PARTIDO")
+        
+        ## Equipara o número de partidos entre as eleições e atribui 0
+        ## quando não existir em um dos anos de referência
+        
+        indicadores_ano1 <- partido_falt_ano1 %>% 
+          select(-PERC_VOTOS2,
+                 -PERC_CADEIRAS2) %>% 
+          mutate(ANO_ELEICAO = ano,
+                 QT_VAGAS = indicadores_ano1[1, "QT_VAGAS"][[1]],
+                 QT_VOTOS_VALIDOS_BR = indicadores_ano1[1, "QT_VOTOS_VALIDOS_BR"][[1]],
+                 VOT_PART_BR = 0,
+                 TOT_CADEIRAS = 0,
+                 PERC_VOTOS = 0,
+                 PERC_CADEIRAS = 0,
+                 NUM_PART_PARLAMENT = indicadores_ano1[1, "NUM_PART_PARLAMENT"][[1]]) %>% 
+          rbind(indicadores_ano1) %>% 
+          arrange(ANO_ELEICAO,
+                  NUMERO_PARTIDO)
+        
+        indicadores_ano2 <- partido_falt_ano2 %>% 
+          mutate(ANO_ELEICAO = ano,
+                 PERC_VOTOS2 = 0,
+                 PERC_CADEIRAS2 = 0) %>% 
+          rbind(indicadores_ano2) %>% 
+          ungroup() %>% 
+          select(NUMERO_PARTIDO,
+                 PERC_VOTOS2,
+                 PERC_CADEIRAS2) %>% 
+          arrange(NUMERO_PARTIDO)
+        
+        ## Juntando ambos os bancos
+        
+        suppressMessages(
+          indicadores_ano1 <- left_join(indicadores_ano1,
+                                        indicadores_ano2))
+        
+        ## Cálculo dos indicadores de 'Volatilidade'
+        
+        indicadores_ano1 <- indicadores_ano1 %>% 
+          mutate(ANO_ELEICAO = ANO_ELEICAO + 4,
+                 VOLATILIDADE_ELEITORAL = volatilidade(PERC_VOTOS,
+                                                       PERC_VOTOS2),
+                 VOLATILIDADE_PARLAMENTAR = volatilidade(PERC_CADEIRAS,
+                                                         PERC_CADEIRAS2))
+        
+        ## Empilha os indicadores calculados em um único banco
+        
+        temp <- bind_rows(temp,
+                          indicadores_ano1)
+        
+      }
+      
+    }
+  } else if(agregacao == "UF"){
+    
+    ## Lista dos estados brasileiros
+    
+    ufs <- c("AC", "AL", "AP", "AM", "BA", 
+             "CE", "DF", "ES", "GO", "MA", 
+             "MT", "MS", "MG", "PA", "PB", 
+             "PR", "PE", "PI", "RJ", "RN", 
+             "RS", "RO", "RR", "SC", "SP", 
+             "SE", "TO")
+    
+    ## For loop que calcula os indicadores de 'Volatilidade'
+    ## para cada ano
+    
+    for(ano in seq(1998, 2018, by = 4)){
+      for(uf in ufs){
+        
+        cat("Lendo", ano, uf, "\n")
+        
+        ## Cria um data frame com as informações da
+        ## eleição corrente
+        
+        indicadores_ano1 <- data %>% 
+          filter(ANO_ELEICAO == ano &
+                   UF == uf) %>% 
+          select(-SIGLA_PARTIDO) %>% 
+          arrange(ANO_ELEICAO,
+                  UF,
+                  NUMERO_PARTIDO)
+        
+        ## Cria um data frame com as informações da próxima
+        ## eleição em relação ao ano corrente
+        
+        indicadores_ano2 <- data %>% 
+          filter(ANO_ELEICAO == ano + 4 &
+                   UF == uf) %>% 
+          select(-SIGLA_PARTIDO) %>% 
+          rename("PERC_VOTOS2" = "PERC_VOTOS",
+                 "PERC_CADEIRAS2" = "PERC_CADEIRAS") %>% 
+          arrange(ANO_ELEICAO,
+                  UF,
+                  NUMERO_PARTIDO)
+        
+        ## Condição para que se comece a calcular os indicadores
+        
+        if(nrow(indicadores_ano1) > 0 |
+           nrow(indicadores_ano2) > 0){
+          
+          ## Verificando se existem partidos ausentes em uma das eleições
+          
+          partido_falt_ano2 <- anti_join(indicadores_ano1,
+                                         indicadores_ano2, 
+                                         by = "NUMERO_PARTIDO")
+          
+          partido_falt_ano1 <- anti_join(indicadores_ano2,
+                                         indicadores_ano1, 
+                                         by = "NUMERO_PARTIDO")
+          
+          ## Equipara o número de partidos entre as eleições e atribui 0
+          ## quando não existir em um dos anos de referência
+          
+          indicadores_ano1 <- partido_falt_ano1 %>% 
+            select(-PERC_VOTOS2,
+                   -PERC_CADEIRAS2) %>% 
+            mutate(ANO_ELEICAO = ano,
+                   UF = uf,
+                   QT_VAGAS = indicadores_ano1[1, "QT_VAGAS"][[1]],
+                   QT_VOTOS_VALIDOS = indicadores_ano1[1, "QT_VOTOS_VALIDOS"][[1]],
+                   VOT_PART_UF = 0,
+                   TOT_CADEIRAS = 0,
+                   PERC_VOTOS = 0,
+                   PERC_CADEIRAS = 0,
+                   NUM_PART_PARLAMENT = indicadores_ano1[1, "NUM_PART_PARLAMENT"][[1]]) %>% 
+            rbind(indicadores_ano1) %>% 
+            arrange(ANO_ELEICAO,
+                    UF,
+                    NUMERO_PARTIDO)
+          
+          indicadores_ano2 <- partido_falt_ano2 %>% 
+            mutate(PERC_VOTOS2 = 0,
+                   PERC_CADEIRAS2 = 0) %>% 
+            rbind(indicadores_ano2) %>% 
+            ungroup() %>% 
+            select(NUMERO_PARTIDO,
+                   PERC_VOTOS2,
+                   PERC_CADEIRAS2) %>% 
+            arrange(NUMERO_PARTIDO)
+          
+          ## Juntando ambos os bancos
+          
+          suppressMessages(
+            indicadores_ano1 <- left_join(indicadores_ano1,
+                                          indicadores_ano2))
+          
+          ## Cálculo dos indicadores de 'Volatilidade'
+          
+          indicadores_ano1 <- indicadores_ano1 %>% 
+            mutate(ANO_ELEICAO = ANO_ELEICAO + 4,
+                   VOLATILIDADE_ELEITORAL = volatilidade(PERC_VOTOS,
+                                                         PERC_VOTOS2),
+                   VOLATILIDADE_PARLAMENTAR = volatilidade(PERC_CADEIRAS,
+                                                           PERC_CADEIRAS2))
+          
+          ## Empilha os indicadores calculados em um único banco
+          
+          temp <- bind_rows(temp,
+                            indicadores_ano1)
+          
+        }
+        
+      }
+    }
+  } else if(agregacao == "MUN"){
+    
+    ## Lista de municípios brasileiros
+    
+    municipios <- unique(pf_mun_cand$COD_MUN_TSE)
+    
+    ## For loop que calcula os indicadores de 'Volatilidade'
+    ## para cada ano
+    
+    for(ano in seq(2000, 2016, by = 4)){
+      for(municipio in municipios){
+        
+        cat("Lendo", ano, municipio, "\n")
+        
+        ## Cria um data frame com as informações da
+        ## eleição corrente
+        
+        indicadores_ano1 <- data %>% 
+          filter(ANO_ELEICAO == ano &
+                   COD_MUN_TSE == municipio) %>% 
+          select(-SIGLA_PARTIDO) %>% 
+          arrange(ANO_ELEICAO,
+                  UF,
+                  NOME_MUNICIPIO,
+                  NUMERO_PARTIDO)
+        
+        ## Cria um data frame com as informações da próxima
+        ## eleição em relação ao ano corrente
+        
+        indicadores_ano2 <- data %>% 
+          filter(ANO_ELEICAO == ano + 4 &
+                   COD_MUN_TSE == municipio) %>% 
+          select(-SIGLA_PARTIDO) %>% 
+          rename("PERC_VOTOS2" = "PERC_VOTOS",
+                 "PERC_CADEIRAS2" = "PERC_CADEIRAS") %>% 
+          arrange(ANO_ELEICAO,
+                  UF,
+                  NOME_MUNICIPIO,
+                  NUMERO_PARTIDO)
+        
+        ## Condição para que se comece a calcular os indicadores
+        
+        if(nrow(indicadores_ano1) > 0 |
+           nrow(indicadores_ano2) > 0){
+          
+          ## Verificando se existem partidos ausentes em uma das eleições
+          
+          partido_falt_ano2 <- anti_join(indicadores_ano1,
+                                         indicadores_ano2, 
+                                         by = "NUMERO_PARTIDO")
+          
+          partido_falt_ano1 <- anti_join(indicadores_ano2,
+                                         indicadores_ano1, 
+                                         by = "NUMERO_PARTIDO")
+          
+          ## Equipara o número de partidos entre as eleições e atribui 0
+          ## quando não existir em um dos anos de referência
+          
+          indicadores_ano1 <- partido_falt_ano1 %>% 
+            select(-PERC_VOTOS2,
+                   -PERC_CADEIRAS2) %>% 
+            mutate(ANO_ELEICAO = ano,
+                   UF = indicadores_ano1[1, "UF"][[1]],
+                   COD_MUN_TSE = municipio,
+                   QT_VAGAS = indicadores_ano1[1, "QT_VAGAS"][[1]],
+                   QT_VOTOS_VALIDOS = indicadores_ano1[1, "QT_VOTOS_VALIDOS"][[1]],
+                   VOT_PART_MUN = 0,
+                   TOT_CADEIRAS = 0,
+                   PERC_VOTOS = 0,
+                   PERC_CADEIRAS = 0,
+                   NUM_PART_PARLAMENT = indicadores_ano1[1, "NUM_PART_PARLAMENT"][[1]]) %>% 
+            rbind(indicadores_ano1) %>% 
+            arrange(ANO_ELEICAO,
+                    UF,
+                    NOME_MUNICIPIO,
+                    NUMERO_PARTIDO)
+          
+          indicadores_ano2 <- partido_falt_ano2 %>% 
+            mutate(PERC_VOTOS2 = 0,
+                   PERC_CADEIRAS2 = 0) %>% 
+            rbind(indicadores_ano2) %>% 
+            ungroup() %>% 
+            select(NUMERO_PARTIDO,
+                   PERC_VOTOS2,
+                   PERC_CADEIRAS2) %>% 
+            arrange(NUMERO_PARTIDO)
+          
+          ## Juntando ambos os bancos
+          
+          suppressMessages(  
+            indicadores_ano1 <- left_join(indicadores_ano1,
+                                          indicadores_ano2))
+          
+          ## Cálculo dos indicadores de 'Volatilidade'
+          
+          indicadores_ano1 <- indicadores_ano1 %>% 
+            mutate(ANO_ELEICAO = ANO_ELEICAO + 4,
+                   VOLATILIDADE_ELEITORAL = volatilidade(PERC_VOTOS,
+                                                         PERC_VOTOS2),
+                   VOLATILIDADE_PARLAMENTAR = volatilidade(PERC_CADEIRAS,
+                                                           PERC_CADEIRAS2))
+          
+          ## Empilha os indicadores calculados em um único banco
+          
+          temp <- bind_rows(temp,
+                            indicadores_ano1)
+          
+        }
+        
+      }
+    }
+  }
+  
+  return(temp)
+  
+}
   
 # 3. Padronização ---------------------------------------------------------
 
@@ -928,7 +1315,7 @@ pont_virg <- function(string,
   suppressWarnings(
     
     formatC(string, 
-            digits = 2,
+            digits = 4,
             format = "f",
             big.mark = ".",
             small.mark = ",",
@@ -941,84 +1328,9 @@ pont_virg <- function(string,
   
 }
 
-## 3.2. Distribuição de Cadeiras -------------------------------------------
+## 3.2. Fragmentação -------------------------------------------------------
 
-## Função para padronização dos dados de distribuição de cadeiras
-
-padroniz_distcad <- function(data, 
-                             agregacao = c("UF", "MUN")){
-  
-  if(agregacao == "UF"){
-  
-  data <- data %>% 
-    select(ANO_ELEICAO, 
-           UF,
-           DESCRICAO_CARGO, 
-           QT_VAGAS,
-           QT_VOTOS_VALIDOS,
-           SIGLA_PARTIDO,
-           VOT_PART_UF,
-           QUOCIENTE_ELEITORAL,
-           QUOCIENTE_PARTIDARIO) %>% 
-    mutate(QUOCIENTE_ELEITORAL = pont_virg(round(QUOCIENTE_ELEITORAL, 0),
-                                           tipo = "inteiro"),
-           QUOCIENTE_PARTIDARIO = pont_virg(round(QUOCIENTE_PARTIDARIO, 0),
-                                            tipo = "inteiro"),
-           QT_VOTOS_VALIDOS = pont_virg(QT_VOTOS_VALIDOS,
-                                        tipo = "inteiro"),
-           VOT_PART_UF = pont_virg(VOT_PART_UF,
-                                   tipo = "inteiro"),
-           DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
-    rename("Ano da eleição" = "ANO_ELEICAO",
-           "Cargo" = "DESCRICAO_CARGO",
-           "Cadeiras oferecidas" = "QT_VAGAS",
-           "Votos válidos" = "QT_VOTOS_VALIDOS",
-           "Sigla do partido" = "SIGLA_PARTIDO",
-           "Votos do partido" = "VOT_PART_UF",
-           "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
-           "Quociente partidário" = "QUOCIENTE_PARTIDARIO")
-  
-  } else if(agregacao == "MUN"){
-    
-    data <- data %>% 
-      select(ANO_ELEICAO, 
-             UF,
-             COD_MUN_TSE,
-             NOME_MUNICIPIO,
-             DESCRICAO_CARGO, 
-             QT_VAGAS,
-             QT_VOTOS_VALIDOS,
-             SIGLA_PARTIDO,
-             VOT_PART_MUN,
-             QUOCIENTE_ELEITORAL,
-             QUOCIENTE_PARTIDARIO) %>% 
-      mutate(QUOCIENTE_ELEITORAL = pont_virg(round(QUOCIENTE_ELEITORAL, 0),
-                                             tipo = "inteiro"),
-             QUOCIENTE_PARTIDARIO = pont_virg(round(QUOCIENTE_PARTIDARIO, 0),
-                                              tipo = "inteiro"),
-             QT_VOTOS_VALIDOS = pont_virg(QT_VOTOS_VALIDOS,
-                                          tipo = "inteiro"),
-             VOT_PART_MUN = pont_virg(VOT_PART_MUN,
-                                      tipo = "inteiro"),
-             DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
-      rename("Ano da eleição" = "ANO_ELEICAO",
-             "Código do município" = "COD_MUN_TSE",
-             "Nome do município" = "NOME_MUNICIPIO",
-             "Cargo" = "DESCRICAO_CARGO",
-             "Cadeiras oferecidas" = "QT_VAGAS",
-             "Votos válidos" = "QT_VOTOS_VALIDOS",
-             "Sigla do partido" = "SIGLA_PARTIDO",
-             "Votos do partido" = "VOT_PART_MUN",
-             "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
-             "Quociente partidário" = "QUOCIENTE_PARTIDARIO")
-    
-  }
-  
-}
-
-## 3.3. Fragmentação -------------------------------------------------------
-
-## Função para padronização dos indcadores de 'Fragmentação'
+## Função para padronização dos indicadores de 'Fragmentação'
 
 padroniz_frag <- function(data, 
                           agregacao = c("BR", "UF", "PF", "MUN")){
@@ -1029,15 +1341,44 @@ padroniz_frag <- function(data,
     ungroup() %>% 
     rename("Ano da eleição" = "ANO_ELEICAO",
            "Cargo" = "DESCRICAO_CARGO",
-           "Votos válidos" = "QT_VOTOS_VALIDOS",
+           "Cadeiras disponíveis" = "QT_VAGAS",
+           "Votos válidos" = "QT_VOTOS_VALIDOS_BR",
            "Sigla do partido" = "SIGLA_PARTIDO",
            "Total de votos conquistados" = "VOT_PART_BR",
            "Total de cadeiras conquistadas" = "TOT_CADEIRAS",
            "Percentual de votos conquistados" = "PERC_VOTOS",
            "Percentual de cadeiras conquistadas" = "PERC_CADEIRAS") %>% 
+    mutate(`Percentual de votos conquistados` = round(`Percentual de votos conquistados`,
+                                                      digits = 4) * 100,
+           `Percentual de cadeiras conquistadas` = round(`Percentual de cadeiras conquistadas`,
+                                                          digits = 4) * 100,
+           `Número efetivo de partidos eleitoral` = round(`Número efetivo de partidos eleitoral`,
+                                                           digits = 2),
+           `Número efetivo de partidos legislativo` = round(`Número efetivo de partidos legislativo`,
+                                                            digits = 2),
+           `Fracionalização` = round(`Fracionalização`,
+                                      digits = 4) * 100,
+           `Fracionalização máxima` = round(`Fracionalização máxima`,
+                                             digits = 4) * 100,
+           `Fragmentação` = round(`Fragmentação`,
+                                  digits = 4) * 100,
+           `Desproporcionalidade` = round(`Desproporcionalidade`,
+                                          digits = 2),
+           `Agregação regional` = "Brasil",
+            UF = "BR",
+            `Código do município` = NA,
+            `Nome do município` = NA,
+           Cargo = str_to_title(Cargo),
+           `Quantidade agregada de eleitores aptos` = NA) %>% 
     select(`Ano da eleição`,
-           Cargo,
+           `Agregação regional`,
+           UF,
+           `Código do município`,
+           `Nome do município`,
+            Cargo,
+           `Cadeiras disponíveis`,
            `Votos válidos`,
+           `Quantidade agregada de eleitores aptos`,
            `Sigla do partido`,
            `Total de votos conquistados`,
            `Total de cadeiras conquistadas`,
@@ -1045,56 +1386,70 @@ padroniz_frag <- function(data,
            `Percentual de cadeiras conquistadas`,
            `Número efetivo de partidos eleitoral`,
            `Número efetivo de partidos legislativo`,
-           Fracionalização,
+            Fracionalização,
            `Fracionalização máxima`,
-           Fragmentação,
-           `Desproporcionalidade`) %>% 
-    mutate(`Percentual de votos conquistados` = pont_virg(round(`Percentual de votos conquistados`,
-                                                                digits = 2),
-                                                          tipo = "decimal"),
-           `Percentual de cadeiras conquistadas` = pont_virg(round(`Percentual de cadeiras conquistadas`,
-                                                                   digits = 2),
-                                                             tipo = "decimal"),
-           `Número efetivo de partidos eleitoral` = pont_virg(round(`Número efetivo de partidos eleitoral`,
-                                                                    digits = 2),
-                                                              tipo = "decimal"),
-           `Número efetivo de partidos legislativo` = pont_virg(round(`Número efetivo de partidos legislativo`,
-                                                                      digits = 2),
-                                                                tipo = "decimal"),
-           `Fracionalização` = pont_virg(round(`Fracionalização`,
-                                               digits = 2),
-                                         tipo = "decimal"),
-           `Fracionalização máxima` = pont_virg(round(`Fracionalização máxima`,
-                                                      digits = 2),
-                                                tipo = "decimal"),
-           `Fragmentação` = pont_virg(round(`Fragmentação`,
-                                            digits = 2),
-                                      tipo = "decimal"),
-           `Desproporcionalidade` = pont_virg(round(`Desproporcionalidade`,
-                                                    digits = 2),
-                                              tipo = "decimal"),
-           `Votos válidos` = pont_virg(`Votos válidos`,
-                                       tipo = "inteiro"),
-           `Total de votos conquistados` = pont_virg(`Total de votos conquistados`,
-                                                     tipo = "inteiro"))
+            Fragmentação,
+           `Desproporcionalidade`) 
   
   } else if(agregacao == "UF"){
     
+    distcad_uf <- bind_rows(distcad_df,
+                            distcad_de)
+    
     data <- data %>% 
       ungroup() %>% 
+      left_join(distcad_uf) %>% 
       rename("Ano da eleição" = "ANO_ELEICAO",
              "Cargo" = "DESCRICAO_CARGO",
+             "Cadeiras disponíveis" = "QT_VAGAS",
              "Votos válidos" = "QT_VOTOS_VALIDOS",
              "Sigla do partido" = "SIGLA_PARTIDO",
+             "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
+             "Quociente partidário" = "QUOCIENTE_PARTIDARIO",
              "Total de votos conquistados" = "VOT_PART_UF",
              "Total de cadeiras conquistadas" = "TOT_CADEIRAS",
              "Percentual de votos conquistados" = "PERC_VOTOS",
              "Percentual de cadeiras conquistadas" = "PERC_CADEIRAS") %>% 
+      mutate(`Quociente eleitoral` = round(`Quociente eleitoral`, 
+                                           digits = 0),
+             `Quociente partidário` = round(`Quociente partidário`, 
+                                            digits = 0),
+             `Percentual de votos conquistados` = round(`Percentual de votos conquistados`,
+                                                         digits = 4) * 100,
+             `Percentual de cadeiras conquistadas` = round(`Percentual de cadeiras conquistadas`,
+                                                           digits = 4) * 100,
+             `Número efetivo de partidos eleitoral` = round(`Número efetivo de partidos eleitoral`,
+                                                            digits = 2),
+             `Número efetivo de partidos legislativo` = round(`Número efetivo de partidos legislativo`,
+                                                              digits = 2),
+             `Fracionalização` = round(`Fracionalização`,
+                                       digits = 4) * 100,
+             `Fracionalização máxima` = round(`Fracionalização máxima`,
+                                              digits = 4) * 100,
+             `Fragmentação` = round(`Fragmentação`,
+                                    digits = 4) * 100,
+             `Desproporcionalidade` = round(`Desproporcionalidade`,
+                                            digits = 2),
+             `Agregação regional` = "UF",
+             `Código do município` = NA,
+             `Nome do município` = NA,
+             Cargo = ifelse(Cargo == "DEPUTADO DISTRITAL",
+                            "DEPUTADO ESTADUAL",
+                            Cargo),
+             Cargo = str_to_title(Cargo),
+             `Quantidade agregada de eleitores aptos` = NA) %>% 
       select(`Ano da eleição`,
+             `Agregação regional`,
              UF,
+             `Código do município`,
+             `Nome do município`,
              Cargo,
+             `Cadeiras disponíveis`,
              `Votos válidos`,
+             `Quantidade agregada de eleitores aptos`,
              `Sigla do partido`,
+             `Quociente eleitoral`,
+             `Quociente partidário`,
              `Total de votos conquistados`,
              `Total de cadeiras conquistadas`,
              `Percentual de votos conquistados`,
@@ -1104,91 +1459,105 @@ padroniz_frag <- function(data,
              Fracionalização,
              `Fracionalização máxima`,
              Fragmentação,
-             `Desproporcionalidade`) %>% 
-      mutate(`Percentual de votos conquistados` = pont_virg(round(`Percentual de votos conquistados`,
-                                                                  digits = 2),
-                                                            tipo = "decimal"),
-             `Percentual de cadeiras conquistadas` = pont_virg(round(`Percentual de cadeiras conquistadas`,
-                                                                     digits = 2),
-                                                               tipo = "decimal"),
-             `Número efetivo de partidos eleitoral` = pont_virg(round(`Número efetivo de partidos eleitoral`,
-                                                                      digits = 2),
-                                                                tipo = "decimal"),
-             `Número efetivo de partidos legislativo` = pont_virg(round(`Número efetivo de partidos legislativo`,
-                                                                        digits = 2),
-                                                                  tipo = "decimal"),
-             `Fracionalização` = pont_virg(round(`Fracionalização`,
-                                                 digits = 2),
-                                           tipo = "decimal"),
-             `Fracionalização máxima` = pont_virg(round(`Fracionalização máxima`,
-                                                        digits = 2),
-                                                  tipo = "decimal"),
-             `Fragmentação` = pont_virg(round(`Fragmentação`,
-                                              digits = 2),
-                                        tipo = "decimal"),
-             `Desproporcionalidade` = pont_virg(round(`Desproporcionalidade`,
-                                                      digits = 2),
-                                                tipo = "decimal"),
-             `Votos válidos` = pont_virg(`Votos válidos`,
-                                         tipo = "inteiro"),
-             `Total de votos conquistados` = pont_virg(`Total de votos conquistados`,
-                                                       tipo = "inteiro"))
+             `Desproporcionalidade`)
     
   } else if(agregacao == "PF"){
     
     data <- data %>% 
       ungroup() %>% 
+      left_join(eleitores_aptos) %>% 
       rename("Ano da eleição" = "ANO_ELEICAO",
+             "Turno" = "NUM_TURNO",
              "Código do município" = "COD_MUN_TSE",
+             "Nome do município" = "NOME_MUNICIPIO",
              "Cargo" = "DESCRICAO_CARGO",
+             "Cadeiras disponíveis" = "QT_VAGAS",
              "Votos válidos" = "QT_VOTOS_VALIDOS",
+             "Quantidade agregada de eleitores aptos" = "AGREG_ELEITORES_APTOS",
              "Sigla do partido" = "SIGLA_PARTIDO",
              "Total de votos conquistados" = "VOT_PART_MUN",
              "Percentual de votos conquistados" = "PERC_VOTOS") %>% 
+      mutate(`Percentual de votos conquistados` = round(`Percentual de votos conquistados`,
+                                                         digits = 4) * 100,
+             `Número efetivo de partidos eleitoral` = round(`Número efetivo de partidos eleitoral`,
+                                                            digits = 2),
+             `Agregação regional` = "Município",
+             Cargo = str_to_title(Cargo)) %>%
       select(`Ano da eleição`,
-             UF,
+             Turno,
+             `Agregação regional`,
+              UF,
              `Código do município`,
-             Cargo,
+             `Nome do município`,
+              Cargo,
+             `Cadeiras disponíveis`,
              `Votos válidos`,
+             `Quantidade agregada de eleitores aptos`,
              `Sigla do partido`,
              `Total de votos conquistados`,
              `Percentual de votos conquistados`,
              `Número efetivo de partidos eleitoral`) %>% 
-      mutate(`Percentual de votos conquistados` = pont_virg(round(`Percentual de votos conquistados`,
-                                                                  digits = 2),
-                                                            tipo = "decimal"),
-             `Número efetivo de partidos eleitoral` = pont_virg(round(`Número efetivo de partidos eleitoral`,
-                                                                      digits = 2),
-                                                                tipo = "decimal"),
-             `Votos válidos` = pont_virg(`Votos válidos`,
-                                         tipo = "inteiro"),
-             `Total de votos conquistados` = pont_virg(`Total de votos conquistados`,
-                                                       tipo = "inteiro")) %>% 
       arrange(`Ano da eleição`,
               UF,
-              `Código do município`)
+              `Código do município`,
+              Turno)
   
   
   } else if(agregacao == "VR"){
     
     data <- data %>% 
       ungroup() %>% 
+      left_join(distcad_vr) %>% 
+      left_join(eleitores_aptos) %>% 
       rename("Ano da eleição" = "ANO_ELEICAO",
              "Código do município" = "COD_MUN_TSE",
              "Nome do município" = "NOME_MUNICIPIO",
              "Cargo" = "DESCRICAO_CARGO",
+             "Cadeiras disponíveis" = "QT_VAGAS",
              "Votos válidos" = "QT_VOTOS_VALIDOS",
+             "Sigla do partido" = "SIGLA_PARTIDO",
+             "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
+             "Quociente partidário" = "QUOCIENTE_PARTIDARIO",
+             "Quantidade agregada de eleitores aptos" = "AGREG_ELEITORES_APTOS",
              "Sigla do partido" = "SIGLA_PARTIDO",
              "Total de votos conquistados" = "VOT_PART_MUN",
              "Total de cadeiras conquistadas" = "TOT_CADEIRAS",
              "Percentual de votos conquistados" = "PERC_VOTOS",
              "Percentual de cadeiras conquistadas" = "PERC_CADEIRAS") %>% 
+      mutate(`Quociente eleitoral` = round(`Quociente eleitoral`, 
+                                           digits = 0),
+             `Quociente partidário` = round(`Quociente partidário`, 
+                                            digits = 0),
+             `Percentual de votos conquistados` = round(`Percentual de votos conquistados`,
+                                                        digits = 4) * 100,
+             `Percentual de cadeiras conquistadas` = round(`Percentual de cadeiras conquistadas`,
+                                                           digits = 4) * 100,
+             `Número efetivo de partidos eleitoral` = round(`Número efetivo de partidos eleitoral`,
+                                                            digits = 2),
+             `Número efetivo de partidos legislativo` = round(`Número efetivo de partidos legislativo`,
+                                                              digits = 2),
+             `Fracionalização` = round(`Fracionalização`,
+                                       digits = 4) * 100,
+             `Fracionalização máxima` = round(`Fracionalização máxima`,
+                                              digits = 4) * 100,
+             `Fragmentação` = round(`Fragmentação`,
+                                    digits = 4) * 100,
+             `Desproporcionalidade` = round(`Desproporcionalidade`,
+                                            digits = 2),
+             `Agregação regional` = "Município",
+             Cargo = str_to_title(Cargo)) %>% 
       select(`Ano da eleição`,
+             `Agregação regional`,
              UF,
              `Código do município`,
              `Nome do município`,
              Cargo,
+             `Cadeiras disponíveis`,
              `Votos válidos`,
+             `Quantidade agregada de eleitores aptos`,
+             `Sigla do partido`,
+             `Quociente eleitoral`,
+             `Quociente partidário`,
              `Sigla do partido`,
              `Total de votos conquistados`,
              `Total de cadeiras conquistadas`,
@@ -1199,41 +1568,13 @@ padroniz_frag <- function(data,
              Fracionalização,
              `Fracionalização máxima`,
              Fragmentação,
-             `Desproporcionalidade`) %>% 
-      mutate(`Percentual de votos conquistados` = pont_virg(round(`Percentual de votos conquistados`,
-                                                                  digits = 2),
-                                                            tipo = "decimal"),
-             `Percentual de cadeiras conquistadas` = pont_virg(round(`Percentual de cadeiras conquistadas`,
-                                                                     digits = 2),
-                                                               tipo = "decimal"),
-             `Número efetivo de partidos eleitoral` = pont_virg(round(`Número efetivo de partidos eleitoral`,
-                                                                      digits = 2),
-                                                                tipo = "decimal"),
-             `Número efetivo de partidos legislativo` = pont_virg(round(`Número efetivo de partidos legislativo`,
-                                                                        digits = 2),
-                                                                  tipo = "decimal"),
-             `Fracionalização` = pont_virg(round(`Fracionalização`,
-                                                 digits = 2),
-                                           tipo = "decimal"),
-             `Fracionalização máxima` = pont_virg(round(`Fracionalização máxima`,
-                                                        digits = 2),
-                                                  tipo = "decimal"),
-             `Fragmentação` = pont_virg(round(`Fragmentação`,
-                                              digits = 2),
-                                        tipo = "decimal"),
-             `Desproporcionalidade` = pont_virg(round(`Desproporcionalidade`,
-                                                      digits = 2),
-                                                tipo = "decimal"),
-             `Votos válidos` = pont_virg(`Votos válidos`,
-                                         tipo = "inteiro"),
-             `Total de votos conquistados` = pont_virg(`Total de votos conquistados`,
-                                                       tipo = "inteiro"))
+             `Desproporcionalidade`)
     
     }
   
 }
 
-## 3.4. Reeleição ----------------------------------------------------------
+## 3.3. Reeleição ----------------------------------------------------------
 
 ## Função para padronização dos indicadores de 'Reeleição'
 
@@ -1251,23 +1592,25 @@ padroniz_reel <- function(data,
              RENOVACAO,
              RENOVACAO_LIQUIDA,
              RECANDIDATURAS) %>% 
-      mutate(QT_VAGAS = pont_virg(QT_VAGAS,
-                                  tipo = "inteiro"),
-             REELEICAO = pont_virg(round(REELEICAO,
-                                      digits = 2),
-                                   tipo = "decimal"),
-             REELEICAO_LIQUIDA = pont_virg(round(REELEICAO_LIQUIDA,
-                                        digits = 2),
-                                        tipo = "decimal"),
-             RENOVACAO = pont_virg(round(RENOVACAO,
-                                      digits = 2),
-                                   tipo = "decimal"),
-             RENOVACAO_LIQUIDA = pont_virg(round(RENOVACAO_LIQUIDA,
-                                      digits = 2),
-                                      tipo = "decimal"),
-             RECANDIDATURAS = pont_virg(round(RECANDIDATURAS,
-                                      digits = 2),
-                                      tipo = "decimal")) %>% 
+      mutate(REELEICAO = round(REELEICAO,
+                               digits = 2),
+             REELEICAO_LIQUIDA = round(REELEICAO_LIQUIDA,
+                                       digits = 2),
+             RENOVACAO = round(RENOVACAO,
+                               digits = 2),
+             RENOVACAO_LIQUIDA = round(RENOVACAO_LIQUIDA,
+                                       digits = 2),
+             RECANDIDATURAS = round(RECANDIDATURAS,
+                                    digits = 2),
+             `Agregação regional` = "Brasil",
+              UF = "BR",
+             `Código do município` = NA,
+             `Nome do município` = NA,
+             `Quantidade agregada de eleitores aptos` = NA,
+             DESCRICAO_CARGO = ifelse(DESCRICAO_CARGO == "DEPUTADO DISTRITAL",
+                            "DEPUTADO ESTADUAL",
+                            DESCRICAO_CARGO),
+             DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
       rename("Ano da eleição" = "ANO_ELEICAO",
              "Cargo" = "DESCRICAO_CARGO",
              "Cadeiras disponíveis" = "QT_VAGAS",
@@ -1276,6 +1619,19 @@ padroniz_reel <- function(data,
              "Renovação" = "RENOVACAO",
              "Renovação líquida" = "RENOVACAO_LIQUIDA",
              "Recandidaturas" = "RECANDIDATURAS") %>% 
+      select(`Ano da eleição`,
+             `Agregação regional`,
+             UF,
+             `Código do município`,
+             `Nome do município`,
+             Cargo,
+             `Cadeiras disponíveis`,
+             `Quantidade agregada de eleitores aptos`,
+             Recandidaturas,
+             `Reeleição`,
+             `Reeleição líquida`,
+             `Renovação`,
+             `Renovação líquida`) %>% 
       arrange(`Ano da eleição`)
     
   } else if(agregacao == "UF"){
@@ -1290,23 +1646,24 @@ padroniz_reel <- function(data,
              RENOVACAO,
              RENOVACAO_LIQUIDA,
              RECANDIDATURAS) %>% 
-      mutate(QT_VAGAS = pont_virg(QT_VAGAS,
-                                  tipo = "inteiro"),
-             REELEICAO = pont_virg(round(REELEICAO,
-                                         digits = 2),
-                                   tipo = "decimal"),
-             REELEICAO_LIQUIDA = pont_virg(round(REELEICAO_LIQUIDA,
-                                                 digits = 2),
-                                           tipo = "decimal"),
-             RENOVACAO = pont_virg(round(RENOVACAO,
-                                         digits = 2),
-                                   tipo = "decimal"),
-             RENOVACAO_LIQUIDA = pont_virg(round(RENOVACAO_LIQUIDA,
-                                                 digits = 2),
-                                           tipo = "decimal"),
-             RECANDIDATURAS = pont_virg(round(RECANDIDATURAS,
-                                              digits = 2),
-                                        tipo = "decimal")) %>% 
+      mutate(REELEICAO = round(REELEICAO,
+                               digits = 2),
+             REELEICAO_LIQUIDA = round(REELEICAO_LIQUIDA,
+                                       digits = 2),
+             RENOVACAO = round(RENOVACAO,
+                               digits = 2),
+             RENOVACAO_LIQUIDA = round(RENOVACAO_LIQUIDA,
+                                       digits = 2),
+             RECANDIDATURAS = round(RECANDIDATURAS,
+                                    digits = 2),
+             `Agregação regional` = "UF",
+             `Código do município` = NA,
+             `Nome do município` = NA,
+             `Quantidade agregada de eleitores aptos` = NA,
+             DESCRICAO_CARGO = ifelse(DESCRICAO_CARGO == "DEPUTADO DISTRITAL",
+                                      "DEPUTADO ESTADUAL",
+                                      DESCRICAO_CARGO),
+             DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
       rename("Ano da eleição" = "ANO_ELEICAO",
              "Cargo" = "DESCRICAO_CARGO",
              "Cadeiras disponíveis" = "QT_VAGAS",
@@ -1315,50 +1672,76 @@ padroniz_reel <- function(data,
              "Renovação" = "RENOVACAO",
              "Renovação líquida" = "RENOVACAO_LIQUIDA",
              "Recandidaturas" = "RECANDIDATURAS") %>% 
+      select(`Ano da eleição`,
+             `Agregação regional`,
+             UF,
+             `Código do município`,
+             `Nome do município`,
+             Cargo,
+             `Cadeiras disponíveis`,
+             `Quantidade agregada de eleitores aptos`,
+             Recandidaturas,
+             `Reeleição`,
+             `Reeleição líquida`,
+             `Renovação`,
+             `Renovação líquida`) %>%
       arrange(`Ano da eleição`,
               UF)
     
   } else if(agregacao == "MUN"){
     
     data <- data %>% 
+      ungroup() %>% 
+      left_join(eleitores_aptos) %>% 
       select(ANO_ELEICAO,
              DESCRICAO_CARGO,
              UF,
              COD_MUN_TSE,
              NOME_MUNICIPIO,
              QT_VAGAS,
+             AGREG_ELEITORES_APTOS,
+             RECANDIDATURAS,
              REELEICAO,
              REELEICAO_LIQUIDA,
              RENOVACAO,
-             RENOVACAO_LIQUIDA,
-             RECANDIDATURAS) %>% 
-      mutate(QT_VAGAS = pont_virg(QT_VAGAS,
-                                  tipo = "inteiro"),
-             REELEICAO = pont_virg(round(REELEICAO,
-                                         digits = 2),
-                                   tipo = "decimal"),
-             REELEICAO_LIQUIDA = pont_virg(round(REELEICAO_LIQUIDA,
-                                                 digits = 2),
-                                           tipo = "decimal"),
-             RENOVACAO = pont_virg(round(RENOVACAO,
-                                         digits = 2),
-                                   tipo = "decimal"),
-             RENOVACAO_LIQUIDA = pont_virg(round(RENOVACAO_LIQUIDA,
-                                                 digits = 2),
-                                           tipo = "decimal"),
-             RECANDIDATURAS = pont_virg(round(RECANDIDATURAS,
-                                              digits = 2),
-                                        tipo = "decimal")) %>% 
+             RENOVACAO_LIQUIDA) %>% 
+      unique() %>% 
+      mutate(REELEICAO = round(REELEICAO,
+                               digits = 2),
+             REELEICAO_LIQUIDA = round(REELEICAO_LIQUIDA,
+                                       digits = 2),
+             RENOVACAO = round(RENOVACAO,
+                               digits = 2),
+             RENOVACAO_LIQUIDA = round(RENOVACAO_LIQUIDA,
+                                       digits = 2),
+             RECANDIDATURAS = round(RECANDIDATURAS,
+                                    digits = 2),
+             `Agregação regional` = "Município",
+             DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
       rename("Ano da eleição" = "ANO_ELEICAO",
              "Cargo" = "DESCRICAO_CARGO",
              "Código do município" = "COD_MUN_TSE",
              "Nome do município" = "NOME_MUNICIPIO",
              "Cadeiras disponíveis" = "QT_VAGAS",
+             "Quantidade agregada de eleitores aptos" = "AGREG_ELEITORES_APTOS",
              "Reeleição" = "REELEICAO",
              "Reeleição líquida" = "REELEICAO_LIQUIDA",
              "Renovação" = "RENOVACAO",
              "Renovação líquida" = "RENOVACAO_LIQUIDA",
              "Recandidaturas" = "RECANDIDATURAS") %>% 
+      select(`Ano da eleição`,
+             `Agregação regional`,
+             UF,
+             `Código do município`,
+             `Nome do município`,
+             Cargo,
+             `Cadeiras disponíveis`,
+             `Quantidade agregada de eleitores aptos`,
+             Recandidaturas,
+             `Reeleição`,
+             `Reeleição líquida`,
+             `Renovação`,
+             `Renovação líquida`) %>%
       arrange(`Ano da eleição`,
               UF,
               `Nome do município`)
@@ -1367,7 +1750,9 @@ padroniz_reel <- function(data,
   
 }
 
-## 3.5. Participação e Alienação -------------------------------------------
+## 3.4. Participação e Alienação -------------------------------------------
+
+## Função para padronização dos indicadores de 'Participação e Alienação'
 
 padroniz_particip_alien <- function(data,
                                     agregacao = c("BR", "UF", "MUN")){
@@ -1376,49 +1761,29 @@ padroniz_particip_alien <- function(data,
     
     data <- data %>% 
       ungroup() %>% 
-      select(ANO_ELEICAO,
-             NUM_TURNO,
-             DESCRICAO_CARGO,
-             QTD_APTOS,
-             QTD_COMPARECIMENTO,
-             QTD_ABSTENCOES, 
-             ABSTENCAO_PERCENTUAL,
-             QT_VOTOS_BRANCOS, 
-             VOTOS_BRANCOS_PERCENTUAIS,
-             QT_VOTOS_NULOS,
-             VOTOS_NULOS_PERCENTUAIS,
-             ALIENACAO_ABSOLUTA,
-             ALIENACAO_PERCENTUAL) %>% 
-      mutate(QTD_APTOS = pont_virg(QTD_APTOS,
-                                   tipo = "inteiro"),
-             QTD_COMPARECIMENTO = pont_virg(QTD_COMPARECIMENTO,
-                                            tipo = "inteiro"),
-             QTD_ABSTENCOES = pont_virg(QTD_ABSTENCOES,
-                                        tipo = "inteiro"),
-             ABSTENCAO_PERCENTUAL = pont_virg(round(ABSTENCAO_PERCENTUAL,
-                                                    digits = 2),
-                                              tipo = "decimal"),
-             QT_VOTOS_BRANCOS = pont_virg(QT_VOTOS_BRANCOS,
-                                          tipo = "inteiro"),
-             VOTOS_BRANCOS_PERCENTUAIS = pont_virg(round(VOTOS_BRANCOS_PERCENTUAIS,
-                                                         digits = 2),
-                                                   tipo = "decimal"),
-             QT_VOTOS_NULOS = pont_virg(QT_VOTOS_NULOS,
-                                        tipo = "inteiro"),
-             VOTOS_NULOS_PERCENTUAIS = pont_virg(round(VOTOS_NULOS_PERCENTUAIS,
-                                                       digits = 2),
-                                                 tipo = "decimal"),
-             ALIENACAO_ABSOLUTA = pont_virg(ALIENACAO_ABSOLUTA,
-                                            tipo = "inteiro"),
-             ALIENACAO_PERCENTUAL = pont_virg(round(ALIENACAO_PERCENTUAL,
-                                                    digits = 2),
-                                              tipo = "decimal")) %>% 
+      mutate(ABSTENCAO_PERCENTUAL = round(ABSTENCAO_PERCENTUAL,
+                                          digits = 2),
+             VOTOS_BRANCOS_PERCENTUAIS = round(VOTOS_BRANCOS_PERCENTUAIS,
+                                               digits = 2),
+             VOTOS_NULOS_PERCENTUAIS = round(VOTOS_NULOS_PERCENTUAIS,
+                                             digits = 2),
+             ALIENACAO_PERCENTUAL = round(ALIENACAO_PERCENTUAL,
+                                          digits = 2),
+             `Agregação regional` = "Brasil",
+             UF = "BR",
+             `Código do município` = NA,
+             `Nome do município` = NA,
+             `Quantidade agregada de eleitores aptos` = NA,
+             DESCRICAO_CARGO = ifelse(DESCRICAO_CARGO == "DEPUTADO DISTRITAL",
+                                      "DEPUTADO ESTADUAL",
+                                      DESCRICAO_CARGO),
+             DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
       rename("Ano da eleição" = "ANO_ELEICAO",
              "Turno" = "NUM_TURNO",
              "Cargo" = "DESCRICAO_CARGO",
-             "Quantidade de eleitores aptos" = "QTD_APTOS",
-             "Quantidade de comparecimento" = "QTD_COMPARECIMENTO",
-             "Quantidade de abstenções" = "QTD_ABSTENCOES",
+             "Quantidade de eleitores aptos" = "QT_APTOS",
+             "Quantidade de comparecimento" = "QT_COMPARECIMENTO",
+             "Quantidade de abstenções" = "QT_ABSTENCOES",
              "Percentual de abstenções" = "ABSTENCAO_PERCENTUAL",
              "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS",
              "Percentual de votos brancos" = "VOTOS_BRANCOS_PERCENTUAIS",
@@ -1426,56 +1791,54 @@ padroniz_particip_alien <- function(data,
              "Percentual de votos nulos" = "VOTOS_NULOS_PERCENTUAIS",
              "Alienação absoluta" = "ALIENACAO_ABSOLUTA",
              "Alienação percentual" = "ALIENACAO_PERCENTUAL") %>% 
-      arrange(`Ano da eleição`)
+      select(`Ano da eleição`,
+             Turno,
+             `Agregação regional`,
+             UF,
+             `Código do município`,
+             `Nome do município`,
+             Cargo,
+             `Quantidade agregada de eleitores aptos`,
+             `Quantidade de eleitores aptos`,
+             `Quantidade de comparecimento`,
+             `Quantidade de abstenções`,
+             `Percentual de abstenções`,
+             `Quantidade de votos brancos`,
+             `Percentual de votos brancos`,
+             `Quantidade de votos nulos`, 
+             `Percentual de votos nulos`,
+             `Alienação absoluta`,
+             `Alienação percentual`) %>% 
+      arrange(`Ano da eleição`,
+              Cargo,
+              Turno)
     
   } else if(agregacao == "UF"){
     
     data <- data %>% 
       ungroup() %>% 
-      select(ANO_ELEICAO,
-             NUM_TURNO,
-             DESCRICAO_CARGO,
-             UF,
-             QTD_APTOS,
-             QTD_COMPARECIMENTO,
-             QTD_ABSTENCOES, 
-             ABSTENCAO_PERCENTUAL,
-             QT_VOTOS_BRANCOS, 
-             VOTOS_BRANCOS_PERCENTUAIS,
-             QT_VOTOS_NULOS,
-             VOTOS_NULOS_PERCENTUAIS,
-             ALIENACAO_ABSOLUTA,
-             ALIENACAO_PERCENTUAL) %>% 
-      mutate(QTD_APTOS = pont_virg(QTD_APTOS,
-                                   tipo = "inteiro"),
-             QTD_COMPARECIMENTO = pont_virg(QTD_COMPARECIMENTO,
-                                            tipo = "inteiro"),
-             QTD_ABSTENCOES = pont_virg(QTD_ABSTENCOES,
-                                        tipo = "inteiro"),
-             ABSTENCAO_PERCENTUAL = pont_virg(round(ABSTENCAO_PERCENTUAL,
-                                                    digits = 2),
-                                              tipo = "decimal"),
-             QT_VOTOS_BRANCOS = pont_virg(QT_VOTOS_BRANCOS,
-                                          tipo = "inteiro"),
-             VOTOS_BRANCOS_PERCENTUAIS = pont_virg(round(VOTOS_BRANCOS_PERCENTUAIS,
-                                                         digits = 2),
-                                                   tipo = "decimal"),
-             QT_VOTOS_NULOS = pont_virg(QT_VOTOS_NULOS,
-                                        tipo = "inteiro"),
-             VOTOS_NULOS_PERCENTUAIS = pont_virg(round(VOTOS_NULOS_PERCENTUAIS,
-                                                       digits = 2),
-                                                 tipo = "decimal"),
-             ALIENACAO_ABSOLUTA = pont_virg(ALIENACAO_ABSOLUTA,
-                                            tipo = "inteiro"),
-             ALIENACAO_PERCENTUAL = pont_virg(round(ALIENACAO_PERCENTUAL,
-                                                    digits = 2),
-                                              tipo = "decimal")) %>% 
+      mutate(ABSTENCAO_PERCENTUAL = round(ABSTENCAO_PERCENTUAL,
+                                          digits = 2),
+             VOTOS_BRANCOS_PERCENTUAIS = round(VOTOS_BRANCOS_PERCENTUAIS,
+                                               digits = 2),
+             VOTOS_NULOS_PERCENTUAIS = round(VOTOS_NULOS_PERCENTUAIS,
+                                             digits = 2),
+             ALIENACAO_PERCENTUAL = round(ALIENACAO_PERCENTUAL,
+                                          digits = 2),
+             `Agregação regional` = "UF",
+             `Código do município` = NA,
+             `Nome do município` = NA,
+             `Quantidade agregada de eleitores aptos` = NA,
+             DESCRICAO_CARGO = ifelse(DESCRICAO_CARGO == "DEPUTADO DISTRITAL",
+                                      "DEPUTADO ESTADUAL",
+                                      DESCRICAO_CARGO),
+             DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
       rename("Ano da eleição" = "ANO_ELEICAO",
              "Turno" = "NUM_TURNO",
              "Cargo" = "DESCRICAO_CARGO",
-             "Quantidade de eleitores aptos" = "QTD_APTOS",
-             "Quantidade de comparecimento" = "QTD_COMPARECIMENTO",
-             "Quantidade de abstenções" = "QTD_ABSTENCOES",
+             "Quantidade de eleitores aptos" = "QT_APTOS",
+             "Quantidade de comparecimento" = "QT_COMPARECIMENTO",
+             "Quantidade de abstenções" = "QT_ABSTENCOES",
              "Percentual de abstenções" = "ABSTENCAO_PERCENTUAL",
              "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS",
              "Percentual de votos brancos" = "VOTOS_BRANCOS_PERCENTUAIS",
@@ -1483,63 +1846,53 @@ padroniz_particip_alien <- function(data,
              "Percentual de votos nulos" = "VOTOS_NULOS_PERCENTUAIS",
              "Alienação absoluta" = "ALIENACAO_ABSOLUTA",
              "Alienação percentual" = "ALIENACAO_PERCENTUAL") %>% 
+      select(`Ano da eleição`,
+             Turno,
+             `Agregação regional`,
+             UF,
+             `Código do município`,
+             `Nome do município`,
+             Cargo,
+             `Quantidade agregada de eleitores aptos`,
+             `Quantidade de eleitores aptos`,
+             `Quantidade de comparecimento`,
+             `Quantidade de abstenções`,
+             `Percentual de abstenções`,
+             `Quantidade de votos brancos`,
+             `Percentual de votos brancos`,
+             `Quantidade de votos nulos`, 
+             `Percentual de votos nulos`,
+             `Alienação absoluta`,
+             `Alienação percentual`) %>% 
       arrange(`Ano da eleição`,
-              UF)
+              UF,
+              Cargo,
+              Turno)
     
   } else if(agregacao == "MUN"){
     
     data <- data %>%
       ungroup() %>% 
-      select(ANO_ELEICAO,
-             NUM_TURNO,
-             ANO_ELEICAO,
-             NUM_TURNO,
-             DESCRICAO_CARGO,
-             UF,
-             COD_MUN_TSE,
-             NOME_MUNICIPIO,
-             QTD_APTOS,
-             QTD_COMPARECIMENTO,
-             QTD_ABSTENCOES, 
-             ABSTENCAO_PERCENTUAL,
-             QT_VOTOS_BRANCOS, 
-             VOTOS_BRANCOS_PERCENTUAIS,
-             QT_VOTOS_NULOS,
-             VOTOS_NULOS_PERCENTUAIS,
-             ALIENACAO_ABSOLUTA,
-             ALIENACAO_PERCENTUAL) %>% 
-      mutate(QTD_APTOS = pont_virg(QTD_APTOS,
-                                   tipo = "inteiro"),
-             QTD_COMPARECIMENTO = pont_virg(QTD_COMPARECIMENTO,
-                                            tipo = "inteiro"),
-             QTD_ABSTENCOES = pont_virg(QTD_ABSTENCOES,
-                                        tipo = "inteiro"),
-             ABSTENCAO_PERCENTUAL = pont_virg(round(ABSTENCAO_PERCENTUAL,
-                                                    digits = 2),
-                                              tipo = "decimal"),
-             QT_VOTOS_BRANCOS = pont_virg(QT_VOTOS_BRANCOS,
-                                          tipo = "inteiro"),
-             VOTOS_BRANCOS_PERCENTUAIS = pont_virg(round(VOTOS_BRANCOS_PERCENTUAIS,
-                                                         digits = 2),
-                                                   tipo = "decimal"),
-             QT_VOTOS_NULOS = pont_virg(QT_VOTOS_NULOS,
-                                        tipo = "inteiro"),
-             VOTOS_NULOS_PERCENTUAIS = pont_virg(round(VOTOS_NULOS_PERCENTUAIS,
-                                                       digits = 2),
-                                                 tipo = "decimal"),
-             ALIENACAO_ABSOLUTA = pont_virg(ALIENACAO_ABSOLUTA,
-                                            tipo = "inteiro"),
-             ALIENACAO_PERCENTUAL = pont_virg(round(ALIENACAO_PERCENTUAL,
-                                                    digits = 2),
-                                              tipo = "decimal")) %>% 
+      left_join(eleitores_aptos) %>% 
+      mutate(ABSTENCAO_PERCENTUAL = round(ABSTENCAO_PERCENTUAL,
+                                          digits = 2),
+             VOTOS_BRANCOS_PERCENTUAIS = round(VOTOS_BRANCOS_PERCENTUAIS,
+                                               digits = 2),
+             VOTOS_NULOS_PERCENTUAIS = round(VOTOS_NULOS_PERCENTUAIS,
+                                             digits = 2),
+             ALIENACAO_PERCENTUAL = round(ALIENACAO_PERCENTUAL,
+                                          digits = 2),
+             `Agregação regional` = "Município",
+             DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
       rename("Ano da eleição" = "ANO_ELEICAO",
              "Turno" = "NUM_TURNO",
              "Cargo" = "DESCRICAO_CARGO",
              "Código do município" = "COD_MUN_TSE",
              "Nome do município" = "NOME_MUNICIPIO",
-             "Quantidade de eleitores aptos" = "QTD_APTOS",
-             "Quantidade de comparecimento" = "QTD_COMPARECIMENTO",
-             "Quantidade de abstenções" = "QTD_ABSTENCOES",
+             "Quantidade de eleitores aptos" = "QT_APTOS",
+             "Quantidade agregada de eleitores aptos" = "AGREG_ELEITORES_APTOS",
+             "Quantidade de comparecimento" = "QT_COMPARECIMENTO",
+             "Quantidade de abstenções" = "QT_ABSTENCOES",
              "Percentual de abstenções" = "ABSTENCAO_PERCENTUAL",
              "Quantidade de votos brancos" = "QT_VOTOS_BRANCOS",
              "Percentual de votos brancos" = "VOTOS_BRANCOS_PERCENTUAIS",
@@ -1547,14 +1900,130 @@ padroniz_particip_alien <- function(data,
              "Percentual de votos nulos" = "VOTOS_NULOS_PERCENTUAIS",
              "Alienação absoluta" = "ALIENACAO_ABSOLUTA",
              "Alienação percentual" = "ALIENACAO_PERCENTUAL") %>% 
+      select(`Ano da eleição`,
+             Turno,
+             `Agregação regional`,
+             UF,
+             `Código do município`,
+             `Nome do município`,
+             Cargo,
+             `Quantidade agregada de eleitores aptos`,
+             `Quantidade de eleitores aptos`,
+             `Quantidade de comparecimento`,
+             `Quantidade de abstenções`,
+             `Percentual de abstenções`,
+             `Quantidade de votos brancos`,
+             `Percentual de votos brancos`,
+             `Quantidade de votos nulos`, 
+             `Percentual de votos nulos`,
+             `Alienação absoluta`,
+             `Alienação percentual`) %>% 
       arrange(`Ano da eleição`,
               UF,
-              `Nome do município`)
+              `Nome do município`,
+              Cargo,
+              Turno)
     
   }
   
 }
 
-## 3.6. Volatilidade -------------------------------------------------------
+## 3.5. Volatilidade -------------------------------------------------------
 
+## Função para padronização dos indicadores de 'Volatilidade'
 
+padroniz_volat <- function(data,
+                           agregacao = c("BR", "UF", "MUN")){
+  
+  if(agregacao == "BR"){
+    
+    data <- data %>% 
+      mutate(VOLATILIDADE_ELEITORAL = round(VOLATILIDADE_ELEITORAL,
+                                            digits = 2),
+             VOLATILIDADE_PARLAMENTAR = round(VOLATILIDADE_PARLAMENTAR,
+                                              digits = 2),
+             `Agregação regional` = "Brasil",
+             UF = "BR",
+             `Código do município` = NA,
+             `Nome do município` = NA,
+             `Quantidade agregada de eleitores aptos` = NA,
+             DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
+      rename("Ano da eleição" = "ANO_ELEICAO",
+             "Cargo" = "DESCRICAO_CARGO",
+             "Volatilidade eleitoral" = "VOLATILIDADE_ELEITORAL",
+             "Volatilidade parlamentar" = "VOLATILIDADE_PARLAMENTAR") %>% 
+      select(`Ano da eleição`,
+             `Agregação regional`,
+             UF,
+             `Código do município`,
+             `Nome do município`,
+             Cargo,
+             `Quantidade agregada de eleitores aptos`,
+             `Volatilidade eleitoral`,
+             `Volatilidade parlamentar`) %>% 
+      arrange(`Ano da eleição`,
+              Cargo) %>% 
+      unique()
+    
+  } else if(agregacao == "UF"){
+    
+    data <- data %>% 
+      mutate(VOLATILIDADE_ELEITORAL = round(VOLATILIDADE_ELEITORAL,
+                                            digits = 2),
+             VOLATILIDADE_PARLAMENTAR = round(VOLATILIDADE_PARLAMENTAR,
+                                              digits = 2),
+             `Agregação regional` = "UF",
+             `Código do município` = NA,
+             `Nome do município` = NA,
+             `Quantidade agregada de eleitores aptos` = NA,
+             DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
+      rename("Ano da eleição" = "ANO_ELEICAO",
+             "Cargo" = "DESCRICAO_CARGO",
+             "Volatilidade eleitoral" = "VOLATILIDADE_ELEITORAL",
+             "Volatilidade parlamentar" = "VOLATILIDADE_PARLAMENTAR") %>% 
+      select(`Ano da eleição`,
+             `Agregação regional`,
+             UF,
+             `Código do município`,
+             `Nome do município`,
+             Cargo,
+             `Quantidade agregada de eleitores aptos`,
+             `Volatilidade eleitoral`,
+             `Volatilidade parlamentar`) %>%
+      arrange(`Ano da eleição`,
+              UF) %>% 
+      unique()
+    
+  } else if(agregacao == "MUN"){
+    
+    data <- data %>% 
+      left_join(eleitores_aptos) %>% 
+      mutate(VOLATILIDADE_ELEITORAL = round(VOLATILIDADE_ELEITORAL,
+                                            digits = 2),
+             VOLATILIDADE_PARLAMENTAR = round(VOLATILIDADE_PARLAMENTAR,
+                                              digits = 2),
+             `Agregação regional` = "Município",
+             DESCRICAO_CARGO = str_to_title(DESCRICAO_CARGO)) %>% 
+      rename("Ano da eleição" = "ANO_ELEICAO",
+             "Cargo" = "DESCRICAO_CARGO",
+             "Código do município" = "COD_MUN_TSE",
+             "Nome do município" = "NOME_MUNICIPIO",
+             "Quantidade agregada de eleitores aptos" = "AGREG_ELEITORES_APTOS",
+             "Volatilidade eleitoral" = "VOLATILIDADE_ELEITORAL",
+             "Volatilidade parlamentar" = "VOLATILIDADE_PARLAMENTAR") %>% 
+      select(`Ano da eleição`,
+             `Agregação regional`,
+             UF,
+             `Código do município`,
+             `Nome do município`,
+             Cargo,
+             `Quantidade agregada de eleitores aptos`,
+             `Volatilidade eleitoral`,
+             `Volatilidade parlamentar`) %>%
+      arrange(`Ano da eleição`,
+              UF,
+              `Nome do município`) %>% 
+      unique()
+    
+  }
+}

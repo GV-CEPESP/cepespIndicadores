@@ -68,23 +68,37 @@ cons_uf <- padroniz_particip_alien(cons_uf,
 cons_mun <- padroniz_particip_alien(cons_mun,
                                     agregacao = "MUN")
 
-# 3. Exporta --------------------------------------------------------------
+# 3. Rbind ----------------------------------------------------------------
 
-## Salva os arquivos referentes aos indicadores de 'Participação e Alienação' 
-## em .rds
+## Junta os arquivos de 'Alienação e Participação' em um arquivo único
 
-saveRDS(cons_br, 
-        "data/output/participacao_alienacao_br.rds")
+alienacao_participacao_final <- bind_rows(cons_br,
+                                          cons_uf,
+                                          cons_mun) %>%
+  mutate(Turno = ifelse(is.na(Turno),
+                        1,
+                        Turno)) %>% 
+  arrange(`Ano da eleição`,
+          `Agregação regional`,
+          `Cargo`,
+          `UF`,
+          `Nome do município`,
+          Turno)
 
-saveRDS(cons_uf, 
-        "data/output/participacao_alienacao_uf.rds")
 
-saveRDS(cons_mun, 
-        "data/output/participacao_alienacao_mun.rds")
+# 4. Exporta --------------------------------------------------------------
 
-## Remove da área de trabalho os dados que não
-## serão mais utilizados
+## Exporta os indicadores de 'Participação e Alienação' em .rds
+
+saveRDS(alienacao_participacao_final, 
+        "data/output/alienacao_participacao_final.rds")
+
+# 5. Limpa Área de Trabalho -----------------------------------------------
+
+## Remove da área de trabalho os dados que 
+## não serão mais utilizados
 
 rm(cons_br,
    cons_uf,
-   cons_mun)
+   cons_mun,
+   alienacao_participacao_final)

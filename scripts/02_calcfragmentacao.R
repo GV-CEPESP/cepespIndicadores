@@ -169,9 +169,6 @@ fragment_df_br <- padroniz_frag(fragment_df_br,
 ## Organiza as variáveis e arredonda em duas casas decimais 
 ## os índices calculados
 
-distcad_df <- padroniz_distcad(distcad_df,
-                               agregacao = "UF")
-
 fragment_df_uf <- padroniz_frag(fragment_df_uf,
                                 agregacao = "UF")
  
@@ -179,9 +176,6 @@ fragment_df_uf <- padroniz_frag(fragment_df_uf,
 
 ## Organiza as variáveis e arredonda em duas casas decimais 
 ## os índices calculados
-
-distcad_de <- padroniz_distcad(distcad_de,
-                               agregacao = "UF")
 
 fragment_de_uf <- padroniz_frag(fragment_de_uf,
                                 agregacao = "UF")
@@ -203,62 +197,65 @@ fragment_pf_mun <- padroniz_frag(fragment_pf_mun,
 ## Organiza as variáveis e arredonda em duas casas decimais 
 ## os índices calculados
 
-distcad_vr <- padroniz_distcad(distcad_vr,
-                               agregacao = "MUN")
-
 fragment_vr_mun <- padroniz_frag(fragment_vr_mun,
                                  agregacao = "VR")
 
 # 5. Rbind ----------------------------------------------------------------
 
-## 5.1. Brasil -------------------------------------------------------------
+## Junta os arquivos de 'Fragmentação' em um arquivo único
 
-## Junta os arquivos de 'Fragmentação' de acordo 
-## com o nível de agregação regional
-
-fragment_br <- bind_rows(fragment_sen_br, 
-                         fragment_df_br)
-
-## 5.2. Estado -------------------------------------------------------------
-
-## Junta os bancos de acordo com seu nível de agregação regional
-
-fragment_uf <- bind_rows(fragment_df_uf, 
-                         fragment_de_uf)
+fragmentacao_final <- bind_rows(fragment_sen_br,
+                                fragment_df_br,
+                                fragment_df_uf,
+                                fragment_de_uf,
+                                fragment_pf_mun,
+                                fragment_vr_mun) %>%
+  mutate(Turno = ifelse(is.na(Turno),
+                        1,
+                        Turno)) %>% 
+  select(`Ano da eleição`,
+         Turno,
+         `Agregação regional`,
+         UF,
+         `Código do município`,
+         `Nome do município`,
+         Cargo,
+         `Cadeiras disponíveis`,
+         `Votos válidos`,
+         `Quantidade agregada de eleitores aptos`,
+         `Sigla do partido`,
+         `Quociente eleitoral`,
+         `Quociente partidário`,
+         `Total de votos conquistados`,
+         `Total de cadeiras conquistadas`,
+         `Percentual de votos conquistados`,
+         `Percentual de cadeiras conquistadas`,
+         `Número efetivo de partidos eleitoral`,
+         `Número efetivo de partidos legislativo`,
+         Fracionalização,
+         `Fracionalização máxima`,
+         Fragmentação,
+         `Desproporcionalidade`) %>% 
+  arrange(`Ano da eleição`,
+          `Agregação regional`,
+          `Cargo`,
+          `UF`,
+          `Nome do município`,
+          `Sigla do partido`)
 
 # 6. Exporta --------------------------------------------------------------
 
 ## Exporta os indicadores de 'Fragmentação' no formato .rds
 
-## 6.1. Distribuição de Cadeiras -------------------------------------------
+saveRDS(fragmentacao_final, 
+        "data/output/fragmentacao_final.rds")
 
-saveRDS(distcad_df, 
-        "data/output/distribuicao_cadeiras_df.rds")
-
-saveRDS(distcad_de, 
-        "data/output/distribuicao_cadeiras_de.rds")
-
-saveRDS(distcad_vr, 
-        "data/output/distribuicao_cadeiras_vr.rds")
-
-## 6.2. Fragmentação -------------------------------------------------------
-
-saveRDS(fragment_br, 
-        "data/output/fragmentacao_br.rds")
-
-saveRDS(fragment_uf, 
-        "data/output/fragmentacao_uf.rds")
-
-saveRDS(fragment_pf_mun, 
-        "data/output/fragmentacao_pf.rds")
-
-saveRDS(fragment_vr_mun, 
-        "data/output/fragmentacao_vr.rds")
+# 7. Limpa Área de Trabalho -----------------------------------------------
 
 ## Remove da área de trabalho os dados que 
 ## não serão mais utilizados
 
-rm(fragment_sen_br, fragment_df_br, fragment_df_uf,
-   fragment_de_uf, fragment_pf_mun, fragment_vr_mun,
-   fragment_br, fragment_uf, sen_br_eleitos, df_br_eleitos,
+rm(fragmentacao_final, fragment_sen_br, fragment_df_br, 
+   fragment_df_uf, fragment_de_uf, fragment_pf_mun, 
+   fragment_vr_mun, sen_br_eleitos, df_br_eleitos,
    df_uf_eleitos, de_uf_eleitos, pf_mun_eleitos, vr_mun_eleitos)

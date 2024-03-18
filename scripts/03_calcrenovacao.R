@@ -119,35 +119,33 @@ reel_vr_mun <- padroniz_reel(reel_vr_mun,
 
 # 4. Rbind ----------------------------------------------------------------
 
-## 4.1. Brasil -------------------------------------------------------------
+## Junta os arquivos de 'Reeleição' em um arquivo único
 
-## Junta os bancos de acordo com o nível de agregação regional
-
-reel_br <- bind_rows(reel_df_br, 
-                     reel_de_br)
-
-## 4.2. Estado -------------------------------------------------------------
-
-## Junta os bancos de acordo com o nível de agregação regional
-
-reel_uf <- bind_rows(reel_df_uf, 
-                     reel_de_uf)
+reeleicao_final <- bind_rows(reel_df_br,
+                             reel_de_br,
+                             reel_df_uf,
+                             reel_de_uf,
+                             reel_vr_mun) %>%
+  arrange(`Ano da eleição`,
+          `Agregação regional`,
+          `Cargo`,
+          `UF`,
+          `Nome do município`)
 
 # 5. Exporta --------------------------------------------------------------
 
-## Salva os arquivos referentes aos indicadores de 'Reeleição' em .rds
+## Exporta os arquivos referentes aos indicadores de 'Reeleição' em .rds
 
-saveRDS(reel_br, 
-        "data/output/reeleicao_br.rds")
+saveRDS(reeleicao_final, 
+        "data/output/reeleicao_final.rds")
 
-saveRDS(reel_uf, 
-        "data/output/reeleicao_uf.rds")
+# 6. Limpa Área de Trabalho -----------------------------------------------
 
-saveRDS(reel_vr_mun, 
-        "data/output/reeleicao_mun.rds")
+## Remove da área de trabalho os dados que 
+## não serão mais utilizados
 
-## Remove os arquivos que nao serao mais utilizados
+rm(de_uf_eleitos, df_uf_eleitos, 
+   reel_df_br, reel_de_br,
+   reel_df_uf, reel_de_uf,
+   reel_vr_mun, reeleicao_final)
 
-rm(estatisticas_ano1,estatisticas_ano2,de_uf_eleitos,df_uf_eleitos, 
-   vr_mun_eleitos, vr_mun_cand, pf_mun_cand,
-   de_uf_cand,df_uf_cand)
