@@ -1188,6 +1188,14 @@ resumo_mun <- resumo_mun %>%
 ## Salvando as informações sobre o intervalo de eleitores aptos
 
 eleitores_aptos <- resumo_mun %>% 
+  mutate(AGREG_ELEITORES_APTOS = factor(AGREG_ELEITORES_APTOS,
+                                        levels = c("Até 5.000 eleitores",
+                                                   "De 5.001 até 10.000 eleitores",
+                                                   "De 10.001 até 20.000 eleitores",
+                                                   "De 20.001 até 50.000 eleitores",
+                                                   "De 50.001 até 100.000 eleitores",
+                                                   "De 100.001 até 200.000 eleitores",
+                                                   "Acima de 200.000 eleitores"))) %>% 
   select(ANO_ELEICAO,
          UF,
          COD_MUN_TSE,

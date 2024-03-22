@@ -353,14 +353,6 @@ media_volatilidade_eleitoresapt <- volatilidade_final %>%
 media_quoc_eleitoral_partidario_final <- bind_rows(media_quoc_eleitoral_partidario_eleitoresapt,
                                                    media_quoc_eleitoral_partidario_nacional) %>% 
   rename("Quantidade de eleitores aptos" = "Quantidade agregada de eleitores aptos") %>% 
-  mutate(`Quantidade de eleitores aptos` = factor(`Quantidade de eleitores aptos`,
-                                                  levels = c("Até 5.000 eleitores",
-                                                             "De 5.001 até 10.000 eleitores",
-                                                             "De 10.001 até 20.000 eleitores",
-                                                             "De 20.001 até 50.000 eleitores",
-                                                             "De 50.001 até 100.000 eleitores",
-                                                             "De 100.001 até 200.000 eleitores",
-                                                             "Acima de 200.000 eleitores"))) %>% 
   arrange(`Ano da eleição`, 
           Turno,
           `Agregação regional`,
@@ -375,14 +367,6 @@ media_quoc_eleitoral_partidario_final <- bind_rows(media_quoc_eleitoral_partidar
 media_fragmentacao_final <- bind_rows(media_fragmentacao_eleitoresapt,
                                       media_fragmentacao_nacional) %>% 
   rename("Quantidade de eleitores aptos" = "Quantidade agregada de eleitores aptos") %>% 
-  mutate(`Quantidade de eleitores aptos` = factor(`Quantidade de eleitores aptos`,
-                                                  levels = c("Até 5.000 eleitores",
-                                                             "De 5.001 até 10.000 eleitores",
-                                                             "De 10.001 até 20.000 eleitores",
-                                                             "De 20.001 até 50.000 eleitores",
-                                                             "De 50.001 até 100.000 eleitores",
-                                                             "De 100.001 até 200.000 eleitores",
-                                                             "Acima de 200.000 eleitores"))) %>% 
   arrange(`Ano da eleição`, 
           Turno,
           `Agregação regional`,
@@ -397,14 +381,6 @@ media_fragmentacao_final <- bind_rows(media_fragmentacao_eleitoresapt,
 media_reeleicao_final <- bind_rows(media_reeleicao_eleitoresapt,
                                    media_reeleicao_nacional) %>% 
   rename("Quantidade de eleitores aptos" = "Quantidade agregada de eleitores aptos") %>% 
-  mutate(`Quantidade de eleitores aptos` = factor(`Quantidade de eleitores aptos`,
-                                                  levels = c("Até 5.000 eleitores",
-                                                             "De 5.001 até 10.000 eleitores",
-                                                             "De 10.001 até 20.000 eleitores",
-                                                             "De 20.001 até 50.000 eleitores",
-                                                             "De 50.001 até 100.000 eleitores",
-                                                             "De 100.001 até 200.000 eleitores",
-                                                             "Acima de 200.000 eleitores"))) %>% 
   arrange(`Ano da eleição`, 
           Turno,
           `Agregação regional`,
@@ -419,14 +395,6 @@ media_reeleicao_final <- bind_rows(media_reeleicao_eleitoresapt,
 media_participacao_final <- bind_rows(media_participacao_eleitoresapt,
                                       media_participacao_nacional) %>% 
   rename("Quantidade de eleitores aptos" = "Quantidade agregada de eleitores aptos") %>% 
-  mutate(`Quantidade de eleitores aptos` = factor(`Quantidade de eleitores aptos`,
-                                                  levels = c("Até 5.000 eleitores",
-                                                             "De 5.001 até 10.000 eleitores",
-                                                             "De 10.001 até 20.000 eleitores",
-                                                             "De 20.001 até 50.000 eleitores",
-                                                             "De 50.001 até 100.000 eleitores",
-                                                             "De 100.001 até 200.000 eleitores",
-                                                             "Acima de 200.000 eleitores"))) %>% 
   arrange(`Ano da eleição`,
           Turno,
           `Agregação regional`,
@@ -441,14 +409,6 @@ media_participacao_final <- bind_rows(media_participacao_eleitoresapt,
 media_volatilidade_final <- bind_rows(media_volatilidade_eleitoresapt,
                                       media_volatilidade_nacional) %>% 
   rename("Quantidade de eleitores aptos" = "Quantidade agregada de eleitores aptos") %>% 
-  mutate(`Quantidade de eleitores aptos` = factor(`Quantidade de eleitores aptos`,
-                                                  levels = c("Até 5.000 eleitores",
-                                                             "De 5.001 até 10.000 eleitores",
-                                                             "De 10.001 até 20.000 eleitores",
-                                                             "De 20.001 até 50.000 eleitores",
-                                                             "De 50.001 até 100.000 eleitores",
-                                                             "De 100.001 até 200.000 eleitores",
-                                                             "Acima de 200.000 eleitores"))) %>% 
   arrange(`Ano da eleição`, 
           Turno,
           `Agregação regional`,
@@ -457,6 +417,13 @@ media_volatilidade_final <- bind_rows(media_volatilidade_eleitoresapt,
           `Quantidade de eleitores aptos`)
 
 # 4. Exporta --------------------------------------------------------------
+
+## Exporta a média dos indicadores de 'Quociente Eleitoral e Partidário' 
+## no formato .rds
+
+saveRDS(media_quoc_eleitoral_partidario_final, 
+        "data/output/media_quociente_eleitoral_partidario_final.rds")
+
 
 ## Exporta a média dos indicadores de 'Fragmentação' no formato .rds
 
@@ -484,4 +451,3 @@ saveRDS(media_volatilidade_final,
 ## não serão mais utilizados
 
 rm(list = ls())
-
