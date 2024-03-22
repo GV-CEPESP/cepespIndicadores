@@ -1189,13 +1189,10 @@ resumo_mun <- resumo_mun %>%
 
 eleitores_aptos <- resumo_mun %>% 
   select(ANO_ELEICAO,
-         ANO_ELEICAO,
-         NUM_TURNO,
          UF,
          COD_MUN_TSE,
-         COD_MUN_IBGE,
-         NOME_MUNICIPIO,
-         AGREG_ELEITORES_APTOS)
+         AGREG_ELEITORES_APTOS) %>% 
+  unique()
 
 ## Separando os dados em bases por cargo e agregação regional
 
@@ -1651,7 +1648,13 @@ vagas_dep <- vagas_dep %>%
   pivot_longer(cols = `1998`:`2022`, 
                names_to = "ANO_ELEICAO",
                values_to = "QT_VAGAS") %>%
-  mutate(ANO_ELEICAO = as.numeric(ANO_ELEICAO)) %>% 
+  mutate(ANO_ELEICAO = as.numeric(ANO_ELEICAO),
+         DESCRICAO_CARGO = ifelse(DESCRICAO_CARGO == "DEPUTADO DISTRITAL",
+                                  "DEPUTADO ESTADUAL",
+                                  DESCRICAO_CARGO),
+         CODIGO_CARGO = ifelse(CODIGO_CARGO == 8,
+                               7,
+                               CODIGO_CARGO)) %>% 
   select(ANO_ELEICAO,
          UF,
          CODIGO_CARGO,

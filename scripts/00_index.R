@@ -7,6 +7,7 @@ library(plyr)
 library(tidyverse)
 library(abjutils)
 library(fansi)
+library(purrr)
 
 ## AMBIENTE
 
@@ -23,8 +24,9 @@ dir <- c("F:/Public/Documents/cepespIndicadores/")
 ## Realiza o cálculo, padronização e exportação dos 
 ## indicadores eleitorais em formato .rds
 
-source("scripts/funcoes.R", 
-       encoding = "UTF-8")
+lapply(list.files(path = "functions",
+                  full.names = T), 
+       source)
 
 source("scripts/01_data.R", 
        encoding = "UTF-8")
