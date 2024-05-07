@@ -13,6 +13,7 @@ eleitos <- function(data,
   if(agregacao == "UF"){
     
     data <- data %>% 
+      ungroup() %>% 
       select(ANO_ELEICAO, 
              NUM_TURNO,
              SIGLA_UF,

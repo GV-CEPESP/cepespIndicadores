@@ -25,7 +25,7 @@ vagas_ver <- readRDS(paste0(dir,
 ## Cria uma lista com os nomes dos arquivos de detalhe_votacao_secao
 
 # arquivos <- list.files(path = "F:/Public/Documents/repositorioTSE/data/output/Detalhe/",
-#                        pattern = "detalhe_votacao_secao")
+#                        pattern = "detalhe_votacao_secao.*parquet")
 
 #### 1.1.1.1. Eleições Gerais ------------------------------------------------
 
@@ -36,48 +36,48 @@ vagas_ver <- readRDS(paste0(dir,
 # ## Carrega e empilha os dados já consolidados do CEPESP DATA
 # 
 # for(arquivo in seq_along(arquivos)){
-#   
-#   if(grepl(paste0(seq(1998,2022,4), 
+# 
+#   if(grepl(paste0(seq(1998,2022,4),
 #                   collapse = "|"),
 #            arquivos[arquivo]) == TRUE){
-#     
+# 
 #     cat("Lendo", arquivos[arquivo], "\n")
-#     
+# 
 #     ## Lendo o arquivo
-#     
+# 
 #     temp <- read_parquet(paste0("F:/Public/Documents/repositorioTSE/data/output/Detalhe/",
 #                                 arquivos[arquivo]))
-#     
+# 
 #     ## Agregando os dados apenas por UF
-#     
-#     temp <- temp %>% 
-#       rename("DESCRICAO_UE" = "NOME_UE") %>% 
-#       group_by(across(ANO_ELEICAO:NOME_UF)) %>% 
+# 
+#     temp <- temp %>%
+#       rename("DESCRICAO_UE" = "NOME_UE") %>%
+#       group_by(across(ANO_ELEICAO:NOME_UF)) %>%
 #       summarise(across(QTDE_APTOS:QTDE_VOTOS_ANULADOS_APU_SEP,
 #                        as.numeric),
 #                 across(QTDE_APTOS:QTDE_VOTOS_ANULADOS_APU_SEP,
-#                        ~sum(., 
-#                             na.rm = TRUE))) %>% 
+#                        ~sum(.,
+#                             na.rm = TRUE))) %>%
 #       unique()
-#     
-#     ## Empilhando os dados 
-#     
+# 
+#     ## Empilhando os dados
+# 
 #     resumo_gr <- bind_rows(resumo_gr,
 #                            temp)
-#     
+# 
 #     ## Removendo os dados que não serão mais utilizados
-#     
+# 
 #     rm(temp)
-#     
+# 
 #     ## Liberando a memória do R
-#     
+# 
 #     gc()
-#     
+# 
 #   }
-#   
+# 
 # }
 # 
-# ## Salvando os dados já consolidados 
+# ## Salvando os dados já consolidados
 # 
 # saveRDS(resumo_gr,
 #         paste0(dir,
@@ -153,71 +153,71 @@ resumo_mun <- readRDS(paste0(dir,
 
 ## Cria uma lista com os nomes dos arquivos finais do CEPESP DATA
 
-arquivos <- list.files(path = "F:/Public/Documents/repositorioTSE/data/output/JoinFinal",
-                       pattern = "votacao_secao_coli_cand.*[.]parquet")
+# arquivos <- list.files(path = "F:/Public/Documents/repositorioTSE/data/output/JoinFinal",
+#                        pattern = "votacao_secao_coli_cand.*[.]parquet")
 
 #### 1.1.2.1. Eleições Gerais ------------------------------------------------
 
 ## Cria uma lista onde os dados serão armazenados
 
-final_cepespdata_gr <- list()
-
-## Carregando o arquivo único contendo o banco de dados gerado pelo CEPESP DATA
-## a partir do join dos dados de Candidatos, Coligações e Votos
-
-for(arquivo in seq_along(arquivos)){
-
-  if(grepl(paste0(seq(1998,2022,4),
-                  collapse = "|"),
-           arquivos[arquivo]) == TRUE){
-
-    cat("Lendo", arquivos[arquivo], "\n")
-
-    ## Lendo o arquivo
-
-    temp <- read_parquet(paste0("F:/Public/Documents/repositorioTSE/data/output/JoinFinal/",
-                                arquivos[arquivo]))
-
-    gc() ## Liberando memória do R
-    
-    gc()
-    
-    cat("Agregando os dados \n")
-
-    ## Agregando os dados apenas por UF
-
-    temp <- temp %>%
-      mutate(QTDE_VOTOS = as.numeric(QTDE_VOTOS),
-             NUM_FEDERACAO = as.character(NUM_FEDERACAO)) %>%
-      group_by(across(c(ID_CEPESP,
-                        ANO_ELEICAO:NOME_UF,
-                        CODIGO_CARGO:SIT_PREST_CONTAS))) %>%
-      summarise(QTDE_VOTOS = sum(QTDE_VOTOS,
-                                 na.rm = TRUE)) %>%
-      unique()
-
-    ## Empilhando os dados
-
-    final_cepespdata_gr <- bind_rows(final_cepespdata_gr,
-                                     temp)
-
-    ## Removendo os dados que não serão mais utilizados
-
-    rm(temp)
-
-    ## Liberando a memória do R
-
-    gc()
-
-  }
-
-}
-
-## Salvando os dados já consolidados
-
-saveRDS(final_cepespdata_gr,
-        paste0(dir,
-               "data/input/final_cepespdata_gr.rds"))
+# final_cepespdata_gr <- list()
+# 
+# ## Carregando o arquivo único contendo o banco de dados gerado pelo CEPESP DATA
+# ## a partir do join dos dados de Candidatos, Coligações e Votos
+# 
+# for(arquivo in seq_along(arquivos)){
+# 
+#   if(grepl(paste0(seq(1998,2022,4),
+#                   collapse = "|"),
+#            arquivos[arquivo]) == TRUE){
+# 
+#     cat("Lendo", arquivos[arquivo], "\n")
+# 
+#     ## Lendo o arquivo
+# 
+#     temp <- read_parquet(paste0("F:/Public/Documents/repositorioTSE/data/output/JoinFinal/",
+#                                 arquivos[arquivo]))
+# 
+#     gc() ## Liberando memória do R
+#     
+#     gc()
+#     
+#     cat("Agregando os dados \n")
+# 
+#     ## Agregando os dados apenas por UF
+# 
+#     temp <- temp %>%
+#       mutate(QTDE_VOTOS = as.numeric(QTDE_VOTOS),
+#              NUM_FEDERACAO = as.character(NUM_FEDERACAO)) %>%
+#       group_by(across(c(ID_CEPESP,
+#                         ANO_ELEICAO:NOME_UF,
+#                         CODIGO_CARGO:SIT_PREST_CONTAS))) %>%
+#       summarise(QTDE_VOTOS = sum(QTDE_VOTOS,
+#                                  na.rm = TRUE)) %>%
+#       unique()
+# 
+#     ## Empilhando os dados
+# 
+#     final_cepespdata_gr <- bind_rows(final_cepespdata_gr,
+#                                      temp)
+# 
+#     ## Removendo os dados que não serão mais utilizados
+# 
+#     rm(temp)
+# 
+#     ## Liberando a memória do R
+# 
+#     gc()
+# 
+#   }
+# 
+# }
+# 
+# ## Salvando os dados já consolidados
+# 
+# saveRDS(final_cepespdata_gr,
+#         paste0(dir,
+#                "data/input/final_cepespdata_gr.rds"))
 
 ## Carregando os dados já consolidados
 
@@ -228,64 +228,66 @@ final_cepespdata_gr <- readRDS(paste0(dir,
 
 ## Cria uma lista onde os dados serão armazenados
 
-final_cepespdata_mun <- list()
+#final_cepespdata_mun <- list()
 
 ## Carregando o arquivo único contendo o banco de dados gerado pelo CEPESP DATA
 ## a partir do join dos dados de Candidatos, Coligações e Votos
 
-for(arquivo in seq_along(arquivos)){
-
-  if(grepl(paste0(seq(2000,2020,4),
-                  collapse = "|"),
-           arquivos[arquivo]) == TRUE){
-
-    cat("Lendo", arquivos[arquivo], "\n")
-
-    ## Lendo o arquivo
-
-    temp <- read_parquet(paste0("F:/Public/Documents/repositorioTSE/data/output/JoinFinal/",
-                                arquivos[arquivo]))
-    
-    ## Liberando a memória do R
-    
-    gc()
-
-    ## Agregando os dados apenas por município
-    
-    cat("Agregando os dados \n")
-
-    temp <- temp %>%
-      mutate(QTDE_VOTOS = as.numeric(QTDE_VOTOS),
-             NUM_FEDERACAO = as.character(NUM_FEDERACAO)) %>%
-      group_by(across(c(ID_CEPESP,
-                        ANO_ELEICAO:NOME_MUNICIPIO,
-                        CODIGO_CARGO:SIT_PREST_CONTAS))) %>%
-      summarise(QTDE_VOTOS = sum(QTDE_VOTOS,
-                                 na.rm = TRUE)) %>%
-      unique()
-
-    ## Empilhando os dados
-
-    final_cepespdata_mun <- bind_rows(final_cepespdata_mun,
-                                      final_cepespdata_mun2)
-
-    ## Removendo os dados que não serão mais utilizados
-
-    rm(temp)
-
-    ## Liberando a memória do R
-
-    gc()
-
-  }
-
-}
-
-## Salvando os dados já consolidados
-
-saveRDS(final_cepespdata_mun,
-        paste0(dir,
-               "data/input/final_cepespdata_mun.rds"))
+# for(arquivo in seq_along(arquivos)){
+# 
+#   if(grepl(paste0(seq(2000,2020,4),
+#                   collapse = "|"),
+#            arquivos[arquivo]) == TRUE){
+# 
+#     cat("Lendo", arquivos[arquivo], "\n")
+# 
+#     ## Lendo o arquivo
+# 
+#     temp <- arrow::open_dataset(paste0("F:/Public/Documents/repositorioTSE/data/output/JoinFinal/",
+#                                 arquivos[arquivo]))
+#     
+#     ## Liberando a memória do R
+#     
+#     gc()
+#     gc()
+# 
+#     ## Agregando os dados apenas por município
+#     
+#     cat("Agregando os dados \n")
+# 
+#     temp <- temp %>%
+#       mutate(QTDE_VOTOS = as.numeric(QTDE_VOTOS),
+#              NUM_FEDERACAO = as.character(NUM_FEDERACAO)) %>%
+#       group_by(across(c(ID_CEPESP,
+#                         ANO_ELEICAO:NOME_MUNICIPIO,
+#                         CODIGO_CARGO:SIT_PREST_CONTAS))) %>%
+#       summarise(QTDE_VOTOS = sum(QTDE_VOTOS,
+#                                  na.rm = TRUE)) %>%
+#       unique() %>% 
+#       collect()
+# 
+#     ## Empilhando os dados
+# 
+#     final_cepespdata_mun <- bind_rows(final_cepespdata_mun,
+#                                       temp)
+# 
+#     ## Removendo os dados que não serão mais utilizados
+# 
+#     rm(temp)
+# 
+#     ## Liberando a memória do R
+# 
+#     gc()
+# 
+#   }
+# 
+# }
+# 
+# ## Salvando os dados já consolidados
+# 
+# saveRDS(final_cepespdata_mun,
+#         paste0(dir,
+#                "data/input/final_cepespdata_mun.rds"))
 
 ## Carregando os dados já consolidados
 

@@ -84,8 +84,8 @@ reel_de_uf <- indic_reel(de_uf_cand,
 #### 2.2.1.1. Prefeito -------------------------------------------------------
 
 reel_pf_uf <- indic_reel(pf_mun_cand,
-                          pf_mun_eleitos,
-                          agregacao = "PF_UF")
+                         pf_mun_eleitos,
+                         agregacao = "PF_UF")
 
 reel_pf_elt_apt <- indic_reel(pf_mun_cand,
                               pf_mun_eleitos,
