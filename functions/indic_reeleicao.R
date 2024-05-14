@@ -516,16 +516,18 @@ indic_reel <- function(candidatos,
                  AGREG_ELEITORES_APTOS == agreg) %>% 
           ungroup() %>% 
           select(AGREG_ELEITORES_APTOS,
+                 SIGLA_UF,
                  COD_MUN_TSE,
                  COD_MUN_IBGE,
                  NOME_MUNICIPIO) %>% 
           unique() %>% 
           arrange(AGREG_ELEITORES_APTOS,
+                  SIGLA_UF,
                   NOME_MUNICIPIO)
         
         for(municipio in 1:nrow(num_municipios)){
           
-          cat("Lendo", ano, uf, "município", municipio, "de", nrow(num_municipios), "\n")
+          cat("Lendo", ano, agreg, "município", municipio, "de", nrow(num_municipios), "\n")
           
           ## Verificando qual candidato foi eleito em t-8
           
@@ -593,7 +595,7 @@ indic_reel <- function(candidatos,
               indicadores2 <- indicadores2 %>% 
                 ungroup() %>% 
                 add_row(ANO_ELEICAO = as.character(ano),
-                        SIGLA_UF = uf,
+                        SIGLA_UF = num_municipios$SIGLA_UF[municipio],
                         COD_MUN_TSE = num_municipios$COD_MUN_TSE[municipio],
                         COD_MUN_IBGE = num_municipios$COD_MUN_IBGE[municipio],
                         REELEITOS_AGREG = 0)
@@ -605,7 +607,7 @@ indic_reel <- function(candidatos,
             suppressMessages(
               indicadores1 <- candidatos %>% 
                 filter(ANO_ELEICAO == ano &
-                         SIGLA_UF == uf &
+                         SIGLA_UF == num_municipios$SIGLA_UF[municipio] &
                          COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
                 filter(ID_CEPESP %in% eleitos_t4$ID_CEPESP) %>% 
                 ungroup() %>% 
@@ -625,7 +627,7 @@ indic_reel <- function(candidatos,
               indicadores1 <- indicadores1 %>% 
                 ungroup() %>% 
                 add_row(ANO_ELEICAO = as.character(ano),
-                        SIGLA_UF = uf,
+                        SIGLA_UF = num_municipios$SIGLA_UF[municipio],
                         COD_MUN_TSE = num_municipios$COD_MUN_TSE[municipio],
                         COD_MUN_IBGE = num_municipios$COD_MUN_IBGE[municipio],
                         NOME_MUNICIPIO = num_municipios$NOME_MUNICIPIO[municipio],
@@ -680,7 +682,7 @@ indic_reel <- function(candidatos,
             
             suppressMessages(
               indicadores1 <- data.frame(ANO_ELEICAO = as.character(ano),
-                                         SIGLA_UF = uf,
+                                         SIGLA_UF = num_municipios$SIGLA_UF[municipio],
                                          COD_MUN_TSE = num_municipios$COD_MUN_TSE[municipio],
                                          COD_MUN_IBGE = num_municipios$COD_MUN_IBGE[municipio],
                                          NOME_MUNICIPIO = num_municipios$NOME_MUNICIPIO[municipio],
