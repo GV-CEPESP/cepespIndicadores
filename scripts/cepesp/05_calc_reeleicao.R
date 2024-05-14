@@ -3,11 +3,9 @@
 
 #'        - Calcular os indicadores de Reeleição:
 
-#'        - 1. Reeleição;
-#'        - 2. Reeleição Incondicional;
+#'        - 1. Reeleição Bruta;
 #'        - 3. Reeleição Líquida;
-#'        - 4. Renovação;
-#'        - 5. Renovação Incondicional;
+#'        - 4. Renovação Bruta;
 #'        - 6. Renovação Líquida; e
 #'        - 7. Recandidaturas.
 
@@ -125,11 +123,19 @@ reel_df_uf <- padroniz_reel(reel_df_uf,
 reel_de_uf <- padroniz_reel(reel_de_uf,
                             agregacao = "UF")
 
-## 3.2. Eleições Municipais ------------------------------------------------
+## 3.2. Eleições Municipais -------------------------------------------------
 
 ### 3.2.1. Município --------------------------------------------------------
 
-#### 3.2.1.1. Vereador -------------------------------------------------------
+#### 3.2.1.1. Prefeito ------------------------------------------------------
+
+reel_pf_uf <- padroniz_reel(reel_pf_uf,
+                            agregacao = "PF_UF") 
+
+reel_pf_elt_apt <- padroniz_reel(reel_pf_elt_apt,
+                                 agregacao = "PF_ELEIT_APT") 
+
+#### 3.2.1.2. Vereador ------------------------------------------------------
 
 reel_vr_mun <- padroniz_reel(reel_vr_mun,
                              agregacao = "MUN") %>% 
