@@ -498,6 +498,7 @@ resumo_mun <- resumo_mun %>%
 ## Salvando as informações sobre o intervalo de eleitores aptos
 
 eleitores_aptos <- resumo_mun %>% 
+  filter(TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA") %>% 
   mutate(AGREG_ELEITORES_APTOS = factor(AGREG_ELEITORES_APTOS,
                                         levels = c("Até 5.000 eleitores",
                                                    "De 5.001 até 10.000 eleitores",
