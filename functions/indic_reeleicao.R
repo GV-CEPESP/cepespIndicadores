@@ -10,14 +10,6 @@ indic_reel <- function(candidatos,
   
   options(dplyr.summarise.inform = FALSE)
   
-  ## Lista temporária onde os dados serão armazenados
-  
-  temp <- list()
-  
-  temp2 <- list()
-  
-  com_erro <- list()
-  
   indicadores_final <- list()
   
   ################################### BR #########################################    
@@ -231,6 +223,14 @@ indic_reel <- function(candidatos,
       
       for(uf in ufs){
         
+        ## Lista temporária onde os dados serão armazenados
+        
+        temp <- list()
+        
+        temp2 <- list()
+        
+        com_erro <- list()
+        
         ## Verificando quantos municípios existem no estado
         
         num_municipios <- candidatos %>% 
@@ -440,8 +440,17 @@ indic_reel <- function(candidatos,
                        REELEITOS_AGREG) %>% 
                 unique())
             
-          if(is.na(indicadores1$REAPRESENTACAO) |
+          if(is.na(indicadores1$PERMIT_CAND) |
+             is.na(indicadores1$REAPRESENTACAO) |
              is.na(indicadores1$REELEITOS_AGREG)){
+            
+            ## Se a informação não está completa para alguma das variáveis-chave,
+            ## torna todas elas NA
+            
+            indicadores1 <- indicadores1 %>% 
+              mutate(PERMIT_CAND = NA,
+                     REAPRESENTACAO = NA,
+                     REELEITOS_AGREG = NA)
             
             ## Atualizando o número de municípios com informação disponível
             ## na agregação
@@ -525,6 +534,14 @@ indic_reel <- function(candidatos,
     for(ano in seq(2008, 2020, by = 4)){
       
       for(agreg in agreg_eleitores){
+        
+        ## Lista temporária onde os dados serão armazenados
+        
+        temp <- list()
+        
+        temp2 <- list()
+        
+        com_erro <- list()
         
         ## Verificando quantos municípios existem na agregação
         
@@ -742,8 +759,17 @@ indic_reel <- function(candidatos,
                      REELEITOS_AGREG) %>% 
               unique())
           
-          if(is.na(indicadores1$REAPRESENTACAO) |
+          if(is.na(indicadores1$PERMIT_CAND) |
+             is.na(indicadores1$REAPRESENTACAO) |
              is.na(indicadores1$REELEITOS_AGREG)){
+            
+            ## Se a informação não está completa para alguma das variáveis-chave,
+            ## torna todas elas NA
+            
+            indicadores1 <- indicadores1 %>% 
+              mutate(PERMIT_CAND = NA,
+                     REAPRESENTACAO = NA,
+                     REELEITOS_AGREG = NA)
             
             ## Atualizando o número de municípios com informação disponível
             ## na agregação
