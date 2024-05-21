@@ -439,7 +439,7 @@ indic_reel <- function(candidatos,
         
         num_municipios <- candidatos %>% 
           filter(ANO_ELEICAO == ano & 
-                   SIGLA_UF == uf) %>% 
+                 SIGLA_UF == uf) %>% 
           ungroup() %>% 
           select(SIGLA_UF,
                  COD_MUN_TSE,
@@ -464,8 +464,7 @@ indic_reel <- function(candidatos,
                    COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
             mutate(ELEITO_T8 = 1) %>% 
             ungroup() %>% 
-            select(ANO_ELEICAO,
-                   SIGLA_UF,
+            select(SIGLA_UF,
                    COD_MUN_TSE,
                    COD_MUN_IBGE,
                    ID_CEPESP,
@@ -477,24 +476,53 @@ indic_reel <- function(candidatos,
             eleitos_t4 <- eleitos %>% 
               filter(ANO_ELEICAO == ano - 4 &
                      COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
-              mutate(ELEITO_T4 = 1) %>% 
-              left_join(eleitos_t8) %>% 
-              mutate(ELEITO_T8 = ifelse(is.na(ELEITO_T8),
-                                        0,
-                                        ELEITO_T8),
-                     PERMIT_CAND = ifelse(ELEITO_T4 == 1 &
-                                          ELEITO_T8 == 1,
-                                          0,
-                                          1)) %>% 
-              ungroup() %>% 
-              select(ANO_ELEICAO,
-                     SIGLA_UF,
-                     COD_MUN_TSE,
-                     COD_MUN_IBGE,
-                     ID_CEPESP,
-                     ELEITO_T4,
-                     ELEITO_T8,
-                     PERMIT_CAND))
+              mutate(ELEITO_T4 = 1))
+          
+          ## Condição p/ calcular o indicador de candidatos passíveis de se recandidatar
+          ## em t0
+          
+          if(nrow(eleitos_t8) > 0){
+            
+            suppressMessages(
+              eleitos_t4 <- eleitos_t4 %>% 
+                left_join(eleitos_t8) %>% 
+                mutate(ELEITO_T8 = ifelse(is.na(ELEITO_T8),
+                                                0,
+                                                ELEITO_T8),
+                       PERMIT_CAND = ifelse(ELEITO_T4 == 1 &
+                                            ELEITO_T8 == 1,
+                                            0,
+                                            1)) %>% 
+                ungroup() %>% 
+                select(ANO_ELEICAO,
+                       SIGLA_UF,
+                       COD_MUN_TSE,
+                       COD_MUN_IBGE,
+                       ID_CEPESP,
+                       ELEITO_T4,
+                       ELEITO_T8,
+                       PERMIT_CAND))
+            
+          } else if(nrow(eleitos_t8) == 8) {
+            
+            suppressMessages(
+              eleitos_t4 <- eleitos_t4 %>% 
+                left_join(eleitos_t8) %>% 
+                mutate(PERMIT_CAND = ifelse(ELEITO_T4 == 1 &
+                                            ELEITO_T8 == 1,
+                                            0,
+                                            1)) %>% 
+                ungroup() %>% 
+                select(ANO_ELEICAO,
+                       SIGLA_UF,
+                       COD_MUN_TSE,
+                       COD_MUN_IBGE,
+                       ID_CEPESP,
+                       ELEITO_T4,
+                       ELEITO_T8,
+                       PERMIT_CAND))
+            
+          }
           
           ## Verificando qual candidato foi eleito em t0
           
@@ -560,7 +588,8 @@ indic_reel <- function(candidatos,
                        COD_MUN_TSE,
                        COD_MUN_IBGE,
                        NOME_MUNICIPIO,
-                       DESCRICAO_CARGO) %>% 
+                       DESCRICAO_CARGO,
+                       ID_CEPESP) %>% 
                 unique()) 
             
              ## Salva se o prefeito eleito em t-4 se candidatou em t0
@@ -572,7 +601,7 @@ indic_reel <- function(candidatos,
                          COD_MUN_IBGE,
                          NOME_MUNICIPIO,
                          DESCRICAO_CARGO) %>% 
-                mutate(REAPRESENTACAO = n())
+                summarise(REAPRESENTACAO = n())
               
               ## Atribuindo 0 nos casos em que o prefeito eleito em t-4 não se 
               ## recandidatou em t0 e ajustando p/ os demais casos (desde que a
@@ -673,14 +702,6 @@ indic_reel <- function(candidatos,
           temp <- bind_rows(temp, 
                             indicadores1)
           
-          desagreg <- bind_rows(desagreg, 
-                                temp)
-          
-          ## Salvando o banco desagregado para conferência
-          
-          saveRDS(desagreg,
-                  "data/output/reel_pf_uf_desagreg_temp.rds")
-          
         }
         
         ## Calcula os indicadores de 'Reeleição' na agregação de referência
@@ -702,7 +723,7 @@ indic_reel <- function(candidatos,
                                           na.rm = TRUE)) %>% 
           mutate(DERROTADOS = REAPRESENTACAO - REELEITOS_AGREG,
                  DESISTENCIA = INFORMACAO_DISPONIVEL - REAPRESENTACAO,
-                 TX_PREFEITOS_PERMIT_REEL = PERMIT_CAND/INFORMACAO_DISPONIVEL,
+                 TX_PREFEITOS_PERMIT_REEL = PERMIT_CAND/QTDE_MUNICIPIOS_AGREG,
                  TX_PREFEITOS_RECAND = REAPRESENTACAO/PERMIT_CAND,
                  REELEICAO_BRUTA = reeleicao(REELEITOS_AGREG, INFORMACAO_DISPONIVEL),
                  REELEICAO_LIQUIDA = reeleicao_liq(REELEITOS_AGREG, 
@@ -715,6 +736,16 @@ indic_reel <- function(candidatos,
         
         indicadores_final <- bind_rows(indicadores_final,
                                        temp2)
+        
+        ## Empilha os dados desagregados em um arquivo p/ conferência
+        
+        desagreg <- bind_rows(desagreg, 
+                              temp)
+        
+        ## Salvando o banco desagregado para conferência
+        
+        saveRDS(desagreg,
+                "data/output/reel_pf_uf_desagreg_temp.rds")
         
         ## Salvando o progresso para conferência
         
@@ -787,8 +818,7 @@ indic_reel <- function(candidatos,
                    COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
             mutate(ELEITO_T8 = 1) %>% 
             ungroup() %>% 
-            select(ANO_ELEICAO,
-                   SIGLA_UF,
+            select(SIGLA_UF,
                    COD_MUN_TSE,
                    COD_MUN_IBGE,
                    ID_CEPESP,
@@ -799,25 +829,54 @@ indic_reel <- function(candidatos,
           suppressMessages(
             eleitos_t4 <- eleitos %>% 
               filter(ANO_ELEICAO == ano - 4 &
-                     COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
-              mutate(ELEITO_T4 = 1) %>% 
-              left_join(eleitos_t8) %>% 
-              mutate(ELEITO_T8 = ifelse(is.na(ELEITO_T8),
-                                        0,
-                                        ELEITO_T8),
-                     PERMIT_CAND = ifelse(ELEITO_T4 == 1 &
-                                            ELEITO_T8 == 1,
+                       COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
+              mutate(ELEITO_T4 = 1))
+          
+          ## Condição p/ calcular o indicador de candidatos passíveis de se recandidatar
+          ## em t0
+          
+          if(nrow(eleitos_t8) > 0){
+            
+            suppressMessages(
+              eleitos_t4 <- eleitos_t4 %>% 
+                left_join(eleitos_t8) %>% 
+                mutate(ELEITO_T8 = ifelse(is.na(ELEITO_T8),
                                           0,
-                                          1)) %>% 
-              ungroup() %>% 
-              select(ANO_ELEICAO,
-                     SIGLA_UF,
-                     COD_MUN_TSE,
-                     COD_MUN_IBGE,
-                     ID_CEPESP,
-                     ELEITO_T4,
-                     ELEITO_T8,
-                     PERMIT_CAND))
+                                          ELEITO_T8),
+                       PERMIT_CAND = ifelse(ELEITO_T4 == 1 &
+                                              ELEITO_T8 == 1,
+                                            0,
+                                            1)) %>% 
+                ungroup() %>% 
+                select(ANO_ELEICAO,
+                       SIGLA_UF,
+                       COD_MUN_TSE,
+                       COD_MUN_IBGE,
+                       ID_CEPESP,
+                       ELEITO_T4,
+                       ELEITO_T8,
+                       PERMIT_CAND))
+            
+          } else if(nrow(eleitos_t8) == 8) {
+            
+            suppressMessages(
+              eleitos_t4 <- eleitos_t4 %>% 
+                left_join(eleitos_t8) %>% 
+                mutate(PERMIT_CAND = ifelse(ELEITO_T4 == 1 &
+                                              ELEITO_T8 == 1,
+                                            0,
+                                            1)) %>% 
+                ungroup() %>% 
+                select(ANO_ELEICAO,
+                       SIGLA_UF,
+                       COD_MUN_TSE,
+                       COD_MUN_IBGE,
+                       ID_CEPESP,
+                       ELEITO_T4,
+                       ELEITO_T8,
+                       PERMIT_CAND))
+            
+          }
           
           ## Verificando qual candidato foi eleito em t0
           
@@ -1024,10 +1083,10 @@ indic_reel <- function(candidatos,
                     REELEITOS_AGREG = sum(REELEITOS_AGREG,
                                           na.rm = TRUE)) %>% 
           mutate(DERROTADOS = REAPRESENTACAO - REELEITOS_AGREG,
-                 DESISTENCIA = QTDE_MUNICIPIOS_AGREG - REAPRESENTACAO,
+                 DESISTENCIA = INFORMACAO_DISPONIVEL - REAPRESENTACAO,
                  TX_PREFEITOS_PERMIT_REEL = PERMIT_CAND/QTDE_MUNICIPIOS_AGREG,
                  TX_PREFEITOS_RECAND = REAPRESENTACAO/PERMIT_CAND,
-                 REELEICAO_BRUTA = reeleicao(REELEITOS_AGREG, QTDE_MUNICIPIOS_AGREG),
+                 REELEICAO_BRUTA = reeleicao(REELEITOS_AGREG, INFORMACAO_DISPONIVEL),
                  REELEICAO_LIQUIDA = reeleicao_liq(REELEITOS_AGREG, 
                                                    DERROTADOS)) %>% 
           mutate(across(DERROTADOS:REELEICAO_LIQUIDA, ~ifelse(is.nan(.),
