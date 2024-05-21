@@ -1078,5 +1078,4 @@ rm(de_br_cons, df_br_cons,
    sen_br_cons, sen_uf_cons,
    gov_br_cons, gov_uf_cons, 
    pr_br_cons, pr_uf_cons,
-   vagas_sen, vagas_dep,
-   vagas_ver)
+   vagas_sen)

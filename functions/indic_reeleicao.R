@@ -16,81 +16,178 @@ indic_reel <- function(candidatos,
   
   if(agregacao == "BR"){
     
+    ## Lista temporária onde os dados com erro serão armazenados
+    
+    com_erro <- list()
+    
     ## For loop que calcula os indicadores de 'Reeleição'
     ## para cada ano
     
-    for(ano in seq(1998, 2018, by = 4)){
+    for(ano in seq(2002, 2022, by = 4)){
       
       cat("Lendo",ano,"\n")
       
-      ## Banco com os candidatos da próxima eleição em 
-      ## relação ao ano corrente
+      ## Salvando a quantidade de vagas disponíveis em t0
       
-      candidatos_ano2 <- candidatos %>% 
-        filter(ANO_ELEICAO == ano + 4) 
+      vagas_t0 <- candidatos %>% 
+        filter(ANO_ELEICAO == ano) %>% 
+        ungroup() %>% 
+        select(SIGLA_UF,
+               QTDE_VAGAS) %>% 
+        unique() %>% 
+        summarise(QTDE_VAGAS = sum(QTDE_VAGAS,
+                                   na.rm = TRUE)) %>% 
+        pull(QTDE_VAGAS)
       
-      ## Banco com os candidatos eleitos na primeira
-      ## eleição de referência
+      ## Salvando o cargo de referência
       
-      eleitos_ano1 <- eleitos %>% 
+      cargo <- unique(candidatos$DESCRICAO_CARGO)
+      
+      ## Banco com os candidatos em t0 
+      
+      candidatos_t0 <- candidatos %>% 
         filter(ANO_ELEICAO == ano) 
       
-      ## Banco com os candidatos eleitos na segunda
-      ## eleição de referência
+      ## Banco com os candidatos eleitos em t0
       
-      eleitos_ano2 <- eleitos %>% 
-        filter(ANO_ELEICAO == ano + 4) 
+      eleitos_t0 <- eleitos %>% 
+        filter(ANO_ELEICAO == ano) 
       
-      ## Filtra os candidatos que se reapresentaram na eleição
-      ## seguinte ao ano corrente e que foram reeleitos
+      ## Banco com os candidatos eleitos em t-4
       
-      eleitos_ano2 <- eleitos_ano2 %>% 
-        filter(ID_CEPESP %in% 
-               eleitos_ano1$ID_CEPESP)
+      eleitos_t4 <- eleitos %>% 
+        filter(ANO_ELEICAO == ano - 4) 
       
       ## Verifica quantos candidatos foram reeleitos e salva o resultado
       
-      indicadores2 <- eleitos_ano2 %>% 
+      indicadores2 <- eleitos_t0 %>% 
+        filter(ID_CEPESP %in% eleitos_t4$ID_CEPESP) %>% 
         group_by(ANO_ELEICAO) %>% 
-        summarise(REELEITOS = n()) 
+        summarise(REELEITOS_AGREG = n()) 
       
-      ## Calcula o total de candidatos que se reapresentaram na 
-      ## eleição seguinte ao ano corrente e cruza o resultado com o número 
-      ## de reeleitos
+      ## Atribui valor 0 caso nenhum dos deputados eleitos em t-4 tenha 
+      ## se reelegido em t0
+      
+      if(nrow(indicadores2) == 0 &
+         ((nrow(eleitos_t4) > 0) &
+          (nrow(eleitos_t0) > 0))) {
+        
+        indicadores2 <- indicadores2 %>% 
+          ungroup() %>% 
+          add_row(ANO_ELEICAO = as.character(ano),
+                  REELEITOS_AGREG = 0)
+        
+        ## Atribui valor NA caso a informação não exista p/ todos os anos de 
+        ## referência
+        
+      } else if(nrow(indicadores2) == 0 &
+                ((nrow(eleitos_t4) > 0) |
+                 (nrow(eleitos_t0) > 0))) {
+        
+        indicadores2 <- indicadores2 %>% 
+          ungroup() %>% 
+          add_row(ANO_ELEICAO = as.character(ano),
+                  REELEITOS_AGREG = NA)
+        
+      }
+      
+      ## Calcula o total de candidatos eleitos em t-4 que se reapresentaram 
+      ## em t0
       
       suppressMessages(
-        indicadores1 <- candidatos_ano2 %>% 
-          filter(ID_CEPESP %in% 
-                 eleitos_ano1$ID_CEPESP) %>% 
+        indicadores1 <- candidatos_t0 %>% 
+          filter(ID_CEPESP %in% eleitos_t4$ID_CEPESP) %>% 
           group_by(ANO_ELEICAO,
                    DESCRICAO_CARGO) %>% 
           mutate(REAPRESENTACAO = n()) %>% 
           select(ANO_ELEICAO,
-                 SIGLA_UF,
                  DESCRICAO_CARGO,
                  QTDE_VAGAS,
                  REAPRESENTACAO) %>% 
-          unique() %>% 
-          group_by(ANO_ELEICAO,
-                   DESCRICAO_CARGO) %>% 
-          reframe(QTDE_VAGAS = sum(QTDE_VAGAS,
-                                   na.rm = TRUE),
-                  REAPRESENTACAO = REAPRESENTACAO) %>% 
-          unique() %>% 
-          left_join(indicadores2))
+          mutate(QTDE_VAGAS = vagas_t0) %>% 
+          unique())
+      
+      ## Atribuindo 0 nos casos em que nenhum dos deputados eleitos em t-4 se 
+      ## recandidatou em t0 e ajustando p/ os demais casos (desde que a
+      ## informação exista p/ todos os anos)
+      
+      if(nrow(indicadores1) == 0 &
+         ((nrow(eleitos_t4) > 0) &
+          (nrow(eleitos_t0) > 0))){
+        
+        indicadores1 <- indicadores1 %>% 
+          ungroup() %>% 
+          add_row(ANO_ELEICAO = as.character(ano),
+                  DESCRICAO_CARGO = cargo,
+                  QTDE_VAGAS = vagas_t0,
+                  REAPRESENTACAO = 0)
+        
+        ## Atribui valor NA caso a informação não exista p/ todos os anos de 
+        ## referência
+        
+      } else if(nrow(indicadores1) == 0 &
+                ((nrow(eleitos_t4) == 0) |
+                 (nrow(eleitos_t0) == 0))){
+        
+        indicadores1 <- indicadores1 %>% 
+          ungroup() %>% 
+          add_row(ANO_ELEICAO = as.character(ano),
+                  DESCRICAO_CARGO = cargo,
+                  QTDE_VAGAS = vagas_t0,
+                  REAPRESENTACAO = NA)
+        
+      }
+      
+      ## Juntando as informações dos deputados que se recandidataram
+      ## em t0, bem como dos que foram reeleitos em t0
+      
+      suppressMessages(
+        indicadores1 <- indicadores1 %>%
+          left_join(indicadores2) %>% 
+          mutate(INFORMACAO_DISPONIVEL = nrow(eleitos_t0)) %>% 
+          select(ANO_ELEICAO,
+                 DESCRICAO_CARGO,
+                 INFORMACAO_DISPONIVEL,
+                 QTDE_VAGAS,
+                 REAPRESENTACAO,
+                 REELEITOS_AGREG) %>% 
+          unique())
+      
+      ## Se a informação não está completa para alguma das variáveis-chave,
+      ## torna todas elas NA
+      
+      if(is.na(indicadores1$REAPRESENTACAO) |
+         is.na(indicadores1$REELEITOS_AGREG)){
+        
+        indicadores1 <- indicadores1 %>% 
+          mutate(REAPRESENTACAO = NA,
+                 REELEITOS_AGREG = NA,
+                 INFORMACAO_DISPONIVEL = NA)
+        
+        ## Empilhando o ano com erro em um banco adicional
+        
+        com_erro <- bind_rows(com_erro,
+                              indicadores1)
+        
+        ## Salvando os municípios com problemas
+        
+        saveRDS(com_erro,
+                "data/output/reeleicao_deputados_anos_com_erro.rds")
+        
+      }
       
       ## Calcula os indicadores de 'Reeleição'
       
       indicadores1 <- indicadores1 %>% 
-        mutate(DERROTADOS = REAPRESENTACAO - REELEITOS,
+        mutate(DERROTADOS = REAPRESENTACAO - REELEITOS_AGREG,
                DESISTENCIA = QTDE_VAGAS - REAPRESENTACAO,
-               REELEICAO_BRUTA = reeleicao(REELEITOS, QTDE_VAGAS),
-               REELEICAO_LIQUIDA = reeleicao_liq(REELEITOS, 
+               REELEICAO_BRUTA = reeleicao(REELEITOS_AGREG, INFORMACAO_DISPONIVEL),
+               REELEICAO_LIQUIDA = reeleicao_liq(REELEITOS_AGREG, 
                                                  DERROTADOS),
                RENOVACAO_BRUTA = renovacao(REELEICAO_BRUTA),
                RENOVACAO_LIQUIDA = renovacao_liq(REELEICAO_LIQUIDA),
                RECANDIDATURAS = recandidaturas(REAPRESENTACAO,
-                                               QTDE_VAGAS))
+                                               INFORMACAO_DISPONIVEL))
       
       ## Empilha os indicadores calculados no banco criado
       
@@ -111,89 +208,192 @@ indic_reel <- function(candidatos,
              "RS", "RO", "RR", "SC", "SP", 
              "SE", "TO")
     
+    ## Lista temporária onde os dados com erro e p/ conferência serão armazenados
+    
+    com_erro <- list()
+    
     ## For loop que calcula os indicadores de 'Reeleição'
     ## para cada ano
     
-    for(ano in seq(1998, 2018, by = 4)){
+    for(ano in seq(2002, 2022, by = 4)){
       
       for(uf in ufs){
         
         cat("Lendo", ano, uf, "\n")
         
-        ## Banco com os candidatos da próxima eleição em 
-        ## relação ao ano corrente
+        ## Salvando o cargo de referência
         
-        candidatos_ano2 <- candidatos %>% 
-          filter(ANO_ELEICAO == ano + 4 &
-                 SIGLA_UF == SIGLA_UF)
+        cargo <- unique(candidatos$DESCRICAO_CARGO)
         
-        ## Banco com os candidatos eleitos na primeira
-        ## eleição de referência
+        ## Salvando a quantidade de vagas disponíveis em t0
         
-        eleitos_ano1 <- eleitos %>% 
+        vagas_t0 <- vagas_dep %>% 
           filter(ANO_ELEICAO == ano &
-                 SIGLA_UF == uf)
+                 SIGLA_UF == uf &
+                 DESCRICAO_CARGO == cargo) %>% 
+          ungroup() %>% 
+          select(SIGLA_UF,
+                 QTDE_VAGAS) %>% 
+          unique() %>% 
+          pull(QTDE_VAGAS)
         
-        ## Banco com os candidatos eleitos na segunda
-        ## eleição de referência
+        ## Banco com os candidatos em t0 
         
-        eleitos_ano2 <- eleitos %>% 
-          filter(ANO_ELEICAO == ano + 4 &
-                 SIGLA_UF == uf)
+        candidatos_t0 <- candidatos %>% 
+          filter(ANO_ELEICAO == ano &
+                 SIGLA_UF == uf) 
         
-        ## Filtra os candidatos que se reapresentaram na eleição
-        ## seguinte ao ano corrente e que foram reeleitos
+        ## Banco com os candidatos eleitos em t0
         
-        eleitos_ano2 <- eleitos_ano2 %>% 
-          filter(ID_CEPESP %in% 
-                 eleitos_ano1$ID_CEPESP)
+        eleitos_t0 <- eleitos %>% 
+          filter(ANO_ELEICAO == ano &
+                 SIGLA_UF == uf) 
         
-        ## Verifica o total de candidatos reeleitos e salva o resultado 
+        ## Banco com os candidatos eleitos em t-4
         
-        indicadores2 <- eleitos_ano2 %>% 
-          group_by(ANO_ELEICAO,
-                   SIGLA_UF) %>% 
-          summarise(REELEITOS = n()) 
+        eleitos_t4 <- eleitos %>% 
+          filter(ANO_ELEICAO == ano - 4 &
+                 SIGLA_UF == uf) 
         
-        ## Calcula o total de candidatos que se reapresentaram na 
-        ## eleição seguinte ao ano corrente e junta com o número 
-        ## de reeleitos
+        ## Verifica quantos candidatos foram reeleitos e salva o resultado
         
         suppressMessages(
-          indicadores1 <- candidatos_ano2 %>% 
-            filter(ID_CEPESP %in% 
-                   eleitos_ano1$ID_CEPESP) %>% 
+        indicadores2 <- eleitos_t0 %>% 
+          filter(ID_CEPESP %in% eleitos_t4$ID_CEPESP) %>% 
+          group_by(ANO_ELEICAO,
+                   SIGLA_UF) %>% 
+          summarise(REELEITOS_AGREG = n())) 
+        
+        ## Atribui valor 0 caso nenhum dos deputados eleitos em t-4 tenha 
+        ## se reelegido em t0
+        
+        if(nrow(indicadores2) == 0 &
+           ((nrow(eleitos_t4) > 0) &
+            (nrow(eleitos_t0) > 0))) {
+          
+          indicadores2 <- indicadores2 %>% 
+            ungroup() %>% 
+            add_row(ANO_ELEICAO = as.character(ano),
+                    SIGLA_UF = uf,
+                    REELEITOS_AGREG = 0)
+          
+          ## Atribui valor NA caso a informação não exista p/ todos os anos de 
+          ## referência
+          
+        } else if(nrow(indicadores2) == 0 &
+                  ((nrow(eleitos_t4) > 0) |
+                   (nrow(eleitos_t0) > 0))) {
+          
+          indicadores2 <- indicadores2 %>% 
+            ungroup() %>% 
+            add_row(ANO_ELEICAO = as.character(ano),
+                    SIGLA_UF = uf,
+                    REELEITOS_AGREG = NA)
+          
+        }
+        
+        ## Calcula o total de candidatos eleitos em t-4 que se reapresentaram 
+        ## em t0
+        
+        suppressMessages(
+          indicadores1 <- candidatos_t0 %>% 
+            filter(ID_CEPESP %in% eleitos_t4$ID_CEPESP) %>% 
             group_by(ANO_ELEICAO,
                      DESCRICAO_CARGO,
-                     SIGLA_UF) %>%
+                     SIGLA_UF) %>% 
             mutate(REAPRESENTACAO = n()) %>% 
             select(ANO_ELEICAO,
                    DESCRICAO_CARGO,
                    SIGLA_UF,
                    QTDE_VAGAS,
                    REAPRESENTACAO) %>% 
-            unique() %>% 
-            group_by(ANO_ELEICAO,
-                     DESCRICAO_CARGO,
-                     SIGLA_UF) %>% 
-            reframe(QTDE_VAGAS = sum(QTDE_VAGAS,
-                                     na.rm = TRUE),
-                    REAPRESENTACAO = REAPRESENTACAO) %>% 
-            unique() %>% 
-            left_join(indicadores2))
+            mutate(QTDE_VAGAS = vagas_t0) %>% 
+            unique())
+        
+        ## Atribuindo 0 nos casos em que nenhum dos deputados eleitos em t-4 se 
+        ## recandidatou em t0 e ajustando p/ os demais casos (desde que a
+        ## informação exista p/ todos os anos)
+        
+        if(nrow(indicadores1) == 0 &
+           ((nrow(eleitos_t4) > 0) &
+            (nrow(eleitos_t0) > 0))){
+          
+          indicadores1 <- indicadores1 %>% 
+            ungroup() %>% 
+            add_row(ANO_ELEICAO = as.character(ano),
+                    DESCRICAO_CARGO = cargo,
+                    SIGLA_UF = uf,
+                    QTDE_VAGAS = vagas_t0,
+                    REAPRESENTACAO = 0)
+          
+          ## Atribui valor NA caso a informação não exista p/ todos os anos de 
+          ## referência
+          
+        } else if(nrow(indicadores1) == 0 &
+                  ((nrow(eleitos_t4) == 0) |
+                   (nrow(eleitos_t0) == 0))){
+          
+          indicadores1 <- indicadores1 %>% 
+            ungroup() %>% 
+            add_row(ANO_ELEICAO = as.character(ano),
+                    DESCRICAO_CARGO = cargo,
+                    SIGLA_UF = uf,
+                    QTDE_VAGAS = vagas_t0,
+                    REAPRESENTACAO = NA)
+          
+        }
+        
+        ## Juntando as informações dos deputados que se recandidataram
+        ## em t0, bem como dos que foram reeleitos em t0
+        
+        suppressMessages(
+          indicadores1 <- indicadores1 %>%
+            left_join(indicadores2) %>% 
+            mutate(INFORMACAO_DISPONIVEL = nrow(eleitos_t0)) %>% 
+            select(ANO_ELEICAO,
+                   DESCRICAO_CARGO,
+                   SIGLA_UF,
+                   INFORMACAO_DISPONIVEL,
+                   QTDE_VAGAS,
+                   REAPRESENTACAO,
+                   REELEITOS_AGREG) %>% 
+            unique())
+        
+        ## Se a informação não está completa para alguma das variáveis-chave,
+        ## torna todas elas NA
+        
+        if(is.na(indicadores1$REAPRESENTACAO) |
+           is.na(indicadores1$REELEITOS_AGREG)){
+          
+          indicadores1 <- indicadores1 %>% 
+            mutate(REAPRESENTACAO = NA,
+                   REELEITOS_AGREG = NA,
+                   INFORMACAO_DISPONIVEL = NA)
+          
+          ## Empilhando o ano com erro em um banco adicional
+          
+          com_erro <- bind_rows(com_erro,
+                                indicadores1)
+          
+          ## Salvando os municípios com problemas
+          
+          saveRDS(com_erro,
+                  "data/output/reeleicao_deputados_anos_com_erro.rds")
+          
+        }
         
         ## Calcula os indicadores de 'Reeleição'
         
         indicadores1 <- indicadores1 %>% 
-          mutate(DERROTADOS = REAPRESENTACAO - REELEITOS,
+          mutate(DERROTADOS = REAPRESENTACAO - REELEITOS_AGREG,
                  DESISTENCIA = QTDE_VAGAS - REAPRESENTACAO,
-                 REELEICAO_BRUTA = reeleicao(REELEITOS, QTDE_VAGAS),
-                 REELEICAO_LIQUIDA = reeleicao_liq(REELEITOS, 
+                 REELEICAO_BRUTA = reeleicao(REELEITOS_AGREG, INFORMACAO_DISPONIVEL),
+                 REELEICAO_LIQUIDA = reeleicao_liq(REELEITOS_AGREG, 
                                                    DERROTADOS),
                  RENOVACAO_BRUTA = renovacao(REELEICAO_BRUTA),
                  RENOVACAO_LIQUIDA = renovacao_liq(REELEICAO_LIQUIDA),
                  RECANDIDATURAS = recandidaturas(REAPRESENTACAO,
-                                                 QTDE_VAGAS))
+                                                 INFORMACAO_DISPONIVEL))
         
         ## Empilha os indicadores calculados no banco criado
         
@@ -216,8 +416,14 @@ indic_reel <- function(candidatos,
              "RS", "RO", "RR", "SC", "SP", 
              "SE", "TO")
     
+    ## Lista temporária onde os dados com erro e p/ conferência serão armazenados
+    
+    com_erro <- list()
+    
+    desagreg <- list()
+    
     ## For loop que calcula os indicadores de 'Reeleição'
-    ## para cada ano
+    ## para cada ano, uf e agregação regional
     
     for(ano in seq(2008, 2020, by = 4)){
       
@@ -229,19 +435,19 @@ indic_reel <- function(candidatos,
         
         temp2 <- list()
         
-        com_erro <- list()
-        
         ## Verificando quantos municípios existem no estado
         
         num_municipios <- candidatos %>% 
           filter(ANO_ELEICAO == ano & 
                    SIGLA_UF == uf) %>% 
           ungroup() %>% 
-          select(COD_MUN_TSE,
+          select(SIGLA_UF,
+                 COD_MUN_TSE,
                  COD_MUN_IBGE,
                  NOME_MUNICIPIO) %>% 
           unique() %>% 
-          arrange(NOME_MUNICIPIO)
+          arrange(SIGLA_UF,
+                  NOME_MUNICIPIO)
         
         ## Salvando o número de municípios na agregação 
         
@@ -255,7 +461,7 @@ indic_reel <- function(candidatos,
           
           eleitos_t8 <- eleitos %>% 
             filter(ANO_ELEICAO == ano - 8 &
-                     COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
+                   COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
             mutate(ELEITO_T8 = 1) %>% 
             ungroup() %>% 
             select(ANO_ELEICAO,
@@ -295,8 +501,6 @@ indic_reel <- function(candidatos,
           eleitos_t0 <- eleitos %>% 
             filter(ANO_ELEICAO == ano &
                    COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio])
-          
-          if(nrow(eleitos_t0) == 1){
             
             ## Verifica se o candidato eleito em t-4 se reelegeu em t0
             
@@ -308,10 +512,9 @@ indic_reel <- function(candidatos,
                          COD_MUN_TSE,
                          COD_MUN_IBGE) %>% 
                 summarise(REELEITOS_AGREG = n()))
-            } 
           
           ## Atribui valor 0 caso o prefeito eleito em t-4 não tenha 
-          ## se reelegido (desde que a informação exista p/ todos os anos)
+          ## se reelegido em t0 (desde que a informação exista p/ todos os anos)
           
           if(nrow(indicadores2) == 0 &
              ((nrow(eleitos_t8) > 0) &
@@ -360,9 +563,7 @@ indic_reel <- function(candidatos,
                        DESCRICAO_CARGO) %>% 
                 unique()) 
             
-            ## Salva se o prefeito eleito em t-4 se candidatou em t0
-            
-            if(nrow(indicadores1) == 1){
+             ## Salva se o prefeito eleito em t-4 se candidatou em t0
               
               indicadores1 <- indicadores1 %>% 
                 group_by(ANO_ELEICAO,
@@ -377,11 +578,11 @@ indic_reel <- function(candidatos,
               ## recandidatou em t0 e ajustando p/ os demais casos (desde que a
               ## informação exista p/ todos os anos)
               
-            } else if(nrow(indicadores1) == 0 &
-                      ((nrow(eleitos_t8) > 0) &
-                       (nrow(eleitos_t4) > 0) &
-                       (nrow(eleitos_t0) > 0))){
-              
+              if(nrow(indicadores1) == 0 &
+                 ((nrow(eleitos_t8) > 0) &
+                  (nrow(eleitos_t4) > 0) &
+                  (nrow(eleitos_t0) > 0))){
+                
               indicadores1 <- indicadores1 %>% 
                 ungroup() %>% 
                 add_row(ANO_ELEICAO = as.character(ano),
@@ -425,7 +626,8 @@ indic_reel <- function(candidatos,
                 left_join(eleitores_aptos) %>% 
                 left_join(indicadores2) %>% 
                 mutate(QTDE_VAGAS = NA,
-                       QTDE_MUNICIPIOS_AGREG = NA) %>% 
+                       QTDE_MUNICIPIOS_AGREG = municipios_agreg,
+                       INFORMACAO_DISPONIVEL = 1) %>% 
                 select(ANO_ELEICAO,
                        SIGLA_UF,
                        COD_MUN_TSE,
@@ -433,6 +635,7 @@ indic_reel <- function(candidatos,
                        NOME_MUNICIPIO,
                        DESCRICAO_CARGO,
                        AGREG_ELEITORES_APTOS,
+                       INFORMACAO_DISPONIVEL,
                        QTDE_MUNICIPIOS_AGREG,
                        QTDE_VAGAS,
                        PERMIT_CAND,
@@ -440,22 +643,18 @@ indic_reel <- function(candidatos,
                        REELEITOS_AGREG) %>% 
                 unique())
             
+            ## Se a informação não está completa para alguma das variáveis-chave,
+            ## torna todas elas NA
+            
           if(is.na(indicadores1$PERMIT_CAND) |
              is.na(indicadores1$REAPRESENTACAO) |
              is.na(indicadores1$REELEITOS_AGREG)){
             
-            ## Se a informação não está completa para alguma das variáveis-chave,
-            ## torna todas elas NA
-            
             indicadores1 <- indicadores1 %>% 
               mutate(PERMIT_CAND = NA,
                      REAPRESENTACAO = NA,
-                     REELEITOS_AGREG = NA)
-            
-            ## Atualizando o número de municípios com informação disponível
-            ## na agregação
-            
-            municipios_agreg <- municipios_agreg - 1
+                     REELEITOS_AGREG = NA,
+                     INFORMACAO_DISPONIVEL = NA)
             
             ## Empilhando o município com erro em um banco adicional
             
@@ -474,10 +673,13 @@ indic_reel <- function(candidatos,
           temp <- bind_rows(temp, 
                             indicadores1)
           
-          ## Atualiza a quantidade de municípios na agregação
+          desagreg <- bind_rows(desagreg, 
+                                temp)
           
-          temp <- temp %>% 
-            mutate(QTDE_MUNICIPIOS_AGREG = municipios_agreg)
+          ## Salvando o banco desagregado para conferência
+          
+          saveRDS(desagreg,
+                  "data/output/reel_pf_uf_desagreg_temp.rds")
           
         }
         
@@ -490,17 +692,19 @@ indic_reel <- function(candidatos,
                    DESCRICAO_CARGO,
                    QTDE_MUNICIPIOS_AGREG,
                    QTDE_VAGAS) %>% 
-          summarise(PERMIT_CAND = sum(PERMIT_CAND, 
+          summarise(INFORMACAO_DISPONIVEL = sum(INFORMACAO_DISPONIVEL, 
+                                                na.rm = TRUE),
+                    PERMIT_CAND = sum(PERMIT_CAND, 
                                       na.rm = TRUE),
                     REAPRESENTACAO = sum(REAPRESENTACAO,
                                          na.rm = TRUE),
                     REELEITOS_AGREG = sum(REELEITOS_AGREG,
                                           na.rm = TRUE)) %>% 
           mutate(DERROTADOS = REAPRESENTACAO - REELEITOS_AGREG,
-                 DESISTENCIA = QTDE_MUNICIPIOS_AGREG - REAPRESENTACAO,
-                 TX_PREFEITOS_PERMIT_REEL = PERMIT_CAND/QTDE_MUNICIPIOS_AGREG,
+                 DESISTENCIA = INFORMACAO_DISPONIVEL - REAPRESENTACAO,
+                 TX_PREFEITOS_PERMIT_REEL = PERMIT_CAND/INFORMACAO_DISPONIVEL,
                  TX_PREFEITOS_RECAND = REAPRESENTACAO/PERMIT_CAND,
-                 REELEICAO_BRUTA = reeleicao(REELEITOS_AGREG, QTDE_MUNICIPIOS_AGREG),
+                 REELEICAO_BRUTA = reeleicao(REELEITOS_AGREG, INFORMACAO_DISPONIVEL),
                  REELEICAO_LIQUIDA = reeleicao_liq(REELEITOS_AGREG, 
                                                    DERROTADOS)) %>% 
           mutate(across(DERROTADOS:REELEICAO_LIQUIDA, ~ifelse(is.nan(.),
@@ -528,8 +732,14 @@ indic_reel <- function(candidatos,
     
     agreg_eleitores <- unique(eleitores_aptos$AGREG_ELEITORES_APTOS)
     
+    ## Lista temporária onde os dados com erro e p/ conferência serão armazenados
+    
+    com_erro <- list()
+    
+    desagreg <- list()
+    
     ## For loop que calcula os indicadores de 'Reeleição'
-    ## para cada ano
+    ## para cada ano e agregação regional
     
     for(ano in seq(2008, 2020, by = 4)){
       
@@ -574,7 +784,7 @@ indic_reel <- function(candidatos,
           
           eleitos_t8 <- eleitos %>% 
             filter(ANO_ELEICAO == ano - 8 &
-                     COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
+                   COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
             mutate(ELEITO_T8 = 1) %>% 
             ungroup() %>% 
             select(ANO_ELEICAO,
@@ -589,7 +799,7 @@ indic_reel <- function(candidatos,
           suppressMessages(
             eleitos_t4 <- eleitos %>% 
               filter(ANO_ELEICAO == ano - 4 &
-                       COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
+                     COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
               mutate(ELEITO_T4 = 1) %>% 
               left_join(eleitos_t8) %>% 
               mutate(ELEITO_T8 = ifelse(is.na(ELEITO_T8),
@@ -613,9 +823,7 @@ indic_reel <- function(candidatos,
           
           eleitos_t0 <- eleitos %>% 
             filter(ANO_ELEICAO == ano &
-                     COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio])
-          
-          if(nrow(eleitos_t0) == 1){
+                   COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio])
             
             ## Verifica se o candidato eleito em t-4 se reelegeu em t0
             
@@ -627,10 +835,9 @@ indic_reel <- function(candidatos,
                          COD_MUN_TSE,
                          COD_MUN_IBGE) %>% 
                 summarise(REELEITOS_AGREG = n()))
-          } 
           
           ## Atribui valor 0 caso o prefeito eleito em t-4 não tenha 
-          ## se reelegido (desde que a informação exista p/ todos os anos)
+          ## se reelegido em t0 (desde que a informação exista p/ todos os anos)
           
           if(nrow(indicadores2) == 0 &
              ((nrow(eleitos_t8) > 0) &
@@ -667,8 +874,8 @@ indic_reel <- function(candidatos,
           suppressMessages(
             indicadores1 <- candidatos %>% 
               filter(ANO_ELEICAO == ano &
-                       SIGLA_UF == num_municipios$SIGLA_UF[municipio] &
-                       COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
+                     SIGLA_UF == num_municipios$SIGLA_UF[municipio] &
+                     COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
               filter(ID_CEPESP %in% eleitos_t4$ID_CEPESP) %>% 
               ungroup() %>% 
               select(ANO_ELEICAO,
@@ -680,8 +887,6 @@ indic_reel <- function(candidatos,
               unique()) 
           
           ## Salva se o prefeito eleito em t-4 se candidatou em t0
-          
-          if(nrow(indicadores1) == 1){
             
             indicadores1 <- indicadores1 %>% 
               group_by(ANO_ELEICAO,
@@ -696,10 +901,10 @@ indic_reel <- function(candidatos,
             ## recandidatou em t0 e ajustando p/ os demais casos (desde que a
             ## informação exista p/ todos os anos)
             
-          } else if(nrow(indicadores1) == 0 &
-                    ((nrow(eleitos_t8) > 0) &
-                     (nrow(eleitos_t4) > 0) &
-                     (nrow(eleitos_t0) > 0))){
+            if(nrow(indicadores1) == 0 &
+               ((nrow(eleitos_t8) > 0) &
+                (nrow(eleitos_t4) > 0) &
+                (nrow(eleitos_t0) > 0))){
             
             indicadores1 <- indicadores1 %>% 
               ungroup() %>% 
@@ -744,7 +949,8 @@ indic_reel <- function(candidatos,
               left_join(eleitores_aptos) %>% 
               left_join(indicadores2) %>% 
               mutate(QTDE_VAGAS = NA,
-                     QTDE_MUNICIPIOS_AGREG = NA) %>% 
+                     QTDE_MUNICIPIOS_AGREG = municipios_agreg,
+                     INFORMACAO_DISPONIVEL = 1) %>% 
               select(ANO_ELEICAO,
                      SIGLA_UF,
                      COD_MUN_TSE,
@@ -752,6 +958,7 @@ indic_reel <- function(candidatos,
                      NOME_MUNICIPIO,
                      DESCRICAO_CARGO,
                      AGREG_ELEITORES_APTOS,
+                     INFORMACAO_DISPONIVEL,
                      QTDE_MUNICIPIOS_AGREG,
                      QTDE_VAGAS,
                      PERMIT_CAND,
@@ -769,12 +976,8 @@ indic_reel <- function(candidatos,
             indicadores1 <- indicadores1 %>% 
               mutate(PERMIT_CAND = NA,
                      REAPRESENTACAO = NA,
-                     REELEITOS_AGREG = NA)
-            
-            ## Atualizando o número de municípios com informação disponível
-            ## na agregação
-            
-            municipios_agreg <- municipios_agreg - 1
+                     REELEITOS_AGREG = NA,
+                     INFORMACAO_DISPONIVEL = NA)
             
             ## Empilhando o município com erro em um banco adicional
             
@@ -784,7 +987,7 @@ indic_reel <- function(candidatos,
             ## Salvando os municípios com problemas
             
             saveRDS(com_erro,
-                    "data/output/reeleicao_prefeitos_municipos_com_erro_v2.rds")
+                    "data/output/reeleicao_prefeitos_municipos_elt_apt_com_erro.rds")
             
           }
           
@@ -793,10 +996,13 @@ indic_reel <- function(candidatos,
           temp <- bind_rows(temp, 
                             indicadores1)
           
-          ## Atualiza a quantidade de municípios na agregação
+          desagreg <- bind_rows(desagreg, 
+                                temp)
           
-          temp <- temp %>% 
-            mutate(QTDE_MUNICIPIOS_AGREG = municipios_agreg)
+          ## Salvando o banco desagregado para conferência
+          
+          saveRDS(desagreg,
+                  "data/output/reel_pf_elt_apt_temp.rds")
           
         }
         
@@ -809,7 +1015,9 @@ indic_reel <- function(candidatos,
                    AGREG_ELEITORES_APTOS,
                    QTDE_MUNICIPIOS_AGREG,
                    QTDE_VAGAS) %>% 
-          summarise(PERMIT_CAND = sum(PERMIT_CAND, 
+          summarise(INFORMACAO_DISPONIVEL = sum(INFORMACAO_DISPONIVEL, 
+                                                na.rm = TRUE),
+                    PERMIT_CAND = sum(PERMIT_CAND, 
                                       na.rm = TRUE),
                     REAPRESENTACAO = sum(REAPRESENTACAO,
                                          na.rm = TRUE),
@@ -844,62 +1052,104 @@ indic_reel <- function(candidatos,
     
     ## Lista de municípios brasileiros
     
-    municipios <- unique(pf_mun_cand$COD_MUN_TSE)
+    num_municipios <- candidatos %>% 
+      ungroup() %>% 
+      select(SIGLA_UF,
+             COD_MUN_TSE,
+             COD_MUN_IBGE,
+             NOME_MUNICIPIO) %>% 
+      unique() %>% 
+      arrange(SIGLA_UF,
+              NOME_MUNICIPIO)
+    
+    ## Lista temporária onde os dados com erro serão armazenados
+    
+    com_erro <- list()
     
     ## For loop que calcula os indicadores de 'Reeleição'
-    ## para cada ano
+    ## para cada ano e agregação regional
     
-    for(ano in seq(2000, 2016, by = 4)){
+    for(ano in seq(2004, 2020, by = 4)){
     
-      for(municipio in seq_along(municipios)){
+      for(municipio in 1:nrow(num_municipios)){
         
-        cat("Lendo", ano, municipio, "\n")
+        cat("Lendo", ano, "município", municipio, "de", nrow(num_municipios), "\n")
         
-        ## Banco com os candidatos da próxima eleição em 
-        ## relação ao ano corrente
+        ## Salvando a quantidade de vagas disponíveis em t0
         
-        candidatos_ano2 <- candidatos %>% 
-          filter(ANO_ELEICAO == ano + 4 &
-                 COD_MUN_TSE == municipios[municipio]) 
+        vagas_t0 <- vagas_ver %>% 
+          filter(ANO_ELEICAO == ano &
+                 COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>%  
+          pull(QTDE_VAGAS) %>% 
+          unique()
+        
+        ## Banco com os candidatos em t0
+        
+        candidatos_t0 <- candidatos %>% 
+          filter(ANO_ELEICAO == ano &
+                 COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) 
         
         ## Banco com os candidatos eleitos na primeira
         ## eleição de referência
         
-        eleitos_ano1 <- eleitos %>% 
+        eleitos_t0 <- eleitos %>% 
           filter(ANO_ELEICAO == ano &
-                 COD_MUN_TSE == municipios[municipio])
+                 COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio])
         
-        ## Banco com os candidatos eleitos na segunda
-        ## eleição de referência
+        ## Banco com os candidatos eleitos em t-4
         
-        eleitos_ano2 <- eleitos %>% 
-          filter(ANO_ELEICAO == ano + 4 &
-                 COD_MUN_TSE == municipios[municipio])
-        
-        ## Filtra os candidatos que se reapresentaram na eleição
-        ## seguinte ao ano corrente e que foram reeleitos
-        
-        eleitos_ano2 <- eleitos_ano2 %>% 
-          filter(ID_CEPESP %in% 
-                 eleitos_ano1$ID_CEPESP)
+        eleitos_t4 <- eleitos %>% 
+          filter(ANO_ELEICAO == ano - 4 &
+                 COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio])
         
         ## Verifica quantos candidatos foram reeleitos e salva o resultado
         
-        indicadores2 <- eleitos_ano2 %>% 
+        indicadores2 <- eleitos_t0 %>% 
+          filter(ID_CEPESP %in% eleitos_t4$ID_CEPESP) %>% 
           group_by(ANO_ELEICAO,
                    SIGLA_UF,
                    COD_MUN_TSE,
                    COD_MUN_IBGE) %>% 
-          summarise(REELEITOS = n()) 
+          summarise(REELEITOS_AGREG = n()) 
         
-        ## Calcula o total de candidatos que se reapresentaram na 
-        ## eleição seguinte ao ano corrente e junta com o número 
-        ## de reeleitos
+        ## Atribui valor 0 caso nenhum dos vereadores eleitos em t-4 tenha 
+        ## se reelegido em t0
+        
+        if(nrow(indicadores2) == 0 &
+           ((nrow(eleitos_t4) > 0) &
+            (nrow(eleitos_t0) > 0))) {
+          
+          indicadores2 <- indicadores2 %>% 
+            ungroup() %>% 
+            add_row(ANO_ELEICAO = as.character(ano),
+                    SIGLA_UF = num_municipios$SIGLA_UF[municipio],
+                    COD_MUN_TSE = num_municipios$COD_MUN_TSE[municipio],
+                    COD_MUN_IBGE = num_municipios$COD_MUN_IBGE[municipio],
+                    REELEITOS_AGREG = 0)
+          
+          ## Atribui valor NA caso a informação não exista p/ todos os anos de 
+          ## referência
+          
+        } else if(nrow(indicadores2) == 0 &
+                  ((nrow(eleitos_t4) == 0) |
+                   (nrow(eleitos_t0) == 0))) {
+          
+          indicadores2 <- indicadores2 %>% 
+            ungroup() %>% 
+            add_row(ANO_ELEICAO = as.character(ano),
+                    SIGLA_UF = num_municipios$SIGLA_UF[municipio],
+                    COD_MUN_TSE = num_municipios$COD_MUN_TSE[municipio],
+                    COD_MUN_IBGE = num_municipios$COD_MUN_IBGE[municipio],
+                    REELEITOS_AGREG = NA)
+          
+        }
+        
+        ## Calcula o total de candidatos eleitos em t-4 que se reapresentaram 
+        ## em t0
         
         suppressMessages(
-          indicadores1 <- candidatos_ano2 %>% 
-            filter(ID_CEPESP %in% 
-                   eleitos_ano1$ID_CEPESP) %>% 
+          indicadores1 <- candidatos_t0 %>% 
+            filter(ID_CEPESP %in% eleitos_t4$ID_CEPESP) %>% 
             group_by(ANO_ELEICAO,
                      DESCRICAO_CARGO,
                      SIGLA_UF,
@@ -925,26 +1175,113 @@ indic_reel <- function(candidatos,
             reframe(QTDE_VAGAS = sum(QTDE_VAGAS,
                                      na.rm = TRUE),
                     REAPRESENTACAO = REAPRESENTACAO) %>% 
-            unique() %>% 
-            left_join(indicadores2))
+            unique())
+        
+        ## Atribuindo 0 nos casos em que nenhum dos vereadores eleitos em t-4 se 
+        ## recandidatou em t0 e ajustando p/ os demais casos (desde que a
+        ## informação exista p/ todos os anos)
+        
+        if(nrow(indicadores1) == 0 &
+           ((nrow(eleitos_t4) > 0) &
+            (nrow(eleitos_t0) > 0))){
+          
+          indicadores1 <- indicadores1 %>% 
+            ungroup() %>% 
+            add_row(ANO_ELEICAO = as.character(ano),
+                    DESCRICAO_CARGO = "VEREADOR",
+                    SIGLA_UF = num_municipios$SIGLA_UF[municipio],
+                    COD_MUN_TSE = num_municipios$COD_MUN_TSE[municipio],
+                    COD_MUN_IBGE = num_municipios$COD_MUN_IBGE[municipio],
+                    NOME_MUNICIPIO = num_municipios$NOME_MUNICIPIO[municipio],
+                    QTDE_VAGAS = vagas_t0,
+                    REAPRESENTACAO = 0)
+          
+          ## Atribui valor NA caso a informação não exista p/ todos os anos de 
+          ## referência
+          
+        } else if(nrow(indicadores1) == 0 &
+                  ((nrow(eleitos_t4) == 0) |
+                   (nrow(eleitos_t0) == 0))){
+          
+          indicadores1 <- indicadores1 %>% 
+            ungroup() %>% 
+            add_row(ANO_ELEICAO = as.character(ano),
+                    DESCRICAO_CARGO = "VEREADOR",
+                    SIGLA_UF = num_municipios$SIGLA_UF[municipio],
+                    COD_MUN_TSE = num_municipios$COD_MUN_TSE[municipio],
+                    COD_MUN_IBGE = num_municipios$COD_MUN_IBGE[municipio],
+                    NOME_MUNICIPIO = num_municipios$NOME_MUNICIPIO[municipio],
+                    QTDE_VAGAS = vagas_t0,
+                    REAPRESENTACAO = NA)
+          
+        }
+        
+        ## Juntando as informações dos vereadores que se recandidataram
+        ## em t0, bem como dos que foram reeleitos em t0
+        
+        suppressMessages(
+          indicadores1 <- indicadores1 %>%
+            left_join(eleitores_aptos) %>% 
+            left_join(indicadores2) %>% 
+            mutate(INFORMACAO_DISPONIVEL = nrow(eleitos_t0)) %>% 
+            select(ANO_ELEICAO,
+                   SIGLA_UF,
+                   COD_MUN_TSE,
+                   COD_MUN_IBGE,
+                   NOME_MUNICIPIO,
+                   DESCRICAO_CARGO,
+                   AGREG_ELEITORES_APTOS,
+                   INFORMACAO_DISPONIVEL,
+                   QTDE_VAGAS,
+                   REAPRESENTACAO,
+                   REELEITOS_AGREG) %>% 
+            unique())
+        
+        if(is.na(indicadores1$REAPRESENTACAO) |
+           is.na(indicadores1$REELEITOS_AGREG)){
+          
+          ## Se a informação não está completa para alguma das variáveis-chave,
+          ## torna todas elas NA
+          
+          indicadores1 <- indicadores1 %>% 
+            mutate(REAPRESENTACAO = NA,
+                   REELEITOS_AGREG = NA,
+                   INFORMACAO_DISPONIVEL = NA)
+          
+          ## Empilhando o município com erro em um banco adicional
+          
+          com_erro <- bind_rows(com_erro,
+                                indicadores1)
+          
+          ## Salvando os municípios com problemas
+          
+          saveRDS(com_erro,
+                  "data/output/reeleicao_vereadores_municipos_com_erro.rds")
+          
+        }
         
         ## Calcula os indicadores de 'Reeleição'
         
         indicadores1 <- indicadores1 %>% 
-          mutate(DERROTADOS = REAPRESENTACAO - REELEITOS,
+          mutate(DERROTADOS = REAPRESENTACAO - REELEITOS_AGREG,
                  DESISTENCIA = QTDE_VAGAS - REAPRESENTACAO,
-                 REELEICAO_BRUTA = reeleicao(REELEITOS, QTDE_VAGAS),
-                 REELEICAO_LIQUIDA = reeleicao_liq(REELEITOS, 
+                 REELEICAO_BRUTA = reeleicao(REELEITOS_AGREG, INFORMACAO_DISPONIVEL),
+                 REELEICAO_LIQUIDA = reeleicao_liq(REELEITOS_AGREG, 
                                                    DERROTADOS),
                  RENOVACAO_BRUTA = renovacao(REELEICAO_BRUTA),
                  RENOVACAO_LIQUIDA = renovacao_liq(REELEICAO_LIQUIDA),
                  RECANDIDATURAS = recandidaturas(REAPRESENTACAO,
-                                                 QTDE_VAGAS))
+                                                 INFORMACAO_DISPONIVEL))
         
         ## Empilha os indicadores calculados no banco criado
         
         indicadores_final <- bind_rows(indicadores_final, 
                                        indicadores1)
+        
+        ## Salvando o progresso para conferência
+        
+        saveRDS(indicadores_final,
+                "data/output/reel_vr_mun_temp.rds")
         
       }
       
