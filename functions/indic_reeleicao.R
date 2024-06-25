@@ -2232,7 +2232,6 @@ indic_reel <- function(candidatos,
         
         suppressMessages(
           indicadores1 <- indicadores1 %>%
-            left_join(eleitores_aptos) %>% 
             left_join(indicadores2) %>% 
             mutate(INFORMACAO_DISPONIVEL = nrow(eleitos_t0)) %>% 
             select(ANO_ELEICAO,
@@ -2241,7 +2240,6 @@ indic_reel <- function(candidatos,
                    COD_MUN_IBGE,
                    NOME_MUNICIPIO,
                    DESCRICAO_CARGO,
-                   AGREG_ELEITORES_APTOS,
                    INFORMACAO_DISPONIVEL,
                    QTDE_VAGAS,
                    REAPRESENTACAO,
