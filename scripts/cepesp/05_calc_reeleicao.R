@@ -77,23 +77,69 @@ reel_de_uf <- indic_reel(de_uf_cand,
 
 ## 2.2. Eleições Municipais -----------------------------------------------
 
-### 2.2.1. Município --------------------------------------------------------
+### 2.2.1. Brasil -----------------------------------------------------------
 
 #### 2.2.1.1. Prefeito -------------------------------------------------------
+
+## Calcula os indicadores de 'Reeleição'
+
+reel_pf_br <- indic_reel(pf_mun_cand,
+                         pf_mun_eleitos,
+                         agregacao = "PF_BR")
+
+#### 2.2.1.2. Vereador -------------------------------------------------------
+
+## Calcula os indicadores de 'Reeleição'
+
+reel_vr_br <- indic_reel(vr_mun_cand,
+                         vr_mun_eleitos,
+                         agregacao = "VR_BR")
+
+### 2.2.2. Estado -----------------------------------------------------------
+
+#### 2.2.2.1. Prefeito -------------------------------------------------------
+
+## Calcula os indicadores de 'Reeleição'
 
 reel_pf_uf <- indic_reel(pf_mun_cand,
                          pf_mun_eleitos,
                          agregacao = "PF_UF")
 
+#### 2.2.2.2. Vereador -------------------------------------------------------
+
+## Calcula os indicadores de 'Reeleição'
+
+reel_vr_uf <- indic_reel(vr_mun_cand,
+                         vr_mun_eleitos,
+                         agregacao = "VR_UF")
+
+### 2.2.3. Município --------------------------------------------------------
+
+#### 2.2.3.1. Vereador -------------------------------------------------------
+
+## Calcula os indicadores de 'Reeleição'
+
+reel_vr_mun <- indic_reel(vr_mun_cand,
+                          vr_mun_eleitos,
+                          agregacao = "VR_MUN")
+
+### 2.2.4. Eleitores Aptos --------------------------------------------------
+
+#### 2.2.4.1. Prefeito -------------------------------------------------------
+
+## Calcula os indicadores de 'Reeleição'
+
 reel_pf_elt_apt <- indic_reel(pf_mun_cand,
                               pf_mun_eleitos,
                               agregacao = "PF_ELEIT_APT")
 
-#### 2.2.1.2. Vereador -------------------------------------------------------
+#### 2.2.4.2. Vereador -------------------------------------------------------
 
-reel_vr_mun <- indic_reel(vr_mun_cand,
-                          vr_mun_eleitos,
-                          agregacao = "MUN")
+## Calcula os indicadores de 'Reeleição'
+
+reel_vr_elt_apt <- indic_reel(vr_mun_cand,
+                              vr_mun_eleitos,
+                              agregacao = "VR_ELEIT_APT")
 
 # 3. Padronização ---------------------------------------------------------
 
@@ -103,10 +149,14 @@ reel_vr_mun <- indic_reel(vr_mun_cand,
 
 #### 3.1.1.1. Deputado Federal -----------------------------------------------
 
+## Padroniza o formato dos indicadores de 'Reeleição'
+
 reel_df_br <- padroniz_reel(reel_df_br,
                             agregacao = "BR")
 
 #### 3.1.1.2. Deputado Estadual ----------------------------------------------
+
+## Padroniza o formato dos indicadores de 'Reeleição'
 
 reel_de_br <- padroniz_reel(reel_de_br,
                             agregacao = "BR")
@@ -115,31 +165,79 @@ reel_de_br <- padroniz_reel(reel_de_br,
 
 #### 3.1.2.1. Deputado Federal -----------------------------------------------
 
+## Padroniza o formato dos indicadores de 'Reeleição'
+
 reel_df_uf <- padroniz_reel(reel_df_uf,
                             agregacao = "UF")
 
 #### 3.1.2.2. Deputado Estadual ----------------------------------------------
+
+## Padroniza o formato dos indicadores de 'Reeleição'
 
 reel_de_uf <- padroniz_reel(reel_de_uf,
                             agregacao = "UF")
 
 ## 3.2. Eleições Municipais -------------------------------------------------
 
-### 3.2.1. Município --------------------------------------------------------
+### 3.2.1. Brasil -----------------------------------------------------------
 
-#### 3.2.1.1. Prefeito ------------------------------------------------------
+#### 3.2.1.1. Prefeito -------------------------------------------------------
+
+## Padroniza o formato dos indicadores de 'Reeleição'
+
+reel_pf_br <- padroniz_reel(reel_pf_br,
+                            agregacao = "PF_BR") 
+
+#### 3.2.1.2. Vereador -------------------------------------------------------
+
+## Padroniza o formato dos indicadores de 'Reeleição'
+
+reel_vr_br <- padroniz_reel(reel_vr_br,
+                            agregacao = "VR_BR") 
+
+### 3.2.2. Estado -----------------------------------------------------------
+
+#### 3.2.2.1. Prefeito -------------------------------------------------------
+
+## Padroniza o formato dos indicadores de 'Reeleição'
 
 reel_pf_uf <- padroniz_reel(reel_pf_uf,
                             agregacao = "PF_UF") 
 
+#### 3.2.2.2. Vereador -------------------------------------------------------
+
+## Padroniza o formato dos indicadores de 'Reeleição'
+
+# Padroniza o formato dos indicadores de 'Reeleição'
+
+reel_vr_uf <- padroniz_reel(reel_vr_uf,
+                            agregacao = "VR_UF") 
+
+### 3.2.3. Município --------------------------------------------------------
+
+#### 3.2.3.1. Vereador ------------------------------------------------------
+
+## Padroniza o formato dos indicadores de 'Reeleição'
+
+reel_vr_mun <- padroniz_reel(reel_vr_mun,
+                             agregacao = "VR_MUN") %>% 
+  unique()
+
+### 3.2.4. Eleitores Aptos --------------------------------------------------
+
+#### 3.2.4.1. Prefeito -------------------------------------------------------
+
+## Padroniza o formato dos indicadores de 'Reeleição'
+
 reel_pf_elt_apt <- padroniz_reel(reel_pf_elt_apt,
                                  agregacao = "PF_ELEIT_APT") 
 
-#### 3.2.1.2. Vereador ------------------------------------------------------
+#### 3.2.4.2. Vereador -------------------------------------------------------
 
-reel_vr_mun <- padroniz_reel(reel_vr_mun,
-                             agregacao = "MUN") %>% 
-  unique()
+## Padroniza o formato dos indicadores de 'Reeleição'
+
+reel_vr_elt_apt <- padroniz_reel(reel_vr_elt_apt,
+                                 agregacao = "VR_ELEIT_APT") 
 
 # 4. Rbind ----------------------------------------------------------------
 
@@ -149,12 +247,18 @@ reeleicao_final <- bind_rows(reel_df_br,
                              reel_de_br,
                              reel_df_uf,
                              reel_de_uf,
-                             reel_vr_mun) %>%
+                             reel_pf_br,
+                             reel_pf_uf,
+                             reel_pf_elt_apt,
+                             reel_vr_br,
+                             reel_vr_uf,
+                             reel_vr_mun,
+                             reel_vr_elt_apt) %>%
   arrange(`Ano da eleição`,
           `Agregação regional`,
           `Cargo`,
           `UF`,
-          `Nome do município`)
+          `Município`)
 
 # 5. Exporta --------------------------------------------------------------
 

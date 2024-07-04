@@ -306,6 +306,7 @@ final_cepespdata_mun <- readRDS(paste0(dir,
 ## no CEPESP DATA
 
 resumo_gr <- resumo_gr %>% 
+  filter(TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA") %>% 
   rename("SIGLA_UF" = "UF") %>% 
   mutate(QTDE_VOTOS_VALIDOS = QTDE_VOTOS_NOMINAIS + QTDE_VOTOS_LEGENDA - QTDE_VOTOS_ANULADOS_APU_SEP) %>% 
   arrange(SIGLA_UF,
@@ -476,6 +477,7 @@ de_uf_cons <- resumo_gr %>%
 ## Reorganizando as informações
 
 resumo_mun <- resumo_mun %>% 
+  filter(TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA") %>% 
   rename("SIGLA_UF" = "UF") %>% 
   mutate(QTDE_VOTOS_VALIDOS = QTDE_VOTOS_NOMINAIS + QTDE_VOTOS_LEGENDA - QTDE_VOTOS_ANULADOS_APU_SEP,
          AGREG_ELEITORES_APTOS = case_when(QTDE_APTOS <= 5000 ~ "Até 5.000 eleitores",
@@ -586,11 +588,9 @@ vr_mun_cons <- resumo_mun %>%
 ## as informações
 
 final_cepespdata_gr <- final_cepespdata_gr %>% 
-  filter(is.na(NOME_CANDIDATO) &
-         nchar(NUMERO_CANDIDATO) == 2 |
-         !is.na(NOME_CANDIDATO)) %>% 
   filter(!DESCRICAO_CARGO %in% c("CONSELHEIRO DISTRITAL",
                                  "GOVERNADOR")) %>% 
+  filter(TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA") %>% 
   rename("SIGLA_UF" = "UF")
 
 ## Separando os dados em bases por cargo, agregação regional e
@@ -599,10 +599,19 @@ final_cepespdata_gr <- final_cepespdata_gr %>%
 ### SENADOR ###
 
 sen_uf_cand <- final_cepespdata_gr %>% 
-  filter(DESCRICAO_CARGO == "SENADOR")
+  filter(DESCRICAO_CARGO == "SENADOR") %>% 
+  filter(!NUMERO_CANDIDATO %in% c("95","96", "97")) %>%
+  filter(is.na(NOME_CANDIDATO) &
+           nchar(NUMERO_CANDIDATO) == 2 |
+           !is.na(NOME_CANDIDATO))
 
 sen_uf_part <- final_cepespdata_gr %>% 
   filter(DESCRICAO_CARGO == "SENADOR") %>% 
+  filter(!NUMERO_CANDIDATO %in% c("95","96", "97")) %>% 
+  mutate(NUMERO_PARTIDO = ifelse(is.na(NUMERO_PARTIDO) &
+                                   NOME_CANDIDATO == "VOTO LEGENDA",
+                                 NUMERO_CANDIDATO,
+                                 NUMERO_PARTIDO)) %>% 
   group_by(ANO_ELEICAO,
            NUM_TURNO,
            CODIGO_CARGO,
@@ -623,10 +632,19 @@ sen_uf_part <- final_cepespdata_gr %>%
 
 df_uf_cand <- final_cepespdata_gr %>% 
   filter(DESCRICAO_CARGO == "DEPUTADO FEDERAL" & 
-         nchar(NUMERO_CANDIDATO) > 2)
+         nchar(NUMERO_CANDIDATO) > 2) %>% 
+  filter(!NUMERO_CANDIDATO %in% c("95","96", "97")) %>%
+  filter(is.na(NOME_CANDIDATO) &
+           nchar(NUMERO_CANDIDATO) == 2 |
+           !is.na(NOME_CANDIDATO))
 
 df_uf_part <- final_cepespdata_gr %>% 
   filter(DESCRICAO_CARGO == "DEPUTADO FEDERAL") %>% 
+  filter(!NUMERO_CANDIDATO %in% c("95","96", "97")) %>% 
+  mutate(NUMERO_PARTIDO = ifelse(is.na(NUMERO_PARTIDO) &
+                                 NOME_CANDIDATO == "VOTO LEGENDA",
+                                 NUMERO_CANDIDATO,
+                                 NUMERO_PARTIDO)) %>% 
   group_by(ANO_ELEICAO,
            NUM_TURNO,
            CODIGO_CARGO,
@@ -647,10 +665,19 @@ df_uf_part <- final_cepespdata_gr %>%
 
 de_uf_cand <- final_cepespdata_gr %>% 
   filter(DESCRICAO_CARGO == "DEPUTADO ESTADUAL" & 
-         nchar(NUMERO_CANDIDATO) > 2)
+         nchar(NUMERO_CANDIDATO) > 2) %>% 
+  filter(!NUMERO_CANDIDATO %in% c("95","96", "97")) %>%
+  filter(is.na(NOME_CANDIDATO) &
+           nchar(NUMERO_CANDIDATO) == 2 |
+           !is.na(NOME_CANDIDATO))
 
 de_uf_part <- final_cepespdata_gr %>% 
   filter(DESCRICAO_CARGO == "DEPUTADO ESTADUAL") %>% 
+  filter(!NUMERO_CANDIDATO %in% c("95","96", "97")) %>% 
+  mutate(NUMERO_PARTIDO = ifelse(is.na(NUMERO_PARTIDO) &
+                                   NOME_CANDIDATO == "VOTO LEGENDA",
+                                 NUMERO_CANDIDATO,
+                                 NUMERO_PARTIDO)) %>% 
   group_by(ANO_ELEICAO,
            NUM_TURNO,
            CODIGO_CARGO,
@@ -673,13 +700,8 @@ de_uf_part <- final_cepespdata_gr %>%
 
 final_cepespdata_mun <- final_cepespdata_mun %>% 
   filter(DESCRICAO_CARGO %in% c("PREFEITO",
-                                "VEREADOR") &
-           DESC_SIT_TOT_TURNO != "#NULO#" &
-           DES_SITUACAO_CANDIDATURA %in% c("APTO",
-                                           "DEFERIDO")) %>% 
-  filter((is.na(NOME_CANDIDATO) &
-            nchar(NUMERO_CANDIDATO) == 2) |
-           !is.na(NOME_CANDIDATO)) %>% 
+                                "VEREADOR")) %>% 
+  filter(TIPO_ELEICAO == "ELEIÇÃO ORDINÁRIA") %>% 
   rename("SIGLA_UF" = "UF")
 
 ## Separando os dados em bases por cargo, agregação regional e
@@ -688,10 +710,12 @@ final_cepespdata_mun <- final_cepespdata_mun %>%
 ### PREFEITO ###
 
 pf_mun_cand <- final_cepespdata_mun %>% 
-  filter(DESCRICAO_CARGO == "PREFEITO")
+  filter(DESCRICAO_CARGO == "PREFEITO") %>% 
+  filter(!NUMERO_CANDIDATO %in% c("95","96", "97"))
 
 pf_mun_part <- final_cepespdata_mun %>% 
   filter(DESCRICAO_CARGO == "PREFEITO") %>% 
+  filter(!NUMERO_CANDIDATO %in% c("95","96", "97")) %>% 
   group_by(ANO_ELEICAO,
            NUM_TURNO,
            CODIGO_CARGO,
@@ -708,10 +732,19 @@ pf_mun_part <- final_cepespdata_mun %>%
 
 vr_mun_cand <- final_cepespdata_mun %>% 
   filter(DESCRICAO_CARGO == "VEREADOR" & 
-         nchar(NUMERO_CANDIDATO) > 2)
+         nchar(NUMERO_CANDIDATO) > 2) %>%
+  filter(!NUMERO_CANDIDATO %in% c("95","96", "97")) %>%
+  filter(is.na(NOME_CANDIDATO) &
+           nchar(NUMERO_CANDIDATO) == 2 |
+           !is.na(NOME_CANDIDATO))
 
 vr_mun_part <- final_cepespdata_mun %>% 
   filter(DESCRICAO_CARGO == "VEREADOR") %>% 
+  filter(!NUMERO_CANDIDATO %in% c("95","96", "97")) %>% 
+  mutate(NUMERO_PARTIDO = ifelse(is.na(NUMERO_PARTIDO) &
+                                   NOME_CANDIDATO == "VOTO LEGENDA",
+                                 NUMERO_CANDIDATO,
+                                 NUMERO_PARTIDO)) %>% 
   group_by(ANO_ELEICAO,
            NUM_TURNO,
            CODIGO_CARGO,

@@ -19,25 +19,25 @@
 ## Calcula o percentual de votos e cadeiras conquistadas pelos 
 ## partidos
 
-df_br_cadeiras_conq <- indic_cadeiras_conq(df_uf_cand,
-                                           agregacao = "BR")
+df_br_cadeiras_conq <- indic_perc_votos_cadeiras(df_uf_cand,
+                                                 agregacao = "BR")
 
 #### 1.1.1.2. Deputado Estadual ----------------------------------------------
 
-de_br_cadeiras_conq <- indic_cadeiras_conq(de_uf_cand,
-                                           agregacao = "BR")
+de_br_cadeiras_conq <- indic_perc_votos_cadeiras(de_uf_cand,
+                                                 agregacao = "BR")
 
 ### 1.1.2. Estado -----------------------------------------------------------
 
 #### 1.1.2.1. Deputado Federal -----------------------------------------------
 
-df_uf_cadeiras_conq <- indic_cadeiras_conq(df_uf_cand,
-                                           agregacao = "UF")
+df_uf_cadeiras_conq <- indic_perc_votos_cadeiras(df_uf_cand,
+                                                 agregacao = "UF")
 
 #### 1.1.2.2. Deputado Estadual ----------------------------------------------
 
-de_uf_cadeiras_conq <- indic_cadeiras_conq(de_uf_cand,
-                                           agregacao = "UF")
+de_uf_cadeiras_conq <- indic_perc_votos_cadeiras(de_uf_cand,
+                                                 agregacao = "UF")
 
 ## 1.2. Eleições Municipais ------------------------------------------------
 
@@ -45,13 +45,13 @@ de_uf_cadeiras_conq <- indic_cadeiras_conq(de_uf_cand,
 
 #### 1.2.1.1. Prefeito -------------------------------------------------------
 
-pf_mun_cadeiras_conq <- indic_cadeiras_conq(pf_mun_cand,
-                                            agregacao = "MUN")
+pf_mun_cadeiras_conq <- indic_perc_votos_cadeiras(pf_mun_cand,
+                                                  agregacao = "PF_MUN")
 
 #### 1.2.1.2. Vereador -------------------------------------------------------
 
-vr_mun_cadeiras_conq <- indic_cadeiras_conq(vr_mun_cand,
-                                            agregacao = "MUN")
+vr_mun_cadeiras_conq <- indic_perc_votos_cadeiras(vr_mun_cand,
+                                                  agregacao = "VR_MUN")
 
 # 2. Indicadores ----------------------------------------------------------
 
@@ -98,14 +98,14 @@ volat_de_uf <- indic_volat(de_uf_cadeiras_conq,
 ## Calcula os indicadores de 'Volatilidade'
 
 volat_pf_mun <- indic_volat(pf_mun_cadeiras_conq,
-                            agregacao = "MUN")
+                            agregacao = "PF_MUN")
 
 #### 2.2.1.2. Vereador -------------------------------------------------------
 
 ## Calcula os indicadores de 'Volatilidade'
 
 volat_vr_mun <- indic_volat(vr_mun_cadeiras_conq,
-                            agregacao = "MUN")
+                            agregacao = "VR_MUN")
 
 # 3. Padronização ---------------------------------------------------------
 

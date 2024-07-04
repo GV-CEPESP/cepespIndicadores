@@ -104,7 +104,7 @@ quoc_eleitoral_partidario_final <- bind_rows(distcad_df_br,
           `Agregação regional`,
           `Cargo`,
           `UF`,
-          `Nome do município`,
+          `Município`,
           `Sigla do partido`)
 
 

@@ -58,12 +58,12 @@ de_uf_eleitos <- indic_cadeiras_conq(de_uf_cand,
 #### 1.2.1.1. Prefeito -------------------------------------------------------
 
 pf_mun_eleitos <- indic_cadeiras_conq(pf_mun_cand,
-                                      agregacao = "MUN")
+                                      agregacao = "PF_MUN")
 
 #### 1.2.1.2. Vereador -------------------------------------------------------
 
 vr_mun_eleitos <- indic_cadeiras_conq(vr_mun_cand,
-                                      agregacao = "MUN")
+                                      agregacao = "VR_MUN")
 
 # 2. Indicadores ----------------------------------------------------------
 
@@ -102,14 +102,14 @@ fragment_de_uf <- indic_frag(de_uf_eleitos,
 ## Calcula o indicador 'Número Efetivo de Partidos Eleitoral'
 
 fragment_pf_mun <- indic_frag(pf_mun_eleitos,
-                              agregacao = "MUN_PF")
+                              agregacao = "PF_MUN")
 
 #### 2.2.1.2. Vereador -------------------------------------------------------
 
 ## Calcula os indicadores de fragmentação em cada ano e município
 
 fragment_vr_mun <- indic_frag(vr_mun_eleitos,
-                              agregacao = "MUN_VR")
+                              agregacao = "VR_MUN")
    
 # 3. Padronização ---------------------------------------------------------
 
@@ -161,7 +161,7 @@ fragment_de_uf <- padroniz_frag(fragment_de_uf,
 ## os índices calculados
 
 fragment_pf_mun <- padroniz_frag(fragment_pf_mun,
-                                 agregacao = "MUN_PF")
+                                 agregacao = "PF_MUN")
 
 #### 4.2.1.2. Vereador -------------------------------------------------------
 
@@ -169,7 +169,7 @@ fragment_pf_mun <- padroniz_frag(fragment_pf_mun,
 ## os índices calculados
 
 fragment_vr_mun <- padroniz_frag(fragment_vr_mun,
-                                 agregacao = "MUN_VR")
+                                 agregacao = "VR_MUN")
 
 # 5. Rbind ----------------------------------------------------------------
 
@@ -182,11 +182,11 @@ fragmentacao_final <- bind_rows(fragment_sen_br,
                                 fragment_pf_mun,
                                 fragment_vr_mun) %>%
   arrange(`Ano da eleição`,
+          `Turno`,
           `Agregação regional`,
           `Cargo`,
           `UF`,
-          `Nome do município`,
-          Turno)
+          `Município`)
 
 # 6. Exporta --------------------------------------------------------------
 

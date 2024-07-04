@@ -4,6 +4,8 @@
 padroniz_volat <- function(data,
                            agregacao = c("BR", "UF", "MUN")){
   
+####################################### BR #####################################
+  
   if(agregacao == "BR"){
     
     data <- data %>% 
@@ -36,6 +38,8 @@ padroniz_volat <- function(data,
               Cargo) %>% 
       unique()
     
+######################################### UF ###################################
+    
   } else if(agregacao == "UF"){
     
     data <- data %>% 
@@ -66,6 +70,8 @@ padroniz_volat <- function(data,
       arrange(`Ano da eleição`,
               UF) %>% 
       unique()
+    
+######################################## MUN ###################################
     
   } else if(agregacao == "MUN"){
     

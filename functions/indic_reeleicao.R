@@ -28,12 +28,17 @@ indic_reel <- function(candidatos,
     
     for(ano in seq(2002, 2022, by = 4)){
       
-      cat("Lendo",ano,"\n")
+      cat("Lendo", ano, "\n")
+      
+      ## Salvando o cargo de referência
+      
+      cargo <- unique(candidatos$DESCRICAO_CARGO)
       
       ## Salvando a quantidade de vagas disponíveis em t0
       
-      vagas_t0 <- candidatos %>% 
-        filter(ANO_ELEICAO == ano) %>% 
+      vagas_t0 <- vagas_dep %>% 
+        filter(ANO_ELEICAO == ano &
+               DESCRICAO_CARGO == cargo) %>% 
         ungroup() %>% 
         select(SIGLA_UF,
                QTDE_VAGAS) %>% 
@@ -41,10 +46,6 @@ indic_reel <- function(candidatos,
         summarise(QTDE_VAGAS = sum(QTDE_VAGAS,
                                    na.rm = TRUE)) %>% 
         pull(QTDE_VAGAS)
-      
-      ## Salvando o cargo de referência
-      
-      cargo <- unique(candidatos$DESCRICAO_CARGO)
       
       ## Banco com os candidatos em t0 
       
@@ -232,8 +233,8 @@ indic_reel <- function(candidatos,
         
         vagas_t0 <- vagas_dep %>% 
           filter(ANO_ELEICAO == ano &
-                   SIGLA_UF == uf &
-                   DESCRICAO_CARGO == cargo) %>% 
+                 SIGLA_UF == uf &
+                 DESCRICAO_CARGO == cargo) %>% 
           ungroup() %>% 
           select(SIGLA_UF,
                  QTDE_VAGAS) %>% 
@@ -430,7 +431,7 @@ indic_reel <- function(candidatos,
       suppressMessages(
         num_municipios <- vagas_ver %>%
           filter(ANO_ELEICAO == ano &
-                   !is.na(QTDE_VAGAS)) %>% 
+                 !is.na(QTDE_VAGAS)) %>% 
           ungroup() %>% 
           select(SIGLA_UF,
                  COD_MUN_TSE,
@@ -768,9 +769,10 @@ indic_reel <- function(candidatos,
         
         ## Verificando quantos municípios existem no estado
         
-        num_municipios <- candidatos %>% 
+        num_municipios <- vagas_ver %>% 
           filter(ANO_ELEICAO == ano & 
-                   SIGLA_UF == uf) %>% 
+                 SIGLA_UF == uf) %>% 
+          filter(!is.na(QTDE_VAGAS)) %>% 
           ungroup() %>% 
           select(SIGLA_UF,
                  COD_MUN_TSE,
@@ -1116,10 +1118,11 @@ indic_reel <- function(candidatos,
         ## Verificando quantos municípios existem na agregação
         
         suppressMessages(
-          num_municipios <- candidatos %>% 
+          num_municipios <- vagas_ver %>% 
             left_join(eleitores_aptos) %>% 
             filter(ANO_ELEICAO == ano & 
-                     AGREG_ELEITORES_APTOS == agreg) %>% 
+                   AGREG_ELEITORES_APTOS == agreg) %>% 
+            filter(!is.na(QTDE_VAGAS)) %>% 
             ungroup() %>% 
             select(AGREG_ELEITORES_APTOS,
                    SIGLA_UF,
@@ -2061,18 +2064,6 @@ indic_reel <- function(candidatos,
     
   } else if(agregacao == "VR_MUN"){
     
-    ## Lista de municípios brasileiros
-    
-    num_municipios <- candidatos %>% 
-      ungroup() %>% 
-      select(SIGLA_UF,
-             COD_MUN_TSE,
-             COD_MUN_IBGE,
-             NOME_MUNICIPIO) %>% 
-      unique() %>% 
-      arrange(SIGLA_UF,
-              NOME_MUNICIPIO)
-    
     ## Lista temporária onde os dados com erro serão armazenados
     
     com_erro <- list()
@@ -2082,6 +2073,20 @@ indic_reel <- function(candidatos,
     
     for(ano in seq(2004, 2020, by = 4)){
       
+      ## Lista de municípios brasileiros
+      
+      num_municipios <- vagas_ver %>% 
+        ungroup() %>% 
+        filter(ANO_ELEICAO == ano) %>% 
+        filter(!is.na(QTDE_VAGAS)) %>% 
+        select(SIGLA_UF,
+               COD_MUN_TSE,
+               COD_MUN_IBGE,
+               NOME_MUNICIPIO) %>% 
+        unique() %>% 
+        arrange(SIGLA_UF,
+                NOME_MUNICIPIO)
+      
       for(municipio in 1:nrow(num_municipios)){
         
         cat("Lendo", ano, "município", municipio, "de", nrow(num_municipios), "\n")
@@ -2090,7 +2095,7 @@ indic_reel <- function(candidatos,
         
         vagas_t0 <- vagas_ver %>% 
           filter(ANO_ELEICAO == ano &
-                   COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>%  
+                 COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>%  
           pull(QTDE_VAGAS) %>% 
           unique()
         
@@ -2324,10 +2329,11 @@ indic_reel <- function(candidatos,
         ## Verificando quantos municípios existem na agregação
         
         suppressMessages(
-          num_municipios <- candidatos %>% 
+          num_municipios <- vagas_ver %>% 
             left_join(eleitores_aptos) %>% 
             filter(ANO_ELEICAO == ano & 
-                     AGREG_ELEITORES_APTOS == agreg) %>% 
+                   AGREG_ELEITORES_APTOS == agreg) %>% 
+            filter(!is.na(QTDE_VAGAS)) %>% 
             ungroup() %>% 
             select(AGREG_ELEITORES_APTOS,
                    SIGLA_UF,
