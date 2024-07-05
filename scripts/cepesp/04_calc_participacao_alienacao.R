@@ -82,7 +82,6 @@ participacao_alienacao_final <- bind_rows(cons_br,
           `UF`,
           `Município`)
 
-
 # 4. Exporta --------------------------------------------------------------
 
 ## Exporta os indicadores de 'Participação e Alienação' em .rds

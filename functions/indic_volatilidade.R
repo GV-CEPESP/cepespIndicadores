@@ -390,7 +390,7 @@ indic_volat <- function(data,
         arrange(SIGLA_UF,
                 NOME_MUNICIPIO)
       
-      for(municipio in 1:nrow(num_municipios)){
+      for(municipio in 1828:nrow(num_municipios)){
         
         cat("Lendo", ano, "município", municipio, "de", nrow(num_municipios), "\n")
         
@@ -702,12 +702,13 @@ indic_volat <- function(data,
           
         }
         
-        ## Salvando uma versão temporária para conferência posterior
-        
-        saveRDS(indicadores_final,
-                "data/output/volatilidade_vereadores_mun_temp.rds")
-        
       }
+      
+      ## Salvando uma versão temporária para conferência posterior
+      
+      saveRDS(indicadores_final,
+              "data/output/volatilidade_vereadores_mun_temp.rds")
+      
     }
   }
   
