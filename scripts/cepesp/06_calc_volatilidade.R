@@ -142,13 +142,12 @@ volat_de_uf <- padroniz_volat(volat_de_uf,
 #### 3.2.1.1. Prefeito -------------------------------------------------------
 
 volat_pf_mun <- padroniz_volat(volat_pf_mun,
-                              agregacao = "MUN") %>% 
-  select(-`Volatilidade parlamentar`)
+                               agregacao = "PF_MUN") 
 
 #### 3.2.1.2. Vereador -------------------------------------------------------
 
-volat_vr_mun2 <- padroniz_volat(volat_vr_mun,
-                               agregacao = "MUN")
+volat_vr_mun <- padroniz_volat(volat_vr_mun,
+                               agregacao = "VR_MUN")
 
 # 4. Rbind ----------------------------------------------------------------
 
@@ -159,13 +158,13 @@ volatilidade_final <- bind_rows(volat_df_br,
                                 volat_df_uf,
                                 volat_de_uf,
                                 volat_pf_mun,
-                                volat_vr_mun) %>%
+                                volat_vr_mun) %>% 
   arrange(`Ano da eleição`,
+          Turno,
           `Agregação regional`,
           `Cargo`,
           `UF`,
-          `Nome do município`)
-
+          `Município`)
 
 # 5. Exporta --------------------------------------------------------------
 

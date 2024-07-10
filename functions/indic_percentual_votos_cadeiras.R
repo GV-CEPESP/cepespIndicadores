@@ -179,19 +179,22 @@ indic_perc_votos_cadeiras <- function(data,
     ## bem como o total de cadeiras conquistadas por cada partido
     
     temp <- data %>% 
-      filter((DESC_SIT_TOT_TURNO == "ELEITO"|
-              DESC_SIT_TOT_TURNO == "ELEITO POR QP"|
-              DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" |
-              DESC_SIT_TOT_TURNO == "ELEITO POR MÉDIA" |
-              DESC_SIT_TOT_TURNO == "MÉDIA" |
-              DESC_SIT_TOT_TURNO == "MEDIA")) %>% 
+      mutate(TOT_CADEIRAS = ifelse(DESC_SIT_TOT_TURNO == "ELEITO"|
+                                     DESC_SIT_TOT_TURNO == "ELEITO POR QP"|
+                                     DESC_SIT_TOT_TURNO == "ELEITO POR MEDIA" |
+                                     DESC_SIT_TOT_TURNO == "ELEITO POR MÉDIA" |
+                                     DESC_SIT_TOT_TURNO == "MÉDIA" |
+                                     DESC_SIT_TOT_TURNO == "MEDIA",
+                                     1,
+                                     NA)) %>% 
       group_by(ANO_ELEICAO,
-               NUM_TURNO,
                SIGLA_UF,
                COD_MUN_TSE,
                DESCRICAO_CARGO,
                NUMERO_PARTIDO) %>% 
-      mutate(TOT_CADEIRAS = n()) %>% 
+      fill(TOT_CADEIRAS, .direction = "downup") %>% 
+      filter(NUM_TURNO == 1) %>% 
+      ungroup() %>% 
       select(ANO_ELEICAO,
              NUM_TURNO,
              SIGLA_UF,
@@ -252,14 +255,14 @@ indic_perc_votos_cadeiras <- function(data,
       unique() %>% 
       mutate(TOT_CADEIRAS = ifelse(is.na(TOT_CADEIRAS),
                                    0,
-                                   TOT_CADEIRAS)))
+                                   TOT_CADEIRAS)) %>% 
+      filter(NUM_TURNO == 1))
     
     ## Calcula o percentual de votos e cadeiras conquistadas por cada partido em cada
     ## eleição e município
     
     data <- data %>% 
-      mutate(PERC_VOTOS = VOT_PART_MUN/QTDE_VOTOS_VALIDOS,
-             PERC_CADEIRAS = TOT_CADEIRAS/INFORMACAO_DISPONIVEL) 
+      mutate(PERC_VOTOS = VOT_PART_MUN/QTDE_VOTOS_VALIDOS) 
     
     ################################## VR_MUN #################################
     

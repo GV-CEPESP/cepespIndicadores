@@ -19,6 +19,8 @@ options(scipen = 99999)
 
 dir <- c("F:/Public/Documents/cepespIndicadores/")
 
+dir <- c("data/input")
+
 # 1. Source ---------------------------------------------------------------
 
 ## Realiza o cálculo, padronização e exportação dos 

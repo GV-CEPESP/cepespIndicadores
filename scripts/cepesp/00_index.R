@@ -19,6 +19,8 @@ options(timeout = 999999,
 
 dir <- c("F:/Public/Documents/cepespIndicadores/")
 
+dir <- ""
+
 # 1. Source ---------------------------------------------------------------
 
 ## Realiza o cálculo, padronização e exportação dos 

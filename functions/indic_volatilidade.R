@@ -96,7 +96,6 @@ indic_volat <- function(data,
           select(-PERC_VOTOS2,
                  -PERC_CADEIRAS2) %>% 
           mutate(ANO_ELEICAO = as.character(ano),
-                 NUM_TURNO = ano_t0[1, "NUM_TURNO"][[1]],
                  QTDE_VAGAS = ano_t0[1, "QTDE_VAGAS"][[1]],
                  QTDE_VOTOS_VALIDOS_BR = ano_t0[1, "QTDE_VOTOS_VALIDOS_BR"][[1]],
                  VOT_PART_BR = 0,
@@ -113,8 +112,7 @@ indic_volat <- function(data,
                  PERC_CADEIRAS2 = 0) %>% 
           rbind(ano_t4) %>% 
           ungroup() %>% 
-          select(NUM_TURNO,
-                 NUMERO_PARTIDO,
+          select(NUMERO_PARTIDO,
                  PERC_VOTOS2,
                  PERC_CADEIRAS2) %>% 
           arrange(NUMERO_PARTIDO)
@@ -146,14 +144,14 @@ indic_volat <- function(data,
       } else if(nrow(ano_t0) > 0 &
                 nrow(ano_t4) == 0) {
         
-        ## Atribuindo 0 aos indicadores de "Volatilidade" porque a 
+        ## Atribuindo NA aos indicadores de "Volatilidade" porque a 
         ## informação não existe em um dos anos de referência
         
         indicadores1 <- ano_t0 %>% 
-          mutate(PERC_VOTOS2 = 0,
-                 PERC_CADEIRAS2 = 0,
-                 VOLATILIDADE_ELEITORAL = 0,
-                 VOLATILIDADE_PARLAMENTAR = 0)
+          mutate(PERC_VOTOS2 = NA,
+                 PERC_CADEIRAS2 = NA,
+                 VOLATILIDADE_ELEITORAL = NA,
+                 VOLATILIDADE_PARLAMENTAR = NA)
         
         ## Empilha os indicadores calculados em um único banco
         
@@ -163,14 +161,15 @@ indic_volat <- function(data,
       } else if(nrow(ano_t0) == 0 &
                 nrow(ano_t4) > 0) {
         
-        ## Atribuindo 0 aos indicadores de "Volatilidade" porque a 
+        ## Atribuindo NA aos indicadores de "Volatilidade" porque a 
         ## informação não existe em um dos anos de referência
         
         indicadores1 <- ano_t4 %>% 
-          mutate(PERC_VOTOS = 0,
-                 PERC_CADEIRAS = 0,
-                 VOLATILIDADE_ELEITORAL = 0,
-                 VOLATILIDADE_PARLAMENTAR = 0)
+          mutate(ANO_ELEICAO = ano) %>% 
+          mutate(PERC_VOTOS = NA,
+                 PERC_CADEIRAS = NA,
+                 VOLATILIDADE_ELEITORAL = NA,
+                 VOLATILIDADE_PARLAMENTAR = NA)
         
         ## Empilha os indicadores calculados em um único banco
         
@@ -280,7 +279,6 @@ indic_volat <- function(data,
             select(-PERC_VOTOS2,
                    -PERC_CADEIRAS2) %>% 
             mutate(ANO_ELEICAO = as.character(ano),
-                   NUM_TURNO = ano_t0[1, "NUM_TURNO"][[1]],
                    SIGLA_UF = uf,
                    QTDE_VAGAS = ano_t0[1, "QTDE_VAGAS"][[1]],
                    QTDE_VOTOS_VALIDOS = ano_t0[1, "QTDE_VOTOS_VALIDOS"][[1]],
@@ -298,8 +296,7 @@ indic_volat <- function(data,
                    PERC_CADEIRAS2 = 0) %>% 
             rbind(ano_t4) %>% 
             ungroup() %>% 
-            select(NUM_TURNO,
-                   NUMERO_PARTIDO,
+            select(NUMERO_PARTIDO,
                    PERC_VOTOS2,
                    PERC_CADEIRAS2) %>% 
             arrange(NUMERO_PARTIDO)
@@ -331,14 +328,14 @@ indic_volat <- function(data,
         } else if(nrow(ano_t0) > 0 &
                   nrow(ano_t4) == 0) {
           
-          ## Atribuindo 0 aos indicadores de "Volatilidade" porque a 
+          ## Atribuindo NA aos indicadores de "Volatilidade" porque a 
           ## informação não existe em um dos anos de referência
           
           indicadores1 <- ano_t0 %>% 
-            mutate(PERC_VOTOS2 = 0,
-                   PERC_CADEIRAS2 = 0,
-                   VOLATILIDADE_ELEITORAL = 0,
-                   VOLATILIDADE_PARLAMENTAR = 0)
+            mutate(PERC_VOTOS2 = NA,
+                   PERC_CADEIRAS2 = NA,
+                   VOLATILIDADE_ELEITORAL = NA,
+                   VOLATILIDADE_PARLAMENTAR = NA)
           
           ## Empilha os indicadores calculados em um único banco
           
@@ -348,14 +345,15 @@ indic_volat <- function(data,
         } else if(nrow(ano_t0) == 0 &
                   nrow(ano_t4) > 0) {
           
-          ## Atribuindo 0 aos indicadores de "Volatilidade" porque a 
+          ## Atribuindo NA aos indicadores de "Volatilidade" porque a 
           ## informação não existe em um dos anos de referência
           
           indicadores1 <- ano_t4 %>% 
-            mutate(PERC_VOTOS = 0,
-                   PERC_CADEIRAS = 0,
-                   VOLATILIDADE_ELEITORAL = 0,
-                   VOLATILIDADE_PARLAMENTAR = 0)
+            mutate(ANO_ELEICAO = ano) %>% 
+            mutate(PERC_VOTOS = NA,
+                   PERC_CADEIRAS = NA,
+                   VOLATILIDADE_ELEITORAL = NA,
+                   VOLATILIDADE_PARLAMENTAR = NA)
           
           ## Empilha os indicadores calculados em um único banco
           
@@ -390,7 +388,7 @@ indic_volat <- function(data,
         arrange(SIGLA_UF,
                 NOME_MUNICIPIO)
       
-      for(municipio in 1828:nrow(num_municipios)){
+      for(municipio in 1:nrow(num_municipios)){
         
         cat("Lendo", ano, "município", municipio, "de", nrow(num_municipios), "\n")
         
@@ -407,8 +405,7 @@ indic_volat <- function(data,
           arrange(ANO_ELEICAO,
                   SIGLA_UF,
                   NOME_MUNICIPIO,
-                  NUMERO_PARTIDO) %>% 
-          select(-PERC_CADEIRAS)
+                  NUMERO_PARTIDO) 
         
         ## Cria um data frame com as informações da eleição
         ## em t-4
@@ -419,8 +416,7 @@ indic_volat <- function(data,
                  COD_MUN_TSE == num_municipios$COD_MUN_TSE[municipio]) %>% 
           filter(QTDE_VAGAS == INFORMACAO_DISPONIVEL) %>% 
           mutate(ANO_ELEICAO = as.character(ANO_ELEICAO)) %>% 
-          select(-SIGLA_PARTIDO,
-                 -PERC_CADEIRAS) %>% 
+          select(-SIGLA_PARTIDO) %>% 
           rename("PERC_VOTOS2" = "PERC_VOTOS") %>% 
           arrange(ANO_ELEICAO,
                   SIGLA_UF,
@@ -500,8 +496,8 @@ indic_volat <- function(data,
           ## informação não existe em um dos anos de referência
           
           indicadores1 <- ano_t0 %>% 
-            mutate(PERC_VOTOS2 = 0,
-                   VOLATILIDADE_ELEITORAL = 0)
+            mutate(PERC_VOTOS2 = NA,
+                   VOLATILIDADE_ELEITORAL = NA)
           
           ## Empilha os indicadores calculados em um único banco
           
@@ -511,12 +507,13 @@ indic_volat <- function(data,
         } else if(nrow(ano_t0) == 0 &
                   nrow(ano_t4) > 0) {
           
-          ## Atribuindo 0 aos indicadores de "Volatilidade" porque a 
+          ## Atribuindo NA aos indicadores de "Volatilidade" porque a 
           ## informação não existe em um dos anos de referência
           
           indicadores1 <- ano_t4 %>% 
-            mutate(PERC_VOTOS = 0,
-                   VOLATILIDADE_ELEITORAL = 0)
+            mutate(ANO_ELEICAO = ano) %>% 
+            mutate(PERC_VOTOS = NA,
+                   VOLATILIDADE_ELEITORAL = NA)
           
           ## Empilha os indicadores calculados em um único banco
           
@@ -669,14 +666,14 @@ indic_volat <- function(data,
         } else if(nrow(ano_t0) > 0 &
                   nrow(ano_t4) == 0) {
           
-          ## Atribuindo 0 aos indicadores de "Volatilidade" porque a 
+          ## Atribuindo NA aos indicadores de "Volatilidade" porque a 
           ## informação não existe em um dos anos de referência
           
           indicadores1 <- ano_t0 %>% 
-            mutate(PERC_VOTOS2 = 0,
-                   PERC_CADEIRAS2 = 0,
-                   VOLATILIDADE_ELEITORAL = 0,
-                   VOLATILIDADE_PARLAMENTAR = 0)
+            mutate(PERC_VOTOS2 = NA,
+                   PERC_CADEIRAS2 = NA,
+                   VOLATILIDADE_ELEITORAL = NA,
+                   VOLATILIDADE_PARLAMENTAR = NA)
           
           ## Empilha os indicadores calculados em um único banco
           
@@ -690,10 +687,11 @@ indic_volat <- function(data,
           ## informação não existe em um dos anos de referência
           
           indicadores1 <- ano_t4 %>% 
-            mutate(PERC_VOTOS = 0,
-                   PERC_CADEIRAS = 0,
-                   VOLATILIDADE_ELEITORAL = 0,
-                   VOLATILIDADE_PARLAMENTAR = 0)
+            mutate(ANO_ELEICAO = ano) %>% 
+            mutate(PERC_VOTOS = NA,
+                   PERC_CADEIRAS = NA,
+                   VOLATILIDADE_ELEITORAL = NA,
+                   VOLATILIDADE_PARLAMENTAR = NA)
           
           ## Empilha os indicadores calculados em um único banco
           
@@ -702,12 +700,12 @@ indic_volat <- function(data,
           
         }
         
+        ## Salvando uma versão temporária para conferência posterior
+        
+        saveRDS(indicadores_final,
+                "data/output/volatilidade_vereadores_mun_temp.rds")
+        
       }
-      
-      ## Salvando uma versão temporária para conferência posterior
-      
-      saveRDS(indicadores_final,
-              "data/output/volatilidade_vereadores_mun_temp.rds")
       
     }
   }
