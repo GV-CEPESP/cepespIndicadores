@@ -90,9 +90,7 @@ Este repositório se organiza nas seguintes pastas:
 | functions    | Funções Auxiliares     | `num_efetivo_partidos.R`            | Calcula o número efetivo de partidos.                                                                                                   |
 | functions    | Funções Auxiliares     | `padroniz_fragmentacao.R`           | Padroniza os dados de fragmentação partidária.                                                                                          |
 | functions    | Funções Auxiliares     | `padroniz_participacao_alienacao.R` | Padroniza os dados de participação e alienação eleitoral.                                                                               |
-| functions    | Funções Auxiliares     | `padroniz_quociente_eleitoral_partid
-
-ario.R` | Padroniza os dados de quociente eleitoral e partidário.                                                                      |
+| functions    | Funções Auxiliares     | `padroniz_quociente_eleitoral_partidario.R` | Padroniza os dados de quociente eleitoral e partidário.                                                                      |
 | functions    | Funções Auxiliares     | `padroniz_reeleicao.R`              | Padroniza os dados de reeleição.                                                                                                        |
 | functions    | Funções Auxiliares     | `padroniz_volatilidade.R`           | Padroniza os dados de volatilidade eleitoral.                                                                                           |
 | functions    | Funções Auxiliares     | `quociente_eleitoral.R`             | Calcula o quociente eleitoral.                                                                                                          |
