@@ -3,7 +3,7 @@
 
 Repositório de indicadores eleitorais desenvolvido pelo Centro de Política e Economia do Setor Público (CEPESP) da Fundação Getulio Vargas (FGV) a partir dos dados disponibilizados no _CEPESP DATA_.
 
-### Organização do Repositório
+### Organização do repositório
 
 Este repositório se organiza nas seguintes pastas:
 
