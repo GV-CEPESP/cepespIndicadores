@@ -1,7 +1,7 @@
 
 # CEPESP INDICADORES - Repositório de Indicadores Eleitorais
 
-Repositório de indicadores eleitorais desenvolvido pelo Centro de Política e Economia do Setor Público (CEPESP) da Fundação Getulio Vargas (FGV) a partir dos dados disponibilizados no _CEPESP DATA_.
+Repositório de indicadores eleitorais desenvolvido pelo Centro de Política e Economia do Setor Público (CEPESP) da Fundação Getulio Vargas (FGV) a partir dos dados disponibilizados no **CEPESP DATA**.
 
 ## Organização do repositório
 
