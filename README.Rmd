@@ -15,7 +15,7 @@ Repositório de indicadores eleitorais desenvolvido pelo Centro de Política e E
 
 Este repositório se organiza nas seguintes pastas:
 
-- **scripts**: códigos para cálculo dos indicadores eleitorais:
+- `scripts`: códigos para cálculo dos indicadores eleitorais:
   - `00_index.R`: configura o ambiente de trabalho e carrega os pacotes necessários.
   - `01_data.R`: importa e prepara os dados brutos.
   - `02_calc_quociente_eleitoral_partidario.R`: calcula índices de quociente eleitoral e número de eleitos por partido.
@@ -24,11 +24,11 @@ Este repositório se organiza nas seguintes pastas:
   - `05_calc_reeleicao.R`: calcula índices de reeleição.
   - `06_calc_volatilidade.R`: calcula índices de volatilidade eleitoral e parlamentar.
 
-- **data**: bases de dados utilizadas nos scripts:
+- `data`: bases de dados utilizadas nos scripts:
   - `input`: dados brutos extraídos de fontes diversas.
   - `output`: dados processados e consolidados.
   
-- **functions**: funções auxiliares utilizadas nos scripts principais:
+- `functions`: funções auxiliares utilizadas nos scripts principais:
   - `abstencao_percentual.R`: calcula o percentual de abstenção eleitoral.
   - `alienacao_absoluta.R`: calcula o número absoluto de eleitores alienados.
   - `alienacao_percentual.R`: calcula o percentual de eleitores alienados.
