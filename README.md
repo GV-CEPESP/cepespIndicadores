@@ -10,7 +10,7 @@ Este repositório se organiza nas seguintes pastas:
 - `scripts`: códigos para cálculo dos indicadores eleitorais:
   - `00_index.R`: configura o ambiente de trabalho e carrega os pacotes necessários.
   - `01_data.R`: importa e prepara os dados brutos.
-  - `02_calc_quociente_eleitoral_partidario.R`: calcula índices de quociente eleitoral e número de eleitos por partido.
+  - `02_calc_quociente_eleitoral.R`: calcula índices de quociente eleitoral e número de eleitos por partido.
   - `03_calc_fragmentacao.R`: calcula índices de fragmentação partidária.
   - `04_calc_participacao_alienacao.R`: calcula índices de participação e alienação eleitoral.
   - `05_calc_reeleicao.R`: calcula índices de reeleição.
@@ -99,3 +99,7 @@ Este repositório se organiza nas seguintes pastas:
 ### Linguagem e Idioma
 
 Todas as manipulações das bases de dados foram conduzidas em linguagem R. Pacotes utilizados no tratamento dos dados estão especificados no arquivo `00_index.R`. Scripts, tabelas auxiliares e bases finais foram padronizadas em português (PT-BR).
+
+## Metodologia
+
+
