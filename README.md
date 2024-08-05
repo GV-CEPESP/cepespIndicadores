@@ -57,7 +57,7 @@ Este repositório se organiza nas seguintes pastas:
 | functions    | Funções Auxiliares     | `renovacao_liquida.R`               | Calcula a renovação líquida.                                                                                                            |
 | functions    | Funções Auxiliares     | `volatilidade.R`                    | Calcula a volatilidade eleitoral e parlamentar.                                                                                                        |
 | functions    | Funções Auxiliares     | `votos_brancos_percentuais.R`       | Calcula o percentual de votos brancos.                                                                                                  |
-| functions    | Funções Auxiliares     | `votos_nulos_percentuais.R`         | Fórmula para o cálculo do percentual de votos nulos.                                                                                                    |
+| functions    | Funções Auxiliares     | `votos_nulos_percentuais.R`         | Calcula o percentual de votos nulos.                                                                                                    |
 
 ### Linguagem e Idioma
 
