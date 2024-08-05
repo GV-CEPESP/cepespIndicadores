@@ -4,10 +4,12 @@
 #'        - Calcular os indicadores de Reeleição:
 
 #'        - 1. Reeleição Bruta;
-#'        - 3. Reeleição Líquida;
-#'        - 4. Renovação Bruta;
-#'        - 6. Renovação Líquida; e
-#'        - 7. Recandidaturas.
+#'        - 2. Reeleição Líquida;
+#'        - 3. Renovação Bruta;
+#'        - 4. Renovação Líquida; 
+#'        - 5. Recandidaturas
+#'        - 6. Taxa de Prefeitos Aptos a Disputar a Reeleição; e
+#'        - 7. Taxa de Prefeitos que Tentaram a Reeleição.
 
 #'        - Limpeza e padronização dos dados gerados.
 
