@@ -60,10 +60,10 @@ Este repositório se organiza nas seguintes pastas:
 | functions    | Funções Auxiliares     | `votos_nulos_percentuais.R`         | Calcula o percentual de votos nulos.                                                                                                    |
 
 ### Linguagem e Idioma
-
 Todo o processamento das bases de dados foi conduzido em linguagem R. Pacotes utilizados no tratamento dos dados estão especificados no arquivo `00_index.R`. Scripts, tabelas auxiliares e bases finais foram padronizadas em português (PT-BR).
 
-## Metodologia
+## Contribuições 
+O **CEPESP DATA** não é um projeto *open-source*, mas estamos sempre abertos a sugestões de melhorias! Caso tenha identificado algum erro em nossos *scripts* ou bases consolidadas, por favor, deposite seu comentário na aba de [*Issues*](https://github.com/GV-CEPESP/dados_eleitorais/issues) (no canto superior esquerdo).  
 
-Para uma explicação mais detalhada de cada indicador, bem como da metodologia utilizada, acesse nosso [guia](https://gv-cepesp.github.io/indicadores_eleitorais/). Nele, você encontrará descrições completas sobre os conceitos, fórmulas e procedimentos.
+Checamos os *issues* com frequência. Se possível, não deixe de se identificar para que possamos retornar sua mensagem prontamente. 
 
