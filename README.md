@@ -63,7 +63,7 @@ Este repositório se organiza nas seguintes pastas:
 Todo o processamento das bases de dados foi conduzido em linguagem R. Pacotes utilizados no tratamento dos dados estão especificados no arquivo `00_index.R`. Scripts, tabelas auxiliares e bases finais foram padronizadas em português (PT-BR).
 
 ## Contribuições 
-O **CEPESP DATA** não é um projeto *open-source*, mas estamos sempre abertos a sugestões de melhorias! Caso tenha identificado algum erro em nossos *scripts* ou bases consolidadas, por favor, deposite seu comentário na aba de [*Issues*](https://github.com/GV-CEPESP/dados_eleitorais/issues) (no canto superior esquerdo).  
+O **CEPESP DATA** não é um projeto *open-source*, mas estamos sempre abertos a sugestões de melhorias! Caso tenha identificado algum erro em nossos *scripts* ou bases consolidadas, por favor, deposite seu comentário na aba de [*Issues*](https://github.com/GV-CEPESP/cepespIndicadores/issues) (no canto superior esquerdo).  
 
 Checamos os *issues* com frequência. Se possível, não deixe de se identificar para que possamos retornar sua mensagem prontamente. 
 
