@@ -85,7 +85,24 @@ indic_perc_votos_cadeiras <- function(data,
     
     data <- data %>% 
       mutate(PERC_VOTOS = VOT_PART_BR/QTDE_VOTOS_VALIDOS_BR,
-             PERC_CADEIRAS = TOT_CADEIRAS/INFORMACAO_DISPONIVEL)
+             PERC_CADEIRAS = TOT_CADEIRAS/INFORMACAO_DISPONIVEL) 
+    
+    ## Calculando o número de partidos com representação parlamentar
+    
+    suppressMessages(
+      part_parlamentar <- data %>% 
+        filter(PERC_CADEIRAS > 0) %>% 
+        group_by(ANO_ELEICAO) %>% 
+        summarise(NUM_PART_PARLAMENT = n()))
+    
+    ## Juntando essa informação com os dados de referência
+    
+    suppressMessages(
+      data <- data %>% 
+        left_join(part_parlamentar) %>% 
+        group_by(ANO_ELEICAO) %>% 
+        fill(NUM_PART_PARLAMENT, 
+             .direction = "downup"))
     
     #################################### UF ###################################    
     
@@ -169,7 +186,26 @@ indic_perc_votos_cadeiras <- function(data,
     
     data <- data %>% 
       mutate(PERC_VOTOS = VOT_PART_UF/QTDE_VOTOS_VALIDOS,
-             PERC_CADEIRAS = TOT_CADEIRAS/INFORMACAO_DISPONIVEL) 
+             PERC_CADEIRAS = TOT_CADEIRAS/INFORMACAO_DISPONIVEL)
+    
+    ## Calculando o número de partidos com representação parlamentar
+    
+    suppressMessages(
+      part_parlamentar <- data %>% 
+        filter(PERC_CADEIRAS > 0) %>% 
+        group_by(ANO_ELEICAO,
+                 SIGLA_UF) %>% 
+        summarise(NUM_PART_PARLAMENT = n()))
+    
+    ## Juntando essa informação com os dados de referência
+    
+    suppressMessages(
+      data <- data %>% 
+        left_join(part_parlamentar) %>% 
+        group_by(ANO_ELEICAO,
+                 SIGLA_UF) %>% 
+        fill(NUM_PART_PARLAMENT, 
+             .direction = "downup"))
     
     ################################### PF_MUN #################################    
     
@@ -352,6 +388,27 @@ indic_perc_votos_cadeiras <- function(data,
     data <- data %>% 
       mutate(PERC_VOTOS = VOT_PART_MUN/QTDE_VOTOS_VALIDOS,
              PERC_CADEIRAS = TOT_CADEIRAS/INFORMACAO_DISPONIVEL)
+    
+    ## Calculando o número de partidos com representação parlamentar
+    
+    suppressMessages(
+      part_parlamentar <- data %>% 
+        filter(PERC_CADEIRAS > 0) %>% 
+        group_by(ANO_ELEICAO,
+                 SIGLA_UF,
+                 COD_MUN_TSE) %>% 
+        summarise(NUM_PART_PARLAMENT = n()))
+    
+    ## Juntando essa informação com os dados de referência
+    
+    suppressMessages(
+      data <- data %>% 
+        left_join(part_parlamentar) %>% 
+        group_by(ANO_ELEICAO,
+                 SIGLA_UF,
+                 COD_MUN_TSE) %>% 
+        fill(NUM_PART_PARLAMENT, 
+             .direction = "downup"))
     
   }
 }

@@ -23,33 +23,33 @@
 ## Calcula o percentual de votos e cadeiras conquistadas pelos 
 ## partidos
 
-sen_br_eleitos <- indic_cadeiras_conq(sen_uf_cand,
-                                      agregacao = "BR")
+sen_br_eleitos <- indic_perc_votos_cadeiras(sen_uf_cand,
+                                            agregacao = "BR")
 
 #### 1.1.1.2. Deputado Federal -----------------------------------------------
 
 ## Calcula o percentual de votos e cadeiras conquistadas pelos 
 ## partidos
 
-df_br_eleitos <- indic_cadeiras_conq(df_uf_cand,
-                                     agregacao = "BR")
+df_br_eleitos <- indic_perc_votos_cadeiras(df_uf_cand,
+                                           agregacao = "BR")
 
 #### 1.1.1.3. Deputado Estadual ----------------------------------------------
 
-de_br_eleitos <- indic_cadeiras_conq(de_uf_cand,
-                                     agregacao = "BR")
+de_br_eleitos <- indic_perc_votos_cadeiras(de_uf_cand,
+                                           agregacao = "BR")
 
 ### 1.1.2. Estado -----------------------------------------------------------
 
 #### 1.1.2.1. Deputado Federal -----------------------------------------------
 
-df_uf_eleitos <- indic_cadeiras_conq(df_uf_cand,
-                                     agregacao = "UF")
+df_uf_eleitos <- indic_perc_votos_cadeiras(df_uf_cand,
+                                           agregacao = "UF")
 
 #### 1.1.2.2. Deputado Estadual ----------------------------------------------
 
-de_uf_eleitos <- indic_cadeiras_conq(de_uf_cand,
-                                     agregacao = "UF")
+de_uf_eleitos <- indic_perc_votos_cadeiras(de_uf_cand,
+                                           agregacao = "UF")
 
 ## 1.2. Eleições Municipais ------------------------------------------------
 
@@ -57,13 +57,13 @@ de_uf_eleitos <- indic_cadeiras_conq(de_uf_cand,
 
 #### 1.2.1.1. Prefeito -------------------------------------------------------
 
-pf_mun_eleitos <- indic_cadeiras_conq(pf_mun_cand,
-                                      agregacao = "PF_MUN")
+pf_mun_eleitos <- indic_perc_votos_cadeiras(pf_mun_cand,
+                                            agregacao = "PF_MUN")
 
 #### 1.2.1.2. Vereador -------------------------------------------------------
 
-vr_mun_eleitos <- indic_cadeiras_conq(vr_mun_cand,
-                                      agregacao = "VR_MUN")
+vr_mun_eleitos <- indic_perc_votos_cadeiras(vr_mun_cand,
+                                            agregacao = "VR_MUN")
 
 # 2. Indicadores ----------------------------------------------------------
 

@@ -165,7 +165,7 @@ indic_volat <- function(data,
         ## informação não existe em um dos anos de referência
         
         indicadores1 <- ano_t4 %>% 
-          mutate(ANO_ELEICAO = ano) %>% 
+          mutate(ANO_ELEICAO = as.character(ano)) %>% 
           mutate(PERC_VOTOS = NA,
                  PERC_CADEIRAS = NA,
                  VOLATILIDADE_ELEITORAL = NA,
@@ -349,7 +349,7 @@ indic_volat <- function(data,
           ## informação não existe em um dos anos de referência
           
           indicadores1 <- ano_t4 %>% 
-            mutate(ANO_ELEICAO = ano) %>% 
+            mutate(ANO_ELEICAO = as.character(ano)) %>% 
             mutate(PERC_VOTOS = NA,
                    PERC_CADEIRAS = NA,
                    VOLATILIDADE_ELEITORAL = NA,
@@ -372,7 +372,7 @@ indic_volat <- function(data,
     ## For loop que calcula os indicadores de 'Volatilidade'
     ## para cada ano
     
-    for(ano in seq(2004, 2020, by = 4)){
+    for(ano in seq(2016, 2020, by = 4)){
       
       ## Lista de municípios brasileiros
       
@@ -511,7 +511,7 @@ indic_volat <- function(data,
           ## informação não existe em um dos anos de referência
           
           indicadores1 <- ano_t4 %>% 
-            mutate(ANO_ELEICAO = ano) %>% 
+            mutate(ANO_ELEICAO = as.character(ano)) %>% 
             mutate(PERC_VOTOS = NA,
                    VOLATILIDADE_ELEITORAL = NA)
           
@@ -687,7 +687,7 @@ indic_volat <- function(data,
           ## informação não existe em um dos anos de referência
           
           indicadores1 <- ano_t4 %>% 
-            mutate(ANO_ELEICAO = ano) %>% 
+            mutate(ANO_ELEICAO = as.character(ano)) %>% 
             mutate(PERC_VOTOS = NA,
                    PERC_CADEIRAS = NA,
                    VOLATILIDADE_ELEITORAL = NA,

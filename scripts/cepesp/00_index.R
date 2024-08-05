@@ -19,7 +19,7 @@ options(timeout = 999999,
 
 dir <- c("F:/Public/Documents/cepespIndicadores/")
 
-dir <- ""
+## dir <- "" ## Máquina local
 
 # 1. Source ---------------------------------------------------------------
 

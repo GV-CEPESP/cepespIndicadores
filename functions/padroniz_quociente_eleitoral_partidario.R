@@ -1,6 +1,6 @@
 
 ## Função para padronização dos indicadores de 'Quociente Eleitoral e 
-##                                              Quociente Partidário'
+##                                              Número de eleitos pelo partido'
 
 padroniz_quoc <- function(data, 
                           agregacao = c("BR", "UF", "MUN")){
@@ -20,11 +20,11 @@ padroniz_quoc <- function(data,
              "Sigla do partido" = "SIGLA_PARTIDO",
              "Total de votos conquistados" = "VOT_PART_BR",
              "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
-             "Quociente partidário" = "QUOCIENTE_PARTIDARIO",
+             "Número de eleitos pelo partido" = "QTDE_ELEITOS_PART",
              "Municípios-Vagas com informação disponíveis" = "INFORMACAO_DISPONIVEL") %>% 
       mutate(`Quociente eleitoral` = round(`Quociente eleitoral`, 
                                            digits = 0),
-             `Quociente partidário` = round(`Quociente partidário`, 
+             `Número de eleitos pelo partido` = round(`Número de eleitos pelo partido`, 
                                             digits = 0),
              `Agregação regional` = "Brasil",
              UF = "BR",
@@ -44,7 +44,7 @@ padroniz_quoc <- function(data,
              `Votos válidos`,
              `Sigla do partido`,
              `Quociente eleitoral`,
-             `Quociente partidário`) 
+             `Número de eleitos pelo partido`) 
   
 ##################################### UF ##################################
     
@@ -62,11 +62,11 @@ padroniz_quoc <- function(data,
              "Sigla do partido" = "SIGLA_PARTIDO",
              "Total de votos conquistados" = "VOT_PART_UF",
              "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
-             "Quociente partidário" = "QUOCIENTE_PARTIDARIO",
+             "Número de eleitos pelo partido" = "QTDE_ELEITOS_PART",
              "Municípios-Vagas com informação disponíveis" = "INFORMACAO_DISPONIVEL") %>% 
       mutate(`Quociente eleitoral` = round(`Quociente eleitoral`, 
                                            digits = 0),
-             `Quociente partidário` = round(`Quociente partidário`, 
+             `Número de eleitos pelo partido` = round(`Número de eleitos pelo partido`, 
                                             digits = 0),
              `Agregação regional` = "UF",
              `Código do município (TSE)` = NA,
@@ -85,7 +85,7 @@ padroniz_quoc <- function(data,
              `Votos válidos`,
              `Sigla do partido`,
              `Quociente eleitoral`,
-             `Quociente partidário`) 
+             `Número de eleitos pelo partido`) 
     
 ################################# MUN #####################################
     
@@ -134,11 +134,11 @@ padroniz_quoc <- function(data,
              "Sigla do partido" = "SIGLA_PARTIDO",
              "Total de votos conquistados" = "VOT_PART_MUN",
              "Quociente eleitoral" = "QUOCIENTE_ELEITORAL",
-             "Quociente partidário" = "QUOCIENTE_PARTIDARIO",
+             "Número de eleitos pelo partido" = "QTDE_ELEITOS_PART",
              "Municípios-Vagas com informação disponíveis" = "INFORMACAO_DISPONIVEL") %>% 
       mutate(`Quociente eleitoral` = round(`Quociente eleitoral`, 
                                            digits = 0),
-             `Quociente partidário` = round(`Quociente partidário`, 
+             `Número de eleitos pelo partido` = round(`Número de eleitos pelo partido`, 
                                             digits = 0),
              `Agregação regional` = "Município",
              Cargo = str_to_title(Cargo),
@@ -157,7 +157,7 @@ padroniz_quoc <- function(data,
              `Votos válidos`,
              `Sigla do partido`,
              `Quociente eleitoral`,
-             `Quociente partidário`)) 
+             `Número de eleitos pelo partido`)) 
     
   }
   

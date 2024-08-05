@@ -5,6 +5,9 @@
 indic_distcad <- function(data,
                           agregacao = c("BR", "UF", "MUN")){
   
+
+##################################### BR #######################################
+  
   
   if(agregacao == "BR"){
     
@@ -31,7 +34,7 @@ indic_distcad <- function(data,
       group_by(ANO_ELEICAO,
                DESCRICAO_CARGO,
                SIGLA_PARTIDO) %>% 
-      mutate(QUOCIENTE_PARTIDARIO = n()) %>% 
+      mutate(QTDE_ELEITOS_PART = n()) %>% 
       select(ANO_ELEICAO,
              DESCRICAO_CARGO,
              QTDE_VOTOS_VALIDOS_BR,
@@ -39,12 +42,13 @@ indic_distcad <- function(data,
              SIGLA_PARTIDO,
              VOT_PART_BR,
              QUOCIENTE_ELEITORAL,
-             QUOCIENTE_PARTIDARIO) %>% 
+             QTDE_ELEITOS_PART) %>% 
       unique() %>% 
       group_by(ANO_ELEICAO) %>% 
-      mutate(INFORMACAO_DISPONIVEL = sum(QUOCIENTE_PARTIDARIO,
+      mutate(INFORMACAO_DISPONIVEL = sum(QTDE_ELEITOS_PART,
                                          na.rm = TRUE))
-  
+
+##################################### UF #######################################
   
   } else if(agregacao == "UF"){
     
@@ -71,7 +75,7 @@ indic_distcad <- function(data,
                SIGLA_UF,
                DESCRICAO_CARGO,
                SIGLA_PARTIDO) %>% 
-      mutate(QUOCIENTE_PARTIDARIO = n()) %>% 
+      mutate(QTDE_ELEITOS_PART = n()) %>% 
       select(ANO_ELEICAO,
              SIGLA_UF,
              DESCRICAO_CARGO,
@@ -80,12 +84,14 @@ indic_distcad <- function(data,
              SIGLA_PARTIDO,
              VOT_PART_UF,
              QUOCIENTE_ELEITORAL,
-             QUOCIENTE_PARTIDARIO) %>% 
+             QTDE_ELEITOS_PART) %>% 
       unique() %>% 
       group_by(ANO_ELEICAO,
                SIGLA_UF) %>% 
-      mutate(INFORMACAO_DISPONIVEL = sum(QUOCIENTE_PARTIDARIO,
+      mutate(INFORMACAO_DISPONIVEL = sum(QTDE_ELEITOS_PART,
                                          na.rm = TRUE))
+    
+##################################### MUN #######################################
     
   } else if(agregacao == "MUN"){
     
@@ -108,7 +114,7 @@ indic_distcad <- function(data,
                NOME_MUNICIPIO,
                DESCRICAO_CARGO,
                SIGLA_PARTIDO) %>% 
-      mutate(QUOCIENTE_PARTIDARIO = n()) %>% 
+      mutate(QTDE_ELEITOS_PART = n()) %>% 
       select(ANO_ELEICAO,
              SIGLA_UF,
              COD_MUN_TSE,
@@ -120,12 +126,12 @@ indic_distcad <- function(data,
              SIGLA_PARTIDO,
              VOT_PART_MUN,
              QUOCIENTE_ELEITORAL,
-             QUOCIENTE_PARTIDARIO) %>% 
+             QTDE_ELEITOS_PART) %>% 
       unique() %>% 
       group_by(ANO_ELEICAO,
                SIGLA_UF,
                COD_MUN_TSE) %>% 
-      mutate(INFORMACAO_DISPONIVEL = sum(QUOCIENTE_PARTIDARIO,
+      mutate(INFORMACAO_DISPONIVEL = sum(QTDE_ELEITOS_PART,
                                          na.rm = TRUE))
     
     ## Salva os municípios com informação incompleta em um novo data frame

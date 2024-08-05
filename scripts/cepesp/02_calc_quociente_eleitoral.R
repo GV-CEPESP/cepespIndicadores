@@ -96,7 +96,7 @@ distcad_vr_mun <- padroniz_quoc(distcad_vr_mun,
 
 ## Junta os arquivos de 'Quociente Eleitoral e Partidário' em um arquivo único
 
-quoc_eleitoral_partidario_final <- bind_rows(distcad_df_br,
+quoc_eleitoral_final <- bind_rows(distcad_df_br,
                                              distcad_df_uf,
                                              distcad_de_uf,
                                              distcad_vr_mun) %>% 
@@ -112,13 +112,13 @@ quoc_eleitoral_partidario_final <- bind_rows(distcad_df_br,
 
 ## Exporta os indicadores de 'Fragmentação' no formato .rds
 
-saveRDS(quoc_eleitoral_partidario_final, 
-        "data/output/quociente_eleitoral_partidario_final.rds")
+saveRDS(quoc_eleitoral_final, 
+        "data/output/quociente_eleitoral_final.rds")
 
 # 5. Limpa Área de Trabalho -----------------------------------------------
 
 ## Remove da área de trabalho os dados que 
 ## não serão mais utilizados
 
-rm(quoc_eleitoral_partidario_final, distcad_df_br,
+rm(quoc_eleitoral_final, distcad_df_br,
    distcad_df_uf, distcad_de_uf, distcad_vr_mun)
