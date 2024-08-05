@@ -8,8 +8,8 @@ Repositório de indicadores eleitorais desenvolvido pelo Centro de Política e E
 Este repositório se organiza nas seguintes pastas:
 
 - `scripts`: códigos para limpeza, processamento e cálculo dos indicadores eleitorais:
-  - `cepesp`: códigos adaptados para os dados no formato original do TSE;
-  - `tse`: códigos adaptados para os dados no formato do CEPESP DATA.
+  - `cepesp`: códigos adaptados para os dados no formato do CEPESP DATA;
+  - `tse`: códigos adaptados para os dados no formato original do TSE.
 
 - `data`: bases de dados utilizadas nos scripts:
   - `input`: dados brutos extraídos de fontes diversas;
