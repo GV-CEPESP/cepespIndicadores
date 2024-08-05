@@ -59,7 +59,7 @@ Este repositório se organiza nas seguintes pastas:
 | functions    | Funções Auxiliares     | `votos_brancos_percentuais.R`       | Calcula o percentual de votos brancos.                                                                                                  |
 | functions    | Funções Auxiliares     | `votos_nulos_percentuais.R`         | Calcula o percentual de votos nulos.                                                                                                    |
 
-### Linguagem e Idioma
+## Linguagem e Idioma
 Todo o processamento das bases de dados foi conduzido em linguagem R. Pacotes utilizados no tratamento dos dados estão especificados no arquivo `00_index.R`. Scripts, tabelas auxiliares e bases finais foram padronizadas em português (PT-BR).
 
 ## Contribuições 
